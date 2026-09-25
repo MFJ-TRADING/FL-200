@@ -13,6 +13,8 @@ body{background:radial-gradient(1200px 600px at 20% -10%,rgba(245,196,81,.06),tr
 .btn-a{background:rgba(245,196,81,.12);color:#f5c451;border:1px solid rgba(245,196,81,.3)}
 .btn-a:hover{background:rgba(245,196,81,.22)}
 .btn-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.btn-r{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
+.btn-r:hover{background:rgba(59,130,246,.22);box-shadow:0 0 18px rgba(59,130,246,.2)}
 .chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b;background:transparent}
 .chip.on{color:#f5c451;border-color:rgba(245,196,81,.4);background:rgba(245,196,81,.08)}
 input{outline:none}
@@ -20,11 +22,8 @@ input{outline:none}
 .micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
 @keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(16,185,129,0)}}
 .dot-live{animation:pulse-dot 1.6s ease infinite}
-@keyframes pulse-amber{0%,100%{opacity:1}50%{opacity:.45}}
-.dot-standby{animation:pulse-amber 2.2s ease infinite}
-@keyframes think{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-.think span{display:inline-block;width:4px;height:4px;margin-right:2px;border-radius:50%;background:#f5c451;animation:think 1.2s infinite}
-.think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;animation:spin 1s linear infinite}
 </style></head>
 <body class="text-slate-200 font-sans min-h-screen">
 
@@ -32,9 +31,9 @@ input{outline:none}
 <div id="login" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/95 p-4">
   <div class="card w-full max-w-sm p-8">
     <div class="mb-6 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913] shadow-[0_0_30px_rgba(245,196,81,.3)]">H</div>
+      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913]">H</div>
       <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">ZCode-Primary · Wake-word · Farrukh Grid</p>
+      <p class="font-mono text-[10px] text-slate-500">v4.0 · ZCode-Primary · hard-refresh</p>
     </div>
     <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
     <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
@@ -52,7 +51,7 @@ input{outline:none}
       <div class="flex items-center gap-2">
         <span id="agentDot" class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
         <h1 class="text-base font-extrabold">HERMES AGENT</h1>
-        <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400 ring-1 ring-emerald-500/25">ONLINE</span>
+        <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400">ONLINE</span>
         <span id="zBadge" class="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500">ZCODE OFF</span>
       </div>
       <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p>
@@ -60,6 +59,7 @@ input{outline:none}
     <div class="ml-auto flex flex-wrap items-center gap-2">
       <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
       <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
+      <button onclick="hardRefresh()" class="btn btn-r" title="cache clear + fresh GitHub data + full reset">🧹 Hard Refresh</button>
       <button id="bVoice" onclick="toggleVoice()" class="btn btn-a">🔊</button>
       <button id="bWake" onclick="toggleWake()" class="btn btn-g">🎧 Wake ON</button>
       <button onclick="zSettings()" class="btn btn-a">⚙️</button>
@@ -69,6 +69,7 @@ input{outline:none}
 
   <div class="card grid grid-cols-2 gap-2 p-3 md:grid-cols-4" id="prop"></div>
 
+  <div id="dplan"></div>
   <div id="zcard"></div>
 
   <div class="flex flex-wrap items-center gap-2">
@@ -95,7 +96,7 @@ input{outline:none}
         </div>
         <span class="font-mono text-[10px]" id="d1Meta"></span>
       </div>
-      <canvas id="cvD1" class="block h-[320px] w-full"></canvas>
+      <canvas id="cvD1" class="block h-[300px] w-full"></canvas>
     </div>
     <div class="card overflow-hidden">
       <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
@@ -106,7 +107,7 @@ input{outline:none}
         </div>
         <span class="font-mono text-[10px]" id="h1Meta"></span>
       </div>
-      <canvas id="cvH1" class="block h-[320px] w-full"></canvas>
+      <canvas id="cvH1" class="block h-[300px] w-full"></canvas>
     </div>
   </div>
 
@@ -133,14 +134,25 @@ input{outline:none}
     </div>
     <div class="space-y-4">
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🌙 ZCode Lessons (self-review)</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🌙 ZCode Lessons</h3>
         <div id="lessons" class="mt-2 space-y-1 text-[10.5px] text-violet-300/90"></div>
       </div>
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 ZCode Memory (recent decisions)</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 ZCode Memory</h3>
         <div id="memory" class="mt-2 space-y-1 font-mono text-[10px] text-slate-400"></div>
       </div>
     </div>
+  </div>
+
+  <div class="card p-4">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">📅 Daily History (5AM PKT)</h3>
+    <div id="history" class="mt-3 space-y-2"></div>
+  </div>
+
+  <div class="card p-4">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛡️ Skills & Health <span id="hOk" class="ml-2"></span></h3>
+    <div id="accRow" class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-5"></div>
+    <div id="skillList" class="mt-3 space-y-1.5 font-mono text-[10px]"></div>
   </div>
 
   <div class="card p-4">
@@ -158,27 +170,21 @@ input{outline:none}
   </div>
 </div>
 
-<!-- ZCODE AGENT PANEL -->
-<div class="fixed bottom-4 right-4 z-40 w-[360px]">
+<!-- ZCODE PANEL -->
+<div class="fixed bottom-4 right-4 z-40 w-[340px]">
   <div class="card overflow-hidden shadow-2xl">
     <div class="flex items-center gap-2 border-b border-ink-800 px-3 py-2">
       <span id="micDot" class="h-2 w-2 rounded-full bg-slate-600"></span>
       <span id="micLbl" class="text-[9px] font-bold text-slate-500">MIC OFF</span>
       <span class="text-xs font-extrabold ml-1">⚡ ZCode</span>
-      <span id="zState" class="rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">ready</span>
       <div class="ml-auto flex gap-1">
         <button onclick="listenOnce()" class="chip">🎤</button>
-        <button onclick="vaCollapse()" class="chip" id="vaCol">—</button>
+        <button onclick="vaCollapse()" class="chip">—</button>
       </div>
     </div>
-    <div id="vaLog" class="max-h-64 space-y-2 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
-    <div id="zChips" class="flex flex-wrap gap-1 border-t border-ink-800 px-3 pt-2">
-      <button class="chip" onclick="quick('Give me a trade decision summary')">Decision?</button>
-      <button class="chip" onclick="quick('Any risk warnings right now?')">Risk?</button>
-      <button class="chip" onclick="quick('Why did you make your last decision?')">Last why?</button>
-    </div>
+    <div id="vaLog" class="max-h-56 space-y-2 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
     <div class="flex gap-2 border-t border-ink-800 p-2">
-      <input id="vaIn" placeholder="ZCode se kuch bhi poochein…" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
+      <input id="vaIn" placeholder="ZCode se poochein…" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
       <button onclick="vaSend()" class="chip on">Send</button>
     </div>
   </div>
@@ -187,31 +193,26 @@ input{outline:none}
 <!-- ZCODE SETTINGS -->
 <div id="zModal" class="fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" style="display:none">
   <div class="card w-full max-w-md p-6">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-sm font-extrabold">⚡ ZCode Settings</h2>
-      <button onclick="document.getElementById('zModal').style.display='none'" class="text-slate-500 hover:text-slate-200">✕</button>
-    </div>
-    <p class="mb-3 text-[11px] leading-relaxed text-slate-400">Key <b>sirf aapke browser</b> mein save hoti hai.</p>
+    <h2 class="mb-4 text-sm font-extrabold">⚡ ZCode Settings</h2>
     <label class="micro text-slate-500">GLM API Key</label>
     <input id="zKey" type="password" class="mb-3 mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-xs"/>
     <div class="mb-3 grid grid-cols-2 gap-2">
-      <div><label class="micro text-slate-500">Base URL</label>
-        <input id="zUrl" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
-      <div><label class="micro text-slate-500">Model</label>
-        <input id="zModel" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
+      <div><label class="micro text-slate-500">Base URL</label><input id="zUrl" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
+      <div><label class="micro text-slate-500">Model</label><input id="zModel" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
     </div>
-    <button onclick="zSave()" class="btn btn-g w-full">SAVE & ACTIVATE</button>
-    <p id="zErr" class="mt-2 text-center text-[10px] text-red-400"></p>
+    <button onclick="zSave()" class="btn btn-g w-full">SAVE</button>
   </div>
 </div>
 
 <script>
+console.log("HERMES DASH v4.0 — candles-fix + hard-refresh");
 const $ = s => document.querySelector(s);
 const CFG = HERMES_CONFIG, LS = "hermes_auth";
-let D = null, CUR = null, fillsMissing = false, agentBusy = false;
+let D = null, CUR = null, agentBusy = false;
 const err = m => $("#loginErr").textContent = m;
+const EBF = () => ({execs:[], results:[]});
 
-/* ============ AUTH + FAST FETCH ============ */
+/* ============ AUTH ============ */
 async function sha256hex(s){
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
@@ -238,15 +239,50 @@ async function tryLogin(){
   try { st = await ghRaw("state/state.json", tok); }
   catch(e){ return err("Token invalid ya state abhi nahi bani"); }
   const h = st && st.auth ? st.auth.hash : null;
-  if (!h) return err("DASH_PASSWORD secret set karke workflow run karein");
+  if (!h) return err("DASH_PASSWORD secret + workflow run karein");
   if (await sha256hex("hermes::" + pass) !== h) return err("Galat password");
   localStorage.setItem("hermes_tok", tok);
   localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
+  st.fills = st.fills || EBF();
   localStorage.setItem("hermes_cache", JSON.stringify(st));
   D = st; openApp(true);
 }
-function logout(){ wantListen = false; try{ rec && rec.abort(); }catch(e){} try{ synth.cancel(); }catch(e){}
-  localStorage.removeItem(LS); localStorage.removeItem("hermes_tok"); location.reload(); }
+function logout(){
+  wantListen = false; try{ rec && rec.abort(); }catch(e){} try{ synth.cancel(); }catch(e){}
+  localStorage.removeItem(LS); localStorage.removeItem("hermes_tok");
+  location.reload();
+}
+/* ===== HARD REFRESH: sab clear + fresh GitHub + full reset ===== */
+async function hardRefresh(){
+  const b = event ? event.target : null;
+  if (b){ b.innerHTML = '<span class="spin">⟳</span> Loading...'; b.disabled = true; }
+  addLog("🧹 Hard refresh: cache clear ho raha hai…");
+  try{ synth && synth.cancel(); }catch(e){}
+  try{ rec && rec.abort(); }catch(e){}
+  const tok = localStorage.getItem("hermes_tok");
+  localStorage.removeItem("hermes_cache");
+  localStorage.removeItem(LS);
+  try{
+    if (tok){
+      D = await ghRaw("state/state.json", tok);
+      D.fills = D.fills || EBF();
+      try {
+        const f = await ghRaw("state/fills.json", tok);
+        D.fills = f || EBF();
+      } catch(e){}
+      localStorage.setItem("hermes_cache", JSON.stringify(D));
+      localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
+      CUR = null;
+      render();
+      addLog("✅ Fresh data load ho gaya · " + (D.updated||"").replace("T"," ").slice(0,16) + "Z", "text-emerald-400");
+      speak("Hard refresh complete. System is fresh and ready.");
+    } else { location.reload(); }
+  } catch(e){
+    addLog("⚠️ Fresh load fail: " + e.message + " — page reload", "text-amber-400");
+    location.reload();
+  }
+  if (b){ setTimeout(() => { b.innerHTML = "🧹 Hard Refresh"; b.disabled = false; }, 1500); }
+}
 function openApp(fresh){
   $("#login").style.display = "none";
   $("#app").classList.remove("hidden");
@@ -257,8 +293,15 @@ function openApp(fresh){
   if (fresh) speak("Welcome Muhammad Farrukh Jadoon. Hermes online. Say: Wake up F L.");
   startWakeEngine();
 }
-function loadCache(){ try { return JSON.parse(localStorage.getItem("hermes_cache") || "null"); } catch(e){ return null; } }
+function loadCache(){
+  try {
+    const c = JSON.parse(localStorage.getItem("hermes_cache") || "null");
+    if (c){ c.fills = c.fills || EBF(); }
+    return c;
+  } catch(e){ return null; }
+}
 
+/* ============ DATA ============ */
 async function refresh(){
   const tok = localStorage.getItem("hermes_tok");
   if (!tok){ logout(); return; }
@@ -266,16 +309,14 @@ async function refresh(){
   const [a, b] = await Promise.allSettled([ghRaw("state/state.json", tok), ghRaw("state/fills.json", tok)]);
   if (a.status === "fulfilled"){
     D = a.value;
-    D.fills = b.status === "fulfilled" ? b.value : (D.fills || {execs:[],results:[]});
-    fillsMissing = b.status !== "fulfilled";
+    D.fills = b.status === "fulfilled" ? (b.value || EBF()) : EBF();
     try { localStorage.setItem("hermes_cache", JSON.stringify(D)); } catch(e){}
     render();
-    const ms = Math.round(performance.now() - t0);
-    $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + ms + "ms";
+    $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + Math.round(performance.now()-t0) + "ms";
   } else if (a.reason && String(a.reason).indexOf("401") >= 0) logout();
 }
 
-/* ============ GRID OPTIONS ============ */
+/* ============ GRID OPTS ============ */
 const GOPT = Object.assign({steps:4, prev:false, exp:true, zone:true},
   JSON.parse(localStorage.getItem("hermes_gopts") || "{}"));
 function saveGopt(){ localStorage.setItem("hermes_gopts", JSON.stringify(GOPT)); }
@@ -294,7 +335,7 @@ function F(v, d){ d = d || 2;
 function modelCard(name, v, acc){
   const dir = v == null ? "–" : v > .55 ? "▲ UP" : v < .45 ? "▼ DOWN" : "• FLAT";
   const col = v == null ? "text-slate-500" : v > .55 ? "text-emerald-400" : v < .45 ? "text-red-400" : "text-slate-400";
-  return '<div class="card p-3 transition">' +
+  return '<div class="card p-3">' +
     '<div class="flex items-center justify-between"><span class="micro font-bold text-slate-400">' + name + '</span>' +
     '<span class="font-mono text-[9px] text-slate-600">' + (acc != null ? Math.round(acc*100) + "% acc" : "no data") + '</span></div>' +
     '<div class="mt-1 font-mono text-lg font-bold ' + col + '">' + dir + '</div>' +
@@ -303,6 +344,8 @@ function modelCard(name, v, acc){
 }
 function render(){
   if (!D) return;
+  D.fills = (D.fills && D.fills.execs) ? D.fills : EBF();
+  console.log("render: symbols=" + Object.keys(D.symbols||{}).join(",") + " fills=" + D.fills.execs.length);
   $("#mMode").textContent = (D.mode || "").toUpperCase();
   $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
   $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
@@ -313,44 +356,69 @@ function render(){
     '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Trades Today</div>' +
       '<div class="mt-0.5 font-mono text-lg font-bold ' + ((B.used||0) >= 3 ? 'text-red-400' : 'text-amber-300') + '">' + (B.used||0) + ' / ' + (P.max_trades_per_day||3) + '</div></div>' +
     '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Losses Today</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((B.losses||0) >= 3 ? 'text-red-400' : 'text-slate-200') + '">' + (B.losses||0) + '</div></div>' +
+      '<div class="mt-0.5 font-mono text-lg font-bold">' + (B.losses||0) + '</div></div>' +
     '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Day PnL</div>' +
       '<div class="mt-0.5 font-mono text-lg font-bold ' + ((S.day_pnl_pct||0) >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (S.day_pnl_pct||0).toFixed(2) + '%</div></div>' +
     '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Drawdown</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold text-slate-200">' + (S.drawdown_pct||0) + '% <span class="text-[9px] text-slate-600">/ ' + (P.max_drawdown_pct||10) + '%</span></div></div>';
+      '<div class="mt-0.5 font-mono text-lg font-bold">' + (S.drawdown_pct||0) + '% <span class="text-[9px] text-slate-600">/ ' + (P.max_drawdown_pct||10) + '%</span></div></div>';
 
   const keys = Object.keys(D.symbols || {});
   if (!CUR && keys.length) CUR = keys[0];
   $("#tabs").innerHTML = keys.map(k =>
     '<button onclick="CUR=\'' + k + '\';render()" class="rounded-lg px-3 py-1.5 font-mono text-[11px] font-bold ' +
     (k === CUR ? 'bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30' : 'bg-ink-900 text-slate-500') + '">' + k + '</button>').join("");
-  const SN = (D.symbols || {})[CUR]; if (!SN) return;
-  const acc = D.acc || {};
+  const SN = (D.symbols || {})[CUR];
 
-  /* ZCODE-PRIMARY CARD */
-  const Z = SN.zcode || {};
-  $("#zcard").innerHTML = (Z.signal || SN.signal) ?
+  /* DAILY PLAN */
+  const DP = (D.daily_plan && D.daily_plan.symbols) ? D.daily_plan.symbols[CUR] : null;
+  if (DP && DP.yesterday_D1){
+    const zd = DP.zcode_daily || {};
+    $("#dplan").innerHTML = '<div class="card p-4">' +
+      '<div class="flex flex-wrap items-center gap-2">' +
+      '<span class="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-sky-300 ring-1 ring-sky-500/25">🌅 DAILY PLAN · 5AM PKT</span>' +
+      '<b class="' + (zd.bias==='BULLISH'?'text-emerald-400':zd.bias==='BEARISH'?'text-red-400':'text-slate-400') + '">' + (zd.bias || '—') + '</b>' +
+      '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.daily_plan.date||'') + '</span></div>' +
+      '<div class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4 font-mono text-[10px]">' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">Yest D1</div>' +
+        'O ' + DP.yesterday_D1.O + ' H ' + DP.yesterday_D1.H + '<br>L ' + DP.yesterday_D1.L + ' C ' + DP.yesterday_D1.C + '</div>' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">Expected H/L</div>' +
+        '★H ' + DP.expected_high + '<br>★L ' + DP.expected_low + '</div>' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">BUY Zones</div>' +
+        'B1 ' + (DP.zones?DP.zones.BUY1:'–') + '<br>B2 ' + (DP.zones?DP.zones.BUY2:'–') + '</div>' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">SELL Zones</div>' +
+        'S1 ' + (DP.zones?DP.zones.SELL1:'–') + '<br>S2 ' + (DP.zones?DP.zones.SELL2:'–') + '</div></div>' +
+      (zd.outlook ? '<p class="mt-2 text-[11px] text-slate-300">💬 ' + zd.outlook + '</p>' : '') +
+      '</div>';
+  } else $("#dplan").innerHTML = '';
+
+  /* ZCODE PRIMARY */
+  const Z = SN ? (SN.zcode || {}) : {};
+  $("#zcard").innerHTML = (SN && (Z.signal || SN.signal)) ?
     '<div class="card p-4">' +
     '<div class="flex flex-wrap items-center gap-2">' +
     '<span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE-PRIMARY</span>' +
     '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
-    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
-    '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.mode||'') + '</span></div>' +
-    (Z.reasoning ? '<p class="mt-2 text-[11.5px] leading-relaxed text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
+    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span></div>' +
+    (Z.reasoning ? '<p class="mt-2 text-[11.5px] text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
     (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' +
       Z.key_factors.map(f => '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
     '</div>' : '';
 
+  if (!SN){
+    console.warn("render: SN nahi mila — D.symbols khali hai. Bot run check karein.");
+    return;
+  }
+  const acc = D.acc || {};
   $("#models").innerHTML =
     modelCard("Stat",    SN.models && SN.models.stat,    acc.m_stat    ? avg(acc.m_stat)    : null) +
     modelCard("Quant",   SN.models && SN.models.quant,   acc.m_quant   ? avg(acc.m_quant)   : null) +
     modelCard("Kronos",  SN.models && SN.models.kronos,  acc.m_kronos  ? avg(acc.m_kronos)  : null) +
     modelCard("TimesFM", SN.models && SN.models.timesfm, acc.m_timesfm ? avg(acc.m_timesfm) : null) +
-    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">GLM Judge</span>' +
-    '<span class="font-mono text-[9px] text-slate-600">' + (acc.m_glm ? Math.round(avg(acc.m_glm)*100) + "% acc" : "primary") + '</span></div>' +
-    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.glm && SN.glm.bias === 'UP' ? 'text-emerald-400' : SN.glm && SN.glm.bias === 'DOWN' ? 'text-red-400' : 'text-slate-400') + '">' + (SN.signal || "WAIT") + '</div>' +
+    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">ZCode Final</span>' +
+    '<span class="font-mono text-[9px] text-slate-600">primary</span></div>' +
+    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal || "WAIT") + '</div>' +
     '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-violet-400/70" style="width:' + ((Z.confidence||0)*100) + '%"></div></div>' +
-    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (Z.risk || "zcode") + '</div></div>';
+    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (Z.risk || "—") + '</div></div>';
 
   const M = SN.matrix || {}, sb = $("#sideBadge");
   $("#mxSym").textContent = "· " + CUR;
@@ -368,18 +436,50 @@ function render(){
     '<td class="py-1.5 text-right ' + (r.v >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.v.toFixed(2) + '</td>' +
     '<td class="py-1.5 text-right ' + (r.c >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.c.toFixed(2) + '</td></tr>').join("");
   if (SN.why && !SN.signal)
-    $("#mxRows").innerHTML += '<tr class="border-t border-ink-800/50"><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · reason: <b class="text-slate-400">' + SN.why + '</b></td></tr>';
+    $("#mxRows").innerHTML += '<tr><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · <b class="text-slate-400">' + SN.why + '</b></td></tr>';
 
   $("#lessons").innerHTML = (D.lessons && D.lessons.items && D.lessons.items.length)
     ? D.lessons.items.slice().reverse().map(l => '<div>• ' + l + '</div>').join("")
-    : '<div class="text-slate-600">abhi koi lesson nahi — nightly review ke baad aayengi</div>';
+    : '<div class="text-slate-600">abhi koi lesson nahi</div>';
 
   $("#memory").innerHTML = (D.memory && D.memory.length)
     ? D.memory.slice().reverse().slice(0,6).map(m =>
       '<div class="flex items-center gap-2"><b class="' + (m.signal==='BUY'?'text-emerald-400':m.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (m.signal||'—') + '</b>' +
       '<span>' + (m.sym||'') + '</span><span class="text-slate-600">conf ' + Math.round((m.conf||0)*100) + '%</span>' +
       '<span class="ml-auto rounded px-1.5 text-[9px] font-bold ' + (m.outcome==='win'?'text-emerald-400':m.outcome==='loss'?'text-red-400':'text-slate-500') + '">' + (m.outcome||'pending').toUpperCase() + '</span></div>').join("")
-    : '<div class="text-slate-600">memory khali — pehla decision pending</div>';
+    : '<div class="text-slate-600">memory khali</div>';
+
+  /* HISTORY */
+  $("#history").innerHTML = (D.history && D.history.length)
+    ? D.history.slice().reverse().slice(0,7).map(dh => {
+        const rows = Object.keys(dh.symbols || {}).map(k => {
+          const e = dh.symbols[k];
+          if (e.error) return '<span class="text-slate-600">' + k + ': err</span>';
+          const zd = e.zcode_daily || {};
+          return '<b class="text-slate-300">' + k + '</b> ' +
+            '<span class="' + (e.yesterday_dir==='up'?'text-emerald-400':'text-red-400') + '">' + (e.yesterday_dir==='up'?'▲':'▼') + ' ' + e.yesterday_range_pips + 'p</span>' +
+            ' · trades ' + e.trades.trades + ' (W' + e.trades.wins + ') $' + e.trades.pnl +
+            (zd.bias ? ' · <span class="text-sky-300">' + zd.bias + '</span>' : '');
+        }).join('<span class="text-slate-700"> | </span>');
+        return '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800 font-mono text-[10.5px]">' +
+          '<span class="micro text-amber-300">' + dh.date + '</span><div class="mt-1">' + rows + '</div></div>';
+      }).join("")
+    : '<div class="text-slate-600">history khali — workflow → mode=daily run karein</div>';
+
+  /* SKILLS + HEALTH + ACCURACY */
+  const MH = D.manager && D.manager.health ? D.manager.health : null;
+  $("#hOk").innerHTML = MH ? (MH.ok
+    ? '<span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] text-emerald-400">ok: true</span>'
+    : '<span class="rounded bg-red-500/10 px-1.5 py-0.5 font-mono text-[9px] text-red-400">ok: false</span>') : '';
+  const AC = D.accuracy && D.accuracy.symbols ? (D.accuracy.symbols[CUR] || {}) : {};
+  $("#accRow").innerHTML = Object.keys(AC).filter(k => AC[k] && AC[k].bars).map(k =>
+    '<div class="rounded-xl bg-ink-950/50 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + k + ' acc</div>' +
+    '<div class="font-mono text-sm font-bold ' + (AC[k].pct >= 55 ? 'text-emerald-400' : AC[k].pct >= 50 ? 'text-amber-300' : 'text-red-400') + '">' + AC[k].pct + '%</div>' +
+    '<div class="text-[8px] text-slate-600">' + AC[k].bars + ' H1 bars</div></div>').join("") || '';
+  const SK = D.skills || {};
+  $("#skillList").innerHTML = Object.keys(SK).map(k =>
+    '<div><b class="text-slate-300">' + k + '</b> <span class="text-slate-600">w' + SK[k].weight + '</span> — ' +
+    (SK[k].skills || []).join(", ") + '</div>').join("");
 
   $("#cmds").innerHTML = (D.commands || []).slice(0,6).map(c => {
     const cls = c.status === "executed" ? "text-emerald-400" : c.status === "expired" ? "text-slate-600" : "text-amber-300";
@@ -389,10 +489,10 @@ function render(){
   }).join("") || '<div class="text-slate-600">no commands yet</div>';
 
   const cmdsI = {}; (D.commands || []).forEach(c => cmdsI[c.id] = c);
-  const execBy = {}; (D.fills.execs || []).forEach(e => execBy[e.cmd_id] = e);
-  const res = (D.fills.results || []);
+  const execBy = {}; D.fills.execs.forEach(e => execBy[e.cmd_id] = e);
+  const res = D.fills.results || [];
   const closedIds = new Set(res.map(r => r.cmd_id));
-  const openRows = (D.fills.execs || []).filter(e => !closedIds.has(e.cmd_id)).map(e => {
+  const openRows = D.fills.execs.filter(e => !closedIds.has(e.cmd_id)).map(e => {
     const c = cmdsI[e.cmd_id] || {};
     return {sym: c.sym || e.sym, side: c.side, entry: e.price, sl: c.sl, tp1: c.tp1, tp2: c.tp2, pnl: null, tp1_done: e.tp1_done};
   });
@@ -414,18 +514,39 @@ function render(){
       '<td class="px-3 py-2.5"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ' + (open ? 'bg-cyan-500/10 text-cyan-300' : t.outcome === 'win' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400') + '">' + (open ? "OPEN" + (t.tp1_done ? " ·BE" : "") : t.outcome.toUpperCase()) + '</span></td></tr>';
   }).join("") || '<tr><td colspan="8" class="px-3 py-4 text-center text-slate-600">no trades yet</td></tr>';
 
+  /* ===== CANDLES — hamesha render ke end mein, guaranteed ===== */
   const G = SN.grid || {};
   $("#d1Sym").textContent = CUR; $("#h1Sym").textContent = CUR;
-  if (G.D1){ $("#d1Meta").innerHTML = 'pos <b class="text-amber-300">' + (G.D1.pos*100).toFixed(0) + '%</b> · ' + G.D1.zone; drawFarrukh($("#cvD1"), G.D1.candles); }
-  if (G.H1){ $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone; drawFarrukh($("#cvH1"), G.H1.candles); }
+  try {
+    if (G.D1 && G.D1.candles && G.D1.candles.length >= 2){
+      $("#d1Meta").innerHTML = 'pos <b class="text-amber-300">' + (G.D1.pos*100).toFixed(0) + '%</b> · ' + G.D1.zone;
+      drawFarrukh($("#cvD1"), G.D1.candles);
+    } else {
+      $("#d1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
+      console.warn("D1 candles missing — bot run check karein (state.symbols." + CUR + ".grid.D1.candles)");
+      drawFarrukh($("#cvD1"), null);
+    }
+    if (G.H1 && G.H1.candles && G.H1.candles.length >= 2){
+      $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone;
+      drawFarrukh($("#cvH1"), G.H1.candles);
+    } else {
+      $("#h1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
+      console.warn("H1 candles missing — bot run check karein (state.symbols." + CUR + ".grid.H1.candles)");
+      drawFarrukh($("#cvH1"), null);
+    }
+  } catch(e){ console.error("candles draw error:", e); }
 }
 
 /* ============ FARRUKH GRID ============ */
 function drawFarrukh(cv, cs){
-  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth || 600, h = cv.clientHeight || 300;
   cv.width = w * dpr; cv.height = h * dpr;
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
-  if (!cs || cs.length < 2) return;
+  if (!cs || cs.length < 2){
+    ctx.fillStyle = "#475569"; ctx.font = "11px 'JetBrains Mono'";
+    ctx.fillText("no candle data — Hard Refresh ya bot run karein", 16, h/2);
+    return;
+  }
   const c1 = cs[0], c0 = cs[1];
   const decN = c1.c >= 100 ? 2 : c1.c >= 10 ? 3 : 5;
   const Fm = v => (+v).toLocaleString("en-US",{minimumFractionDigits:decN,maximumFractionDigits:decN});
@@ -524,7 +645,6 @@ function toggleVoice(){
   voiceOn = !voiceOn; localStorage.setItem("hermes_voice", voiceOn ? "1" : "0");
   $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
   if (!voiceOn){ try{ synth.cancel(); }catch(e){} }
-  addLog(voiceOn ? "🔊 voice on" : "🔇 voice off");
 }
  $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
 function speak(text, cb){
@@ -534,7 +654,7 @@ function speak(text, cb){
   try {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = .98; u.pitch = 1;
+    u.rate = .98;
     const vs = synth.getVoices();
     const v = vs.find(v => /en(-|_)?(US|GB)/i.test(v.lang)) || vs.find(v => /en/i.test(v.lang));
     if (v) u.voice = v;
@@ -548,9 +668,10 @@ function speak(text, cb){
 function addLog(t, cls){
   const d = document.createElement("div");
   d.className = cls || "text-slate-400"; d.innerHTML = t;
-  $("#vaLog").appendChild(d);
-  $("#vaLog").scrollTop = $("#vaLog").scrollHeight;
-  while ($("#vaLog").children.length > 60) $("#vaLog").firstElementChild.remove();
+  const log = $("#vaLog"); if (!log) return;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  while (log.children.length > 60) log.firstElementChild.remove();
 }
 
 /* ============ ZCODE AGENT ============ */
@@ -558,113 +679,89 @@ const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
 const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
 const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
 function zBadge(){
-  const on = !!ZKEY();
-  $("#zBadge").textContent = on ? "ZCODE · " + ZMODEL() : "ZCODE OFF";
-  $("#zBadge").className = on
-    ? "rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400"
-    : "rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500";
+  $("#zBadge").textContent = ZKEY() ? "ZCODE · " + ZMODEL() : "ZCODE OFF";
 }
 function zSettings(){
   $("#zKey").value = ZKEY(); $("#zUrl").value = ZURL(); $("#zModel").value = ZMODEL();
-  $("#zErr").textContent = "";
   $("#zModal").style.display = "flex";
 }
 function zSave(){
   const k = $("#zKey").value.trim();
-  if (!k){ $("#zErr").textContent = "Key likhein"; return; }
+  if (!k) return;
   localStorage.setItem("hermes_zkey", k);
   localStorage.setItem("hermes_zurl", $("#zUrl").value.trim() || ZURL());
   localStorage.setItem("hermes_zmodel", $("#zModel").value.trim() || "glm-4.6");
   $("#zModal").style.display = "none";
-  zBadge(); addLog("⚡ ZCode activated · " + ZMODEL(), "text-emerald-400");
-  speak("ZCode agent activated.");
+  zBadge(); addLog("⚡ ZCode activated", "text-emerald-400");
 }
 function buildContext(){
   const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
   const out = {desk: {mode: D.mode, equity: S.equity, winrate50: S.winrate50,
     day_pnl_pct: S.day_pnl_pct, drawdown_pct: S.drawdown_pct,
-    trades_used_today: B.used||0, max_trades: P.max_trades_per_day||3, losses_today: B.losses||0}, symbols: {}};
+    trades_used_today: B.used||0, max_trades: P.max_trades_per_day||3}, symbols: {}};
   Object.keys(D.symbols || {}).forEach(k => {
     const sn = D.symbols[k], g = sn.grid || {};
-    out.symbols[k] = {price: sn.price, signal: sn.signal, no_trade_reason: sn.why,
+    out.symbols[k] = {price: sn.price, signal: sn.signal, why: sn.why,
       zcode_reasoning: sn.zcode && sn.zcode.reasoning,
-      confidence: sn.matrix && sn.matrix.p_up,
       grid: {D1: g.D1 && {pos: g.D1.pos, zone: g.D1.zone}, H1: g.H1 && {pos: g.H1.pos, zone: g.H1.zone}},
       models: sn.models || {}, plan: sn.plan || null};
   });
+  out.daily_plan = D.daily_plan || null;
   out.lessons = (D.lessons && D.lessons.items || []).slice(-3);
-  out.memory = D.memory || [];
-  out.recent_results = (D.fills.results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
+  out.recent_results = ((D.fills || EBF()).results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
   return out;
 }
-const ZSYSTEM = "You are ZCode, the AI analyst of 'Hermes' - a prop-firm-style Gold/FX trading agent owned by Muhammad Farrukh Jadoon. " +
-  "You get LIVE desk state as JSON including your own lessons and recent decisions with outcomes. Be concise (max 4 sentences unless asked detail), " +
-  "reference actual numbers, respect prop rules (3 trades/day, 1% risk, 3% daily loss, 10% max DD), never guarantee profits, " +
-  "add 'analysis not financial advice' when suggesting trades. Reply in the user's language (English or Roman Urdu).";
+const ZSYSTEM = "You are ZCode, AI analyst of 'Hermes' - prop-firm Gold/FX agent of Muhammad Farrukh Jadoon. You get LIVE desk state JSON. Be concise (max 4 sentences), reference real numbers, respect prop rules, never guarantee profits. Reply in user's language.";
 let zHist = [];
 async function askAgent(q){
-  if (agentBusy){ addLog("⏳ ZCode busy…", "text-amber-400"); return; }
+  if (agentBusy){ addLog("⏳ busy…", "text-amber-400"); return; }
   addLog("👤 " + q, "text-cyan-300 font-bold");
   agentBusy = true;
-  $("#zState").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
   try {
     if (!ZKEY()) throw new Error("nokey");
     const r = await fetch(ZURL(), {method:"POST",
       headers:{"Authorization":"Bearer "+ZKEY(), "Content-Type":"application/json"},
       body: JSON.stringify({model: ZMODEL(), temperature: 0.4, max_tokens: 400,
         messages: [{role:"system", content: ZSYSTEM},
-                   {role:"user", content: "LIVE DESK STATE:\n" + JSON.stringify(buildContext())},
+                   {role:"user", content: "LIVE DESK:\n" + JSON.stringify(buildContext())},
                    ...zHist.slice(-6), {role:"user", content: q}]})});
     if (!r.ok) throw new Error("API " + r.status);
     const ans = await r.json();
-    const reply = ((((ans || {}).choices || [])[0] || {}).message || {}).content || "Koi jawab nahi mila.";
+    const reply = ((((ans || {}).choices || [])[0] || {}).message || {}).content || "…";
     zHist.push({role:"user", content:q}, {role:"assistant", content:reply});
     zHist = zHist.slice(-12);
     addLog("⚡ " + reply.replace(/\n/g,"<br>"), "text-slate-200");
     speak(reply);
   } catch(e){
-    if (e.message === "nokey"){
-      addLog("⚙️ Pehle ⚙️ mein GLM key dalein — local mode se jawab de raha hun.", "text-amber-400");
-      localCommand(q);
-    } else {
-      addLog("⚠️ API error: " + e.message + " — local fallback.", "text-amber-400");
-      localCommand(q);
-    }
+    if (e.message === "nokey"){ addLog("⚙️ Pehle GLM key dalein", "text-amber-400"); localCommand(q); }
+    else { addLog("⚠️ " + e.message + " — local fallback", "text-amber-400"); localCommand(q); }
   }
   agentBusy = false;
-  $("#zState").textContent = "ready";
 }
 function localCommand(raw){
   const t = (raw || "").toLowerCase();
-  if (/status|report|brief|update/.test(t)) return briefing();
+  if (/status|report|brief/.test(t)) return briefing();
   if (/signal/.test(t)){
     if (!D) return speak("no data");
     return speak("Signals: " + Object.keys(D.symbols||{}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". "));
   }
-  if (/trade/.test(t)){
-    const res = (D && D.fills && D.fills.results || []).slice(-3).reverse();
-    if (!res.length) return speak("No completed trades yet.");
-    return speak(res.map(r => r.sym + " " + (r.pnl >= 0 ? "profit" : "loss") + " " + Math.abs(r.pnl).toFixed(2) + " dollars").join(". "));
-  }
-  if (/refresh|sync/.test(t)){ speak("Refreshing."); return refresh(); }
+  if (/refresh/.test(t)){ return hardRefresh(); }
   if (/lock|logout/.test(t)) return logout();
-  if (/hello|salam|hi/.test(t)) return speak("Hello Muhammad Farrukh Jadoon. Say status for briefing.");
-  return speak("Full AI ke liye ZCode settings mein GLM key dalein. Ya kahen: status, signals, trades, refresh.");
+  return speak("Say: status, signals, refresh. Ya ZCode key settings mein dalein.");
 }
 function briefing(){
-  if (!D) return speak("Data load ho raha hai, ek minute.");
+  if (!D) return speak("Data load ho raha hai.");
   if (ZKEY()) return askAgent("Give me the full desk briefing like a professional risk officer.");
   const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
-  let t = "Equity " + F(S.equity) + " dollars. " + (B.used||0) + " of " + (P.max_trades_per_day||3) +
-    " trades used. Day P and L " + (S.day_pnl_pct||0).toFixed(2) + " percent.";
+  let t = "Equity " + F(S.equity) + " dollars. " + (B.used||0) + " of " + (P.max_trades_per_day||3) + " trades used.";
   Object.keys(D.symbols || {}).forEach(k => {
     const sn = D.symbols[k];
-    t += " " + k + ": " + (sn.signal ? sn.signal + ", confidence " + Math.round(((sn.matrix||{}).p_up||.5)*100) + " percent." : "no trade. " + (sn.why||""));
+    t += " " + k + ": " + (sn.signal ? sn.signal : "no trade");
   });
   speak(t);
 }
 
-/* ============ WAKE-WORD ENGINE ============ */
+/* ============ WAKE ENGINE ============ */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null, wantListen = localStorage.getItem("hermes_wake") !== "0";
 let awake = false, awakeTimer = null, recActive = false, permDenied = false;
@@ -682,27 +779,24 @@ function toggleWake(){
   wantListen = !wantListen;
   localStorage.setItem("hermes_wake", wantListen ? "1" : "0");
   $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
-  $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
-  if (wantListen){ startRec(); addLog("🎧 Wake ON — 'Wake up FL' kahen"); }
-  else { pauseRec(); setMic("bg-slate-600", "MIC OFF"); awake = false; addLog("🎧 Wake off"); }
+  if (wantListen){ startRec(); } else { pauseRec(); setMic("bg-slate-600", "MIC OFF"); }
 }
  $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
- $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
 function startWakeEngine(){
-  if (!SR){ setMic("bg-slate-600", "MIC N/A"); addLog("⚠️ Voice Chrome/Edge mein chalti hai", "text-amber-400"); return; }
+  if (!SR){ setMic("bg-slate-600", "MIC N/A"); return; }
   if (rec) return;
   rec = new SR();
   rec.continuous = true; rec.interimResults = true; rec.lang = "en-US";
   rec.onstart = () => { recActive = true;
     setMic(awake ? "bg-emerald-400 dot-live" : "bg-amber-400 dot-standby",
-           awake ? "ACTIVE · boliye" : "STANDBY · 'Wake up FL'"); };
+           awake ? "ACTIVE" : "STANDBY · Wake up FL"); };
   rec.onend = () => { recActive = false; if (wantListen) setTimeout(startRec, 400); };
   rec.onerror = e => {
     recActive = false;
     if (e.error === "not-allowed" || e.error === "service-not-allowed"){
       permDenied = true; wantListen = false;
       setMic("bg-slate-600", "MIC BLOCKED");
-      addLog("⚠️ Mic permission block — browser settings se allow karein, phir 🎧 Wake ON", "text-amber-400");
+      addLog("⚠️ Mic blocked — browser settings se allow karein", "text-amber-400");
     } else if (wantListen) setTimeout(startRec, 800);
   };
   rec.onresult = e => {
@@ -712,24 +806,24 @@ function startWakeEngine(){
     if (fin.trim()) handleUtterance(fin.trim());
   };
   startRec();
-  addLog("🎧 Standby — bas kahen: <b>Wake up FL</b>", "text-amber-300");
+  addLog("🎧 Standby — kahen: <b>Wake up FL</b>", "text-amber-300");
 }
-const RE_WAKE = /(wake\s*up\s*f\s*l|wake\s*up\s*fl|wakeup|wake\s*up|hey\s*fl|ok\s*fl|hermes)/i;
-const RE_SLEEP = /(sleep\s*mode|go\s*to\s*sleep|so\s*jao|stand\s*down|good\s*bye|alvida)/i;
+const RE_WAKE = /(wake\s*up|wakeup|hey\s*fl|ok\s*fl|hermes)/i;
+const RE_SLEEP = /(sleep|so\s*jao|stand\s*down|alvida)/i;
 function handleUtterance(text){
   const low = text.toLowerCase();
-  if (RE_SLEEP.test(low)){ awake = false;
-    if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'");
+  if (awake && RE_SLEEP.test(low)){ awake = false;
+    if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · Wake up FL");
     return speak("Stand by."); }
   const m = low.match(RE_WAKE);
   if (m){
     const idx = low.indexOf(m[0]);
     const after = text.slice(idx + m[0].length).replace(/^[\s,.!?]+/, "").trim();
     awake = true;
-    setMic("bg-emerald-400 dot-live", "ACTIVE · boliye");
+    setMic("bg-emerald-400 dot-live", "ACTIVE");
     clearTimeout(awakeTimer);
-    awakeTimer = setTimeout(() => { if (awake){ awake = false;
-      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'"); } }, 120000);
+    awakeTimer = setTimeout(() => { awake = false;
+      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · Wake up FL"); }, 120000);
     if (after.length > 2) routeCommand(after);
     else speak("Yes Farrukh?");
     return;
@@ -737,7 +831,7 @@ function handleUtterance(text){
   if (awake){
     clearTimeout(awakeTimer);
     awakeTimer = setTimeout(() => { awake = false;
-      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'"); }, 120000);
+      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · Wake up FL"); }, 120000);
     routeCommand(text);
   }
 }
@@ -746,31 +840,24 @@ function routeCommand(q){
   if (ZKEY()) askAgent(q);
   else localCommand(q);
 }
-function listenOnce(){ if (!SR) return addLog("⚠️ Chrome/Edge use karein", "text-amber-400");
+function listenOnce(){ if (!SR) return;
   awake = true; startRec(); addLog("🎤 listening…"); }
-function quick(q){ routeInput(q); }
 function routeInput(q){
   const t = (q || "").toLowerCase();
-  if (/^(mute|stop|quiet|chup)$/.test(t)){
-    voiceOn = false; localStorage.setItem("hermes_voice","0"); $("#bVoice").textContent = "🔇";
-    try{ synth.cancel(); }catch(e){} return addLog("🔇 muted");
-  }
-  if (/^(unmute|voice on)$/.test(t)){
-    voiceOn = true; localStorage.setItem("hermes_voice","1"); $("#bVoice").textContent = "🔊";
-    return addLog("🔊 unmuted");
-  }
-  if (/^(refresh|sync)$/.test(t)){ speak("Refreshing."); return refresh(); }
+  if (/^(mute|chup)$/.test(t)){ voiceOn = false; localStorage.setItem("hermes_voice","0");
+    $("#bVoice").textContent = "🔇"; try{ synth.cancel(); }catch(e){} return; }
+  if (/^(unmute)$/.test(t)){ voiceOn = true; localStorage.setItem("hermes_voice","1");
+    $("#bVoice").textContent = "🔊"; return; }
+  if (/^(refresh)$/.test(t)){ return hardRefresh(); }
   if (/^(lock|logout)$/.test(t)) return logout();
-  if (/^(sleep|standby)$/.test(t)){ awake = false; return speak("Stand by."); }
   routeCommand(q);
 }
 function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; routeInput(v); } }
  $("#vaIn").addEventListener("keydown", e => { if (e.key === "Enter") vaSend(); });
 function vaCollapse(){
-  const l = $("#vaLog"), c = $("#zChips"), f = $("#vaIn").parentElement;
+  const l = $("#vaLog"), f = $("#vaIn").parentElement;
   const hid = l.style.display === "none";
-  l.style.display = hid ? "" : "none"; c.style.display = hid ? "" : "none"; f.style.display = hid ? "" : "none";
-  $("#vaCol").textContent = hid ? "—" : "+";
+  l.style.display = hid ? "" : "none"; f.style.display = hid ? "" : "none";
 }
 
 /* ============ BOOT ============ */

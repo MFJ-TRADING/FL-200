@@ -9,12 +9,11 @@
 <style>
 body{background:radial-gradient(1200px 600px at 20% -10%,rgba(245,196,81,.06),transparent),radial-gradient(900px 500px at 90% 110%,rgba(16,185,129,.05),transparent),#060913}
 .card{border-radius:1rem;border:1px solid rgba(23,34,59,.9);background:rgba(11,18,32,.65);backdrop-filter:blur(8px)}
-.card:hover{border-color:rgba(35,50,83,1)}
 .btn{border-radius:.6rem;padding:.45rem .9rem;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
 .btn-a{background:rgba(245,196,81,.12);color:#f5c451;border:1px solid rgba(245,196,81,.3)}
-.btn-a:hover{background:rgba(245,196,81,.22);box-shadow:0 0 18px rgba(245,196,81,.15)}
+.btn-a:hover{background:rgba(245,196,81,.22)}
 .btn-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3)}
-.chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b}
+.chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b;background:transparent}
 .chip.on{color:#f5c451;border-color:rgba(245,196,81,.4);background:rgba(245,196,81,.08)}
 input{outline:none}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#17223b;border-radius:4px}
@@ -24,7 +23,7 @@ input{outline:none}
 </style></head>
 <body class="text-slate-200 font-sans min-h-screen">
 
-<!-- ================= LOGIN ================= -->
+<!-- LOGIN -->
 <div id="login" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/95 p-4">
   <div class="card w-full max-w-sm p-8">
     <div class="mb-6 text-center">
@@ -40,10 +39,9 @@ input{outline:none}
   </div>
 </div>
 
-<!-- ================= APP ================= -->
+<!-- APP -->
 <div id="app" class="hidden mx-auto max-w-[1400px] space-y-4 p-4">
 
-  <!-- HEADER -->
   <header class="card flex flex-wrap items-center gap-3 p-4">
     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-bold text-[#060913]">H</div>
     <div>
@@ -57,21 +55,21 @@ input{outline:none}
     <div class="ml-auto flex flex-wrap items-center gap-2">
       <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
       <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
-      <button id="bVoice" onclick="toggleVoice()" class="btn btn-a" title="voice on/off">🔊</button>
-      <button onclick="briefing()" class="btn btn-g" title="voice briefing">🗣 Briefing</button>
+      <button id="bVoice" onclick="toggleVoice()" class="btn btn-a">🔊</button>
+      <button onclick="briefing()" class="btn btn-g">🗣 Briefing</button>
       <button onclick="logout()" class="btn btn-a">🔒 Lock</button>
     </div>
   </header>
 
-  <!-- PROP -->
   <div class="card grid grid-cols-2 gap-2 p-3 md:grid-cols-4" id="prop"></div>
 
-  <!-- TABS + GRID OPTIONS -->
   <div class="flex flex-wrap items-center gap-2">
     <div id="tabs" class="flex flex-wrap gap-2"></div>
     <div class="ml-auto flex flex-wrap items-center gap-1.5">
       <span class="micro text-slate-600">grid steps</span>
-      <button class="chip stp" data-s="3">3</button><button class="chip stp on" data-s="4">4</button><button class="chip stp" data-s="6">6</button>
+      <button class="chip stp" data-s="3">3</button>
+      <button class="chip stp on" data-s="4">4</button>
+      <button class="chip stp" data-s="6">6</button>
       <span class="mx-1 h-4 w-px bg-ink-800"></span>
       <button class="chip" id="oPrev" onclick="togOpt('prev',this)">Prev H/L</button>
       <button class="chip on" id="oExp" onclick="togOpt('exp',this)">★ Expected</button>
@@ -79,7 +77,6 @@ input{outline:none}
     </div>
   </div>
 
-  <!-- D1 / H1 GRID PANELS -->
   <div class="grid gap-4 xl:grid-cols-2">
     <div class="card overflow-hidden">
       <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
@@ -105,11 +102,9 @@ input{outline:none}
     </div>
   </div>
 
-  <!-- MODELS -->
   <div class="grid grid-cols-2 gap-3 md:grid-cols-5" id="models"></div>
 
-  <!-- MATRIX + SKILLS -->
-  <div class="grid gap-4 lg:grid-cols-[1fr_1fr]">
+  <div class="grid gap-4 lg:grid-cols-2">
     <div class="card p-4">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">⚖️ Decision Matrix <span id="mxSym" class="text-slate-600"></span></h3>
       <div class="mt-3 flex items-center gap-4 rounded-xl bg-ink-950/60 p-3 ring-1 ring-ink-800">
@@ -140,7 +135,6 @@ input{outline:none}
     </div>
   </div>
 
-  <!-- TRADES -->
   <div class="card overflow-x-auto">
     <table class="w-full min-w-[720px] text-left text-xs">
       <thead><tr class="micro text-slate-500">
@@ -151,20 +145,20 @@ input{outline:none}
   </div>
 </div>
 
-<!-- ================= VOICE ASSISTANT (floating) ================= -->
-<div id="va" class="fixed bottom-4 right-4 z-40 w-[330px]">
+<!-- VOICE ASSISTANT -->
+<div class="fixed bottom-4 right-4 z-40 w-[330px]">
   <div class="card overflow-hidden shadow-2xl">
     <div class="flex items-center gap-2 border-b border-ink-800 px-3 py-2">
       <span id="micDot" class="h-2 w-2 rounded-full bg-slate-600"></span>
       <span class="text-xs font-bold">🎙️ Hermes Voice</span>
       <div class="ml-auto flex gap-1">
-        <button onclick="listen()" class="chip" title="bol kar poochein">🎤 Speak</button>
+        <button onclick="listen()" class="chip">🎤 Speak</button>
         <button onclick="vaCollapse()" class="chip" id="vaCol">—</button>
       </div>
     </div>
     <div id="vaLog" class="max-h-44 space-y-1.5 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
     <div class="flex gap-2 border-t border-ink-800 p-2">
-      <input id="vaIn" placeholder="type: status / signals / trades / refresh" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
+      <input id="vaIn" placeholder="status / signals / trades / refresh" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
       <button onclick="vaSend()" class="chip on">Send</button>
     </div>
   </div>
@@ -173,3 +167,395 @@ input{outline:none}
 <script>
 const $ = s => document.querySelector(s);
 const CFG = HERMES_CONFIG, LS = "hermes_auth";
+let D = null, CUR = null, fillsMissing = false;
+const err = m => $("#loginErr").textContent = m;
+
+/* ---------- AUTH ---------- */
+async function sha256hex(s){
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
+}
+function sessionValid(){
+  try {
+    const s = JSON.parse(localStorage.getItem(LS));
+    if (!s || !s.ts) return false;
+    if ((Date.now() - s.ts) / 86400000 > CFG.SESSION_DAYS){ localStorage.removeItem(LS); return false; }
+    return true;
+  } catch(e){ return false; }
+}
+async function ghFetch(path, tok){
+  const url = "https://api.github.com/repos/" + CFG.REPO + "/contents/" + path + "?ref=" + CFG.BRANCH + "&t=" + Date.now();
+  const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github+json"}});
+  if (!r.ok) throw new Error("gh " + r.status);
+  const j = await r.json();
+  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob((j.content||"").replace(/\n/g,"")), c=>c.charCodeAt(0))));
+}
+async function tryLogin(){
+  err("");
+  const tok = $("#gtok").value.trim(), pass = $("#pass").value;
+  if (!tok || !pass) return err("Token aur password dono likhein");
+  let st;
+  try { st = await ghFetch("state/state.json", tok); }
+  catch(e){ return err("Token invalid ya state abhi nahi bani"); }
+  const h = st && st.auth ? st.auth.hash : null;
+  if (!h) return err("DASH_PASSWORD secret set karke workflow run karein");
+  if (await sha256hex("hermes::" + pass) !== h) return err("Galat password");
+  localStorage.setItem("hermes_tok", tok);
+  localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
+  D = st; openApp(true);
+}
+function logout(){ try{ synth.cancel(); }catch(e){}
+  localStorage.removeItem(LS); localStorage.removeItem("hermes_tok"); location.reload(); }
+function openApp(fresh){
+  $("#login").style.display = "none";
+  $("#app").classList.remove("hidden");
+  refresh(); setInterval(refresh, 120000);
+  if (fresh) speak("Welcome Muhammad Farrukh Jadoon. Hermes agent is online.", () => briefing());
+  else briefing();
+}
+
+/* ---------- DATA ---------- */
+async function refresh(){
+  const tok = localStorage.getItem("hermes_tok");
+  if (!tok){ logout(); return; }
+  try {
+    D = await ghFetch("state/state.json", tok);
+    if (!fillsMissing){
+      try { D.fills = await ghFetch("state/fills.json", tok); }
+      catch(e){ fillsMissing = true; D.fills = {execs:[],results:[]}; }
+    } else { D.fills = D.fills || {execs:[],results:[]}; }
+    render();
+  } catch(e){ if (e.message.indexOf("401") >= 0) logout(); }
+}
+
+/* ---------- GRID OPTIONS ---------- */
+const GOPT = Object.assign({steps:4, prev:false, exp:true, zone:true},
+  JSON.parse(localStorage.getItem("hermes_gopts") || "{}"));
+function saveGopt(){ localStorage.setItem("hermes_gopts", JSON.stringify(GOPT)); }
+document.querySelectorAll(".stp").forEach(b => {
+  b.classList.toggle("on", +b.dataset.s === GOPT.steps);
+  b.onclick = () => { GOPT.steps = +b.dataset.s;
+    document.querySelectorAll(".stp").forEach(x => x.classList.toggle("on", x === b));
+    saveGopt(); render(); };
+});
+function togOpt(k, el){ GOPT[k] = !GOPT[k]; el.classList.toggle("on", GOPT[k]); saveGopt(); render(); }
+
+/* ---------- RENDER ---------- */
+const avg = a => a.reduce((x,y)=>x+y,0) / a.length;
+function F(v, d){ d = d || 2;
+  return v == null ? "–" : (+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function modelCard(name, v, acc){
+  const dir = v == null ? "–" : v > .55 ? "▲ UP" : v < .45 ? "▼ DOWN" : "• FLAT";
+  const col = v == null ? "text-slate-500" : v > .55 ? "text-emerald-400" : v < .45 ? "text-red-400" : "text-slate-400";
+  return '<div class="card p-3 transition">' +
+    '<div class="flex items-center justify-between"><span class="micro font-bold text-slate-400">' + name + '</span>' +
+    '<span class="font-mono text-[9px] text-slate-600">' + (acc != null ? Math.round(acc*100) + "% acc" : "no data") + '</span></div>' +
+    '<div class="mt-1 font-mono text-lg font-bold ' + col + '">' + dir + '</div>' +
+    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full ' + (v > .5 ? 'bg-emerald-500/70' : 'bg-red-500/70') + '" style="width:' + (v == null ? 0 : v*100) + '%"></div></div>' +
+    '<div class="mt-1 text-right font-mono text-[9px] text-slate-500">p_up ' + (v == null ? "–" : (v*100).toFixed(0) + "%") + '</div></div>';
+}
+function render(){
+  if (!D) return;
+  $("#mMode").textContent = (D.mode || "").toUpperCase();
+  $("#mUpd").textContent = (D.updated || "").replace("T"," ").slice(0,16) + "Z";
+  $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
+  $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
+  $("#thr").textContent = "THR " + F((D.weights && D.weights._thr) || .6, 0) + "%";
+
+  const P = D.prop || {}, B = P.budget || {}, S = D.stats || {};
+  $("#prop").innerHTML =
+    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Trades Today</div>' +
+      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((B.used||0) >= 3 ? 'text-red-400' : 'text-amber-300') + '">' + (B.used||0) + ' / ' + (P.max_trades_per_day||3) + '</div></div>' +
+    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Losses Today</div>' +
+      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((B.losses||0) >= 3 ? 'text-red-400' : 'text-slate-200') + '">' + (B.losses||0) + '</div></div>' +
+    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Day PnL</div>' +
+      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((S.day_pnl_pct||0) >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (S.day_pnl_pct||0).toFixed(2) + '%</div></div>' +
+    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Drawdown</div>' +
+      '<div class="mt-0.5 font-mono text-lg font-bold text-slate-200">' + (S.drawdown_pct||0) + '% <span class="text-[9px] text-slate-600">/ ' + (P.max_drawdown_pct||10) + '%</span></div></div>';
+
+  const keys = Object.keys(D.symbols || {});
+  if (!CUR && keys.length) CUR = keys[0];
+  $("#tabs").innerHTML = keys.map(k =>
+    '<button onclick="CUR=\'' + k + '\';render()" class="rounded-lg px-3 py-1.5 font-mono text-[11px] font-bold ' +
+    (k === CUR ? 'bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30' : 'bg-ink-900 text-slate-500') + '">' + k + '</button>').join("");
+  const SN = (D.symbols || {})[CUR]; if (!SN) return;
+  const acc = D.acc || {};
+  $("#models").innerHTML =
+    modelCard("Stat",    SN.models && SN.models.stat,    acc.m_stat    ? avg(acc.m_stat)    : null) +
+    modelCard("Quant",   SN.models && SN.models.quant,   acc.m_quant   ? avg(acc.m_quant)   : null) +
+    modelCard("Kronos",  SN.models && SN.models.kronos,  acc.m_kronos  ? avg(acc.m_kronos)  : null) +
+    modelCard("TimesFM", SN.models && SN.models.timesfm, acc.m_timesfm ? avg(acc.m_timesfm) : null) +
+    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">GLM Judge</span>' +
+    '<span class="font-mono text-[9px] text-slate-600">' + (acc.m_glm ? Math.round(avg(acc.m_glm)*100) + "% acc" : "judge") + '</span></div>' +
+    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.glm && SN.glm.bias === 'UP' ? 'text-emerald-400' : SN.glm && SN.glm.bias === 'DOWN' ? 'text-red-400' : 'text-slate-400') + '">' + (SN.glm ? SN.glm.bias : "OFF") + '</div>' +
+    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-amber-400/70" style="width:' + ((SN.glm ? SN.glm.conf : 0) * 100) + '%"></div></div>' +
+    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (SN.glm ? SN.glm.comment : "key set karein") + '</div></div>';
+
+  const M = SN.matrix || {}, sb = $("#sideBadge");
+  $("#mxSym").textContent = "· " + CUR;
+  sb.textContent = SN.signal || "WAIT";
+  sb.className = "rounded-xl px-4 py-2 text-2xl font-extrabold " +
+    (SN.signal === "BUY" ? "bg-emerald-500/15 text-emerald-400" : SN.signal === "SELL" ? "bg-red-500/15 text-red-400" : "bg-ink-800 text-slate-500");
+  $("#pTxt").textContent = "P(up) " + F((M.p_up || .5) * 100, 1) + "%";
+  $("#thrTxt").textContent = "THR " + F((M.thr || .6) * 100, 0) + "%";
+  $("#pBar").style.width = ((M.p_up || .5) * 100) + "%";
+  $("#pDot").style.left = "calc(" + ((M.p_up || .5) * 100) + "% - 2px)";
+  $("#thrMark").style.left = ((M.thr || .6) * 100) + "%";
+  $("#mxRows").innerHTML = (M.rows || []).map(r =>
+    '<tr class="border-t border-ink-800/50"><td class="py-1.5 text-slate-400">' + r.k + '</td>' +
+    '<td class="py-1.5 text-right text-slate-500">' + r.w.toFixed(2) + '</td>' +
+    '<td class="py-1.5 text-right ' + (r.v >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.v.toFixed(2) + '</td>' +
+    '<td class="py-1.5 text-right ' + (r.c >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.c.toFixed(2) + '</td></tr>').join("");
+  if (SN.why && !SN.signal)
+    $("#mxRows").innerHTML += '<tr class="border-t border-ink-800/50"><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · reason: <b class="text-slate-400">' + SN.why + '</b></td></tr>';
+
+  $("#metaList").innerHTML = Object.entries(D.meta || {}).map(e =>
+    '<div><b class="text-slate-300">' + e[0] + '</b> v' + e[1].ver + ' — ' + (e[1].skills || []).join(", ") + '</div>').join("");
+
+  $("#cmds").innerHTML = (D.commands || []).slice(0,6).map(c => {
+    const cls = c.status === "executed" ? "text-emerald-400" : c.status === "expired" ? "text-slate-600" : "text-amber-300";
+    return '<div class="flex items-center gap-2"><b class="' + (c.side === 'BUY' ? 'text-emerald-400' : 'text-red-400') + '">' + c.side + '</b>' +
+      '<span class="text-slate-300">' + c.sym + '</span><span class="text-slate-500">' + c.lots + ' lots · SL ' + F(c.sl,4) + ' · TP2 ' + F(c.tp2,4) + '</span>' +
+      '<span class="ml-auto rounded px-1.5 text-[9px] font-bold uppercase ' + cls + '">● ' + c.status + '</span></div>';
+  }).join("") || '<div class="text-slate-600">no commands yet</div>';
+
+  const cmdsI = {}; (D.commands || []).forEach(c => cmdsI[c.id] = c);
+  const execBy = {}; (D.fills.execs || []).forEach(e => execBy[e.cmd_id] = e);
+  const res = (D.fills.results || []);
+  const closedIds = new Set(res.map(r => r.cmd_id));
+  const openRows = (D.fills.execs || []).filter(e => !closedIds.has(e.cmd_id)).map(e => {
+    const c = cmdsI[e.cmd_id] || {};
+    return {sym: c.sym || e.sym, side: c.side, entry: e.price, sl: c.sl, tp1: c.tp1, tp2: c.tp2, pnl: null, tp1_done: e.tp1_done};
+  });
+  const closedRows = res.slice().reverse().map(r => {
+    const c = cmdsI[r.cmd_id] || {}, ex = execBy[r.cmd_id] || {};
+    return {sym: c.sym || r.sym, side: c.side, entry: ex.price, sl: c.sl, tp1: c.tp1, tp2: c.tp2, pnl: r.pnl, tp1_done: ex.tp1_done, outcome: r.pnl >= 0 ? "win" : "loss"};
+  });
+  const rows = openRows.concat(closedRows).slice(0,14);
+  $("#trades").innerHTML = rows.map(t => {
+    const open = t.pnl == null;
+    return '<tr class="border-t border-ink-800/50">' +
+      '<td class="px-3 py-2.5 font-semibold">' + (t.sym || "–") + '</td>' +
+      '<td class="px-3 py-2.5 font-bold ' + (t.side === 'BUY' ? 'text-emerald-400' : 'text-red-400') + '">' + (t.side || "–") + '</td>' +
+      '<td class="px-3 py-2.5 font-mono">' + F(t.entry,4) + '</td>' +
+      '<td class="px-3 py-2.5 font-mono text-red-400">' + F(t.sl,4) + '</td>' +
+      '<td class="px-3 py-2.5 font-mono text-emerald-400">' + F(t.tp1,4) + '</td>' +
+      '<td class="px-3 py-2.5 font-mono text-emerald-400">' + F(t.tp2,4) + '</td>' +
+      '<td class="px-3 py-2.5 font-mono font-bold ' + (open ? 'text-slate-600' : t.pnl >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (open ? "–" : (t.pnl >= 0 ? "+" : "−") + "$" + F(Math.abs(t.pnl))) + '</td>' +
+      '<td class="px-3 py-2.5"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ' + (open ? 'bg-cyan-500/10 text-cyan-300' : t.outcome === 'win' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400') + '">' + (open ? "OPEN" + (t.tp1_done ? " ·BE" : "") : t.outcome.toUpperCase()) + '</span></td></tr>';
+  }).join("") || '<tr><td colspan="8" class="px-3 py-4 text-center text-slate-600">no trades yet</td></tr>';
+
+  const G = SN.grid || {};
+  $("#d1Sym").textContent = CUR; $("#h1Sym").textContent = CUR;
+  if (G.D1){ $("#d1Meta").innerHTML = 'pos <b class="text-amber-300">' + (G.D1.pos*100).toFixed(0) + '%</b> · ' + G.D1.zone; drawFarrukh($("#cvD1"), G.D1.candles); }
+  if (G.H1){ $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone; drawFarrukh($("#cvH1"), G.H1.candles); }
+}
+
+/* ---------- FARRUKH GRID ENGINE ---------- */
+function drawFarrukh(cv, cs){
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+  if (!cs || cs.length < 2) return;
+  const c1 = cs[0], c0 = cs[1];
+  const decN = c1.c >= 100 ? 2 : c1.c >= 10 ? 3 : 5;
+  const Fm = v => (+v).toLocaleString("en-US",{minimumFractionDigits:decN,maximumFractionDigits:decN});
+  const red = c1.c < c1.o;
+  const H = c1.h, L = c1.l, R = (H - L) || 1e-9;
+  const step = 100/3, maxS = GOPT.steps;
+  const lvl = pct => red ? (H - pct/100*R) : (L + pct/100*R);
+  const pctOf = p => (red ? (H-p)/R*100 : (p-L)/R*100);
+
+  const mom = c1.c - c1.o;
+  const pH = mom > 0 ? c1.c + .6*R : c1.c + .4*R;
+  const pL = mom > 0 ? c1.c - .4*R : c1.c - .6*R;
+  const hiB = Math.max(pctOf(pH), pctOf(pL)), loB = Math.min(pctOf(pH), pctOf(pL));
+  const minLow = Math.floor(loB/step)*step, maxLow = minLow + step;
+  const maxHigh = Math.ceil(hiB/step)*step, minHigh = maxHigh - step;
+  const tagFor = pct => {
+    if (Math.abs(pct-minLow) < .01) return {t:"BUY 2", c:"#10b981"};
+    if (Math.abs(pct-maxLow) < .01) return {t:"BUY 1", c:"#10b981"};
+    if (Math.abs(pct-minHigh) < .01) return {t:"SELL 1", c:"#ef4444"};
+    if (Math.abs(pct-maxHigh) < .01) return {t:"SELL 2", c:"#ef4444"};
+    return null;
+  };
+
+  const levels = []; for (let k = -1; k <= maxS; k++) levels.push(k*step);
+  const vals = levels.map(lvl).concat([c0.h, c0.l, H, L]);
+  if (GOPT.exp) vals.push(c1.c + R/2, c1.c - R/2);
+  let mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+  const pd = (mx-mn)*.06 || 1; mn -= pd; mx += pd;
+  const padT = 14, padB = 26, padL = 8, padR = 158;
+  const pw = w - padL - padR, ph = h - padT - padB;
+  const Y = v => padT + (mx - v)/(mx - mn)*ph;
+
+  if (GOPT.zone){
+    ctx.fillStyle = "rgba(16,185,129,.07)";
+    ctx.fillRect(padL, Y(lvl(maxLow)), pw, Math.abs(Y(lvl(maxLow)) - Y(lvl(minLow))));
+    ctx.fillStyle = "rgba(239,68,68,.07)";
+    ctx.fillRect(padL, Y(lvl(maxHigh)), pw, Math.abs(Y(lvl(maxHigh)) - Y(lvl(minHigh))));
+  }
+
+  levels.forEach(pct => {
+    const p = lvl(pct), y = Y(p), tg = tagFor(pct);
+    const edge = Math.abs(pct) < .01 || Math.abs(pct-100) < .01;
+    ctx.strokeStyle = tg ? tg.c : edge ? "rgba(148,163,184,.5)" : "rgba(100,116,139,.3)";
+    ctx.setLineDash(tg ? [] : [4,4]); ctx.lineWidth = tg ? 1.6 : 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke(); ctx.setLineDash([]);
+    const txt = (tg ? tg.t + " · " : "") + (Math.round(pct*10)/10) + "% [" + Fm(p) + "]";
+    ctx.font = (tg ? "bold " : "") + "9px 'JetBrains Mono'";
+    const tw = ctx.measureText(txt).width + 10;
+    const bg = tg ? (tg.c === "#10b981" ? "rgba(16,185,129,.16)" : "rgba(239,68,68,.16)") : "rgba(6,9,19,.8)";
+    ctx.fillStyle = bg;
+    ctx.fillRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16);
+    if (tg){ ctx.strokeStyle = tg.c; ctx.globalAlpha = .5; ctx.strokeRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16); ctx.globalAlpha = 1; }
+    ctx.fillStyle = tg ? tg.c : edge ? "#94a3b8" : "#64748b";
+    ctx.fillText(txt, w - padR + 13, y + 3.5);
+  });
+
+  if (GOPT.exp){
+    [[c1.c + R/2, "★ EXP HIGH", "52,211,153"], [c1.c - R/2, "★ EXP LOW", "251,191,36"]].forEach(a => {
+      const y = Y(a[0]);
+      ctx.strokeStyle = "rgba(" + a[2] + ",.8)"; ctx.setLineDash([6,4]); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = "bold 9px 'JetBrains Mono'";
+      const tw = ctx.measureText(a[1] + " " + Fm(a[0])).width + 10;
+      ctx.fillStyle = "rgba(6,9,19,.9)"; ctx.fillRect(padL + 2, y - 8, tw, 16);
+      ctx.fillStyle = "rgb(" + a[2] + ")"; ctx.fillText(a[1] + " " + Fm(a[0]), padL + 7, y + 3.5);
+    });
+  }
+  if (GOPT.prev){
+    [[H, "PREV HIGH", "251,113,133"], [L, "PREV LOW", "56,189,248"]].forEach(a => {
+      const y = Y(a[0]);
+      ctx.strokeStyle = "rgba(" + a[2] + ",.9)"; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke();
+      ctx.fillStyle = "rgb(" + a[2] + ")"; ctx.font = "8px 'JetBrains Mono'";
+      ctx.fillText(a[1], w - padR - 52, y - 4);
+    });
+  }
+
+  const cw = Math.max(24, Math.min(44, pw*.1));
+  const x1 = padL + pw*.2, x0 = padL + pw*.46;
+  const cnd = (x, c, live) => {
+    const up = c.c >= c.o, col = up ? "#10b981" : "#ef4444";
+    ctx.strokeStyle = col; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x, Y(c.h)); ctx.lineTo(x, Y(c.l)); ctx.stroke();
+    if (live){ ctx.shadowColor = col; ctx.shadowBlur = 16; }
+    ctx.fillStyle = col;
+    ctx.fillRect(x - cw/2, Math.min(Y(c.o), Y(c.c)), cw, Math.max(2, Math.abs(Y(c.o) - Y(c.c))));
+    ctx.shadowBlur = 0;
+    if (live){ ctx.strokeStyle = col + "55"; ctx.lineWidth = 1;
+      ctx.strokeRect(x - cw/2 - 5, Math.min(Y(c.o), Y(c.c)) - 5, cw + 10, Math.max(12, Math.abs(Y(c.o) - Y(c.c)) + 10)); }
+  };
+  cnd(x1, c1, false); cnd(x0, c0, true);
+
+  ctx.textAlign = "center"; ctx.font = "9px 'JetBrains Mono'";
+  ctx.fillStyle = "#475569"; ctx.fillText("candle[1] · " + (red ? "RED" : "GREEN"), x1, h - 12);
+  ctx.fillStyle = c0.c >= c0.o ? "rgba(16,185,129,.9)" : "rgba(239,68,68,.9)";
+  ctx.fillText("candle[0] · live", x0, h - 12);
+  ctx.textAlign = "left";
+}
+
+/* ---------- VOICE ENGINE ---------- */
+const synth = window.speechSynthesis || null;
+let voiceOn = localStorage.getItem("hermes_voice") !== "0";
+function toggleVoice(){
+  voiceOn = !voiceOn; localStorage.setItem("hermes_voice", voiceOn ? "1" : "0");
+  $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
+  if (!voiceOn){ try{ synth.cancel(); }catch(e){} }
+  addLog(voiceOn ? "🔊 voice on" : "🔇 voice off", true);
+}
+ $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
+function speak(text, cb){
+  addLog("🤖 " + text);
+  if (!voiceOn || !synth){ if (cb) cb(); return; }
+  try {
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = .98; u.pitch = 1;
+    const vs = synth.getVoices();
+    const v = vs.find(v => /en(-|_)?(US|GB)/i.test(v.lang)) || vs.find(v => /en/i.test(v.lang));
+    if (v) u.voice = v;
+    u.onend = () => { if (cb) cb(); };
+    synth.speak(u);
+  } catch(e){ if (cb) cb(); }
+}
+function addLog(t, silent){
+  const d = document.createElement("div");
+  d.className = "text-slate-400"; d.innerHTML = t;
+  $("#vaLog").prepend(d);
+  while ($("#vaLog").children.length > 40) $("#vaLog").lastElementChild.remove();
+}
+function briefing(){
+  if (!D) return speak("Data is not loaded yet. Please refresh.");
+  const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
+  const ms = m => m == null ? "off" : m > .55 ? "bullish" : m < .45 ? "bearish" : "flat";
+  let t = "Equity " + F(S.equity) + " dollars. Today " + (B.used||0) + " of " + (P.max_trades_per_day||3) +
+    " trades used, " + (B.losses||0) + " losses. Day P and L " + (S.day_pnl_pct||0).toFixed(2) +
+    " percent. Win rate " + (S.winrate50||0) + " percent. Drawdown " + (S.drawdown_pct||0) + " percent.";
+  Object.keys(D.symbols || {}).forEach(k => {
+    const sn = D.symbols[k], M = sn.models || {};
+    t += " " + k + ": ";
+    if (sn.signal){
+      t += sn.signal + " signal, confidence " + Math.round(((sn.matrix || {}).p_up || .5)*100) + " percent. " +
+        "Stat " + ms(M.stat) + ", Quant " + ms(M.quant) + ", Kronos " + ms(M.kronos) + ", TimesFM " + ms(M.timesfm) +
+        (sn.glm ? ", G L M judge " + sn.glm.bias : "") + ".";
+    } else t += "no trade. Reason: " + (sn.why || "filters") + ".";
+  });
+  const openN = (D.fills.execs || []).filter(e => !(D.fills.results || []).some(r => r.cmd_id === e.cmd_id)).length;
+  t += " Open positions: " + openN + ".";
+  speak(t);
+}
+function handleCommand(raw){
+  const t = (raw || "").toLowerCase();
+  addLog("🎤 " + raw, true);
+  if (/status|report|brief|update/.test(t)) return briefing();
+  if (/signal/.test(t)){
+    if (!D) return speak("no data");
+    const s = Object.keys(D.symbols || {}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". ");
+    return speak("Current signals: " + s);
+  }
+  if (/trade/.test(t)){
+    const res = (D && D.fills && D.fills.results || []).slice(-3).reverse();
+    if (!res.length) return speak("No completed trades yet.");
+    return speak(res.map(r => r.sym + " " + (r.pnl >= 0 ? "profit" : "loss") + " " + Math.abs(r.pnl).toFixed(2) + " dollars").join(". "));
+  }
+  if (/refresh|sync/.test(t)){ speak("Refreshing."); return refresh(); }
+  if (/mute|stop|quiet|chup/.test(t)){
+    voiceOn = false; localStorage.setItem("hermes_voice","0"); $("#bVoice").textContent = "🔇";
+    try{ synth.cancel(); }catch(e){} return addLog("🔇 muted", true);
+  }
+  if (/unmute|voice on|bol/.test(t)){
+    voiceOn = true; localStorage.setItem("hermes_voice","1"); $("#bVoice").textContent = "🔊";
+    return addLog("🔊 unmuted", true);
+  }
+  if (/lock|logout|band/.test(t)) return logout();
+  if (/hello|salam|hi/.test(t)) return speak("Hello Muhammad Farrukh Jadoon. Hermes agent is online. Say status for briefing.");
+  return speak("Command not recognized. Try: status, signals, trades, refresh, or mute.");
+}
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+if (SR){
+  rec = new SR(); rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.onresult = e => handleCommand(e.results[0][0].transcript);
+  rec.onend = () => $("#micDot").className = "h-2 w-2 rounded-full bg-slate-600";
+  rec.onerror = () => $("#micDot").className = "h-2 w-2 rounded-full bg-slate-600";
+}
+function listen(){
+  if (!rec) return addLog("⚠️ Voice input Chrome/Edge mein chalta hai — text likhein.", true);
+  try { rec.start(); $("#micDot").className = "h-2 w-2 rounded-full bg-red-400 dot-live"; } catch(e){}
+}
+function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; handleCommand(v); } }
+ $("#vaIn").addEventListener("keydown", e => { if (e.key === "Enter") vaSend(); });
+function vaCollapse(){
+  const l = $("#vaLog"), f = $("#vaIn").parentElement;
+  const hid = l.style.display === "none";
+  l.style.display = hid ? "" : "none"; f.style.display = hid ? "" : "none";
+  $("#vaCol").textContent = hid ? "—" : "+";
+}
+
+/* ---------- BOOT ---------- */
+ $("#pass").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+if (sessionValid()) openApp(false);
+</script>
+</body></html>

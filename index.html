@@ -354,7 +354,25 @@ function render(){
     '<td class="py-1.5 text-right ' + (r.c >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.c.toFixed(2) + '</td></tr>').join("");
   if (SN.why && !SN.signal)
     $("#mxRows").innerHTML += '<tr class="border-t border-ink-800/50"><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · reason: <b class="text-slate-400">' + SN.why + '</b></td></tr>';
-
+/* ZCode Primary card */
+const Z = SN.zcode || {};
+if (Z.signal || SN.signal){
+  const zb = document.createElement("div");
+  zb.className = "card p-4 lg:col-span-2";
+  zb.innerHTML =
+    '<div class="flex flex-wrap items-center gap-2"><span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE-PRIMARY</span>' +
+    '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
+    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
+    '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.mode||'') + '</span></div>' +
+    (Z.reasoning ? '<p class="mt-2 text-[11px] leading-relaxed text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
+    (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' + Z.key_factors.map(f =>
+      '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
+    (D.lessons && D.lessons.items && D.lessons.items.length ?
+      '<div class="mt-2 border-t border-ink-800 pt-2"><div class="micro text-slate-500">🌙 Learned lessons (' + (D.lessons.items.length) + ')</div>' +
+      D.lessons.items.slice(-3).map(l => '<div class="mt-1 text-[10px] text-violet-300/80">• ' + l + '</div>').join('') + '</div>' : '');
+  $("#models").parentNode.insertBefore(zb, $("#models"));
+}
+  
   $("#metaList").innerHTML = Object.entries(D.meta || {}).map(e =>
     '<div><b class="text-slate-300">' + e[0] + '</b> v' + e[1].ver + ' — ' + (e[1].skills || []).join(", ") + '</div>').join("");
 

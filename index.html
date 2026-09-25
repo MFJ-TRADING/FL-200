@@ -7,48 +7,108 @@
 <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{ink:{950:'#060913',900:'#0b1220',850:'#11192d',800:'#17223b',700:'#233253'}},fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-body{background:#060913}
-.card{border-radius:1rem;border:1px solid rgba(23,34,59,.8);background:rgba(11,18,32,.6)}
-.btn{border-radius:.6rem;padding:.5rem 1rem;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
-.btn-a{background:rgba(245,196,81,.15);color:#f5c451;border:1px solid rgba(245,196,81,.3)}
-.btn-g{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+body{background:radial-gradient(1200px 600px at 20% -10%,rgba(245,196,81,.06),transparent),radial-gradient(900px 500px at 90% 110%,rgba(16,185,129,.05),transparent),#060913}
+.card{border-radius:1rem;border:1px solid rgba(23,34,59,.9);background:rgba(11,18,32,.65);backdrop-filter:blur(8px)}
+.card:hover{border-color:rgba(35,50,83,1)}
+.btn{border-radius:.6rem;padding:.45rem .9rem;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-a{background:rgba(245,196,81,.12);color:#f5c451;border:1px solid rgba(245,196,81,.3)}
+.btn-a:hover{background:rgba(245,196,81,.22);box-shadow:0 0 18px rgba(245,196,81,.15)}
+.btn-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b}
+.chip.on{color:#f5c451;border-color:rgba(245,196,81,.4);background:rgba(245,196,81,.08)}
 input{outline:none}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#17223b;border-radius:4px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#17223b;border-radius:4px}
+.micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(16,185,129,0)}}
+.dot-live{animation:pulse-dot 1.6s ease infinite}
 </style></head>
 <body class="text-slate-200 font-sans min-h-screen">
 
-<!-- LOGIN -->
-<div id="login" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-950 p-4">
+<!-- ================= LOGIN ================= -->
+<div id="login" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/95 p-4">
   <div class="card w-full max-w-sm p-8">
     <div class="mb-6 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913]">H</div>
+      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913] shadow-[0_0_30px_rgba(245,196,81,.3)]">H</div>
       <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">token + password (Secrets)</p>
+      <p class="font-mono text-[10px] text-slate-500">D1/H1 Farrukh Grid · voice · self-learning</p>
     </div>
-    <input id="gtok" type="password" placeholder="GitHub Token (fine-grained)" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
+    <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
     <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
-    <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK</button>
+    <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK 🔊</button>
     <p id="loginErr" class="mt-3 text-center text-[11px] text-red-400"></p>
+    <p class="mt-3 text-center text-[9px] text-slate-600">login par voice briefing hogi — volume on rakhein</p>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app" class="hidden mx-auto max-w-[1300px] space-y-4 p-4">
+<!-- ================= APP ================= -->
+<div id="app" class="hidden mx-auto max-w-[1400px] space-y-4 p-4">
+
+  <!-- HEADER -->
   <header class="card flex flex-wrap items-center gap-3 p-4">
     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-bold text-[#060913]">H</div>
-    <div><h1 class="text-base font-extrabold">HERMES AGENT</h1>
-      <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · updated <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p></div>
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+        <h1 class="text-base font-extrabold">HERMES AGENT</h1>
+        <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400 ring-1 ring-emerald-500/25">ONLINE</span>
+      </div>
+      <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · updated <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p>
+    </div>
     <div class="ml-auto flex flex-wrap items-center gap-2">
       <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
       <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
-      <button onclick="logout()" class="btn btn-g">🔒 Lock</button>
+      <button id="bVoice" onclick="toggleVoice()" class="btn btn-a" title="voice on/off">🔊</button>
+      <button onclick="briefing()" class="btn btn-g" title="voice briefing">🗣 Briefing</button>
+      <button onclick="logout()" class="btn btn-a">🔒 Lock</button>
     </div>
   </header>
 
+  <!-- PROP -->
   <div class="card grid grid-cols-2 gap-2 p-3 md:grid-cols-4" id="prop"></div>
-  <div id="tabs" class="flex flex-wrap gap-2"></div>
+
+  <!-- TABS + GRID OPTIONS -->
+  <div class="flex flex-wrap items-center gap-2">
+    <div id="tabs" class="flex flex-wrap gap-2"></div>
+    <div class="ml-auto flex flex-wrap items-center gap-1.5">
+      <span class="micro text-slate-600">grid steps</span>
+      <button class="chip stp" data-s="3">3</button><button class="chip stp on" data-s="4">4</button><button class="chip stp" data-s="6">6</button>
+      <span class="mx-1 h-4 w-px bg-ink-800"></span>
+      <button class="chip" id="oPrev" onclick="togOpt('prev',this)">Prev H/L</button>
+      <button class="chip on" id="oExp" onclick="togOpt('exp',this)">★ Expected</button>
+      <button class="chip on" id="oZone" onclick="togOpt('zone',this)">Zones</button>
+    </div>
+  </div>
+
+  <!-- D1 / H1 GRID PANELS -->
+  <div class="grid gap-4 xl:grid-cols-2">
+    <div class="card overflow-hidden">
+      <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
+        <div class="flex items-center gap-2">
+          <span class="rounded bg-amber-400/10 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-300 ring-1 ring-amber-400/25">D1</span>
+          <span class="text-xs font-bold" id="d1Sym">–</span>
+          <span class="micro text-slate-600">candle[1] · farrukh grid 33%</span>
+        </div>
+        <span class="font-mono text-[10px]" id="d1Meta"></span>
+      </div>
+      <canvas id="cvD1" class="block h-[320px] w-full"></canvas>
+    </div>
+    <div class="card overflow-hidden">
+      <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
+        <div class="flex items-center gap-2">
+          <span class="rounded bg-cyan-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-cyan-300 ring-1 ring-cyan-500/25">H1</span>
+          <span class="text-xs font-bold" id="h1Sym">–</span>
+          <span class="micro text-slate-600">candle[1] · farrukh grid 33%</span>
+        </div>
+        <span class="font-mono text-[10px]" id="h1Meta"></span>
+      </div>
+      <canvas id="cvH1" class="block h-[320px] w-full"></canvas>
+    </div>
+  </div>
+
+  <!-- MODELS -->
   <div class="grid grid-cols-2 gap-3 md:grid-cols-5" id="models"></div>
 
+  <!-- MATRIX + SKILLS -->
   <div class="grid gap-4 lg:grid-cols-[1fr_1fr]">
     <div class="card p-4">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">⚖️ Decision Matrix <span id="mxSym" class="text-slate-600"></span></h3>
@@ -64,32 +124,26 @@ input{outline:none}
         </div>
       </div>
       <table class="mt-3 w-full text-left font-mono text-[11px]">
-        <thead><tr class="text-[9px] uppercase tracking-wider text-slate-500">
-          <th class="py-1.5">Feature / Model</th><th class="py-1.5 text-right">W</th><th class="py-1.5 text-right">Vote</th><th class="py-1.5 text-right">Contrib</th>
-        </tr></thead><tbody id="mxRows"></tbody>
+        <thead><tr class="micro text-slate-500"><th class="py-1.5">Feature / Model</th><th class="py-1.5 text-right">W</th><th class="py-1.5 text-right">Vote</th><th class="py-1.5 text-right">Contrib</th></tr></thead>
+        <tbody id="mxRows"></tbody>
       </table>
     </div>
     <div class="space-y-4">
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">📐 33% Grid</h3>
-        <div id="gridInfo" class="mt-3 space-y-2 font-mono text-[11px]"></div>
-        <canvas id="cvG" class="mt-2 block h-[150px] w-full"></canvas>
-      </div>
-      <div class="card p-4">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 Skills Registry</h3>
         <div id="metaList" class="mt-2 space-y-1 font-mono text-[10px] text-slate-400"></div>
+      </div>
+      <div class="card p-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛰️ Execution Commands</h3>
+        <div id="cmds" class="mt-3 space-y-1.5 font-mono text-[11px]"></div>
       </div>
     </div>
   </div>
 
-  <div class="card p-4">
-    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛰️ Execution Commands (→ Exness bridge)</h3>
-    <div id="cmds" class="mt-3 space-y-1.5 font-mono text-[11px]"></div>
-  </div>
-
+  <!-- TRADES -->
   <div class="card overflow-x-auto">
     <table class="w-full min-w-[720px] text-left text-xs">
-      <thead><tr class="text-[10px] uppercase tracking-wider text-slate-500">
+      <thead><tr class="micro text-slate-500">
         <th class="px-3 py-2.5">Sym</th><th class="px-3 py-2.5">Side</th><th class="px-3 py-2.5">Entry</th><th class="px-3 py-2.5">SL</th>
         <th class="px-3 py-2.5">TP1</th><th class="px-3 py-2.5">TP2</th><th class="px-3 py-2.5">PnL</th><th class="px-3 py-2.5">Status</th>
       </tr></thead><tbody id="trades"></tbody>
@@ -97,208 +151,25 @@ input{outline:none}
   </div>
 </div>
 
+<!-- ================= VOICE ASSISTANT (floating) ================= -->
+<div id="va" class="fixed bottom-4 right-4 z-40 w-[330px]">
+  <div class="card overflow-hidden shadow-2xl">
+    <div class="flex items-center gap-2 border-b border-ink-800 px-3 py-2">
+      <span id="micDot" class="h-2 w-2 rounded-full bg-slate-600"></span>
+      <span class="text-xs font-bold">🎙️ Hermes Voice</span>
+      <div class="ml-auto flex gap-1">
+        <button onclick="listen()" class="chip" title="bol kar poochein">🎤 Speak</button>
+        <button onclick="vaCollapse()" class="chip" id="vaCol">—</button>
+      </div>
+    </div>
+    <div id="vaLog" class="max-h-44 space-y-1.5 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
+    <div class="flex gap-2 border-t border-ink-800 p-2">
+      <input id="vaIn" placeholder="type: status / signals / trades / refresh" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
+      <button onclick="vaSend()" class="chip on">Send</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const $ = s => document.querySelector(s);
-const F = (v,d=2) => v==null ? "–" : (+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
 const CFG = HERMES_CONFIG, LS = "hermes_auth";
-let D = null, CUR = null;
-const err = m => $("#loginErr").textContent = m;
-
-/* ---- AUTH ---- */
-async function sha256hex(s){
-  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
-}
-function sessionValid(){
-  try {
-    const s = JSON.parse(localStorage.getItem(LS));
-    if (!s?.ts) return false;
-    if ((Date.now()-s.ts)/86400000 > CFG.SESSION_DAYS){ localStorage.removeItem(LS); return false; }
-    return true;
-  } catch(e){ return false; }
-}
-async function ghFetch(path, tok){
-  const url = `https://api.github.com/repos/${CFG.REPO}/contents/${path}?ref=${CFG.BRANCH}&t=${Date.now()}`;
-  const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github+json"}});
-  if (!r.ok) throw new Error("gh "+r.status);
-  const j = await r.json();
-  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob((j.content||"").replace(/\n/g,"")), c=>c.charCodeAt(0))));
-}
-async function tryLogin(){
-  err("");
-  const tok = $("#gtok").value.trim(), pass = $("#pass").value;
-  if (!tok || !pass) return err("Token aur password dono likhein");
-  let st;
-  try { st = await ghFetch("state/state.json", tok); } catch(e){ return err("Token invalid ya state abhi nahi bani (STEP 3 dekhein)"); }
-  const h = st?.auth?.hash;
-  if (!h) return err("DASH_PASSWORD secret set karke workflow run karein");
-  if (await sha256hex("hermes::"+pass) !== h) return err("Galat password");
-  localStorage.setItem("hermes_tok", tok);
-  localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
-  D = st; openApp();
-}
-function logout(){ localStorage.removeItem(LS); localStorage.removeItem("hermes_tok"); location.reload(); }
-function openApp(){ $("#login").style.display="none"; $("#app").classList.remove("hidden"); refresh(); setInterval(refresh, 120000); }
-
-/* ---- DATA ---- */
-async function refresh(){
-  const tok = localStorage.getItem("hermes_tok");
-  if (!tok){ logout(); return; }
-  try {
-    D = await ghFetch("state/state.json", tok);
-    try { D.fills = await ghFetch("state/fills.json", tok); } catch(e){ D.fills = {execs:[],results:[]}; }
-    render();
-  } catch(e){ if (e.message.includes("401")) logout(); }
-}
-
-/* ---- RENDER ---- */
-const avg = a => a.reduce((x,y)=>x+y,0)/a.length;
-function modelCard(name, v, acc){
-  const dir = v==null ? "–" : v>.55 ? "▲ UP" : v<.45 ? "▼ DOWN" : "• FLAT";
-  const col = v==null ? "text-slate-500" : v>.55 ? "text-emerald-400" : v<.45 ? "text-red-400" : "text-slate-400";
-  return `<div class="card p-3">
-    <div class="flex items-center justify-between"><span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${name}</span>
-    <span class="font-mono text-[9px] text-slate-600">${acc!=null?Math.round(acc*100)+"% acc":"no data"}</span></div>
-    <div class="mt-1 font-mono text-lg font-bold ${col}">${dir}</div>
-    <div class="mt-1 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full ${v>.5?'bg-emerald-500/70':'bg-red-500/70'}" style="width:${v==null?0:v*100}%"></div></div>
-    <div class="mt-1 text-right font-mono text-[9px] text-slate-500">p_up ${v==null?"–":(v*100).toFixed(0)+"%"}</div></div>`;
-}
-function render(){
-  if (!D) return;
-  $("#mMode").textContent = (D.mode||"").toUpperCase() + " · BRAIN OK";
-  $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16)+"Z";
-  $("#mEq").textContent = "$" + F(D.stats?.equity);
-  $("#wr").textContent = "WR50 " + F(D.stats?.winrate50,1) + "%";
-  $("#thr").textContent = "THR " + F((D.weights?._thr||.6)*100,0) + "%";
-
-  const P = D.prop||{}, B = P.budget||{}, S = D.stats||{};
-  $("#prop").innerHTML = `
-    <div><div class="text-[9px] uppercase text-slate-500">Trades Today</div>
-      <div class="font-mono text-lg font-bold ${B.used>=3?'text-red-400':'text-amber-300'}">${B.used||0} / ${P.max_trades_per_day||3}</div></div>
-    <div><div class="text-[9px] uppercase text-slate-500">Losses Today</div>
-      <div class="font-mono text-lg font-bold ${B.losses>=3?'text-red-400':'text-slate-200'}">${B.losses||0}</div></div>
-    <div><div class="text-[9px] uppercase text-slate-500">Day PnL</div>
-      <div class="font-mono text-lg font-bold ${(S.day_pnl_pct||0)>=0?'text-emerald-400':'text-red-400'}">${(S.day_pnl_pct||0).toFixed(2)}%</div></div>
-    <div><div class="text-[9px] uppercase text-slate-500">Drawdown</div>
-      <div class="font-mono text-lg font-bold text-slate-200">${S.drawdown_pct||0}% <span class="text-[9px] text-slate-600">/ ${P.max_drawdown_pct||10}%</span></div></div>`;
-
-  const keys = Object.keys(D.symbols||{});
-  if (!CUR && keys.length) CUR = keys[0];
-  $("#tabs").innerHTML = keys.map(k =>
-    `<button onclick="CUR='${k}';render()" class="rounded-lg px-3 py-1.5 font-mono text-[11px] font-bold ${k===CUR?'bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30':'bg-ink-900 text-slate-500'}">${k}</button>`).join("");
-  const SN = D.symbols?.[CUR]; if (!SN) return;
-  const acc = D.acc||{};
-  $("#models").innerHTML =
-    modelCard("Stat", SN.models?.stat, acc.m_stat?avg(acc.m_stat):null) +
-    modelCard("Quant", SN.models?.quant, acc.m_quant?avg(acc.m_quant):null) +
-    modelCard("Kronos", SN.models?.kronos, acc.m_kronos?avg(acc.m_kronos):null) +
-    modelCard("TimesFM", SN.models?.timesfm, acc.m_timesfm?avg(acc.m_timesfm):null) +
-    `<div class="card p-3"><div class="flex items-center justify-between"><span class="text-[10px] font-bold uppercase tracking-wider text-amber-300">GLM Judge</span>
-      <span class="font-mono text-[9px] text-slate-600">${acc.m_glm?Math.round(avg(acc.m_glm)*100)+"% acc":"judge"}</span></div>
-      <div class="mt-1 font-mono text-lg font-bold ${SN.glm?.bias==='UP'?'text-emerald-400':SN.glm?.bias==='DOWN'?'text-red-400':'text-slate-400'}">${SN.glm?.bias||"OFF"}</div>
-      <div class="mt-1 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-amber-400/70" style="width:${(SN.glm?.conf||0)*100}%"></div></div>
-      <div class="mt-1 truncate text-right text-[9px] text-slate-500">${SN.glm?.comment||"key set karein"}</div></div>`;
-
-  const M = SN.matrix||{}, sb = $("#sideBadge");
-  $("#mxSym").textContent = "· " + CUR;
-  sb.textContent = SN.signal || "WAIT";
-  sb.className = "rounded-xl px-4 py-2 text-2xl font-extrabold " +
-    (SN.signal==="BUY"?"bg-emerald-500/15 text-emerald-400":SN.signal==="SELL"?"bg-red-500/15 text-red-400":"bg-ink-800 text-slate-500");
-  $("#pTxt").textContent = "P(up) " + F((M.p_up||.5)*100,1) + "%";
-  $("#thrTxt").textContent = "THR " + F((M.thr||.6)*100,0) + "%";
-  $("#pBar").style.width = ((M.p_up||.5)*100) + "%";
-  $("#pDot").style.left = "calc(" + ((M.p_up||.5)*100) + "% - 2px)";
-  $("#thrMark").style.left = ((M.thr||.6)*100) + "%";
-  $("#mxRows").innerHTML = (M.rows||[]).map(r =>
-    `<tr class="border-t border-ink-800/50"><td class="py-1.5 text-slate-400">${r.k}</td>
-     <td class="py-1.5 text-right text-slate-500">${r.w.toFixed(2)}</td>
-     <td class="py-1.5 text-right ${r.v>=0?'text-emerald-400':'text-red-400'}">${r.v.toFixed(2)}</td>
-     <td class="py-1.5 text-right ${r.c>=0?'text-emerald-400':'text-red-400'}">${r.c.toFixed(2)}</td></tr>`).join("");
-  if (SN.why && !SN.signal)
-    $("#mxRows").innerHTML += `<tr class="border-t border-ink-800/50"><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · reason: <b class="text-slate-400">${SN.why}</b></td></tr>`;
-
-  const G = SN.grid||{};
-  $("#gridInfo").innerHTML = ["D1","H1"].map(tf => {
-    const g = G[tf]; if (!g) return "";
-    return `<div class="flex items-center gap-2"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ${tf==='D1'?'bg-amber-400/10 text-amber-300':'bg-cyan-500/10 text-cyan-300'}">${tf}</span>
-      <span>price in prev-range: <b>${(g.pos*100).toFixed(0)}%</b></span>
-      <span class="ml-auto rounded bg-ink-800 px-1.5 text-[9px] uppercase">${g.zone}</span></div>`;
-  }).join("");
-  const g = G.D1||G.H1; if (g?.candles) drawGrid($("#cvG"), g.candles);
-
-  $("#metaList").innerHTML = Object.entries(D.meta||{}).map(([k,m]) =>
-    `<div><b class="text-slate-300">${k}</b> v${m.ver} — ${(m.skills||[]).join(", ")}</div>`).join("");
-
-  $("#cmds").innerHTML = (D.commands||[]).slice(0,6).map(c => {
-    const cls = c.status==="executed"?"text-emerald-400":c.status==="expired"?"text-slate-600":"text-amber-300";
-    return `<div class="flex items-center gap-2"><b class="${c.side==='BUY'?'text-emerald-400':'text-red-400'}">${c.side}</b>
-      <span class="text-slate-300">${c.sym}</span><span class="text-slate-500">${c.lots} lots · SL ${F(c.sl,4)} · TP2 ${F(c.tp2,4)}</span>
-      <span class="ml-auto rounded px-1.5 text-[9px] font-bold uppercase ${cls}">● ${c.status}</span></div>`;
-  }).join("") || '<div class="text-slate-600">no commands yet</div>';
-
-  /* trades = commands + fills ka join */
-  const cmds = {}; (D.commands||[]).forEach(c => cmds[c.id] = c);
-  const execBy = {}; (D.fills?.execs||[]).forEach(e => execBy[e.cmd_id] = e);
-  const res = (D.fills?.results||[]);
-  const closedIds = new Set(res.map(r => r.cmd_id));
-  const openRows = (D.fills?.execs||[]).filter(e => !closedIds.has(e.cmd_id)).map(e => {
-    const c = cmds[e.cmd_id]||{};
-    return {sym:c.sym||e.sym, side:c.side, entry:e.price, sl:c.sl, tp1:c.tp1, tp2:c.tp2, pnl:null, tp1_done:e.tp1_done};
-  });
-  const closedRows = res.slice().reverse().map(r => {
-    const c = cmds[r.cmd_id]||{}, ex = execBy[r.cmd_id]||{};
-    return {sym:c.sym||r.sym, side:c.side, entry:ex.price, sl:c.sl, tp1:c.tp1, tp2:c.tp2, pnl:r.pnl, tp1_done:ex.tp1_done, outcome:r.pnl>=0?"win":"loss"};
-  });
-  const rows = [...openRows, ...closedRows].slice(0,14);
-  $("#trades").innerHTML = rows.map(t => {
-    const open = t.pnl == null;
-    return `<tr class="border-t border-ink-800/50">
-      <td class="px-3 py-2.5 font-semibold">${t.sym||"–"}</td>
-      <td class="px-3 py-2.5 font-bold ${t.side==='BUY'?'text-emerald-400':'text-red-400'}">${t.side||"–"}</td>
-      <td class="px-3 py-2.5 font-mono">${F(t.entry,4)}</td>
-      <td class="px-3 py-2.5 font-mono text-red-400">${F(t.sl,4)}</td>
-      <td class="px-3 py-2.5 font-mono text-emerald-400">${F(t.tp1,4)}</td>
-      <td class="px-3 py-2.5 font-mono text-emerald-400">${F(t.tp2,4)}</td>
-      <td class="px-3 py-2.5 font-mono font-bold ${open?'text-slate-600':t.pnl>=0?'text-emerald-400':'text-red-400'}">${open?"–":(t.pnl>=0?"+":"−")+"$"+F(Math.abs(t.pnl))}</td>
-      <td class="px-3 py-2.5"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ${open?'bg-cyan-500/10 text-cyan-300':t.outcome==='win'?'bg-emerald-500/10 text-emerald-400':'bg-red-500/10 text-red-400'}">${open?("OPEN"+(t.tp1_done?" ·BE":"")):t.outcome.toUpperCase()}</span></td></tr>`;
-  }).join("") || '<tr><td colspan="8" class="px-3 py-4 text-center text-slate-600">no trades yet</td></tr>';
-}
-
-function drawGrid(cv, cs){
-  const dpr = devicePixelRatio||1, w = cv.clientWidth, h = cv.clientHeight;
-  cv.width = w*dpr; cv.height = h*dpr;
-  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
-  const [c1,c0] = cs, lo = c1.l, hi = c1.h;
-  const lv = [0,1,2,3,-1,4].map(k => ({k, v: lo + k*(hi-lo)/3}));
-  let mn = Math.min(...lv.map(l=>l.v), c0.l), mx = Math.max(...lv.map(l=>l.v), c0.h);
-  const pd = (mx-mn)*.12; mn -= pd; mx += pd;
-  const Y = v => 14 + (mx-v)/(mx-mn)*(h-28);
-  const P = ["-33%","0%","33%","66%","100%","133%"];
-  lv.forEach(l => {
-    const y = Y(l.v), gold = l.k===0||l.k===3;
-    ctx.strokeStyle = gold ? "rgba(245,196,81,.8)" : l.k===-1||l.k===4 ? "rgba(100,116,139,.3)" : "rgba(34,211,238,.4)";
-    ctx.setLineDash(gold?[]:[5,4]); ctx.lineWidth = gold?1.3:1;
-    ctx.beginPath(); ctx.moveTo(70,y); ctx.lineTo(w-58,y); ctx.stroke(); ctx.setLineDash([]);
-    ctx.font = "8px 'JetBrains Mono'"; ctx.fillStyle = gold?"#f5c451":"#64748b";
-    ctx.fillText(P[l.k+1], 40, y+3);
-    ctx.fillStyle = gold?"rgba(245,196,81,.85)":"#7dd3fc";
-    ctx.fillText(F(l.v,2), w-54, y+3);
-  });
-  const cnd = (x,c) => {
-    const col = c.c>=c.o ? "#10b981" : "#ef4444";
-    ctx.strokeStyle = col; ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.moveTo(x,Y(c.h)); ctx.lineTo(x,Y(c.l)); ctx.stroke();
-    ctx.fillStyle = col;
-    ctx.fillRect(x-13, Math.min(Y(c.o),Y(c.c)), 26, Math.max(2,Math.abs(Y(c.o)-Y(c.c))));
-  };
-  cnd(30, c1); cnd(85, c0);
-  ctx.font = "8px 'JetBrains Mono'"; ctx.textAlign = "center";
-  ctx.fillStyle = "#475569"; ctx.fillText("candle[1]", 30, h-2);
-  ctx.fillStyle = "#94a3b8"; ctx.fillText("candle[0] live", 85, h-2);
-  ctx.textAlign = "left";
-}
-
- $("#pass").addEventListener("keydown", e => e.key === "Enter" && tryLogin());
-if (sessionValid()) openApp();
-</script>
-</body></html>

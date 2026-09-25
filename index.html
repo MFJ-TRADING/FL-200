@@ -20,6 +20,11 @@ input{outline:none}
 .micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
 @keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(16,185,129,0)}}
 .dot-live{animation:pulse-dot 1.6s ease infinite}
+@keyframes pulse-amber{0%,100%{opacity:1}50%{opacity:.45}}
+.dot-standby{animation:pulse-amber 2.2s ease infinite}
+@keyframes think{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.think span{display:inline-block;width:4px;height:4px;margin-right:2px;border-radius:50%;background:#f5c451;animation:think 1.2s infinite}
+.think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
 </style></head>
 <body class="text-slate-200 font-sans min-h-screen">
 
@@ -29,13 +34,13 @@ input{outline:none}
     <div class="mb-6 text-center">
       <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913] shadow-[0_0_30px_rgba(245,196,81,.3)]">H</div>
       <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">D1/H1 Farrukh Grid · voice · self-learning</p>
+      <p class="font-mono text-[10px] text-slate-500">Wake-word · ZCode Agent · Farrukh Grid</p>
     </div>
     <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
     <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
-    <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK 🔊</button>
+    <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK 🎙️</button>
     <p id="loginErr" class="mt-3 text-center text-[11px] text-red-400"></p>
-    <p class="mt-3 text-center text-[9px] text-slate-600">login par voice briefing hogi — volume on rakhein</p>
+    <p class="mt-3 text-center text-[9px] text-slate-600">login ke baad mic allow karein — phir bas kahen "Wake up FL"</p>
   </div>
 </div>
 
@@ -46,18 +51,20 @@ input{outline:none}
     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-bold text-[#060913]">H</div>
     <div>
       <div class="flex items-center gap-2">
-        <span class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+        <span id="agentDot" class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
         <h1 class="text-base font-extrabold">HERMES AGENT</h1>
         <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400 ring-1 ring-emerald-500/25">ONLINE</span>
+        <span id="zBadge" class="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500">ZCODE OFF</span>
       </div>
-      <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · updated <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p>
+      <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p>
     </div>
     <div class="ml-auto flex flex-wrap items-center gap-2">
       <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
       <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
       <button id="bVoice" onclick="toggleVoice()" class="btn btn-a">🔊</button>
-      <button onclick="briefing()" class="btn btn-g">🗣 Briefing</button>
-      <button onclick="logout()" class="btn btn-a">🔒 Lock</button>
+      <button id="bWake" onclick="toggleWake()" class="btn btn-g">🎧 Wake ON</button>
+      <button onclick="zSettings()" class="btn btn-a">⚙️</button>
+      <button onclick="logout()" class="btn btn-a">🔒</button>
     </div>
   </header>
 
@@ -145,32 +152,60 @@ input{outline:none}
   </div>
 </div>
 
-<!-- VOICE ASSISTANT -->
-<div class="fixed bottom-4 right-4 z-40 w-[330px]">
+<!-- ZCODE AGENT PANEL -->
+<div class="fixed bottom-4 right-4 z-40 w-[360px]">
   <div class="card overflow-hidden shadow-2xl">
     <div class="flex items-center gap-2 border-b border-ink-800 px-3 py-2">
       <span id="micDot" class="h-2 w-2 rounded-full bg-slate-600"></span>
-      <span class="text-xs font-bold">🎙️ Hermes Voice</span>
+      <span id="micLbl" class="text-[9px] font-bold text-slate-500">MIC OFF</span>
+      <span class="text-xs font-extrabold ml-1">⚡ ZCode</span>
+      <span id="zState" class="rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">ready</span>
       <div class="ml-auto flex gap-1">
-        <button onclick="listen()" class="chip">🎤 Speak</button>
+        <button onclick="listenOnce()" class="chip" title="ek dafa suno">🎤</button>
         <button onclick="vaCollapse()" class="chip" id="vaCol">—</button>
       </div>
     </div>
-    <div id="vaLog" class="max-h-44 space-y-1.5 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
+    <div id="vaLog" class="max-h-64 space-y-2 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
+    <div id="zChips" class="flex flex-wrap gap-1 border-t border-ink-800 px-3 pt-2">
+      <button class="chip" onclick="quick('Give me a trade decision summary')">Decision?</button>
+      <button class="chip" onclick="quick('Any risk warnings right now?')">Risk?</button>
+      <button class="chip" onclick="quick('Explain current signal reasoning')">Reasoning</button>
+    </div>
     <div class="flex gap-2 border-t border-ink-800 p-2">
-      <input id="vaIn" placeholder="status / signals / trades / refresh" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
+      <input id="vaIn" placeholder="ZCode se kuch bhi poochein…" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
       <button onclick="vaSend()" class="chip on">Send</button>
     </div>
+  </div>
+</div>
+
+<!-- ZCODE SETTINGS -->
+<div id="zModal" class="fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" style="display:none">
+  <div class="card w-full max-w-md p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-sm font-extrabold">⚡ ZCode Agent Settings</h2>
+      <button onclick="document.getElementById('zModal').style.display='none'" class="text-slate-500 hover:text-slate-200">✕</button>
+    </div>
+    <p class="mb-3 text-[11px] leading-relaxed text-slate-400">Key <b>sirf aapke browser</b> mein save hoti hai — repo mein kabhi nahi jaati.</p>
+    <label class="micro text-slate-500">GLM API Key</label>
+    <input id="zKey" type="password" placeholder="aapki Z.ai key" class="mb-3 mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-xs"/>
+    <div class="mb-3 grid grid-cols-2 gap-2">
+      <div><label class="micro text-slate-500">Base URL</label>
+        <input id="zUrl" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
+      <div><label class="micro text-slate-500">Model</label>
+        <input id="zModel" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
+    </div>
+    <button onclick="zSave()" class="btn btn-g w-full">SAVE & ACTIVATE</button>
+    <p id="zErr" class="mt-2 text-center text-[10px] text-red-400"></p>
   </div>
 </div>
 
 <script>
 const $ = s => document.querySelector(s);
 const CFG = HERMES_CONFIG, LS = "hermes_auth";
-let D = null, CUR = null, fillsMissing = false;
+let D = null, CUR = null, fillsMissing = false, agentBusy = false;
 const err = m => $("#loginErr").textContent = m;
 
-/* ---------- AUTH ---------- */
+/* ================= FAST AUTH + FETCH ================= */
 async function sha256hex(s){
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
@@ -183,52 +218,64 @@ function sessionValid(){
     return true;
   } catch(e){ return false; }
 }
-async function ghFetch(path, tok){
+/* RAW mode: base64 decode skip — 3-5x fast */
+async function ghRaw(path, tok){
   const url = "https://api.github.com/repos/" + CFG.REPO + "/contents/" + path + "?ref=" + CFG.BRANCH + "&t=" + Date.now();
-  const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github+json"}});
+  const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github.raw"}});
   if (!r.ok) throw new Error("gh " + r.status);
-  const j = await r.json();
-  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob((j.content||"").replace(/\n/g,"")), c=>c.charCodeAt(0))));
+  return await r.json();
 }
 async function tryLogin(){
   err("");
   const tok = $("#gtok").value.trim(), pass = $("#pass").value;
   if (!tok || !pass) return err("Token aur password dono likhein");
   let st;
-  try { st = await ghFetch("state/state.json", tok); }
+  try { st = await ghRaw("state/state.json", tok); }
   catch(e){ return err("Token invalid ya state abhi nahi bani"); }
   const h = st && st.auth ? st.auth.hash : null;
   if (!h) return err("DASH_PASSWORD secret set karke workflow run karein");
   if (await sha256hex("hermes::" + pass) !== h) return err("Galat password");
   localStorage.setItem("hermes_tok", tok);
   localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
+  localStorage.setItem("hermes_cache", JSON.stringify(st));
   D = st; openApp(true);
 }
-function logout(){ try{ synth.cancel(); }catch(e){}
+function logout(){ wantListen = false; try{ rec && rec.abort(); }catch(e){} try{ synth.cancel(); }catch(e){}
   localStorage.removeItem(LS); localStorage.removeItem("hermes_tok"); location.reload(); }
 function openApp(fresh){
   $("#login").style.display = "none";
   $("#app").classList.remove("hidden");
-  refresh(); setInterval(refresh, 120000);
-  if (fresh) speak("Welcome Muhammad Farrukh Jadoon. Hermes agent is online.", () => briefing());
-  else briefing();
+  /* CACHE-FIRST: turant render, phir background refresh */
+  const cached = loadCache();
+  if (cached){ D = cached; render(); markCached(); }
+  refresh();
+  setInterval(refresh, 90000);
+  if (fresh){
+    speak("Welcome Muhammad Farrukh Jadoon. Hermes online. Say: Wake up F L.", null);
+  }
+  startWakeEngine();
 }
+function loadCache(){ try { return JSON.parse(localStorage.getItem("hermes_cache") || "null"); } catch(e){ return null; } }
+function markCached(){ const u = $("#mUpd"); if (u && D && D.updated) u.textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z (cached)"; }
 
-/* ---------- DATA ---------- */
+/* ================= DATA ================= */
 async function refresh(){
   const tok = localStorage.getItem("hermes_tok");
   if (!tok){ logout(); return; }
-  try {
-    D = await ghFetch("state/state.json", tok);
-    if (!fillsMissing){
-      try { D.fills = await ghFetch("state/fills.json", tok); }
-      catch(e){ fillsMissing = true; D.fills = {execs:[],results:[]}; }
-    } else { D.fills = D.fills || {execs:[],results:[]}; }
+  const t0 = performance.now();
+  const [a, b] = await Promise.allSettled([ghRaw("state/state.json", tok), ghRaw("state/fills.json", tok)]);
+  if (a.status === "fulfilled"){
+    D = a.value;
+    D.fills = b.status === "fulfilled" ? b.value : (D.fills || {execs:[],results:[]});
+    fillsMissing = b.status !== "fulfilled";
+    localStorage.setItem("hermes_cache", JSON.stringify(D));
     render();
-  } catch(e){ if (e.message.indexOf("401") >= 0) logout(); }
+    const ms = Math.round(performance.now() - t0);
+    $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + ms + "ms";
+  } else if (a.reason && String(a.reason).indexOf("401") >= 0) logout();
 }
 
-/* ---------- GRID OPTIONS ---------- */
+/* ================= GRID OPTIONS ================= */
 const GOPT = Object.assign({steps:4, prev:false, exp:true, zone:true},
   JSON.parse(localStorage.getItem("hermes_gopts") || "{}"));
 function saveGopt(){ localStorage.setItem("hermes_gopts", JSON.stringify(GOPT)); }
@@ -240,7 +287,7 @@ document.querySelectorAll(".stp").forEach(b => {
 });
 function togOpt(k, el){ GOPT[k] = !GOPT[k]; el.classList.toggle("on", GOPT[k]); saveGopt(); render(); }
 
-/* ---------- RENDER ---------- */
+/* ================= RENDER ================= */
 const avg = a => a.reduce((x,y)=>x+y,0) / a.length;
 function F(v, d){ d = d || 2;
   return v == null ? "–" : (+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}); }
@@ -257,7 +304,6 @@ function modelCard(name, v, acc){
 function render(){
   if (!D) return;
   $("#mMode").textContent = (D.mode || "").toUpperCase();
-  $("#mUpd").textContent = (D.updated || "").replace("T"," ").slice(0,16) + "Z";
   $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
   $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
   $("#thr").textContent = "THR " + F((D.weights && D.weights._thr) || .6, 0) + "%";
@@ -351,7 +397,7 @@ function render(){
   if (G.H1){ $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone; drawFarrukh($("#cvH1"), G.H1.candles); }
 }
 
-/* ---------- FARRUKH GRID ENGINE ---------- */
+/* ================= FARRUKH GRID ================= */
 function drawFarrukh(cv, cs){
   const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
   cv.width = w * dpr; cv.height = h * dpr;
@@ -365,7 +411,6 @@ function drawFarrukh(cv, cs){
   const step = 100/3, maxS = GOPT.steps;
   const lvl = pct => red ? (H - pct/100*R) : (L + pct/100*R);
   const pctOf = p => (red ? (H-p)/R*100 : (p-L)/R*100);
-
   const mom = c1.c - c1.o;
   const pH = mom > 0 ? c1.c + .6*R : c1.c + .4*R;
   const pL = mom > 0 ? c1.c - .4*R : c1.c - .6*R;
@@ -379,7 +424,6 @@ function drawFarrukh(cv, cs){
     if (Math.abs(pct-maxHigh) < .01) return {t:"SELL 2", c:"#ef4444"};
     return null;
   };
-
   const levels = []; for (let k = -1; k <= maxS; k++) levels.push(k*step);
   const vals = levels.map(lvl).concat([c0.h, c0.l, H, L]);
   if (GOPT.exp) vals.push(c1.c + R/2, c1.c - R/2);
@@ -388,14 +432,12 @@ function drawFarrukh(cv, cs){
   const padT = 14, padB = 26, padL = 8, padR = 158;
   const pw = w - padL - padR, ph = h - padT - padB;
   const Y = v => padT + (mx - v)/(mx - mn)*ph;
-
   if (GOPT.zone){
     ctx.fillStyle = "rgba(16,185,129,.07)";
     ctx.fillRect(padL, Y(lvl(maxLow)), pw, Math.abs(Y(lvl(maxLow)) - Y(lvl(minLow))));
     ctx.fillStyle = "rgba(239,68,68,.07)";
     ctx.fillRect(padL, Y(lvl(maxHigh)), pw, Math.abs(Y(lvl(maxHigh)) - Y(lvl(minHigh))));
   }
-
   levels.forEach(pct => {
     const p = lvl(pct), y = Y(p), tg = tagFor(pct);
     const edge = Math.abs(pct) < .01 || Math.abs(pct-100) < .01;
@@ -405,14 +447,12 @@ function drawFarrukh(cv, cs){
     const txt = (tg ? tg.t + " · " : "") + (Math.round(pct*10)/10) + "% [" + Fm(p) + "]";
     ctx.font = (tg ? "bold " : "") + "9px 'JetBrains Mono'";
     const tw = ctx.measureText(txt).width + 10;
-    const bg = tg ? (tg.c === "#10b981" ? "rgba(16,185,129,.16)" : "rgba(239,68,68,.16)") : "rgba(6,9,19,.8)";
-    ctx.fillStyle = bg;
+    ctx.fillStyle = tg ? (tg.c === "#10b981" ? "rgba(16,185,129,.16)" : "rgba(239,68,68,.16)") : "rgba(6,9,19,.8)";
     ctx.fillRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16);
     if (tg){ ctx.strokeStyle = tg.c; ctx.globalAlpha = .5; ctx.strokeRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16); ctx.globalAlpha = 1; }
     ctx.fillStyle = tg ? tg.c : edge ? "#94a3b8" : "#64748b";
     ctx.fillText(txt, w - padR + 13, y + 3.5);
   });
-
   if (GOPT.exp){
     [[c1.c + R/2, "★ EXP HIGH", "52,211,153"], [c1.c - R/2, "★ EXP LOW", "251,191,36"]].forEach(a => {
       const y = Y(a[0]);
@@ -433,7 +473,6 @@ function drawFarrukh(cv, cs){
       ctx.fillText(a[1], w - padR - 52, y - 4);
     });
   }
-
   const cw = Math.max(24, Math.min(44, pw*.1));
   const x1 = padL + pw*.2, x0 = padL + pw*.46;
   const cnd = (x, c, live) => {
@@ -448,7 +487,6 @@ function drawFarrukh(cv, cs){
       ctx.strokeRect(x - cw/2 - 5, Math.min(Y(c.o), Y(c.c)) - 5, cw + 10, Math.max(12, Math.abs(Y(c.o) - Y(c.c)) + 10)); }
   };
   cnd(x1, c1, false); cnd(x0, c0, true);
-
   ctx.textAlign = "center"; ctx.font = "9px 'JetBrains Mono'";
   ctx.fillStyle = "#475569"; ctx.fillText("candle[1] · " + (red ? "RED" : "GREEN"), x1, h - 12);
   ctx.fillStyle = c0.c >= c0.o ? "rgba(16,185,129,.9)" : "rgba(239,68,68,.9)";
@@ -456,19 +494,20 @@ function drawFarrukh(cv, cs){
   ctx.textAlign = "left";
 }
 
-/* ---------- VOICE ENGINE ---------- */
+/* ================= TTS (mic auto-pause ke saath) ================= */
 const synth = window.speechSynthesis || null;
 let voiceOn = localStorage.getItem("hermes_voice") !== "0";
 function toggleVoice(){
   voiceOn = !voiceOn; localStorage.setItem("hermes_voice", voiceOn ? "1" : "0");
   $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
   if (!voiceOn){ try{ synth.cancel(); }catch(e){} }
-  addLog(voiceOn ? "🔊 voice on" : "🔇 voice off", true);
+  addLog(voiceOn ? "🔊 voice on" : "🔇 voice off");
 }
  $("#bVoice").textContent = voiceOn ? "🔊" : "🔇";
 function speak(text, cb){
   addLog("🤖 " + text);
   if (!voiceOn || !synth){ if (cb) cb(); return; }
+  pauseRec();                                   /* khud ko na sune */
   try {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -476,44 +515,105 @@ function speak(text, cb){
     const vs = synth.getVoices();
     const v = vs.find(v => /en(-|_)?(US|GB)/i.test(v.lang)) || vs.find(v => /en/i.test(v.lang));
     if (v) u.voice = v;
-    u.onend = () => { if (cb) cb(); };
+    let done = false;
+    const fin = () => { if (done) return; done = true; resumeRec(); if (cb) cb(); };
+    u.onend = fin; u.onerror = fin;
     synth.speak(u);
-  } catch(e){ if (cb) cb(); }
+    setTimeout(fin, Math.max(3000, text.length * 90));   /* safety */
+  } catch(e){ resumeRec(); if (cb) cb(); }
 }
-function addLog(t, silent){
+function addLog(t, cls){
   const d = document.createElement("div");
-  d.className = "text-slate-400"; d.innerHTML = t;
-  $("#vaLog").prepend(d);
-  while ($("#vaLog").children.length > 40) $("#vaLog").lastElementChild.remove();
+  d.className = cls || "text-slate-400"; d.innerHTML = t;
+  $("#vaLog").appendChild(d);
+  $("#vaLog").scrollTop = $("#vaLog").scrollHeight;
+  while ($("#vaLog").children.length > 60) $("#vaLog").firstElementChild.remove();
 }
-function briefing(){
-  if (!D) return speak("Data is not loaded yet. Please refresh.");
+
+/* ================= ZCODE AGENT ================= */
+const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
+const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
+const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
+function zBadge(){
+  const on = !!ZKEY();
+  $("#zBadge").textContent = on ? "ZCODE · " + ZMODEL() : "ZCODE OFF";
+  $("#zBadge").className = on
+    ? "rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400"
+    : "rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500";
+}
+function zSettings(){
+  $("#zKey").value = ZKEY(); $("#zUrl").value = ZURL(); $("#zModel").value = ZMODEL();
+  $("#zErr").textContent = "";
+  $("#zModal").style.display = "flex";
+}
+function zSave(){
+  const k = $("#zKey").value.trim();
+  if (!k){ $("#zErr").textContent = "Key likhein"; return; }
+  localStorage.setItem("hermes_zkey", k);
+  localStorage.setItem("hermes_zurl", $("#zUrl").value.trim() || ZURL());
+  localStorage.setItem("hermes_zmodel", $("#zModel").value.trim() || "glm-4.6");
+  $("#zModal").style.display = "none";
+  zBadge(); addLog("⚡ ZCode activated · " + ZMODEL(), "text-emerald-400");
+  speak("ZCode agent activated.");
+}
+function buildContext(){
   const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
-  const ms = m => m == null ? "off" : m > .55 ? "bullish" : m < .45 ? "bearish" : "flat";
-  let t = "Equity " + F(S.equity) + " dollars. Today " + (B.used||0) + " of " + (P.max_trades_per_day||3) +
-    " trades used, " + (B.losses||0) + " losses. Day P and L " + (S.day_pnl_pct||0).toFixed(2) +
-    " percent. Win rate " + (S.winrate50||0) + " percent. Drawdown " + (S.drawdown_pct||0) + " percent.";
+  const out = {desk: {mode: D.mode, equity: S.equity, winrate50: S.winrate50,
+    day_pnl_pct: S.day_pnl_pct, drawdown_pct: S.drawdown_pct,
+    trades_used_today: B.used||0, max_trades: P.max_trades_per_day||3, losses_today: B.losses||0}, symbols: {}};
   Object.keys(D.symbols || {}).forEach(k => {
-    const sn = D.symbols[k], M = sn.models || {};
-    t += " " + k + ": ";
-    if (sn.signal){
-      t += sn.signal + " signal, confidence " + Math.round(((sn.matrix || {}).p_up || .5)*100) + " percent. " +
-        "Stat " + ms(M.stat) + ", Quant " + ms(M.quant) + ", Kronos " + ms(M.kronos) + ", TimesFM " + ms(M.timesfm) +
-        (sn.glm ? ", G L M judge " + sn.glm.bias : "") + ".";
-    } else t += "no trade. Reason: " + (sn.why || "filters") + ".";
+    const sn = D.symbols[k], g = sn.grid || {};
+    out.symbols[k] = {price: sn.price, signal: sn.signal, no_trade_reason: sn.why,
+      confidence: sn.matrix && sn.matrix.p_up,
+      grid: {D1: g.D1 && {pos: g.D1.pos, zone: g.D1.zone}, H1: g.H1 && {pos: g.H1.pos, zone: g.H1.zone}},
+      models: sn.models || {}, glm_judge: sn.glm || null, plan: sn.plan || null};
   });
-  const openN = (D.fills.execs || []).filter(e => !(D.fills.results || []).some(r => r.cmd_id === e.cmd_id)).length;
-  t += " Open positions: " + openN + ".";
-  speak(t);
+  out.recent_results = (D.fills.results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
+  return out;
 }
-function handleCommand(raw){
+const ZSYSTEM = "You are ZCode, the AI analyst of 'Hermes' — a prop-firm-style Gold/FX trading agent owned by Muhammad Farrukh Jadoon. " +
+  "You get LIVE desk state as JSON. Be concise (max 4 sentences unless asked detail), reference actual numbers, " +
+  "respect prop rules (3 trades/day, 1% risk, 3% daily loss, 10% max DD), never guarantee profits, " +
+  "add 'analysis not financial advice' when suggesting trades. Reply in the user's language (English or Roman Urdu).";
+let zHist = [];
+async function askAgent(q){
+  if (agentBusy){ addLog("⏳ ZCode busy…", "text-amber-400"); return; }
+  addLog("👤 " + q, "text-cyan-300 font-bold");
+  agentBusy = true;
+  $("#zState").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
+  try {
+    if (!ZKEY()) throw new Error("nokey");
+    const r = await fetch(ZURL(), {method:"POST",
+      headers:{"Authorization":"Bearer "+ZKEY(), "Content-Type":"application/json"},
+      body: JSON.stringify({model: ZMODEL(), temperature: 0.4, max_tokens: 400,
+        messages: [{role:"system", content: ZSYSTEM},
+                   {role:"user", content: "LIVE DESK STATE:\n" + JSON.stringify(buildContext())},
+                   ...zHist.slice(-6), {role:"user", content: q}]})});
+    if (!r.ok) throw new Error("API " + r.status);
+    const ans = await r.json();
+    const reply = ((((ans || {}).choices || [])[0] || {}).message || {}).content || "Koi jawab nahi mila.";
+    zHist.push({role:"user", content:q}, {role:"assistant", content:reply});
+    zHist = zHist.slice(-12);
+    addLog("⚡ " + reply.replace(/\n/g,"<br>"), "text-slate-200");
+    speak(reply);
+  } catch(e){
+    if (e.message === "nokey"){
+      addLog("⚙️ Pehle ⚙️ mein GLM key dalein — local mode se jawab de raha hun.", "text-amber-400");
+      localCommand(q);
+    } else {
+      addLog("⚠️ API error: " + e.message + " — local fallback.", "text-amber-400");
+      localCommand(q);
+    }
+  }
+  agentBusy = false;
+  $("#zState").textContent = "ready";
+}
+function localCommand(raw){
   const t = (raw || "").toLowerCase();
-  addLog("🎤 " + raw, true);
   if (/status|report|brief|update/.test(t)) return briefing();
   if (/signal/.test(t)){
     if (!D) return speak("no data");
-    const s = Object.keys(D.symbols || {}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". ");
-    return speak("Current signals: " + s);
+    return speak("Signals: " + Object.keys(D.symbols||{}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". "));
   }
   if (/trade/.test(t)){
     const res = (D && D.fills && D.fills.results || []).slice(-3).reverse();
@@ -521,40 +621,148 @@ function handleCommand(raw){
     return speak(res.map(r => r.sym + " " + (r.pnl >= 0 ? "profit" : "loss") + " " + Math.abs(r.pnl).toFixed(2) + " dollars").join(". "));
   }
   if (/refresh|sync/.test(t)){ speak("Refreshing."); return refresh(); }
-  if (/mute|stop|quiet|chup/.test(t)){
-    voiceOn = false; localStorage.setItem("hermes_voice","0"); $("#bVoice").textContent = "🔇";
-    try{ synth.cancel(); }catch(e){} return addLog("🔇 muted", true);
-  }
-  if (/unmute|voice on|bol/.test(t)){
-    voiceOn = true; localStorage.setItem("hermes_voice","1"); $("#bVoice").textContent = "🔊";
-    return addLog("🔊 unmuted", true);
-  }
-  if (/lock|logout|band/.test(t)) return logout();
-  if (/hello|salam|hi/.test(t)) return speak("Hello Muhammad Farrukh Jadoon. Hermes agent is online. Say status for briefing.");
-  return speak("Command not recognized. Try: status, signals, trades, refresh, or mute.");
+  if (/lock|logout/.test(t)) return logout();
+  if (/hello|salam|hi/.test(t)) return speak("Hello Muhammad Farrukh Jadoon. Say status for briefing.");
+  return speak("Full AI ke liye ZCode settings mein GLM key dalein. Ya kahen: status, signals, trades, refresh.");
 }
+function briefing(){
+  if (!D) return speak("Data load ho raha hai, ek minute.");
+  if (ZKEY()) return askAgent("Give me the full desk briefing like a professional risk officer.");
+  const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
+  const ms = m => m == null ? "off" : m > .55 ? "bullish" : m < .45 ? "bearish" : "flat";
+  let t = "Equity " + F(S.equity) + " dollars. " + (B.used||0) + " of " + (P.max_trades_per_day||3) +
+    " trades used, " + (B.losses||0) + " losses. Day P and L " + (S.day_pnl_pct||0).toFixed(2) +
+    " percent. Win rate " + (S.winrate50||0) + " percent. Drawdown " + (S.drawdown_pct||0) + " percent.";
+  Object.keys(D.symbols || {}).forEach(k => {
+    const sn = D.symbols[k], M = sn.models || {};
+    t += " " + k + ": ";
+    if (sn.signal) t += sn.signal + ", confidence " + Math.round(((sn.matrix || {}).p_up || .5)*100) + " percent. Models: Stat " + ms(M.stat) + ", Quant " + ms(M.quant) + ", Kronos " + ms(M.kronos) + ", TimesFM " + ms(M.timesfm) + ".";
+    else t += "no trade. " + (sn.why || "") + ".";
+  });
+  speak(t);
+}
+
+/* ================= WAKE-WORD ENGINE ================= */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec = null;
-if (SR){
-  rec = new SR(); rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
-  rec.onresult = e => handleCommand(e.results[0][0].transcript);
-  rec.onend = () => $("#micDot").className = "h-2 w-2 rounded-full bg-slate-600";
-  rec.onerror = () => $("#micDot").className = "h-2 w-2 rounded-full bg-slate-600";
+let rec = null, wantListen = localStorage.getItem("hermes_wake") !== "0";
+let awake = false, awakeTimer = null, recActive = false, permDenied = false;
+
+function setMic(color, label){
+  $("#micDot").className = "h-2 w-2 rounded-full " + color;
+  $("#micLbl").textContent = label;
 }
-function listen(){
-  if (!rec) return addLog("⚠️ Voice input Chrome/Edge mein chalta hai — text likhein.", true);
-  try { rec.start(); $("#micDot").className = "h-2 w-2 rounded-full bg-red-400 dot-live"; } catch(e){}
+function pauseRec(){ try{ rec && rec.abort(); }catch(e){} recActive = false; }
+function resumeRec(){ setTimeout(() => startRec(), 350); }
+function startRec(){
+  if (!SR || !wantListen || recActive || permDenied) return;
+  try { rec.start(); } catch(e){}
 }
-function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; handleCommand(v); } }
+function toggleWake(){
+  wantListen = !wantListen;
+  localStorage.setItem("hermes_wake", wantListen ? "1" : "0");
+  $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
+  $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
+  if (wantListen){ startRec(); addLog("🎧 Wake-word listening ON — 'Wake up FL' kahen"); }
+  else { pauseRec(); setMic("bg-slate-600", "MIC OFF"); deactivate(false); addLog("🎧 Wake off"); }
+}
+ $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
+ $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
+
+function activate(){
+  awake = true;
+  setMic("bg-emerald-400 dot-live", "ACTIVE · boliye");
+  clearTimeout(awakeTimer);
+  awakeTimer = setTimeout(() => { if (awake){ deactivate(true); } }, 120000);
+}
+function deactivate(say){
+  awake = false; clearTimeout(awakeTimer);
+  if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'");
+  if (say) speak("Stand by par chala gaya hun. Wake up FL kahen jab zaroorat ho.");
+}
+function startWakeEngine(){
+  if (!SR){ setMic("bg-slate-600", "MIC N/A"); addLog("⚠️ Voice Chrome/Edge mein chalti hai", "text-amber-400"); return; }
+  if (rec) return;
+  rec = new SR();
+  rec.continuous = true; rec.interimResults = true; rec.lang = "en-US";
+  rec.onstart = () => { recActive = true;
+    setMic(awake ? "bg-emerald-400 dot-live" : "bg-amber-400 dot-standby",
+           awake ? "ACTIVE · boliye" : "STANDBY · 'Wake up FL'"); };
+  rec.onend = () => { recActive = false; if (wantListen) setTimeout(startRec, 400); };
+  rec.onerror = e => {
+    recActive = false;
+    if (e.error === "not-allowed" || e.error === "service-not-allowed"){
+      permDenied = true; wantListen = false;
+      setMic("bg-slate-600", "MIC BLOCKED");
+      addLog("⚠️ Mic permission block hai — browser settings se allow karein, phir 🎧 Wake ON dabayen", "text-amber-400");
+    } else if (wantListen) setTimeout(startRec, 800);
+  };
+  rec.onresult = e => {
+    let fin = "";
+    for (let i = e.resultIndex; i < e.results.length; i++)
+      if (e.results[i].isFinal) fin += e.results[i][0].transcript + " ";
+    if (fin.trim()) handleUtterance(fin.trim());
+  };
+  startRec();
+  addLog("🎧 Standby — bas kahen: <b>Wake up FL</b>", "text-amber-300");
+}
+
+const RE_WAKE  = /(wake\s*up\s*f\s*l|wake\s*up\s*fl|wakeup\s*f\s*l|wakeup|wake\s*up|hey\s*fl|ok\s*fl|hi\s*fl|hermes)/i;
+const RE_SLEEP = /(sleep\s*mode|go\s*to\s*sleep|so\s*jao|stand\s*down|stand\s*by\s*mode|good\s*bye|alvida)/i;
+
+function handleUtterance(text){
+  const low = text.toLowerCase();
+  if (RE_SLEEP.test(low)){ deactivate(true); return; }
+  const m = low.match(RE_WAKE);
+  if (m){
+    const idx = low.indexOf(m[0]);
+    const after = text.slice(idx + m[0].length).replace(/^[\s,.!?]+/, "").trim();
+    activate();
+    if (after.length > 2){ routeCommand(after); }
+    else speak("Yes Farrukh?");
+    return;
+  }
+  if (awake){
+    activate();                       /* timer refresh */
+    routeCommand(text);
+  }
+  /* standby mein wake ke ilawa sab ignore */
+}
+function routeCommand(q){
+  setMic("bg-red-400 dot-live", "PROCESSING");
+  if (ZKEY()) askAgent(q);
+  else localCommand(q);
+}
+function listenOnce(){
+  if (!SR) return addLog("⚠️ Chrome/Edge use karein", "text-amber-400");
+  activate(); startRec(); addLog("🎤 ek dafa sun raha hun…");
+}
+function quick(q){ routeInput(q); }
+function routeInput(q){
+  const t = (q || "").toLowerCase();
+  if (/^(mute|stop|quiet|chup)$/.test(t)){
+    voiceOn = false; localStorage.setItem("hermes_voice","0"); $("#bVoice").textContent = "🔇";
+    try{ synth.cancel(); }catch(e){} return addLog("🔇 muted");
+  }
+  if (/^(unmute|voice on)$/.test(t)){
+    voiceOn = true; localStorage.setItem("hermes_voice","1"); $("#bVoice").textContent = "🔊";
+    return addLog("🔊 unmuted");
+  }
+  if (/^(refresh|sync)$/.test(t)){ speak("Refreshing."); return refresh(); }
+  if (/^(lock|logout)$/.test(t)) return logout();
+  if (/^(sleep|standby)$/.test(t)) return deactivate(true);
+  routeCommand(q);
+}
+function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; routeInput(v); } }
  $("#vaIn").addEventListener("keydown", e => { if (e.key === "Enter") vaSend(); });
 function vaCollapse(){
-  const l = $("#vaLog"), f = $("#vaIn").parentElement;
+  const l = $("#vaLog"), c = $("#zChips"), f = $("#vaIn").parentElement;
   const hid = l.style.display === "none";
-  l.style.display = hid ? "" : "none"; f.style.display = hid ? "" : "none";
+  l.style.display = hid ? "" : "none"; c.style.display = hid ? "" : "none"; f.style.display = hid ? "" : "none";
   $("#vaCol").textContent = hid ? "—" : "+";
 }
 
-/* ---------- BOOT ---------- */
+/* ================= BOOT ================= */
+zBadge();
  $("#pass").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
 if (sessionValid()) openApp(false);
 </script>

@@ -34,13 +34,12 @@ input{outline:none}
     <div class="mb-6 text-center">
       <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913] shadow-[0_0_30px_rgba(245,196,81,.3)]">H</div>
       <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">Wake-word · ZCode Agent · Farrukh Grid</p>
+      <p class="font-mono text-[10px] text-slate-500">ZCode-Primary · Wake-word · Farrukh Grid</p>
     </div>
     <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
     <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
     <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK 🎙️</button>
     <p id="loginErr" class="mt-3 text-center text-[11px] text-red-400"></p>
-    <p class="mt-3 text-center text-[9px] text-slate-600">login ke baad mic allow karein — phir bas kahen "Wake up FL"</p>
   </div>
 </div>
 
@@ -69,6 +68,8 @@ input{outline:none}
   </header>
 
   <div class="card grid grid-cols-2 gap-2 p-3 md:grid-cols-4" id="prop"></div>
+
+  <div id="zcard"></div>
 
   <div class="flex flex-wrap items-center gap-2">
     <div id="tabs" class="flex flex-wrap gap-2"></div>
@@ -132,14 +133,19 @@ input{outline:none}
     </div>
     <div class="space-y-4">
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 Skills Registry</h3>
-        <div id="metaList" class="mt-2 space-y-1 font-mono text-[10px] text-slate-400"></div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🌙 ZCode Lessons (self-review)</h3>
+        <div id="lessons" class="mt-2 space-y-1 text-[10.5px] text-violet-300/90"></div>
       </div>
       <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛰️ Execution Commands</h3>
-        <div id="cmds" class="mt-3 space-y-1.5 font-mono text-[11px]"></div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 ZCode Memory (recent decisions)</h3>
+        <div id="memory" class="mt-2 space-y-1 font-mono text-[10px] text-slate-400"></div>
       </div>
     </div>
+  </div>
+
+  <div class="card p-4">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛰️ Execution Commands</h3>
+    <div id="cmds" class="mt-3 space-y-1.5 font-mono text-[11px]"></div>
   </div>
 
   <div class="card overflow-x-auto">
@@ -161,7 +167,7 @@ input{outline:none}
       <span class="text-xs font-extrabold ml-1">⚡ ZCode</span>
       <span id="zState" class="rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">ready</span>
       <div class="ml-auto flex gap-1">
-        <button onclick="listenOnce()" class="chip" title="ek dafa suno">🎤</button>
+        <button onclick="listenOnce()" class="chip">🎤</button>
         <button onclick="vaCollapse()" class="chip" id="vaCol">—</button>
       </div>
     </div>
@@ -169,7 +175,7 @@ input{outline:none}
     <div id="zChips" class="flex flex-wrap gap-1 border-t border-ink-800 px-3 pt-2">
       <button class="chip" onclick="quick('Give me a trade decision summary')">Decision?</button>
       <button class="chip" onclick="quick('Any risk warnings right now?')">Risk?</button>
-      <button class="chip" onclick="quick('Explain current signal reasoning')">Reasoning</button>
+      <button class="chip" onclick="quick('Why did you make your last decision?')">Last why?</button>
     </div>
     <div class="flex gap-2 border-t border-ink-800 p-2">
       <input id="vaIn" placeholder="ZCode se kuch bhi poochein…" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
@@ -182,12 +188,12 @@ input{outline:none}
 <div id="zModal" class="fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" style="display:none">
   <div class="card w-full max-w-md p-6">
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-sm font-extrabold">⚡ ZCode Agent Settings</h2>
+      <h2 class="text-sm font-extrabold">⚡ ZCode Settings</h2>
       <button onclick="document.getElementById('zModal').style.display='none'" class="text-slate-500 hover:text-slate-200">✕</button>
     </div>
-    <p class="mb-3 text-[11px] leading-relaxed text-slate-400">Key <b>sirf aapke browser</b> mein save hoti hai — repo mein kabhi nahi jaati.</p>
+    <p class="mb-3 text-[11px] leading-relaxed text-slate-400">Key <b>sirf aapke browser</b> mein save hoti hai.</p>
     <label class="micro text-slate-500">GLM API Key</label>
-    <input id="zKey" type="password" placeholder="aapki Z.ai key" class="mb-3 mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-xs"/>
+    <input id="zKey" type="password" class="mb-3 mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-xs"/>
     <div class="mb-3 grid grid-cols-2 gap-2">
       <div><label class="micro text-slate-500">Base URL</label>
         <input id="zUrl" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
@@ -205,7 +211,7 @@ const CFG = HERMES_CONFIG, LS = "hermes_auth";
 let D = null, CUR = null, fillsMissing = false, agentBusy = false;
 const err = m => $("#loginErr").textContent = m;
 
-/* ================= FAST AUTH + FETCH ================= */
+/* ============ AUTH + FAST FETCH ============ */
 async function sha256hex(s){
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
@@ -218,7 +224,6 @@ function sessionValid(){
     return true;
   } catch(e){ return false; }
 }
-/* RAW mode: base64 decode skip — 3-5x fast */
 async function ghRaw(path, tok){
   const url = "https://api.github.com/repos/" + CFG.REPO + "/contents/" + path + "?ref=" + CFG.BRANCH + "&t=" + Date.now();
   const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github.raw"}});
@@ -245,20 +250,15 @@ function logout(){ wantListen = false; try{ rec && rec.abort(); }catch(e){} try{
 function openApp(fresh){
   $("#login").style.display = "none";
   $("#app").classList.remove("hidden");
-  /* CACHE-FIRST: turant render, phir background refresh */
   const cached = loadCache();
-  if (cached){ D = cached; render(); markCached(); }
+  if (cached){ D = cached; render(); }
   refresh();
   setInterval(refresh, 90000);
-  if (fresh){
-    speak("Welcome Muhammad Farrukh Jadoon. Hermes online. Say: Wake up F L.", null);
-  }
+  if (fresh) speak("Welcome Muhammad Farrukh Jadoon. Hermes online. Say: Wake up F L.");
   startWakeEngine();
 }
 function loadCache(){ try { return JSON.parse(localStorage.getItem("hermes_cache") || "null"); } catch(e){ return null; } }
-function markCached(){ const u = $("#mUpd"); if (u && D && D.updated) u.textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z (cached)"; }
 
-/* ================= DATA ================= */
 async function refresh(){
   const tok = localStorage.getItem("hermes_tok");
   if (!tok){ logout(); return; }
@@ -268,14 +268,14 @@ async function refresh(){
     D = a.value;
     D.fills = b.status === "fulfilled" ? b.value : (D.fills || {execs:[],results:[]});
     fillsMissing = b.status !== "fulfilled";
-    localStorage.setItem("hermes_cache", JSON.stringify(D));
+    try { localStorage.setItem("hermes_cache", JSON.stringify(D)); } catch(e){}
     render();
     const ms = Math.round(performance.now() - t0);
     $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + ms + "ms";
   } else if (a.reason && String(a.reason).indexOf("401") >= 0) logout();
 }
 
-/* ================= GRID OPTIONS ================= */
+/* ============ GRID OPTIONS ============ */
 const GOPT = Object.assign({steps:4, prev:false, exp:true, zone:true},
   JSON.parse(localStorage.getItem("hermes_gopts") || "{}"));
 function saveGopt(){ localStorage.setItem("hermes_gopts", JSON.stringify(GOPT)); }
@@ -287,7 +287,7 @@ document.querySelectorAll(".stp").forEach(b => {
 });
 function togOpt(k, el){ GOPT[k] = !GOPT[k]; el.classList.toggle("on", GOPT[k]); saveGopt(); render(); }
 
-/* ================= RENDER ================= */
+/* ============ RENDER ============ */
 const avg = a => a.reduce((x,y)=>x+y,0) / a.length;
 function F(v, d){ d = d || 2;
   return v == null ? "–" : (+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}); }
@@ -307,7 +307,6 @@ function render(){
   $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
   $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
   $("#thr").textContent = "THR " + F((D.weights && D.weights._thr) || .6, 0) + "%";
-  const HH = ""; /* health state.json ke neeche aayega agar chahiye */
 
   const P = D.prop || {}, B = P.budget || {}, S = D.stats || {};
   $("#prop").innerHTML =
@@ -327,16 +326,31 @@ function render(){
     (k === CUR ? 'bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30' : 'bg-ink-900 text-slate-500') + '">' + k + '</button>').join("");
   const SN = (D.symbols || {})[CUR]; if (!SN) return;
   const acc = D.acc || {};
+
+  /* ZCODE-PRIMARY CARD */
+  const Z = SN.zcode || {};
+  $("#zcard").innerHTML = (Z.signal || SN.signal) ?
+    '<div class="card p-4">' +
+    '<div class="flex flex-wrap items-center gap-2">' +
+    '<span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE-PRIMARY</span>' +
+    '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
+    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
+    '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.mode||'') + '</span></div>' +
+    (Z.reasoning ? '<p class="mt-2 text-[11.5px] leading-relaxed text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
+    (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' +
+      Z.key_factors.map(f => '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
+    '</div>' : '';
+
   $("#models").innerHTML =
     modelCard("Stat",    SN.models && SN.models.stat,    acc.m_stat    ? avg(acc.m_stat)    : null) +
     modelCard("Quant",   SN.models && SN.models.quant,   acc.m_quant   ? avg(acc.m_quant)   : null) +
     modelCard("Kronos",  SN.models && SN.models.kronos,  acc.m_kronos  ? avg(acc.m_kronos)  : null) +
     modelCard("TimesFM", SN.models && SN.models.timesfm, acc.m_timesfm ? avg(acc.m_timesfm) : null) +
     '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">GLM Judge</span>' +
-    '<span class="font-mono text-[9px] text-slate-600">' + (acc.m_glm ? Math.round(avg(acc.m_glm)*100) + "% acc" : "judge") + '</span></div>' +
-    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.glm && SN.glm.bias === 'UP' ? 'text-emerald-400' : SN.glm && SN.glm.bias === 'DOWN' ? 'text-red-400' : 'text-slate-400') + '">' + (SN.glm ? SN.glm.bias : "OFF") + '</div>' +
-    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-amber-400/70" style="width:' + ((SN.glm ? SN.glm.conf : 0) * 100) + '%"></div></div>' +
-    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (SN.glm ? SN.glm.comment : "key set karein") + '</div></div>';
+    '<span class="font-mono text-[9px] text-slate-600">' + (acc.m_glm ? Math.round(avg(acc.m_glm)*100) + "% acc" : "primary") + '</span></div>' +
+    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.glm && SN.glm.bias === 'UP' ? 'text-emerald-400' : SN.glm && SN.glm.bias === 'DOWN' ? 'text-red-400' : 'text-slate-400') + '">' + (SN.signal || "WAIT") + '</div>' +
+    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-violet-400/70" style="width:' + ((Z.confidence||0)*100) + '%"></div></div>' +
+    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (Z.risk || "zcode") + '</div></div>';
 
   const M = SN.matrix || {}, sb = $("#sideBadge");
   $("#mxSym").textContent = "· " + CUR;
@@ -355,27 +369,17 @@ function render(){
     '<td class="py-1.5 text-right ' + (r.c >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.c.toFixed(2) + '</td></tr>').join("");
   if (SN.why && !SN.signal)
     $("#mxRows").innerHTML += '<tr class="border-t border-ink-800/50"><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · reason: <b class="text-slate-400">' + SN.why + '</b></td></tr>';
-/* ZCode Primary card */
-const Z = SN.zcode || {};
-if (Z.signal || SN.signal){
-  const zb = document.createElement("div");
-  zb.className = "card p-4 lg:col-span-2";
-  zb.innerHTML =
-    '<div class="flex flex-wrap items-center gap-2"><span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE-PRIMARY</span>' +
-    '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
-    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
-    '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.mode||'') + '</span></div>' +
-    (Z.reasoning ? '<p class="mt-2 text-[11px] leading-relaxed text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
-    (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' + Z.key_factors.map(f =>
-      '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
-    (D.lessons && D.lessons.items && D.lessons.items.length ?
-      '<div class="mt-2 border-t border-ink-800 pt-2"><div class="micro text-slate-500">🌙 Learned lessons (' + (D.lessons.items.length) + ')</div>' +
-      D.lessons.items.slice(-3).map(l => '<div class="mt-1 text-[10px] text-violet-300/80">• ' + l + '</div>').join('') + '</div>' : '');
-  $("#models").parentNode.insertBefore(zb, $("#models"));
-}
-  
-  $("#metaList").innerHTML = Object.entries(D.meta || {}).map(e =>
-    '<div><b class="text-slate-300">' + e[0] + '</b> v' + e[1].ver + ' — ' + (e[1].skills || []).join(", ") + '</div>').join("");
+
+  $("#lessons").innerHTML = (D.lessons && D.lessons.items && D.lessons.items.length)
+    ? D.lessons.items.slice().reverse().map(l => '<div>• ' + l + '</div>').join("")
+    : '<div class="text-slate-600">abhi koi lesson nahi — nightly review ke baad aayengi</div>';
+
+  $("#memory").innerHTML = (D.memory && D.memory.length)
+    ? D.memory.slice().reverse().slice(0,6).map(m =>
+      '<div class="flex items-center gap-2"><b class="' + (m.signal==='BUY'?'text-emerald-400':m.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (m.signal||'—') + '</b>' +
+      '<span>' + (m.sym||'') + '</span><span class="text-slate-600">conf ' + Math.round((m.conf||0)*100) + '%</span>' +
+      '<span class="ml-auto rounded px-1.5 text-[9px] font-bold ' + (m.outcome==='win'?'text-emerald-400':m.outcome==='loss'?'text-red-400':'text-slate-500') + '">' + (m.outcome||'pending').toUpperCase() + '</span></div>').join("")
+    : '<div class="text-slate-600">memory khali — pehla decision pending</div>';
 
   $("#cmds").innerHTML = (D.commands || []).slice(0,6).map(c => {
     const cls = c.status === "executed" ? "text-emerald-400" : c.status === "expired" ? "text-slate-600" : "text-amber-300";
@@ -416,7 +420,7 @@ if (Z.signal || SN.signal){
   if (G.H1){ $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone; drawFarrukh($("#cvH1"), G.H1.candles); }
 }
 
-/* ================= FARRUKH GRID ================= */
+/* ============ FARRUKH GRID ============ */
 function drawFarrukh(cv, cs){
   const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
   cv.width = w * dpr; cv.height = h * dpr;
@@ -513,7 +517,7 @@ function drawFarrukh(cv, cs){
   ctx.textAlign = "left";
 }
 
-/* ================= TTS (mic auto-pause ke saath) ================= */
+/* ============ TTS ============ */
 const synth = window.speechSynthesis || null;
 let voiceOn = localStorage.getItem("hermes_voice") !== "0";
 function toggleVoice(){
@@ -526,7 +530,7 @@ function toggleVoice(){
 function speak(text, cb){
   addLog("🤖 " + text);
   if (!voiceOn || !synth){ if (cb) cb(); return; }
-  pauseRec();                                   /* khud ko na sune */
+  pauseRec();
   try {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -538,7 +542,7 @@ function speak(text, cb){
     const fin = () => { if (done) return; done = true; resumeRec(); if (cb) cb(); };
     u.onend = fin; u.onerror = fin;
     synth.speak(u);
-    setTimeout(fin, Math.max(3000, text.length * 90));   /* safety */
+    setTimeout(fin, Math.max(3000, text.length * 90));
   } catch(e){ resumeRec(); if (cb) cb(); }
 }
 function addLog(t, cls){
@@ -549,7 +553,7 @@ function addLog(t, cls){
   while ($("#vaLog").children.length > 60) $("#vaLog").firstElementChild.remove();
 }
 
-/* ================= ZCODE AGENT ================= */
+/* ============ ZCODE AGENT ============ */
 const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
 const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
 const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
@@ -583,16 +587,19 @@ function buildContext(){
   Object.keys(D.symbols || {}).forEach(k => {
     const sn = D.symbols[k], g = sn.grid || {};
     out.symbols[k] = {price: sn.price, signal: sn.signal, no_trade_reason: sn.why,
+      zcode_reasoning: sn.zcode && sn.zcode.reasoning,
       confidence: sn.matrix && sn.matrix.p_up,
       grid: {D1: g.D1 && {pos: g.D1.pos, zone: g.D1.zone}, H1: g.H1 && {pos: g.H1.pos, zone: g.H1.zone}},
-      models: sn.models || {}, glm_judge: sn.glm || null, plan: sn.plan || null};
+      models: sn.models || {}, plan: sn.plan || null};
   });
+  out.lessons = (D.lessons && D.lessons.items || []).slice(-3);
+  out.memory = D.memory || [];
   out.recent_results = (D.fills.results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
   return out;
 }
-const ZSYSTEM = "You are ZCode, the AI analyst of 'Hermes' — a prop-firm-style Gold/FX trading agent owned by Muhammad Farrukh Jadoon. " +
-  "You get LIVE desk state as JSON. Be concise (max 4 sentences unless asked detail), reference actual numbers, " +
-  "respect prop rules (3 trades/day, 1% risk, 3% daily loss, 10% max DD), never guarantee profits, " +
+const ZSYSTEM = "You are ZCode, the AI analyst of 'Hermes' - a prop-firm-style Gold/FX trading agent owned by Muhammad Farrukh Jadoon. " +
+  "You get LIVE desk state as JSON including your own lessons and recent decisions with outcomes. Be concise (max 4 sentences unless asked detail), " +
+  "reference actual numbers, respect prop rules (3 trades/day, 1% risk, 3% daily loss, 10% max DD), never guarantee profits, " +
   "add 'analysis not financial advice' when suggesting trades. Reply in the user's language (English or Roman Urdu).";
 let zHist = [];
 async function askAgent(q){
@@ -648,24 +655,19 @@ function briefing(){
   if (!D) return speak("Data load ho raha hai, ek minute.");
   if (ZKEY()) return askAgent("Give me the full desk briefing like a professional risk officer.");
   const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
-  const ms = m => m == null ? "off" : m > .55 ? "bullish" : m < .45 ? "bearish" : "flat";
   let t = "Equity " + F(S.equity) + " dollars. " + (B.used||0) + " of " + (P.max_trades_per_day||3) +
-    " trades used, " + (B.losses||0) + " losses. Day P and L " + (S.day_pnl_pct||0).toFixed(2) +
-    " percent. Win rate " + (S.winrate50||0) + " percent. Drawdown " + (S.drawdown_pct||0) + " percent.";
+    " trades used. Day P and L " + (S.day_pnl_pct||0).toFixed(2) + " percent.";
   Object.keys(D.symbols || {}).forEach(k => {
-    const sn = D.symbols[k], M = sn.models || {};
-    t += " " + k + ": ";
-    if (sn.signal) t += sn.signal + ", confidence " + Math.round(((sn.matrix || {}).p_up || .5)*100) + " percent. Models: Stat " + ms(M.stat) + ", Quant " + ms(M.quant) + ", Kronos " + ms(M.kronos) + ", TimesFM " + ms(M.timesfm) + ".";
-    else t += "no trade. " + (sn.why || "") + ".";
+    const sn = D.symbols[k];
+    t += " " + k + ": " + (sn.signal ? sn.signal + ", confidence " + Math.round(((sn.matrix||{}).p_up||.5)*100) + " percent." : "no trade. " + (sn.why||""));
   });
   speak(t);
 }
 
-/* ================= WAKE-WORD ENGINE ================= */
+/* ============ WAKE-WORD ENGINE ============ */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null, wantListen = localStorage.getItem("hermes_wake") !== "0";
 let awake = false, awakeTimer = null, recActive = false, permDenied = false;
-
 function setMic(color, label){
   $("#micDot").className = "h-2 w-2 rounded-full " + color;
   $("#micLbl").textContent = label;
@@ -681,23 +683,11 @@ function toggleWake(){
   localStorage.setItem("hermes_wake", wantListen ? "1" : "0");
   $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
   $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
-  if (wantListen){ startRec(); addLog("🎧 Wake-word listening ON — 'Wake up FL' kahen"); }
-  else { pauseRec(); setMic("bg-slate-600", "MIC OFF"); deactivate(false); addLog("🎧 Wake off"); }
+  if (wantListen){ startRec(); addLog("🎧 Wake ON — 'Wake up FL' kahen"); }
+  else { pauseRec(); setMic("bg-slate-600", "MIC OFF"); awake = false; addLog("🎧 Wake off"); }
 }
  $("#bWake").textContent = wantListen ? "🎧 Wake ON" : "🎧 Wake OFF";
  $("#bWake").className = wantListen ? "btn btn-g" : "btn btn-a";
-
-function activate(){
-  awake = true;
-  setMic("bg-emerald-400 dot-live", "ACTIVE · boliye");
-  clearTimeout(awakeTimer);
-  awakeTimer = setTimeout(() => { if (awake){ deactivate(true); } }, 120000);
-}
-function deactivate(say){
-  awake = false; clearTimeout(awakeTimer);
-  if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'");
-  if (say) speak("Stand by par chala gaya hun. Wake up FL kahen jab zaroorat ho.");
-}
 function startWakeEngine(){
   if (!SR){ setMic("bg-slate-600", "MIC N/A"); addLog("⚠️ Voice Chrome/Edge mein chalti hai", "text-amber-400"); return; }
   if (rec) return;
@@ -712,7 +702,7 @@ function startWakeEngine(){
     if (e.error === "not-allowed" || e.error === "service-not-allowed"){
       permDenied = true; wantListen = false;
       setMic("bg-slate-600", "MIC BLOCKED");
-      addLog("⚠️ Mic permission block hai — browser settings se allow karein, phir 🎧 Wake ON dabayen", "text-amber-400");
+      addLog("⚠️ Mic permission block — browser settings se allow karein, phir 🎧 Wake ON", "text-amber-400");
     } else if (wantListen) setTimeout(startRec, 800);
   };
   rec.onresult = e => {
@@ -724,37 +714,40 @@ function startWakeEngine(){
   startRec();
   addLog("🎧 Standby — bas kahen: <b>Wake up FL</b>", "text-amber-300");
 }
-
-const RE_WAKE  = /(wake\s*up\s*f\s*l|wake\s*up\s*fl|wakeup\s*f\s*l|wakeup|wake\s*up|hey\s*fl|ok\s*fl|hi\s*fl|hermes)/i;
-const RE_SLEEP = /(sleep\s*mode|go\s*to\s*sleep|so\s*jao|stand\s*down|stand\s*by\s*mode|good\s*bye|alvida)/i;
-
+const RE_WAKE = /(wake\s*up\s*f\s*l|wake\s*up\s*fl|wakeup|wake\s*up|hey\s*fl|ok\s*fl|hermes)/i;
+const RE_SLEEP = /(sleep\s*mode|go\s*to\s*sleep|so\s*jao|stand\s*down|good\s*bye|alvida)/i;
 function handleUtterance(text){
   const low = text.toLowerCase();
-  if (RE_SLEEP.test(low)){ deactivate(true); return; }
+  if (RE_SLEEP.test(low)){ awake = false;
+    if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'");
+    return speak("Stand by."); }
   const m = low.match(RE_WAKE);
   if (m){
     const idx = low.indexOf(m[0]);
     const after = text.slice(idx + m[0].length).replace(/^[\s,.!?]+/, "").trim();
-    activate();
-    if (after.length > 2){ routeCommand(after); }
+    awake = true;
+    setMic("bg-emerald-400 dot-live", "ACTIVE · boliye");
+    clearTimeout(awakeTimer);
+    awakeTimer = setTimeout(() => { if (awake){ awake = false;
+      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'"); } }, 120000);
+    if (after.length > 2) routeCommand(after);
     else speak("Yes Farrukh?");
     return;
   }
   if (awake){
-    activate();                       /* timer refresh */
+    clearTimeout(awakeTimer);
+    awakeTimer = setTimeout(() => { awake = false;
+      if (wantListen) setMic("bg-amber-400 dot-standby", "STANDBY · 'Wake up FL'"); }, 120000);
     routeCommand(text);
   }
-  /* standby mein wake ke ilawa sab ignore */
 }
 function routeCommand(q){
   setMic("bg-red-400 dot-live", "PROCESSING");
   if (ZKEY()) askAgent(q);
   else localCommand(q);
 }
-function listenOnce(){
-  if (!SR) return addLog("⚠️ Chrome/Edge use karein", "text-amber-400");
-  activate(); startRec(); addLog("🎤 ek dafa sun raha hun…");
-}
+function listenOnce(){ if (!SR) return addLog("⚠️ Chrome/Edge use karein", "text-amber-400");
+  awake = true; startRec(); addLog("🎤 listening…"); }
 function quick(q){ routeInput(q); }
 function routeInput(q){
   const t = (q || "").toLowerCase();
@@ -768,7 +761,7 @@ function routeInput(q){
   }
   if (/^(refresh|sync)$/.test(t)){ speak("Refreshing."); return refresh(); }
   if (/^(lock|logout)$/.test(t)) return logout();
-  if (/^(sleep|standby)$/.test(t)) return deactivate(true);
+  if (/^(sleep|standby)$/.test(t)){ awake = false; return speak("Stand by."); }
   routeCommand(q);
 }
 function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; routeInput(v); } }
@@ -780,7 +773,7 @@ function vaCollapse(){
   $("#vaCol").textContent = hid ? "—" : "+";
 }
 
-/* ================= BOOT ================= */
+/* ============ BOOT ============ */
 zBadge();
  $("#pass").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
 if (sessionValid()) openApp(false);

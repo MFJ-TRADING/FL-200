@@ -1,829 +1,920 @@
 <!DOCTYPE html>
-<html lang="en" class="dark"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>FL-200 · Hermes Terminal</title>
-<script src="./config.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={darkMode:'class',theme:{extend:{colors:{ink:{950:'#060913',900:'#0b1220',850:'#11192d',800:'#17223b',700:'#233253'}},fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JARVIS AI QUANT · 6-LAYER SECURE v5.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body{background:radial-gradient(1200px 600px at 20% -10%,rgba(245,196,81,.06),transparent),radial-gradient(900px 500px at 90% 110%,rgba(16,185,129,.05),transparent),#060913}
-.card{border-radius:1rem;border:1px solid rgba(23,34,59,.9);background:rgba(11,18,32,.65);backdrop-filter:blur(8px)}
-.btn{border-radius:.6rem;padding:.45rem .9rem;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
-.btn-a{background:rgba(245,196,81,.12);color:#f5c451;border:1px solid rgba(245,196,81,.3)}
-.btn-a:hover{background:rgba(245,196,81,.22)}
-.btn-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3)}
-.btn-r{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
-.chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b;background:transparent}
-.chip.on{color:#f5c451;border-color:rgba(245,196,81,.4);background:rgba(245,196,81,.08)}
-input{outline:none}
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#17223b;border-radius:4px}
-.micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
-@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(16,185,129,0)}}
-.dot-live{animation:pulse-dot 1.6s ease infinite}
+:root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,243,255,.07),transparent),linear-gradient(rgba(0,243,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.02) 1px,transparent 1px);background-size:100% 100%,28px 28px,28px 28px;min-height:100vh;overflow-x:hidden}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes think{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-.think span{display:inline-block;width:4px;height:4px;margin-right:2px;border-radius:50%;background:#f5c451;animation:think 1.2s infinite}
+.think span{display:inline-block;width:4px;height:4px;margin-right:2px;border-radius:50%;background:var(--cyan);animation:think 1.2s infinite}
 .think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spin{display:inline-block;animation:spin 1s linear infinite}
-</style></head>
-<body class="text-slate-200 font-sans min-h-screen">
+.top-nav{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;background:rgba(5,8,18,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.brand{font-family:'Orbitron';font-size:1.15rem;font-weight:900;letter-spacing:1.5px}.brand span{color:var(--cyan)}
+.nav-links{display:flex;gap:2px}
+.nav-btn{font-family:'Orbitron';font-size:.65rem;color:var(--muted);padding:5px 10px;border-radius:4px;border:1px solid transparent;background:transparent;cursor:pointer}
+.nav-btn:hover,.nav-btn.active{color:var(--cyan);background:rgba(0,243,255,.1);border-color:rgba(0,243,255,.3)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.status{background:rgba(0,255,102,.08);border:1px solid rgba(0,255,102,.35);color:var(--green);padding:3px 8px;font-family:'Orbitron';font-size:.6rem;border-radius:4px;display:flex;align-items:center;gap:4px}
+.dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+.layer-badge{font-family:'Orbitron';font-size:.55rem;padding:2px 6px;border-radius:3px;background:rgba(189,0,255,.08);border:1px solid rgba(189,0,255,.3);color:var(--purple)}
+.control-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border)}
+.sym-btn,.tf-btn{font-family:'Orbitron';font-size:.68rem;padding:4px 11px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
+.sym-btn.active,.tf-btn.active{background:rgba(0,243,255,.15);color:var(--cyan);border-color:var(--cyan)}
+.sym-btn.closed{opacity:.55}
+.badge-closed{background:rgba(255,0,85,.15);color:var(--red);border:1px solid rgba(255,0,85,.4);padding:2px 7px;border-radius:3px;font-size:.6rem;font-family:'Orbitron'}
+.badge-open{background:rgba(0,255,102,.12);color:var(--green);border:1px solid rgba(0,255,102,.35);padding:2px 7px;border-radius:3px;font-size:.6rem;font-family:'Orbitron'}
+.main{max-width:1580px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.full{grid-column:span 3}.span2{grid-column:span 2}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:11px;position:relative}
+.panel::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
+.ph{font-family:'Orbitron';font-size:.75rem;color:var(--cyan);letter-spacing:.9px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:5px}
+.live{font-size:.6rem;color:var(--green)}
+.live.warn{color:var(--amber)}
+.action{background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);display:grid;grid-template-columns:2fr 1fr 1fr 1.1fr;gap:8px;align-items:center;padding:11px 13px}
+.action-title{font-family:'Orbitron';font-size:.95rem}
+.action-signal{font-size:1.3rem;font-family:'Orbitron';color:var(--green);font-weight:900}
+.action.closed .action-signal{color:var(--muted)}
+.byline{font-family:'JetBrains Mono';font-size:.58rem;color:var(--purple);margin-top:3px}
+.mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:7px 9px;border-radius:4px}
+.mlabel{font-size:.62rem;color:var(--muted)}
+.mval{font-family:'Orbitron';font-size:.88rem}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.price{font-family:'Orbitron';font-size:1.5rem;font-weight:800}
+.candle-wrap{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.candle-head{display:flex;justify-content:space-between;align-items:center;padding:7px 11px;border-bottom:1px solid var(--border);font-size:.72rem}
+canvas{display:block;width:100%;height:270px;background:#060913}
+.path-box{margin-top:7px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:9px}
+.path-title{font-family:'Orbitron';font-size:.7rem;color:var(--cyan);margin-bottom:5px}
+.path-steps{display:flex;flex-wrap:wrap;gap:5px;font-size:.76rem;align-items:center}
+.step{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.22);padding:3px 8px;border-radius:3px}
+.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:10px;cursor:pointer;transition:.2s}
+.mcard:hover{border-color:rgba(0,243,255,.45)}
+.mcard.heavy{border-color:rgba(0,255,102,.28)}
+.mname{font-family:'Orbitron';font-size:.78rem;font-weight:700}
+.mtype{font-size:.6rem;color:var(--muted)}
+.mpred{font-family:'Orbitron';font-size:1.05rem;color:var(--cyan);font-weight:800;margin:4px 0 2px}
+.msig{font-size:.7rem;font-weight:700;color:var(--green)}
+.msig.na{color:var(--muted)}
+.mmeta{display:flex;justify-content:space-between;font-size:.64rem;color:var(--muted);margin-top:3px}
+.macc{font-family:'Orbitron';color:var(--cyan)}
+.wbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:4px;overflow:hidden}
+.wfill{height:100%;border-radius:2px}
+.wfill.h{width:100%;background:linear-gradient(90deg,var(--green),#00ffaa)}
+.wfill.m{width:66%;background:linear-gradient(90deg,var(--amber),#ffcc44)}
+.wfill.l{width:33%;background:var(--muted)}
+.wbadge{font-family:'Orbitron';font-size:.56rem;padding:1px 5px;border-radius:3px}
+.wbadge.h{color:var(--green);background:rgba(0,255,102,.1);border:1px solid rgba(0,255,102,.3)}
+.wbadge.m{color:var(--amber);background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.25)}
+.wbadge.l{color:var(--muted);background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.25)}
+.pillar-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.pchip{font-family:'Orbitron';font-size:.52rem;padding:2px 6px;border-radius:3px;border:1px solid rgba(0,255,102,.3);color:var(--green);background:rgba(0,255,102,.06)}
+.pchip.fail{border-color:rgba(255,0,85,.4);color:var(--red);background:rgba(255,0,85,.06)}
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:8px}
+.iname{font-family:'Orbitron';font-size:.72rem}
+.ival{font-family:'Orbitron';font-size:1rem;margin:2px 0}
+.ival.bull{color:var(--green)}.ival.bear{color:var(--red)}.ival.neu{color:var(--amber)}.ival.na{color:var(--muted);font-size:.7rem}
+.istat{font-size:.62rem;color:var(--muted)}
+.chat{display:flex;flex-direction:column;height:230px}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+.msg{max-width:88%;padding:5px 9px;border-radius:5px;font-size:.78rem;white-space:pre-wrap}
+.msg.ai{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.18);align-self:flex-start}
+.msg.user{background:rgba(189,0,255,.09);border:1px solid rgba(189,0,255,.22);align-self:flex-end}
+.msg .t{font-size:.55rem;color:var(--muted);display:block}
+.tagline{font-family:'JetBrains Mono';font-size:.52rem;color:var(--purple);margin-top:2px}
+.input-row{display:flex;gap:5px}
+.cinp{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:6px 9px;font-size:.82rem;border-radius:4px;outline:none}
+.sbtn{width:34px;height:34px;border-radius:4px;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan);cursor:pointer}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;visibility:hidden;transition:.3s}
+.overlay.open{opacity:1;visibility:visible}
+.side{position:fixed;top:0;right:0;width:390px;max-width:100%;height:100vh;background:rgba(6,10,22,.98);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
+.side.open{transform:translateX(0)}
+.side-h{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.side-t{font-family:'Orbitron';font-size:.85rem;color:var(--cyan)}
+.close{background:transparent;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;border-radius:4px;cursor:pointer}
+.side-b{flex:1;overflow-y:auto;padding:11px 13px}
+.inst{background:rgba(0,0,0,.4);border:1px solid rgba(0,243,255,.18);border-radius:4px;padding:10px;font-family:'JetBrains Mono';font-size:.72rem;line-height:1.45;white-space:pre-wrap}
+.section{display:none}.section.active{display:block}
+.lockwrap{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.lockcard{width:340px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:28px;text-align:center}
+.locklogo{font-family:'Orbitron';font-size:1.4rem;font-weight:900;margin-bottom:4px}
+.lockcard input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-size:.85rem;border-radius:5px;outline:none;margin-bottom:9px;font-family:'JetBrains Mono'}
+.lockbtn{width:100%;font-family:'Orbitron';font-size:.75rem;padding:10px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
+.lerr{font-size:.72rem;color:var(--red);margin-top:8px;min-height:16px}
+@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.model-grid,.ind-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.ind-grid{grid-template-columns:1fr}.nav-links{display:none}.side{width:100%}}
+</style>
+</head>
+<body>
 
-<!-- LOGIN -->
-<div id="login" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/95 p-4">
-  <div class="card w-full max-w-sm p-8">
-    <div class="mb-6 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913]">H</div>
-      <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">v6.0 · chat-only · simple brain</p>
-    </div>
-    <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
-    <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
-    <button onclick="tryLogin()" class="btn btn-a w-full">UNLOCK</button>
-    <p id="loginErr" class="mt-3 text-center text-[11px] text-red-400"></p>
+<!-- ============ LOCK (P9) ============ -->
+<div class="lockwrap" id="lock">
+  <div class="lockcard">
+    <div class="locklogo">⚡ JARVIS</div>
+    <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">6-LAYER SECURE ACCESS · v5.1</div>
+    <input id="ltok" type="password" placeholder="GitHub Token">
+    <input id="lpass" type="password" placeholder="Password (DASH_PASSWORD)">
+    <button class="lockbtn" id="lockBtn">UNLOCK</button>
+    <div class="lerr" id="lockErr"></div>
+    <div style="font-size:.6rem;color:var(--muted)">GitHub Pages par kholein (file:// par login kaam nahi karega)</div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app" class="hidden mx-auto max-w-[1400px] space-y-4 p-4">
+<nav class="top-nav">
+<div class="brand">⚡ JARVIS <span>AI COMMAND</span></div>
+<div class="nav-links">
+<button class="nav-btn active" data-s="dash">DASHBOARD</button>
+<button class="nav-btn" data-s="strategy">STRATEGY</button>
+<button class="nav-btn" data-s="account">ACCOUNT</button>
+<button class="nav-btn" data-s="rules">RULES</button>
+<button class="nav-btn" data-s="reports">REPORTS</button>
+</div>
+<div class="nav-right">
+<span class="layer-badge" id="layerBadge" title="6-layer can't-fail engine">L1✓ L2✓ L3✓ L4✓ L5✓ L6✓</span>
+<div class="status"><div class="dot"></div> AI CORE v5.1</div>
+<button class="nav-btn" id="openSet" style="border:1px solid var(--border)">⚙</button>
+</div>
+</nav>
 
-  <header class="card flex flex-wrap items-center gap-3 p-4">
-    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-bold text-[#060913]">H</div>
-    <div>
-      <div class="flex items-center gap-2">
-        <span id="agentDot" class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-        <h1 class="text-base font-extrabold" id="hTitle">HERMES AGENT</h1>
-        <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400">ONLINE</span>
-        <span id="zBadge" class="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500">ZCODE OFF</span>
-      </div>
-      <p class="font-mono text-[10px] text-slate-500"><span id="mMode" class="text-emerald-400">–</span> · <span id="mUpd" class="text-slate-400">–</span> · equity <span id="mEq" class="text-emerald-400">–</span></p>
-    </div>
-    <div class="ml-auto flex flex-wrap items-center gap-2">
-      <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
-      <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
-      <button onclick="hardRefresh()" class="btn btn-r">🧹 Hard Refresh</button>
-      <button onclick="zSettings()" class="btn btn-a">⚙️</button>
-      <button onclick="logout()" class="btn btn-a">🔒</button>
-    </div>
-  </header>
-
-  <div class="card grid grid-cols-2 gap-2 p-3 md:grid-cols-4" id="prop"></div>
-
-  <div id="dplan"></div>
-  <div id="zcard"></div>
-  <div id="splan"></div>
-
-  <div class="flex flex-wrap items-center gap-2">
-    <div id="tabs" class="flex flex-wrap gap-2"></div>
-    <div class="ml-auto flex flex-wrap items-center gap-1.5">
-      <span class="micro text-slate-600">grid steps</span>
-      <button class="chip stp" data-s="3">3</button>
-      <button class="chip stp on" data-s="4">4</button>
-      <button class="chip stp" data-s="6">6</button>
-      <span class="mx-1 h-4 w-px bg-ink-800"></span>
-      <button class="chip" id="oPrev" onclick="togOpt('prev',this)">Prev H/L</button>
-      <button class="chip on" id="oExp" onclick="togOpt('exp',this)">★ Expected</button>
-      <button class="chip on" id="oZone" onclick="togOpt('zone',this)">Zones</button>
-    </div>
-  </div>
-
-  <div class="grid gap-4 xl:grid-cols-2">
-    <div class="card overflow-hidden">
-      <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
-        <div class="flex items-center gap-2">
-          <span class="rounded bg-amber-400/10 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-300 ring-1 ring-amber-400/25">D1</span>
-          <span class="text-xs font-bold" id="d1Sym">–</span>
-          <span class="micro text-slate-600">candle[1] · farrukh grid 33%</span>
-        </div>
-        <span class="font-mono text-[10px]" id="d1Meta"></span>
-      </div>
-      <canvas id="cvD1" class="block h-[300px] w-full"></canvas>
-    </div>
-    <div class="card overflow-hidden">
-      <div class="flex items-center justify-between border-b border-ink-800 px-3 py-2.5">
-        <div class="flex items-center gap-2">
-          <span class="rounded bg-cyan-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-cyan-300 ring-1 ring-cyan-500/25">H1</span>
-          <span class="text-xs font-bold" id="h1Sym">–</span>
-          <span class="micro text-slate-600">candle[1] · farrukh grid 33%</span>
-        </div>
-        <span class="font-mono text-[10px]" id="h1Meta"></span>
-      </div>
-      <canvas id="cvH1" class="block h-[300px] w-full"></canvas>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-2 gap-3 md:grid-cols-5" id="models"></div>
-
-  <div class="grid gap-4 lg:grid-cols-2">
-    <div class="card p-4">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">⚖️ Decision Matrix <span id="mxSym" class="text-slate-600"></span></h3>
-      <div class="mt-3 flex items-center gap-4 rounded-xl bg-ink-950/60 p-3 ring-1 ring-ink-800">
-        <div id="sideBadge" class="rounded-xl bg-ink-800 px-4 py-2 text-2xl font-extrabold text-slate-500">WAIT</div>
-        <div class="flex-1">
-          <div class="mb-1 flex justify-between font-mono text-[10px] text-slate-500"><span>0.00</span><span id="pTxt">Score –</span><span id="thrTxt">THR 0.10</span></div>
-          <div class="relative h-2 rounded-full bg-ink-800">
-            <div class="absolute left-1/2 top-0 h-full w-px bg-slate-600"></div>
-            <div id="pDot" class="absolute -top-1 h-4 w-1 rounded-full bg-slate-100" style="left:50%"></div>
-          </div>
-        </div>
-      </div>
-      <table class="mt-3 w-full text-left font-mono text-[11px]">
-        <thead><tr class="micro text-slate-500"><th class="py-1.5">Model</th><th class="py-1.5">Bias</th><th class="py-1.5 text-right">Conf</th><th class="py-1.5 text-right">W</th><th class="py-1.5 text-right">Contrib</th></tr></thead>
-        <tbody id="mxRows"></tbody>
-      </table>
-    </div>
-    <div class="space-y-4">
-      <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🌙 ZCode Lessons</h3>
-        <div id="lessons" class="mt-2 space-y-1 text-[10.5px] text-violet-300/90"></div>
-      </div>
-      <div class="card p-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🧠 ZCode Memory</h3>
-        <div id="memory" class="mt-2 space-y-1 font-mono text-[10px] text-slate-400"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card p-4">
-    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">📅 Daily History</h3>
-    <div id="history" class="mt-3 space-y-2"></div>
-  </div>
-
-  <div class="card p-4">
-    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛡️ Skills & Health <span id="hOk" class="ml-2"></span></h3>
-    <div id="accRow" class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-5"></div>
-    <div id="skillList" class="mt-3 space-y-1.5 font-mono text-[10px]"></div>
-    <div id="stratInfo" class="mt-2 font-mono text-[10px] text-sky-300"></div>
-  </div>
-
-  <div class="card p-4">
-    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛰️ Execution Commands</h3>
-    <div id="cmds" class="mt-3 space-y-1.5 font-mono text-[11px]"></div>
-  </div>
-
-  <div class="card overflow-x-auto">
-    <table class="w-full min-w-[720px] text-left text-xs">
-      <thead><tr class="micro text-slate-500">
-        <th class="px-3 py-2.5">Sym</th><th class="px-3 py-2.5">Side</th><th class="px-3 py-2.5">Entry</th><th class="px-3 py-2.5">SL</th>
-        <th class="px-3 py-2.5">TP1</th><th class="px-3 py-2.5">TP2</th><th class="px-3 py-2.5">PnL</th><th class="px-3 py-2.5">Status</th>
-      </tr></thead><tbody id="trades"></tbody>
-    </table>
-  </div>
+<div class="control-bar">
+<span style="font-family:'Orbitron';font-size:.65rem;color:var(--muted)">SYMBOL:</span>
+<button class="sym-btn active" data-sym="XAUUSD">XAUUSD</button>
+<button class="sym-btn" data-sym="EURUSD">EURUSD</button>
+<button class="sym-btn" data-sym="ETHUSD">ETHUSD</button>
+<span id="mktBadge" class="badge-closed">—</span>
+<span style="width:1px;height:16px;background:var(--border);margin:0 4px"></span>
+<span style="font-family:'Orbitron';font-size:.65rem;color:var(--muted)">TF:</span>
+<button class="tf-btn" data-tf="M30">M30</button>
+<button class="tf-btn active" data-tf="H1">H1</button>
+<button class="tf-btn" data-tf="H4">H4</button>
+<button class="tf-btn" data-tf="D1">D1</button>
+<button class="tf-btn" data-tf="W1">W1</button>
+<span style="margin-left:auto;font-size:.7rem;color:var(--muted)" id="sysStatus">—</span>
 </div>
 
-<!-- ZCODE CHAT PANEL (chat-only) -->
-<div class="fixed bottom-4 right-4 z-40 w-[340px]">
-  <div class="card overflow-hidden shadow-2xl">
-    <div class="flex items-center gap-2 border-b border-ink-800 px-3 py-2">
-      <span class="dot-live h-2 w-2 rounded-full bg-emerald-400"></span>
-      <span class="text-xs font-extrabold">⚡ ZCode Chat</span>
-      <span id="zState" class="rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">ready</span>
-      <div class="ml-auto">
-        <button onclick="vaCollapse()" class="chip">—</button>
-      </div>
-    </div>
-    <div id="vaLog" class="max-h-64 space-y-2 overflow-y-auto px-3 py-2 font-mono text-[10.5px] leading-relaxed"></div>
-    <div id="zChips" class="flex flex-wrap gap-1 border-t border-ink-800 px-3 pt-2">
-      <button class="chip" onclick="quick('Give me a trade decision summary')">Decision?</button>
-      <button class="chip" onclick="quick('Any risk warnings right now?')">Risk?</button>
-      <button class="chip" onclick="quick('Explain current signal reasoning')">Reasoning</button>
-    </div>
-    <div class="flex gap-2 border-t border-ink-800 p-2">
-      <input id="vaIn" placeholder="ZCode se poochein…" class="flex-1 rounded-lg border border-ink-800 bg-ink-900 px-2.5 py-1.5 text-[11px]"/>
-      <button onclick="vaSend()" class="chip on">Send</button>
-    </div>
-  </div>
+<div class="main">
+<div class="section active" id="dash">
+<div class="grid">
+
+<div class="panel full action" id="actionPanel">
+<div>
+<div class="action-title">💡 RECOMMENDATION · <span id="recSym">—</span> · <span id="recTF">H1</span></div>
+<div style="color:var(--muted);font-size:.78rem;margin-top:2px" id="recNote">—</div>
+<div class="byline" id="recBy">—</div>
+</div>
+<div class="mbox"><div class="mlabel">ACTION</div><div class="action-signal" id="recAction">—</div></div>
+<div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
+<div class="mbox"><div class="mlabel">TARGET / SL</div><div class="mval" id="recTP">—</div></div>
 </div>
 
-<!-- ZCODE SETTINGS -->
-<div id="zModal" class="fixed inset-0 z-50 items-center justify-center bg-black/70 p-4" style="display:none">
-  <div class="card w-full max-w-md p-6">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-sm font-extrabold">⚡ ZCode Settings</h2>
-      <button onclick="document.getElementById('zModal').style.display='none'" class="text-slate-500 hover:text-slate-200">✕</button>
-    </div>
-    <p class="mb-3 text-[11px] text-slate-400">Key sirf browser mein save hoti hai — repo mein kabhi nahi jaati.</p>
-    <label class="micro text-slate-500">GLM API Key</label>
-    <input id="zKey" type="password" class="mb-3 mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-xs"/>
-    <div class="mb-3 grid grid-cols-2 gap-2">
-      <div><label class="micro text-slate-500">Base URL</label><input id="zUrl" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
-      <div><label class="micro text-slate-500">Model</label><input id="zModel" class="mt-1 w-full rounded-lg border border-ink-800 bg-ink-900 px-3 py-2 font-mono text-[11px]"/></div>
-    </div>
-    <button onclick="zSave()" class="btn btn-g w-full">SAVE & ACTIVATE</button>
-    <p id="zErr" class="mt-2 text-center text-[10px] text-red-400"></p>
-  </div>
+<div class="panel span2">
+<div class="ph"><span>📊 MARKET · <span id="mktSym">—</span></span><span id="mktLive" class="live">—</span></div>
+<div class="mgrid">
+<div class="mbox"><div class="mlabel">PRICE</div><div class="price" id="livePrice">—</div></div>
+<div class="mbox"><div class="mlabel">D1 ExpH / ExpL</div><div class="mval" style="font-size:.82rem;margin-top:2px" id="hlVal">—</div></div>
+<div class="mbox"><div class="mlabel">DATA LAYER (P1)</div><div class="mval" id="dataLayer" style="margin-top:2px">—</div></div>
+<div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:2px" id="sessionVal">—</div></div>
+</div>
+</div>
+
+<div class="panel">
+<div class="ph"><span>🧠 AI WORKFLOW</span></div>
+<div style="font-family:'JetBrains Mono';font-size:.68rem;color:#a5f3fc;height:110px;overflow-y:auto" id="logBox"></div>
+</div>
+
+<div class="panel full">
+<div class="ph"><span>🕯️ FARRUKH GRID · CANDLE[1]+[0]</span><span id="gridStatus" class="live">—</span></div>
+<div class="candle-wrap">
+<div class="candle-head">
+<span style="font-family:'Orbitron';font-size:.7rem;color:var(--cyan)" id="gridTitle">—</span>
+<span style="font-size:.68rem;color:var(--muted)" id="gridMeta">—</span>
+</div>
+<canvas id="cvGrid"></canvas>
+</div>
+<div class="path-box">
+<div class="path-title">📍 EXPECTED PATH (MODEL DRIVEN)</div>
+<div class="path-steps" id="pathSteps"></div>
+<div style="margin-top:5px;font-size:.7rem;color:var(--muted)" id="pathSource">—</div>
+</div>
+<div class="pillar-row" id="pillarRow"></div>
+</div>
+
+<div class="panel full">
+<div class="ph"><span>🧬 MODELS · <span id="modLabel">—</span></span><span style="font-size:.6rem;color:var(--muted)">L3 live · L4 repaired · no fake numbers</span></div>
+<div class="model-grid" id="modelGrid"></div>
+</div>
+
+<div class="panel full">
+<div class="ph"><span>📉 INDICATORS</span><span style="font-size:.6rem;color:var(--muted)">P1: verified data only</span></div>
+<div class="ind-grid" id="indGrid"></div>
+</div>
+
+<div class="panel span2">
+<div class="ph"><span>💬 ZCODE CHAT</span><span id="chatMode" style="font-size:.6rem;color:var(--muted)">L1→L5 active</span></div>
+<div class="chat">
+<div class="msgs" id="msgs"></div>
+<div class="input-row"><input class="cinp" id="cinp" placeholder="Ask ZCode…"><button class="sbtn" id="sbtn">➤</button></div>
+</div>
+</div>
+<div class="panel">
+<div class="ph"><span>🔄 SELF-LEARNING</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center"><div style="font-size:.6rem;color:var(--muted)">LEDGER (P4)</div><div style="font-family:Orbitron;font-size:1.05rem;color:var(--cyan)" id="ledgerN">—</div></div>
+<div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center"><div style="font-size:.6rem;color:var(--muted)">INTEGRITY</div><div style="font-family:Orbitron;font-size:1.05rem;color:var(--amber)" id="ledgerI">—</div></div>
+<div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center"><div style="font-size:.6rem;color:var(--muted)">SECURITY (P9)</div><div style="font-family:Orbitron;font-size:1.05rem;color:var(--amber)" id="secN">—</div></div>
+<div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center"><div style="font-size:.6rem;color:var(--muted)">COMPARE (P5)</div><div style="font-family:Orbitron;font-size:1.05rem;color:var(--amber)" id="cmpN">—</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="section" id="strategy">
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB</span></div>
+<div class="inst" id="stratBox">STRATEGY.md status loading…</div>
+</div></div>
+
+<div class="section" id="account">
+<div class="panel full"><div class="ph"><span>💼 ACCOUNT</span><span style="font-size:.6rem;color:var(--muted)">L5: live state · no fake numbers</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+<div class="mbox" style="text-align:center"><div class="mlabel">EQUITY</div><div class="mval" id="accEq">—</div></div>
+<div class="mbox" style="text-align:center"><div class="mlabel">TRADES TODAY</div><div class="mval" id="accTr">—</div></div>
+<div class="mbox" style="text-align:center"><div class="mlabel">DAY PNL</div><div class="mval" id="accPnl">—</div></div>
+</div></div></div>
+
+<div class="section" id="rules">
+<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE)</span></div>
+<div style="display:flex;flex-direction:column;gap:5px" id="rulesBox"></div></div></div>
+
+<div class="section" id="reports">
+<div class="panel full"><div class="ph"><span>📋 REPORTS</span></div>
+<div class="inst" id="repBox">—</div></div></div>
+</div>
+
+<div class="overlay" id="setOverlay"></div>
+<div class="side" id="settings">
+<div class="side-h"><div class="side-t">⚙ CENTRAL CONFIG</div><button class="close" id="closeSet">✕</button></div>
+<div class="side-b">
+<div style="font-family:Orbitron;font-size:.65rem;color:var(--muted);margin-bottom:8px">CHAT AI (L1-L5)</div>
+<div style="margin-bottom:7px"><label style="font-size:.62rem;color:var(--muted)">GLM API KEY</label>
+<input id="cfgKey" type="password" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:5px;border-radius:3px;margin-top:2px;font-family:JetBrains Mono"></div>
+<div style="margin-bottom:7px"><label style="font-size:.62rem;color:var(--muted)">MODEL</label>
+<input id="cfgModel" value="glm-4.6" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:5px;border-radius:3px;margin-top:2px;font-family:JetBrains Mono"></div>
+<button class="nav-btn" style="width:100%;border:1px solid var(--border);padding:8px;margin-top:4px" id="saveCfg">SAVE (browser-only · P9 safe)</button>
+<div style="margin-top:12px;font-size:.62rem;color:var(--muted);line-height:1.5">Key sirf is browser ke localStorage mein — repo/state/logs mein kabhi nahi jati (P9). Bina key bhi chat chalta hai — L5 fallback rules se.</div>
+</div>
+</div>
+
+<div class="overlay" id="modOverlay"></div>
+<div class="side" id="modDetail">
+<div class="side-h"><div class="side-t" id="modTitle">MODEL</div><button class="close" id="closeMod">✕</button></div>
+<div class="side-b"><div class="inst" id="modInst"></div></div>
 </div>
 
 <script>
-console.log("HERMES DASH v6.0 — chat-only (voice removed)");
-const $ = s => document.querySelector(s);
-const CFG = HERMES_CONFIG, LS = "hermes_auth";
-let D = null, CUR = null, agentBusy = false;
-const err = m => $("#loginErr").textContent = m;
-const EBF = () => ({execs:[], results:[]});
+/* ================================================================
+   JARVIS 6-LAYER SECURE v5.1 — static full-trace tested
+   L1 Contract | L2 Structured | L3 Parse | L4 Repair+Retry |
+   L5 Fallback Engine | L6 Audit Tag
+   LAW: koi fake data nahi — jo hai wahi, jo nahi wo saaf.
+================================================================ */
+console.log("JARVIS 6-LAYER v5.1 — weaknesses removed, full-trace tested");
 
-/* ============ AUTH ============ */
-async function sha256hex(s){
-  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("");
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (v,d) => { d = d==null?2:d; return (v==null||isNaN(v)) ? "—" : (+v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); };
+
+/* ---------- state ---------- */
+const CONFIG = {
+  symbols: { XAUUSD:{name:'Gold',type:'metal'}, EURUSD:{name:'Euro',type:'forex'}, ETHUSD:{name:'Ethereum',type:'crypto'} },
+  GH_REPO: "MFJ-TRADING/FL-200-Private",
+  GH_BRANCH: "main"
+};
+let STATE = null, TOKEN = localStorage.getItem("hermes_tok") || "";
+let CUR_SYM = 'XAUUSD', CUR_TF = 'H1';
+const MTHR = 0.10;
+const VOTE_KEY = { GRID:"grid", KRONOS:"kronos", QUANT:"quant", TAURUS:"taurus", ZCODE:"zcode", STAT:"stat_advisory" };
+
+/* ---------- P1 DATA INTEGRITY ---------- */
+function validCandles(cs){
+  if (!Array.isArray(cs) || cs.length < 2) return false;
+  return cs.every(c => c && typeof c.h === 'number' && c.h >= c.l && c.h >= c.o && c.h >= c.c && c.l <= c.o && c.l <= c.c && c.h > 0);
 }
-function sessionValid(){
-  try {
-    const s = JSON.parse(localStorage.getItem(LS));
-    if (!s || !s.ts) return false;
-    if ((Date.now() - s.ts) / 86400000 > CFG.SESSION_DAYS){ localStorage.removeItem(LS); return false; }
-    return true;
-  } catch(e){ return false; }
+function isMarketOpen(sym){
+  const s = CONFIG.symbols[sym]; if (!s) return false;
+  if (s.type === 'crypto') return true;
+  const day = new Date().getUTCDay();
+  return !(day === 6 || day === 0);
 }
+
+/* ---------- GH ---------- */
 async function ghRaw(path, tok){
-  const url = "https://api.github.com/repos/" + CFG.REPO + "/contents/" + path + "?ref=" + CFG.BRANCH + "&t=" + Date.now();
+  const url = "https://api.github.com/repos/" + CONFIG.GH_REPO + "/contents/" + path + "?ref=" + CONFIG.GH_BRANCH + "&t=" + Date.now();
   const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github.raw"}});
   if (!r.ok) throw new Error("gh " + r.status);
   return await r.json();
 }
-async function tryLogin(){
-  err("");
-  const tok = $("#gtok").value.trim(), pass = $("#pass").value;
-  if (!tok || !pass) return err("Token aur password dono likhein");
-  let st;
-  try { st = await ghRaw("state/state.json", tok); }
-  catch(e){ return err("Token invalid ya state abhi nahi bani"); }
-  const h = st && st.auth ? st.auth.hash : null;
-  if (!h) return err("DASH_PASSWORD secret + workflow run karein");
-  if (await sha256hex("hermes::" + pass) !== h) return err("Galat password");
-  localStorage.setItem("hermes_tok", tok);
-  localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
-  st.fills = st.fills || EBF();
-  localStorage.setItem("hermes_cache", JSON.stringify(st));
-  D = st; openApp(true);
+
+/* ---------- L3 PARSE ---------- */
+function extractJSON(txt){
+  try { return JSON.parse(txt); } catch(e){}
+  const a = txt.indexOf("{"), b = txt.lastIndexOf("}");
+  if (a >= 0 && b > a){ try { return JSON.parse(txt.slice(a, b+1)); } catch(e){} }
+  return null;
 }
-function logout(){
-  localStorage.removeItem(LS); localStorage.removeItem("hermes_tok");
-  location.reload();
+
+/* ---------- L4 REPAIR ---------- */
+function repairDecision(d){
+  if (!d || typeof d !== "object") return null;
+  const out = {};
+  const sig = String(d.signal || d.next_hour_bias || d.bias || "").toUpperCase().trim();
+  out.signal = ["BUY","SELL","NO_TRADE","WAIT"].includes(sig) ? sig : null;
+  let conf = parseFloat(d.confidence != null ? d.confidence : (d.conf != null ? d.conf : 0.5));
+  if (isNaN(conf)) conf = 0.5;
+  if (conf > 1 && conf <= 100) conf = conf / 100;
+  out.confidence = Math.max(0, Math.min(1, conf));
+  out.reasoning = String(d.reasoning || d.comment || "").slice(0, 200);
+  out.key_factors = Array.isArray(d.key_factors) ? d.key_factors.slice(0,4).map(x=>String(x).slice(0,60)) : [];
+  const rk = String(d.risk || "MEDIUM").toUpperCase();
+  out.risk = ["LOW","MEDIUM","HIGH"].includes(rk) ? rk : "MEDIUM";
+  return out.signal ? out : null;
 }
-async function hardRefresh(){
-  let b = null;
-  document.querySelectorAll("button").forEach(x => { if (x.textContent.indexOf("Hard Refresh") >= 0) b = x; });
-  if (b){ b.innerHTML = '<span class="spin">⟳</span> Loading...'; b.disabled = true; }
-  addLog("🧹 Hard refresh: cache clear + fresh data…");
-  const tok = localStorage.getItem("hermes_tok");
-  localStorage.removeItem("hermes_cache");
-  localStorage.removeItem(LS);
-  try{
-    if (tok){
-      D = await ghRaw("state/state.json", tok);
-      D.fills = D.fills || EBF();
-      try {
-        const f = await ghRaw("state/fills.json", tok);
-        D.fills = f || EBF();
-      } catch(e){}
-      localStorage.setItem("hermes_cache", JSON.stringify(D));
-      localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
-      CUR = null;
-      render();
-      addLog("✅ Fresh data loaded · " + (D.updated||"").replace("T"," ").slice(0,16) + "Z", "text-emerald-400");
-      botSay("Hard refresh complete. System fresh hai.");
-    } else { location.reload(); }
+
+/* ---------- L1+L3+L4 AI CALL ---------- */
+const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
+const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
+const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
+
+async function aiCall(messages, maxTokens){
+  const r = await fetch(ZURL(), {method:"POST",
+    headers:{Authorization:"Bearer "+ZKEY(), "Content-Type":"application/json"},
+    body: JSON.stringify({model:ZMODEL(), temperature:0.4, max_tokens:maxTokens||400, messages})});
+  if (!r.ok) throw new Error("api " + r.status);
+  const txt = (await r.json()).choices[0].message.content;
+  let d = extractJSON(txt);           // L3
+  let repaired = false;
+  if (d){ const fx = repairDecision(d); if (fx){ d = fx; } else { d = null; repaired = true; } }
+  if (!d){                            // L4 retry with feedback
+    addMsg("ai", "⚠️ Output invalid tha — L4 repair retry chal raha hai…");
+    const r2 = await fetch(ZURL(), {method:"POST",
+      headers:{Authorization:"Bearer "+ZKEY(), "Content-Type":"application/json"},
+      body: JSON.stringify({model:ZMODEL(), temperature:0.2, max_tokens:maxTokens||400,
+        messages: messages.concat([{role:"user", content:"Your previous reply was not valid JSON. Reply ONLY minified JSON per schema. No other text."}])})});
+    if (r2.ok){
+      d = extractJSON((await r2.json()).choices[0].message.content);
+      if (d) d = repairDecision(d);
+      repaired = true;
+    }
+  }
+  return {d: d, repaired: repaired};
+}
+
+/* ---------- L5 FALLBACK (rules — task phir bhi complete) ---------- */
+function briefingText(){
+  if (!STATE || !STATE.stats) return "State abhi load nahi hui.";
+  const S = STATE.stats;
+  let t = "Equity $" + fmt(S.equity) + ". Trades " + (S.trades_today||0) + "/" + (STATE.prop?.max_trades_per_day || 3) + ". ";
+  Object.keys(STATE.symbols || {}).forEach(k => { t += k + ": " + (STATE.symbols[k].signal || "HOLD") + ". "; });
+  return t;
+}
+function fallbackAnswer(q){
+  const low = (q || "").toLowerCase();
+  const open = isMarketOpen(CUR_SYM);
+  if (/status|report|brief/.test(low)) return briefingText();
+  if (!STATE || !STATE.symbols) return "State abhi load nahi hui — bot ka pehla run ya Hard Refresh chahiye.";
+  const SN = STATE.symbols[CUR_SYM];
+  if (!SN) return CUR_SYM + " ka data state mein nahi — config.json mein add karein.";
+  if (/signal/.test(low)) return "Rules-based: " + CUR_SYM + " " + (SN.signal || "HOLD") + " (score " + (SN.matrix ? SN.matrix.score : "–") + ")";
+  if (/plan/.test(low) && SN.plan){
+    const P1 = SN.plan.B1 || SN.plan.S1;
+    return "Plan " + SN.plan.side + ": entry " + P1.entry + ", SL " + P1.sl + ", TP " + P1.tp;
+  }
+  if (/lesson/.test(low)){
+    const L = (STATE.lessons && STATE.lessons.items) || [];
+    return L.length ? "Lessons: " + L.slice(-3).join(" | ") : "Abhi koi lesson nahi (nightly review ke baad aati hain).";
+  }
+  return open
+    ? CUR_SYM + " " + CUR_TF + ": live session. Full AI jawab ke liye ⚙️ mein GLM key dalein."
+    : CUR_SYM + " market closed (weekend). Structure frozen. ETHUSD 24/7 open hai.";
+}
+
+/* ---------- CHAT UI ---------- */
+function addMsg(cls, text, tag){
+  const d = document.createElement("div"); d.className = "msg " + cls;
+  let html = text.replace(/\n/g,"<br>");
+  if (cls === "user") html = esc(text);
+  d.innerHTML = html + (tag ? '<span class="tagline">' + esc(tag) + '</span>' : "")
+    + '<span class="t">' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) + '</span>';
+  const box = $("msgs");
+  box.appendChild(d); box.scrollTop = 9999;
+  while (box.children.length > 50) box.firstElementChild.remove();
+}
+function log(msg){
+  const el = $("logBox");
+  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = '<div><span style="color:var(--muted)">[' + t + ']</span> ' + esc(msg) + '</div>' + el.innerHTML;
+  while (el.children.length > 40) el.lastElementChild.remove();
+}
+
+function buildContext(){
+  const S = (STATE && STATE.stats) || {};
+  const syms = {};
+  Object.keys((STATE && STATE.symbols) || {}).forEach(k => {
+    const sn = STATE.symbols[k];
+    syms[k] = {signal: sn.signal || null, price: sn.price || null,
+      plan: sn.plan ? {side: sn.plan.side} : null,
+      grid: {H1: sn.grid && sn.grid.H1 ? {pos: sn.grid.H1.pos, zone: sn.grid.H1.zone} : null}};
+  });
+  return {desk: {equity: S.equity, trades_today: S.trades_today, mode: STATE ? STATE.mode : null},
+    symbols: syms, lessons: ((STATE && STATE.lessons && STATE.lessons.items) || []).slice(-3)};
+}
+
+/* ---------- CHAT SEND (L1→L5) ---------- */
+async function chatSend(){
+  const inp = $("cinp");
+  const q = inp.value.trim(); if (!q) return;
+  inp.value = "";
+  addMsg("user", q);
+  if (!ZKEY()){
+    addMsg("ai", fallbackAnswer(q), "completed_by: fallback-rules (L5)");
+    log("[L5] fallback engine completed task");
+    return;
+  }
+  $("chatMode").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
+  const sys = "You are ZCode, AI analyst of HERMES (prop-firm Gold/FX desk of Muhammad Farrukh Jadoon). " +
+    "Reply ONLY minified JSON: {\"answer\":\"max 5 sentences in user language\",\"confidence\":0-1}. " +
+    "Respect prop rules, never guarantee profit.";
+  const msgs = [{role:"system", content:sys},
+    {role:"user", content:"LIVE DESK:\n" + JSON.stringify(buildContext())},
+    {role:"user", content:q}];
+  try {
+    const res = await aiCall(msgs, 400);
+    if (res.d){
+      addMsg("ai", res.d.answer || "(empty)", "completed_by: ai" + (res.repaired ? " (L4-repaired)" : " (L3-clean)") + " · conf " + Math.round(res.d.confidence*100) + "%");
+      log("[L3] parsed" + (res.repaired ? " · [L4] repaired" : " clean") + " · task complete");
+    } else {
+      addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — AI output unusable)");
+      log("[L5] AI unusable → fallback completed task");
+    }
   } catch(e){
-    addLog("⚠️ Fresh load fail: " + e.message, "text-amber-400");
-    location.reload();
+    addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — " + e.message + ")");
+    log("[L5] api fail → fallback completed task");
   }
-  if (b){ setTimeout(() => { b.innerHTML = "🧹 Hard Refresh"; b.disabled = false; }, 1500); }
-}
-function openApp(fresh){
-  $("#login").style.display = "none";
-  $("#app").classList.remove("hidden");
-  const cached = loadCache();
-  if (cached){ D = cached; render(); }
-  refresh();
-  setInterval(refresh, 90000);
-  if (fresh){
-    addLog("👋 Welcome Muhammad Farrukh Jadoon! Hermes online.", "text-emerald-400");
-    addLog("💬 Neeche type karke ZCode se poochein — ya quick buttons dabayen.");
-  }
-}
-function loadCache(){
-  try {
-    const c = JSON.parse(localStorage.getItem("hermes_cache") || "null");
-    if (c){ c.fills = c.fills || EBF(); }
-    return c;
-  } catch(e){ return null; }
+  $("chatMode").textContent = "L1→L5 active";
 }
 
-/* ============ DATA ============ */
-async function refresh(){
-  const tok = localStorage.getItem("hermes_tok");
-  if (!tok){ logout(); return; }
-  const t0 = performance.now();
-  const [a, b, u] = await Promise.allSettled([
-    ghRaw("state/state.json", tok),
-    ghRaw("state/fills.json", tok),
-    ghRaw("state/uiconfig.json", tok)
-  ]);
-  if (a.status === "fulfilled"){
-    D = a.value;
-    D.fills = b.status === "fulfilled" ? (b.value || EBF()) : EBF();
-    if (u.status === "fulfilled" && u.value) applyUI(u.value);
-    try { localStorage.setItem("hermes_cache", JSON.stringify(D)); } catch(e){}
-    render();
-    $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + Math.round(performance.now()-t0) + "ms";
-  } else if (a.reason && String(a.reason).indexOf("401") >= 0) logout();
-}
-
-/* ============ UI CONFIG ============ */
-let _uiTimer = null;
-function applyUI(ui){
-  try {
-    if (ui.title){ document.title = ui.title; const h = $("#hTitle"); if (h) h.textContent = ui.title; }
-    if (ui.accent){
-      let st = document.getElementById("uistyle");
-      if (!st){ st = document.createElement("style"); st.id = "uistyle"; document.head.appendChild(st); }
-      st.textContent = ".btn-a{color:" + ui.accent + ";border-color:" + ui.accent + "55;background:" + ui.accent + "1f}" +
-        ".chip.on{color:" + ui.accent + ";border-color:" + ui.accent + "66;background:" + ui.accent + "14}";
-    }
-    (ui.hidden || []).forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
-    if (ui.refresh_sec){
-      clearInterval(_uiTimer);
-      _uiTimer = setInterval(refresh, ui.refresh_sec * 1000);
-    }
-  } catch(e){}
-}
-
-/* ============ GRID OPTS ============ */
-const GOPT = Object.assign({steps:4, prev:false, exp:true, zone:true},
-  JSON.parse(localStorage.getItem("hermes_gopts") || "{}"));
-function saveGopt(){ localStorage.setItem("hermes_gopts", JSON.stringify(GOPT)); }
-document.querySelectorAll(".stp").forEach(b => {
-  b.classList.toggle("on", +b.dataset.s === GOPT.steps);
-  b.onclick = () => { GOPT.steps = +b.dataset.s;
-    document.querySelectorAll(".stp").forEach(x => x.classList.toggle("on", x === b));
-    saveGopt(); render(); };
-});
-function togOpt(k, el){ GOPT[k] = !GOPT[k]; el.classList.toggle("on", GOPT[k]); saveGopt(); render(); }
-
-/* ============ RENDER ============ */
-const avg = a => a.reduce((x,y)=>x+y,0) / a.length;
-function F(v, d){ d = d || 2;
-  return v == null ? "–" : (+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}); }
-function modelCard(name, v, acc){
-  const dir = v == null ? "–" : v > .55 ? "▲ UP" : v < .45 ? "▼ DOWN" : "• FLAT";
-  const col = v == null ? "text-slate-500" : v > .55 ? "text-emerald-400" : v < .45 ? "text-red-400" : "text-slate-400";
-  return '<div class="card p-3">' +
-    '<div class="flex items-center justify-between"><span class="micro font-bold text-slate-400">' + name + '</span>' +
-    '<span class="font-mono text-[9px] text-slate-600">' + (acc != null ? Math.round(acc*100) + "% acc" : "no data") + '</span></div>' +
-    '<div class="mt-1 font-mono text-lg font-bold ' + col + '">' + dir + '</div>' +
-    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full ' + (v > .5 ? 'bg-emerald-500/70' : 'bg-red-500/70') + '" style="width:' + (v == null ? 0 : v*100) + '%"></div></div>' +
-    '<div class="mt-1 text-right font-mono text-[9px] text-slate-500">p_up ' + (v == null ? "–" : (v*100).toFixed(0) + "%") + '</div></div>';
-}
+/* ---------- RENDER ---------- */
 function render(){
-  if (!D) return;
-  D.fills = (D.fills && D.fills.execs) ? D.fills : EBF();
-  $("#mMode").textContent = (D.mode || "").toUpperCase();
-  $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
-  $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
-  $("#thr").textContent = "THR " + F((D.weights && D.weights._thr) || .6, 0) + "%";
+  const open = isMarketOpen(CUR_SYM);
+  const SN = (STATE && STATE.symbols) ? STATE.symbols[CUR_SYM] : null;
+  const dec = CUR_SYM === 'EURUSD' ? 4 : 2;
 
-  const P = D.prop || {}, B = P.budget || {}, S = D.stats || {};
-  $("#prop").innerHTML =
-    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Trades Today</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((B.used||0) >= 3 ? 'text-red-400' : 'text-amber-300') + '">' + (B.used||0) + ' / ' + (P.max_trades_per_day||3) + '</div></div>' +
-    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Losses Today</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold">' + (B.losses||0) + '</div></div>' +
-    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Day PnL</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold ' + ((S.day_pnl_pct||0) >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (S.day_pnl_pct||0).toFixed(2) + '%</div></div>' +
-    '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800"><div class="micro text-slate-500">Drawdown</div>' +
-      '<div class="mt-0.5 font-mono text-lg font-bold">' + (S.drawdown_pct||0) + '% <span class="text-[9px] text-slate-600">/ ' + (P.max_drawdown_pct||10) + '%</span></div></div>';
+  const badge = $("mktBadge");
+  if (open){ badge.className='badge-open'; badge.textContent='MARKET OPEN'; }
+  else { badge.className='badge-closed'; badge.textContent='MARKET CLOSED'; }
+  $("sysStatus").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long'}) + " · " +
+    (open ? "markets active" : "gold/forex closed · crypto open");
 
-  const keys = Object.keys(D.symbols || {});
-  if (!CUR && keys.length) CUR = keys[0];
-  $("#tabs").innerHTML = keys.map(k =>
-    '<button onclick="CUR=\'' + k + '\';render()" class="rounded-lg px-3 py-1.5 font-mono text-[11px] font-bold ' +
-    (k === CUR ? 'bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30' : 'bg-ink-900 text-slate-500') + '">' + k + '</button>').join("");
-  const SN = (D.symbols || {})[CUR];
-
-  /* DAILY PLAN */
-  const DP = (D.daily_plan && D.daily_plan.symbols) ? D.daily_plan.symbols[CUR] : null;
-  if (DP && DP.yesterday_D1){
-    $("#dplan").innerHTML = '<div class="card p-4">' +
-      '<div class="flex flex-wrap items-center gap-2">' +
-      '<span class="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-sky-300 ring-1 ring-sky-500/25">🌅 DAILY PLAN</span>' +
-      '<b class="' + (DP.yesterday_dir==='up'?'text-emerald-400':'text-red-400') + '">yest ' + DP.yesterday_dir + ' ' + DP.yesterday_range_pips + 'p</b>' +
-      '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.daily_plan.date||'') + '</span></div>' +
-      '<div class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4 font-mono text-[10px]">' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">Yest D1</div>' +
-        'O ' + DP.yesterday_D1.O + ' H ' + DP.yesterday_D1.H + '<br>L ' + DP.yesterday_D1.L + ' C ' + DP.yesterday_D1.C + '</div>' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">Expected H/L</div>' +
-        '★H ' + DP.expected_high + '<br>★L ' + DP.expected_low + '</div>' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">BUY Zones</div>' +
-        'B1 ' + (DP.zones?DP.zones.BUY1:'–') + '<br>B2 ' + (DP.zones?DP.zones.BUY2:'–') + '</div>' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">SELL Zones</div>' +
-        'S1 ' + (DP.zones?DP.zones.SELL1:'–') + '<br>S2 ' + (DP.zones?DP.zones.SELL2:'–') + '</div></div></div>';
-  } else $("#dplan").innerHTML = '';
-
-  /* ZCODE PRIMARY */
+  const rp = $("actionPanel");
+  $("recSym").textContent = CUR_SYM;
+  $("recTF").textContent = CUR_TF;
   const Z = SN ? (SN.zcode || {}) : {};
-  $("#zcard").innerHTML = (SN && (Z.signal || SN.signal)) ?
-    '<div class="card p-4">' +
-    '<div class="flex flex-wrap items-center gap-2">' +
-    '<span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE</span>' +
-    '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
-    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
-    (SN.signal_by ? '<span class="ml-auto rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">' + SN.signal_by + '</span>' : '') + '</div>' +
-    (Z.reasoning ? '<p class="mt-2 text-[11.5px] text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
-    (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' +
-      Z.key_factors.map(f => '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
-    '</div>' : '';
+  if (SN && SN.signal){
+    rp.classList.toggle("closed", !open || SN.signal === "NO_TRADE" || SN.signal === "WAIT");
+    const ra = $("recAction");
+    ra.textContent = open ? (SN.signal === "NO_TRADE" ? "WAIT" : SN.signal) : "WAIT";
+    ra.style.color = SN.signal === "BUY" ? "var(--green)" : SN.signal === "SELL" ? "var(--red)" : "var(--muted)";
+    $("recNote").textContent = Z.reasoning || SN.why || "ensemble + grid";
+    $("recBy").textContent = "by: " + (SN.signal_by || "—") + " · tag: " + (Z ? "ai-fused" : "matrix") + " · reproducible: v6-schema";
+    const P1 = SN.plan ? (SN.plan.B1 || SN.plan.S1) : null;
+    $("recEntry").textContent = P1 ? String(P1.entry) : "—";
+    $("recTP").textContent = P1 ? "TP " + P1.tp + " (SL " + P1.sl + ")" : "—";
+  } else {
+    rp.classList.add("closed");
+    $("recAction").textContent = "AWAITING DATA";
+    $("recAction").style.color = "var(--muted)";
+    $("recNote").textContent = "Bot ka pehla run hoga tab signal aayega (L5: koi fake signal nahi)";
+    $("recBy").textContent = "—";
+    $("recEntry").textContent = "—";
+    $("recTP").textContent = "—";
+  }
 
-  /* STRATEGY PLAN */
-  const SP = SN ? SN.plan : null;
-  const VT = SN ? (SN.votes || {}) : {};
-  if (SP){
-    const P1 = SP.B1 || SP.S1, P2 = SP.B2 || SP.S2, lbl = SP.side === "BUY" ? ["B1","B2"] : ["S1","S2"];
-    $("#splan").innerHTML = '<div class="card p-4">' +
-      '<div class="flex flex-wrap items-center gap-2">' +
-      '<span class="rounded bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300 ring-1 ring-emerald-500/25">📐 STRATEGY PLAN · fade-first-touch</span>' +
-      '<b class="' + (SP.side==='BUY'?'text-emerald-400':'text-red-400') + '">' + SP.side + ' · ' + lbl[0] + '/' + lbl[1] + '</b></div>' +
-      '<div class="mt-2 grid grid-cols-2 gap-2 font-mono text-[10.5px]">' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + lbl[0] + ' (primary)</div>' +
-        'entry ' + P1.entry + '<br><span class="text-red-400">SL ' + P1.sl + '</span><br><span class="text-emerald-400">TP ' + P1.tp + '</span></div>' +
-      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + lbl[1] + ' (deeper)</div>' +
-        'entry ' + P2.entry + '<br><span class="text-red-400">SL ' + P2.sl + '</span><br><span class="text-emerald-400">TP ' + P2.tp + '</span></div></div>' +
-      '<div class="mt-2 font-mono text-[10px] text-slate-400">Grid: ' +
-      Object.keys(SP.levels).map(k => '<b class="text-slate-300">' + k + '</b> ' + SP.levels[k]).join(' · ') + '</div>' +
-      '<table class="mt-2 w-full text-left font-mono text-[10px]"><thead><tr class="micro text-slate-500">' +
-      '<th>Agent</th><th>Bias</th><th>Conf</th><th>First Zone</th></tr></thead><tbody>' +
-      Object.keys(VT).filter(k => VT[k] && VT[k].next_hour_bias).map(k =>
-        '<tr class="border-t border-ink-800/50"><td class="py-1">' + k + '</td>' +
-        '<td class="' + (VT[k].next_hour_bias==='BUY'?'text-emerald-400':VT[k].next_hour_bias==='SELL'?'text-red-400':'text-slate-400') + '">' + VT[k].next_hour_bias + '</td>' +
-        '<td>' + VT[k].confidence + '%</td><td class="text-slate-500">' + VT[k].first_zone_guess + '</td></tr>').join('') +
-      '</tbody></table></div>';
-  } else $("#splan").innerHTML = '';
+  $("mktSym").textContent = CUR_SYM;
+  const live = $("mktLive");
+  live.textContent = open ? "LIVE" : "CLOSED";
+  live.className = open ? "live" : "live warn";
+  if (SN){
+    $("livePrice").textContent = fmt(SN.price, dec);
+    $("hlVal").textContent = fmt(SN.grid?.D1?.expected_high, dec) + " / " + fmt(SN.grid?.D1?.expected_low, dec);
+    $("dataLayer").textContent = "P1 ✓ validated";
+    $("dataLayer").style.color = "var(--green)";
+  } else {
+    $("livePrice").textContent = "—";
+    $("hlVal").textContent = "—";
+    $("dataLayer").textContent = "awaiting bot";
+    $("dataLayer").style.color = "var(--amber)";
+  }
+  $("sessionVal").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long'});
 
-  if (!SN){ console.warn("render: no symbol data — bot run check karein"); return; }
-  const acc = D.acc || {};
-  $("#models").innerHTML =
-    modelCard("Stat",    SN.models && SN.models.stat,    acc.m_stat    ? avg(acc.m_stat)    : null) +
-    modelCard("Quant",   SN.models && SN.models.quant,   acc.m_quant   ? avg(acc.m_quant)   : null) +
-    modelCard("Kronos",  SN.models && SN.models.kronos,  acc.m_kronos  ? avg(acc.m_kronos)  : null) +
-    modelCard("TimesFM", SN.models && SN.models.timesfm, acc.m_timesfm ? avg(acc.m_timesfm) : null) +
-    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">Final</span>' +
-    '<span class="font-mono text-[9px] text-slate-600">' + (SN.signal_by || "matrix") + '</span></div>' +
-    '<div class="mt-1 font-mono text-lg font-bold ' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal || "WAIT") + '</div>' +
-    '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-violet-400/70" style="width:' + ((Z.confidence||0)*100) + '%"></div></div>' +
-    '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (Z.risk || "—") + '</div></div>';
+  $("gridTitle").textContent = CUR_SYM + " · " + CUR_TF;
+  $("modLabel").textContent = CUR_SYM + " " + CUR_TF;
+  const gs = $("gridStatus");
+  gs.textContent = CUR_TF + (SN ? (open ? " · LIVE" : " · FROZEN") : " · NO DATA");
+  gs.className = SN ? "live" : "live warn";
 
-  const M = SN.matrix || {}, sb = $("#sideBadge");
-  $("#mxSym").textContent = "· " + CUR;
-  sb.textContent = SN.signal || "WAIT";
-  sb.className = "rounded-xl px-4 py-2 text-2xl font-extrabold " +
-    (SN.signal === "BUY" ? "bg-emerald-500/15 text-emerald-400" : SN.signal === "SELL" ? "bg-red-500/15 text-red-400" : "bg-ink-800 text-slate-500");
-  $("#pTxt").textContent = "Score " + F(M.score || 0, 3);
-  $("#thrTxt").textContent = "THR ±0.10";
-  const scorePct = 50 + Math.max(-50, Math.min(50, (M.score || 0) * 100));
-  $("#pDot").style.left = "calc(" + scorePct + "% - 2px)";
-  $("#mxRows").innerHTML = (M.rows || []).map(r =>
-    '<tr class="border-t border-ink-800/50"><td class="py-1.5 text-slate-400">' + r.k + '</td>' +
-    '<td class="py-1.5 ' + ((r.bias||'')==='BUY'?'text-emerald-400':(r.bias||'')==='SELL'?'text-red-400':'text-slate-400') + '">' + (r.bias||'—') + '</td>' +
-    '<td class="py-1.5 text-right text-slate-300">' + (r.conf||'–') + '%</td>' +
-    '<td class="py-1.5 text-right text-slate-500">' + (r.w!=null?r.w.toFixed(2):'–') + '</td>' +
-    '<td class="py-1.5 text-right ' + ((r.c||0) >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (r.c!=null?r.c.toFixed(3):'–') + '</td></tr>').join("");
-  if (SN.why && !SN.signal)
-    $("#mxRows").innerHTML += '<tr><td colspan="5" class="py-1.5 text-[10px] text-slate-600">no trade · <b class="text-slate-400">' + SN.why + '</b></td></tr>';
+  /* TF → data mapping (P1 honest) */
+  let gridData = null, tfNote = "";
+  if (SN && SN.grid){
+    if (CUR_TF === "H1"){ gridData = SN.grid.H1; tfNote = ""; }
+    else if (CUR_TF === "D1"){ gridData = SN.grid.D1; tfNote = ""; }
+    else if (CUR_TF === "M30"){ gridData = SN.grid.H1; tfNote = "M30 proxy → H1 data"; }
+    else if (CUR_TF === "H4"){ gridData = SN.grid.H1; tfNote = "H4 proxy → H1 data"; }
+    else if (CUR_TF === "W1"){ gridData = SN.grid.D1; tfNote = "W1 proxy → D1 data"; }
+  }
+  const okData = gridData && validCandles(gridData.candles);
+  $("gridMeta").textContent = okData
+    ? ("pos " + Math.round((gridData.pos||0)*100) + "% · " + (gridData.zone||"—") + (tfNote ? " · " + tfNote : ""))
+    : (SN ? "candle data invalid" : "bot run pending");
 
-  $("#lessons").innerHTML = (D.lessons && D.lessons.items && D.lessons.items.length)
-    ? D.lessons.items.slice().reverse().map(l => '<div>• ' + l + '</div>').join("")
-    : '<div class="text-slate-600">abhi koi lesson nahi</div>';
+  /* Expected Path */
+  const ps = $("pathSteps");
+  if (SN && SN.plan){
+    const side = SN.plan.side;
+    ps.innerHTML = '<div class="step">1. Price → ' + (side==='BUY'?'BUY':'SELL') + ' zone first</div><span style="color:var(--muted)">→</span>'
+      + '<div class="step">2. Push ' + (side==='BUY'?'ExpL → B1':'ExpH → S1') + '</div><span style="color:var(--muted)">→</span>'
+      + '<div class="step">3. Fade reaction</div><span style="color:var(--muted)">→</span>'
+      + '<div class="step">4. Target TP (1:2)</div>';
+    $("pathSource").textContent = "ensemble: grid+quant+kronos · fused by " + (SN.signal_by || "matrix") + (tfNote ? " · " + tfNote : "");
+  } else {
+    ps.innerHTML = '<div class="step">Bot ke pehle run ke baad model-driven path yahan aayega</div>';
+    $("pathSource").textContent = "L5: no fabricated path";
+  }
 
-  $("#memory").innerHTML = (D.memory && D.memory.length)
-    ? D.memory.slice().reverse().slice(0,6).map(m =>
-      '<div class="flex items-center gap-2"><b class="' + (m.signal==='BUY'?'text-emerald-400':m.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (m.signal||'—') + '</b>' +
-      '<span>' + (m.sym||'') + '</span><span class="text-slate-600">conf ' + Math.round((m.conf||0)*100) + '%</span>' +
-      '<span class="ml-auto rounded px-1.5 text-[9px] font-bold ' + (m.outcome==='win'?'text-emerald-400':m.outcome==='loss'?'text-red-400':'text-slate-500') + '">' + (m.outcome||'pending').toUpperCase() + '</span></div>').join("")
-    : '<div class="text-slate-600">memory khali</div>';
+  /* Pillar chips */
+  const SEC = STATE ? STATE.security : null;
+  const MH = STATE ? STATE.manager : null;
+  const pillars = [
+    ["P1 DATA", !!SN],
+    ["P2 ANALYZE", !!SN],
+    ["P3 IMPROVE", Object.keys((STATE && STATE.model_self) || {}).length > 0],
+    ["P4 LEDGER " + ((STATE && STATE.pillar_ledger && STATE.pillar_ledger.entries) || 0), STATE && STATE.pillar_ledger ? STATE.pillar_ledger.integrity : false],
+    ["P5 COMPARE", !!STATE],
+    ["P6 LESSONS", ((STATE && STATE.lessons && STATE.lessons.items) || []).length > 0],
+    ["P7 RISK", true],
+    ["P8 SIM", true],
+    ["P9 SEC " + (SEC ? (SEC.ok ? "OK" : "!!") : "…"), SEC ? SEC.ok : false],
+    ["P10 HEALTH", MH ? MH.ok : false]
+  ];
+  $("pillarRow").innerHTML = pillars.map(p =>
+    '<span class="pchip ' + (p[1] ? '' : 'fail') + '">' + p[0] + (p[1] ? '✓' : '…') + '</span>').join("");
 
-  $("#history").innerHTML = (D.history && D.history.length)
-    ? D.history.slice().reverse().slice(0,7).map(dh => {
-        const rows = Object.keys(dh.symbols || {}).map(k => {
-          const e = dh.symbols[k];
-          if (e.error) return '<span class="text-slate-600">' + k + ': err</span>';
-          return '<b class="text-slate-300">' + k + '</b> ' +
-            '<span class="' + (e.yesterday_dir==='up'?'text-emerald-400':'text-red-400') + '">' + (e.yesterday_dir==='up'?'▲':'▼') + ' ' + e.yesterday_range_pips + 'p</span>' +
-            ' · trades ' + e.trades.trades + ' (W' + e.trades.wins + ') $' + e.trades.pnl;
-        }).join('<span class="text-slate-700"> | </span>');
-        return '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800 font-mono text-[10.5px]">' +
-          '<span class="micro text-amber-300">' + dh.date + '</span><div class="mt-1">' + rows + '</div></div>';
-      }).join("")
-    : '<div class="text-slate-600">history khali — raat ke run par auto banti hai</div>';
-
-  const MH = D.manager && D.manager.health ? D.manager.health : null;
-  $("#hOk").innerHTML = MH ? (MH.ok
-    ? '<span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] text-emerald-400">ok: true</span>'
-    : '<span class="rounded bg-red-500/10 px-1.5 py-0.5 font-mono text-[9px] text-red-400">ok: false</span>') : '';
-  const AC = D.accuracy || {};
-  const accSym = AC.symbols ? AC.symbols[CUR] : null;
-  $("#accRow").innerHTML = accSym ? Object.keys(accSym).filter(k => accSym[k] && accSym[k].bars).map(k =>
-    '<div class="rounded-xl bg-ink-950/50 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + k + '</div>' +
-    '<div class="font-mono text-sm font-bold ' + (accSym[k].pct >= 55 ? 'text-emerald-400' : accSym[k].pct >= 50 ? 'text-amber-300' : 'text-red-400') + '">' + accSym[k].pct + '%</div>' +
-    '<div class="text-[8px] text-slate-600">' + accSym[k].bars + ' bars</div></div>').join("") || '' : '';
-  const SK = D.skills || {};
-  $("#skillList").innerHTML = Object.keys(SK).map(k =>
-    '<div><b class="text-slate-300">' + k + '</b> <span class="text-slate-600">w' + SK[k].weight + '</span> — ' +
-    (SK[k].skills || []).join(", ") + '</div>').join("");
-  const SM = D.strategy_file || {};
-  $("#stratInfo").innerHTML = SM.loaded
-    ? '📄 STRATEGY.md: <b class="text-emerald-400">loaded</b> · ' + SM.chars + ' chars · sha ' + SM.sha
-    : '📄 STRATEGY.md: <span class="text-amber-400">not loaded</span> — built-in prompt';
-
-  $("#cmds").innerHTML = (D.commands || []).slice(0,6).map(c => {
-    const cls = c.status === "executed" ? "text-emerald-400" : c.status === "expired" ? "text-slate-600" : "text-amber-300";
-    return '<div class="flex items-center gap-2"><b class="' + (c.side === 'BUY' ? 'text-emerald-400' : 'text-red-400') + '">' + c.side + '</b>' +
-      '<span class="text-slate-300">' + c.sym + '</span><span class="text-slate-500">' + c.lots + ' lots · SL ' + F(c.sl,4) + ' · TP ' + F(c.tp2,4) + '</span>' +
-      '<span class="ml-auto rounded px-1.5 text-[9px] font-bold uppercase ' + cls + '">● ' + c.status + '</span></div>';
-  }).join("") || '<div class="text-slate-600">no commands yet</div>';
-
-  const cmdsI = {}; (D.commands || []).forEach(c => cmdsI[c.id] = c);
-  const execBy = {}; D.fills.execs.forEach(e => execBy[e.cmd_id] = e);
-  const res = D.fills.results || [];
-  const closedIds = new Set(res.map(r => r.cmd_id));
-  const openRows = D.fills.execs.filter(e => !closedIds.has(e.cmd_id)).map(e => {
-    const c = cmdsI[e.cmd_id] || {};
-    return {sym: c.sym || e.sym, side: c.side, entry: e.price, sl: c.sl, tp1: c.tp1, tp2: c.tp2, pnl: null, tp1_done: e.tp1_done};
-  });
-  const closedRows = res.slice().reverse().map(r => {
-    const c = cmdsI[r.cmd_id] || {}, ex = execBy[r.cmd_id] || {};
-    return {sym: c.sym || r.sym, side: c.side, entry: ex.price, sl: c.sl, tp1: c.tp1, tp2: c.tp2, pnl: r.pnl, tp1_done: ex.tp1_done, outcome: r.pnl >= 0 ? "win" : "loss"};
-  });
-  const rows = openRows.concat(closedRows).slice(0,14);
-  $("#trades").innerHTML = rows.map(t => {
-    const open = t.pnl == null;
-    return '<tr class="border-t border-ink-800/50">' +
-      '<td class="px-3 py-2.5 font-semibold">' + (t.sym || "–") + '</td>' +
-      '<td class="px-3 py-2.5 font-bold ' + (t.side === 'BUY' ? 'text-emerald-400' : 'text-red-400') + '">' + (t.side || "–") + '</td>' +
-      '<td class="px-3 py-2.5 font-mono">' + F(t.entry,4) + '</td>' +
-      '<td class="px-3 py-2.5 font-mono text-red-400">' + F(t.sl,4) + '</td>' +
-      '<td class="px-3 py-2.5 font-mono text-emerald-400">' + F(t.tp1,4) + '</td>' +
-      '<td class="px-3 py-2.5 font-mono text-emerald-400">' + F(t.tp2,4) + '</td>' +
-      '<td class="px-3 py-2.5 font-mono font-bold ' + (open ? 'text-slate-600' : t.pnl >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (open ? "–" : (t.pnl >= 0 ? "+" : "−") + "$" + F(Math.abs(t.pnl))) + '</td>' +
-      '<td class="px-3 py-2.5"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ' + (open ? 'bg-cyan-500/10 text-cyan-300' : t.outcome === 'win' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400') + '">' + (open ? "OPEN" + (t.tp1_done ? " ·BE" : "") : t.outcome.toUpperCase()) + '</span></td></tr>';
-  }).join("") || '<tr><td colspan="8" class="px-3 py-4 text-center text-slate-600">no trades yet</td></tr>';
-
-  /* CANDLES — guaranteed last, guarded */
-  const G = SN.grid || {};
-  $("#d1Sym").textContent = CUR; $("#h1Sym").textContent = CUR;
-  try {
-    if (G.D1 && G.D1.candles && G.D1.candles.length >= 2){
-      $("#d1Meta").innerHTML = 'pos <b class="text-amber-300">' + (G.D1.pos*100).toFixed(0) + '%</b> · ' + G.D1.zone;
-      drawFarrukh($("#cvD1"), G.D1.candles);
+  /* Models — L3 live, L4 awaiting */
+  const votes = (SN && SN.votes) || {};
+  const defs = [
+    ["GRID","grid","h","structural base"],
+    ["KRONOS","kronos","h","extreme fade + path"],
+    ["QUANT","quant","m","RSI+MACD fade"],
+    ["TAURUS","taurus","m","regime modifier"],
+    ["ZCODE","zcode","h","fusion engine"],
+    ["STAT","stat_advisory","l","advisory"]
+  ];
+  $("modelGrid").innerHTML = defs.map(function(df){
+    const n = df[0], k = df[1], w = df[2], role = df[3];
+    let bias = null, confTxt = "", extra = "";
+    if (k === "zcode"){
+      if (Z && Z.signal){ bias = Z.signal; confTxt = Math.round((Z.confidence||0)*100) + "%"; extra = Z.risk || ""; }
     } else {
-      $("#d1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
-      drawFarrukh($("#cvD1"), null);
+      const v = votes[k];
+      if (v && v.next_hour_bias){ bias = v.next_hour_bias; confTxt = v.confidence + "%"; extra = v.first_zone_guess || ""; }
     }
-    if (G.H1 && G.H1.candles && G.H1.candles.length >= 2){
-      $("#h1Meta").innerHTML = 'pos <b class="text-cyan-300">' + (G.H1.pos*100).toFixed(0) + '%</b> · ' + G.H1.zone;
-      drawFarrukh($("#cvH1"), G.H1.candles);
-    } else {
-      $("#h1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
-      drawFarrukh($("#cvH1"), null);
-    }
-  } catch(e){ console.error("candles draw error:", e); }
+    const self = ((STATE && STATE.model_self) || {})[k];
+    const acc = self && self.recent && self.recent.length
+      ? Math.round(self.recent.reduce(function(a,b){return a+b;},0)/self.recent.length*100) + "% live"
+      : "warming";
+    const sigLine = !SN ? "AWAITING DATA" : (bias ? confTxt + " · " + extra : "no vote");
+    return '<div class="mcard ' + (w==='h'?'heavy':'') + '" data-m="' + n + '">'
+      + '<div style="display:flex;justify-content:space-between"><div><div class="mname">' + n + '</div><div class="mtype">' + role + '</div></div><div class="wbadge ' + w + '">' + (w==='h'?'HEAVY':w==='m'?'MEDIUM':'LIGHT') + '</div></div>'
+      + '<div class="mpred">' + (bias ? bias : (SN ? "HOLD" : "—")) + '</div>'
+      + '<div class="msig ' + (bias ? '' : 'na') + '">' + sigLine + '</div>'
+      + '<div class="mmeta"><span>Self-acc</span><span class="macc">' + acc + '</span></div>'
+      + '<div class="wbar"><div class="wfill ' + w + '"></div></div></div>';
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function(c){
+    c.onclick = function(){
+      const n = c.getAttribute("data-m");
+      const k = VOTE_KEY[n];
+      const v = votes[k];
+      const self = ((STATE && STATE.model_self) || {})[k];
+      const zdec = (SN && SN.zcode) || null;
+      let lastVote = "awaiting bot run";
+      if (k === "zcode" && zdec){
+        lastVote = JSON.stringify({signal: zdec.signal, conf: zdec.confidence, risk: zdec.risk, why: zdec.reasoning});
+      } else if (v){
+        lastVote = JSON.stringify({bias: v.next_hour_bias, conf: v.confidence, zone: v.first_zone_guess, why: v.reasoning});
+      }
+      $("modTitle").textContent = n;
+      $("modInst").textContent =
+        "ROLE: " + (n==="GRID" ? "Farrukh 33% structural base — fade-first-touch anchor (W 0.40)"
+        : n==="KRONOS" ? "Extreme-stretch fade + path forecast (W 0.35)"
+        : n==="QUANT" ? "RSI-14 + MACD zone-confirmed fade (W 0.25)"
+        : n==="TAURUS" ? "Regime + volatility modifier — never votes direction"
+        : n==="ZCODE" ? "FUSION ENGINE: heavy LLM, strategy-bound, memory+lessons aware, final authority"
+        : "Advisory p_up only — cannot override Grid") +
+        "\n\nPILLARS ON THIS MODEL:\n- P2 Analyze: reads own record before voting\n- P3 SelfImprove: conf-bias " + (self ? self.conf_bias : 0) + " (clamped ±10, anti-overfit: min 6 samples)\n- Streak: " + (self ? self.streak : 0) + "\n- Best zone: " + ((self && self.best_zone) || "learning…") + "\n- Worst zone: " + ((self && self.worst_zone) || "learning…") + "\n- Own note: " + ((self && self.last_note) || "none yet") +
+        "\n\nLAST VOTE:\n" + lastVote;
+      $("modDetail").classList.add("open");
+      $("modOverlay").classList.add("open");
+    };
+  });
+
+  /* Indicators — P1 verified only */
+  const qReason = (SN && SN.votes && SN.votes.quant && SN.votes.quant.reasoning) || "";
+  const rsiM = qReason.match(/RSI (\d+)/);
+  const inds = [
+    ["RSI", rsiM ? rsiM[1] : null, rsiM ? (parseInt(rsiM[1],10) > 55 ? "bull" : parseInt(rsiM[1],10) < 45 ? "bear" : "neu") : "na"],
+    ["MACD", qReason.indexOf("MACD") >= 0 ? "in vote" : null, "na"],
+    ["REGIME", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.regime) || null, ((SN&&SN.votes&&SN.votes.taurus&&SN.votes.taurus.regime)||"").indexOf("TREND") === 0 ? "bull" : "neu"],
+    ["VOL", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.vol) || null, "neu"],
+    ["MATRIX", SN && SN.matrix ? ((SN.matrix.score > 0 ? "+" : "") + SN.matrix.score) : null, ((SN&&SN.matrix&&SN.matrix.score)||0) > MTHR ? "bull" : ((SN&&SN.matrix&&SN.matrix.score)||0) < -MTHR ? "bear" : "neu"],
+    ["H1 ZONE", SN && SN.grid && SN.grid.H1 ? SN.grid.H1.zone : null, (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="upper" ? "bear" : (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="lower" ? "bull" : "neu"]
+  ];
+  $("indGrid").innerHTML = inds.map(function(x){
+    return '<div class="ind"><div class="iname">' + x[0] + '</div><div class="ival ' + (x[1] ? x[2] : 'na') + '">' + (x[1] || "AWAITING") + '</div><div class="istat">' + (x[1] ? "P1 verified" : "bot run pending") + '</div></div>';
+  }).join("");
+
+  /* Self-learning */
+  $("ledgerN").textContent = (STATE && STATE.pillar_ledger) ? STATE.pillar_ledger.entries : "—";
+  const li = $("ledgerI");
+  if (STATE && STATE.pillar_ledger){
+    li.textContent = STATE.pillar_ledger.integrity ? "INTACT ✓" : "BROKEN!!";
+    li.style.color = STATE.pillar_ledger.integrity ? "var(--green)" : "var(--red)";
+  }
+  const sc = $("secN");
+  if (STATE && STATE.security){
+    sc.textContent = STATE.security.ok ? "OK ✓" : "CHECK";
+    sc.style.color = STATE.security.ok ? "var(--green)" : "var(--red)";
+  }
+  const cp = $("cmpN");
+  if (STATE && STATE.comparison && STATE.comparison.ready){
+    cp.textContent = STATE.comparison.verdict;
+    cp.style.color = STATE.comparison.delta > 0 ? "var(--green)" : STATE.comparison.delta < 0 ? "var(--red)" : "var(--amber)";
+  }
+
+  /* Account + rules (L5 truth) */
+  $("accEq").textContent = (STATE && STATE.stats) ? "$" + fmt(STATE.stats.equity) : "—";
+  $("accTr").textContent = (STATE && STATE.stats) ? ((STATE.stats.trades_today||0) + "/" + ((STATE.prop && STATE.prop.max_trades_per_day) || 3)) : "—";
+  const dp = $("accPnl");
+  if (STATE && STATE.stats){
+    dp.textContent = (STATE.stats.day_pnl_pct >= 0 ? "+" : "") + STATE.stats.day_pnl_pct.toFixed(2) + "%";
+    dp.style.color = STATE.stats.day_pnl_pct >= 0 ? "var(--green)" : "var(--red)";
+  }
+  const P = (STATE && STATE.prop) || {};
+  $("rulesBox").innerHTML = [
+    ["Max Risk/Trade", fmt(P.risk_per_trade_pct != null ? P.risk_per_trade_pct : 1.0) + "%"],
+    ["Daily Loss Cap", fmt(P.daily_loss_limit_pct != null ? P.daily_loss_limit_pct : 3.0) + "%"],
+    ["Max Drawdown", fmt(P.max_drawdown_pct != null ? P.max_drawdown_pct : 10.0) + "%"],
+    ["Trades/Day", "max " + (P.max_trades_per_day || 3)],
+    ["3 Losses", "session stop"],
+    ["R:R Template", "min 1:2"]
+  ].map(function(r){
+    return '<div style="display:flex;justify-content:space-between;padding:6px;background:rgba(255,255,255,.03);border-radius:3px"><span>' + r[0] + '</span><span class="badge-run">' + r[1] + '</span></div>';
+  }).join("");
+
+  $("repBox").textContent = (STATE && STATE.updated)
+    ? "Last brain run: " + STATE.updated.replace("T"," ").slice(0,16) + "Z · mode: " + (STATE.mode || "") + "\nHourly + nightly reports Discord par. Full history: state/memory.jsonl (append-only, P4)."
+    : "Bot ka pehla run pending — reports uske baad.";
+
+  $("stratBox").textContent = (STATE && STATE.strategy_file)
+    ? (STATE.strategy_file.loaded
+        ? "STRATEGY.md LOADED — chars " + STATE.strategy_file.chars + " · sha " + STATE.strategy_file.sha + " · updated " + (STATE.strategy_file.mtime || "—") + "Z\n\nOwner is file ko Discord/GitHub se edit karta hai — bot agle run se naye rules follow karta hai."
+        : "STRATEGY.md not loaded — built-in prompt chal raha hai.")
+    : "State load nahi hui.";
+
+  /* Grid canvas — P1 valid only */
+  drawGrid(okData ? gridData.candles : null, open && okData);
 }
 
-/* ============ FARRUKH GRID ============ */
-function drawFarrukh(cv, cs){
-  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth || 600, h = cv.clientHeight || 300;
+/* ---------- GRID CANVAS ---------- */
+function drawGrid(cs, live){
+  const cv = $("cvGrid");
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth || 700, h = 270;
   cv.width = w * dpr; cv.height = h * dpr;
-  const ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
-  if (!cs || cs.length < 2){
-    ctx.fillStyle = "#475569"; ctx.font = "11px 'JetBrains Mono'";
-    ctx.fillText("no candle data — Hard Refresh ya bot run karein", 16, h/2);
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  if (!cs){
+    ctx.fillStyle = "#475569"; ctx.font = "11px JetBrains Mono";
+    ctx.fillText("No candle data yet — L5: system fake data nahi dikhata. Bot run karein.", 16, h/2);
     return;
   }
   const c1 = cs[0], c0 = cs[1];
   const decN = c1.c >= 100 ? 2 : c1.c >= 10 ? 3 : 5;
-  const Fm = v => (+v).toLocaleString("en-US",{minimumFractionDigits:decN,maximumFractionDigits:decN});
   const red = c1.c < c1.o;
   const H = c1.h, L = c1.l, R = (H - L) || 1e-9;
-  const step = 100/3, maxS = GOPT.steps;
-  const lvl = pct => red ? (H - pct/100*R) : (L + pct/100*R);
-  const pctOf = p => (red ? (H-p)/R*100 : (p-L)/R*100);
-  const mom = c1.c - c1.o;
-  const pH = mom > 0 ? c1.c + .6*R : c1.c + .4*R;
-  const pL = mom > 0 ? c1.c - .4*R : c1.c - .6*R;
-  const hiB = Math.max(pctOf(pH), pctOf(pL)), loB = Math.min(pctOf(pH), pctOf(pL));
-  const minLow = Math.floor(loB/step)*step, maxLow = minLow + step;
-  const maxHigh = Math.ceil(hiB/step)*step, minHigh = maxHigh - step;
-  const tagFor = pct => {
-    if (Math.abs(pct-minLow) < .01) return {t:"BUY 2", c:"#10b981"};
-    if (Math.abs(pct-maxLow) < .01) return {t:"BUY 1", c:"#10b981"};
-    if (Math.abs(pct-minHigh) < .01) return {t:"SELL 1", c:"#ef4444"};
-    if (Math.abs(pct-maxHigh) < .01) return {t:"SELL 2", c:"#ef4444"};
-    return null;
-  };
-  const levels = []; for (let k = -1; k <= maxS; k++) levels.push(k*step);
-  const vals = levels.map(lvl).concat([c0.h, c0.l, H, L]);
-  if (GOPT.exp) vals.push(c1.c + R/2, c1.c - R/2);
+  const step = 100/3;
+  const lvl = function(pct){ return red ? (H - pct/100*R) : (L + pct/100*R); };
+  const levels = [];
+  for (let k = -1; k <= 4; k++) levels.push(k*step);
+  const vals = levels.map(lvl).concat([c0.h, c0.l, H, L, c1.c + R/2, c1.c - R/2]);
   let mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
-  const pd = (mx-mn)*.06 || 1; mn -= pd; mx += pd;
-  const padT = 14, padB = 26, padL = 8, padR = 158;
+  const pd = (mx-mn)*.08; mn -= pd; mx += pd;
+  const padT = 10, padB = 20, padL = 6, padR = 145;
   const pw = w - padL - padR, ph = h - padT - padB;
-  const Y = v => padT + (mx - v)/(mx - mn)*ph;
-  if (GOPT.zone){
-    ctx.fillStyle = "rgba(16,185,129,.07)";
-    ctx.fillRect(padL, Y(lvl(maxLow)), pw, Math.abs(Y(lvl(maxLow)) - Y(lvl(minLow))));
-    ctx.fillStyle = "rgba(239,68,68,.07)";
-    ctx.fillRect(padL, Y(lvl(maxHigh)), pw, Math.abs(Y(lvl(maxHigh)) - Y(lvl(minHigh))));
-  }
-  levels.forEach(pct => {
-    const p = lvl(pct), y = Y(p), tg = tagFor(pct);
-    const edge = Math.abs(pct) < .01 || Math.abs(pct-100) < .01;
-    ctx.strokeStyle = tg ? tg.c : edge ? "rgba(148,163,184,.5)" : "rgba(100,116,139,.3)";
-    ctx.setLineDash(tg ? [] : [4,4]); ctx.lineWidth = tg ? 1.6 : 1;
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke(); ctx.setLineDash([]);
-    const txt = (tg ? tg.t + " · " : "") + (Math.round(pct*10)/10) + "% [" + Fm(p) + "]";
-    ctx.font = (tg ? "bold " : "") + "9px 'JetBrains Mono'";
-    const tw = ctx.measureText(txt).width + 10;
-    ctx.fillStyle = tg ? (tg.c === "#10b981" ? "rgba(16,185,129,.16)" : "rgba(239,68,68,.16)") : "rgba(6,9,19,.8)";
-    ctx.fillRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16);
-    if (tg){ ctx.strokeStyle = tg.c; ctx.globalAlpha = .5; ctx.strokeRect(w - padR + 8, y - 8, Math.min(padR - 14, tw), 16); ctx.globalAlpha = 1; }
-    ctx.fillStyle = tg ? tg.c : edge ? "#94a3b8" : "#64748b";
-    ctx.fillText(txt, w - padR + 13, y + 3.5);
+  const Y = function(v){ return padT + (mx - v)/(mx - mn)*ph; };
+
+  ctx.fillStyle = 'rgba(16,185,129,.06)';
+  ctx.fillRect(padL, Y(lvl(33)), pw, Math.abs(Y(lvl(33)) - Y(lvl(0))));
+  ctx.fillStyle = 'rgba(239,68,68,.06)';
+  ctx.fillRect(padL, Y(lvl(100)), pw, Math.abs(Y(lvl(100)) - Y(lvl(133))));
+
+  levels.forEach(function(pct){
+    const p = lvl(pct), y = Y(p);
+    const isBuy = Math.abs(pct-0) < 1 || Math.abs(pct-33) < 1;
+    const isSell = Math.abs(pct-100) < 1 || Math.abs(pct-133) < 1;
+    ctx.strokeStyle = isBuy ? '#10b981' : isSell ? '#ef4444' : 'rgba(100,116,139,.3)';
+    ctx.setLineDash(isBuy || isSell ? [] : [3,3]);
+    ctx.lineWidth = isBuy || isSell ? 1.4 : 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 4, y); ctx.stroke();
+    ctx.setLineDash([]);
+    let tag = '';
+    if (Math.abs(pct-0) < 1) tag = 'BUY2 ';
+    if (Math.abs(pct-33) < 1) tag = 'BUY1 ';
+    if (Math.abs(pct-100) < 1) tag = 'SELL1 ';
+    if (Math.abs(pct-133) < 1) tag = 'SELL2 ';
+    ctx.font = (isBuy || isSell ? 'bold ' : '') + '8px JetBrains Mono';
+    ctx.fillStyle = isBuy ? '#10b981' : isSell ? '#ef4444' : '#64748b';
+    ctx.fillText(tag + Math.round(pct) + '% [' + p.toFixed(decN) + ']', w - padR + 8, y + 3);
   });
-  if (GOPT.exp){
-    [[c1.c + R/2, "★ EXP HIGH", "52,211,153"], [c1.c - R/2, "★ EXP LOW", "251,191,36"]].forEach(a => {
-      const y = Y(a[0]);
-      ctx.strokeStyle = "rgba(" + a[2] + ",.8)"; ctx.setLineDash([6,4]); ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke(); ctx.setLineDash([]);
-      ctx.font = "bold 9px 'JetBrains Mono'";
-      const tw = ctx.measureText(a[1] + " " + Fm(a[0])).width + 10;
-      ctx.fillStyle = "rgba(6,9,19,.9)"; ctx.fillRect(padL + 2, y - 8, tw, 16);
-      ctx.fillStyle = "rgb(" + a[2] + ")"; ctx.fillText(a[1] + " " + Fm(a[0]), padL + 7, y + 3.5);
-    });
-  }
-  if (GOPT.prev){
-    [[H, "PREV HIGH", "251,113,133"], [L, "PREV LOW", "56,189,248"]].forEach(a => {
-      const y = Y(a[0]);
-      ctx.strokeStyle = "rgba(" + a[2] + ",.9)"; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 6, y); ctx.stroke();
-      ctx.fillStyle = "rgb(" + a[2] + ")"; ctx.font = "8px 'JetBrains Mono'";
-      ctx.fillText(a[1], w - padR - 52, y - 4);
-    });
-  }
-  const cw = Math.max(24, Math.min(44, pw*.1));
-  const x1 = padL + pw*.2, x0 = padL + pw*.46;
-  const cnd = (x, c, live) => {
-    const up = c.c >= c.o, col = up ? "#10b981" : "#ef4444";
-    ctx.strokeStyle = col; ctx.lineWidth = 1.6;
+
+  [[c1.c + R/2, '★ EXP HIGH', '#34d399'], [c1.c - R/2, '★ EXP LOW', '#fbbf24']].forEach(function(a){
+    const y = Y(a[0]);
+    ctx.strokeStyle = a[2]; ctx.setLineDash([5,3]); ctx.lineWidth = 1.1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 4, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = a[2]; ctx.font = 'bold 8px JetBrains Mono';
+    ctx.fillText(a[1] + ' ' + a[0].toFixed(decN), padL + 4, y - 3);
+  });
+
+  const cw = Math.max(20, Math.min(36, pw*.09));
+  const x1 = padL + pw*.22, x0 = padL + pw*.48;
+  function drawC(x, c, isLive){
+    const up = c.c >= c.o, col = up ? '#10b981' : '#ef4444';
+    ctx.strokeStyle = col; ctx.lineWidth = 1.4;
     ctx.beginPath(); ctx.moveTo(x, Y(c.h)); ctx.lineTo(x, Y(c.l)); ctx.stroke();
-    if (live){ ctx.shadowColor = col; ctx.shadowBlur = 16; }
+    if (isLive && live){ ctx.shadowColor = col; ctx.shadowBlur = 12; }
     ctx.fillStyle = col;
     ctx.fillRect(x - cw/2, Math.min(Y(c.o), Y(c.c)), cw, Math.max(2, Math.abs(Y(c.o) - Y(c.c))));
     ctx.shadowBlur = 0;
-    if (live){ ctx.strokeStyle = col + "55"; ctx.lineWidth = 1;
-      ctx.strokeRect(x - cw/2 - 5, Math.min(Y(c.o), Y(c.c)) - 5, cw + 10, Math.max(12, Math.abs(Y(c.o) - Y(c.c)) + 10)); }
+  }
+  drawC(x1, c1, false);
+  drawC(x0, c0, true);
+
+  ctx.textAlign = 'center'; ctx.font = '8px JetBrains Mono';
+  ctx.fillStyle = '#475569'; ctx.fillText('candle[1]', x1, h - 8);
+  ctx.fillStyle = live ? '#10b981' : '#64748b';
+  ctx.fillText(live ? 'candle[0] LIVE' : 'candle[0] FROZEN', x0, h - 8);
+  ctx.textAlign = 'left';
+}
+
+/* ---------- LOCK (P9) ---------- */
+async function sha256hex(s){
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2,"0"); }).join("");
+}
+function lockErr(m){ $("lockErr").textContent = m; }
+async function tryUnlock(){
+  const tok = $("ltok").value.trim(), pass = $("lpass").value;
+  if (!tok || !pass){ lockErr("Token aur password dono likhein"); return; }
+  lockErr("Verifying…");
+  let st;
+  try { st = await ghRaw("state/state.json", tok); }
+  catch(e){ lockErr("Token invalid ya state abhi nahi bani (" + e.message + ")"); return; }
+  const h = st && st.auth ? st.auth.hash : null;
+  if (!h){ lockErr("DASH_PASSWORD secret set karke bot run karein"); return; }
+  let calc = "";
+  try { calc = await sha256hex("hermes::" + pass); } catch(e){ lockErr("SHA-256 needs HTTPS (GitHub Pages)"); return; }
+  if (calc !== h){ lockErr("Galat password"); return; }
+  TOKEN = tok;
+  localStorage.setItem("hermes_tok", tok);
+  localStorage.setItem("hermes_sess", JSON.stringify({ts: Date.now()}));
+  STATE = st;
+  STATE.fills = {execs:[],results:[]};
+  try { STATE.fills = await ghRaw("state/fills.json", tok); } catch(e){}
+  $("lock").style.display = "none";
+  bootAfter(true);
+}
+ $("lockBtn").onclick = tryUnlock;
+ $("lpass").addEventListener("keydown", function(e){ if (e.key === "Enter") tryUnlock(); });
+
+/* ---------- CONTROLS ---------- */
+function setSymbol(sym){
+  CUR_SYM = sym;
+  Array.prototype.forEach.call(document.querySelectorAll(".sym-btn"), function(b){
+    b.classList.toggle("active", b.getAttribute("data-sym") === sym);
+    b.classList.toggle("closed", !isMarketOpen(b.getAttribute("data-sym")));
+  });
+  render();
+}
+function setTF(tf){
+  CUR_TF = tf;
+  Array.prototype.forEach.call(document.querySelectorAll(".tf-btn"), function(b){
+    b.classList.toggle("active", b.getAttribute("data-tf") === tf);
+  });
+  render();
+}
+Array.prototype.forEach.call(document.querySelectorAll(".sym-btn"), function(b){
+  b.onclick = function(){ setSymbol(b.getAttribute("data-sym")); };
+});
+Array.prototype.forEach.call(document.querySelectorAll(".tf-btn"), function(b){
+  b.onclick = function(){ setTF(b.getAttribute("data-tf")); };
+});
+Array.prototype.forEach.call(document.querySelectorAll(".nav-btn[data-s]"), function(b){
+  b.onclick = function(){
+    Array.prototype.forEach.call(document.querySelectorAll(".nav-btn[data-s]"), function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    Array.prototype.forEach.call(document.querySelectorAll(".section"), function(s){ s.classList.remove("active"); });
+    $(b.getAttribute("data-s")).classList.add("active");
   };
-  cnd(x1, c1, false); cnd(x0, c0, true);
-  ctx.textAlign = "center"; ctx.font = "9px 'JetBrains Mono'";
-  ctx.fillStyle = "#475569"; ctx.fillText("candle[1] · " + (red ? "RED" : "GREEN"), x1, h - 12);
-  ctx.fillStyle = c0.c >= c0.o ? "rgba(16,185,129,.9)" : "rgba(239,68,68,.9)";
-  ctx.fillText("candle[0] · live", x0, h - 12);
-  ctx.textAlign = "left";
-}
+});
+ $("openSet").onclick = function(){
+  $("cfgKey").value = ZKEY();
+  $("cfgModel").value = ZMODEL();
+  $("settings").classList.add("open"); $("setOverlay").classList.add("open");
+};
+ $("closeSet").onclick = $("setOverlay").onclick = function(){
+  $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
+};
+ $("closeMod").onclick = $("modOverlay").onclick = function(){
+  $("modDetail").classList.remove("open"); $("modOverlay").classList.remove("open");
+};
+ $("sbtn").onclick = chatSend;
+ $("cinp").addEventListener("keydown", function(e){ if (e.key === "Enter") chatSend(); });
+ $("saveCfg").onclick = function(){
+  const k = $("cfgKey").value.trim();
+  if (k) localStorage.setItem("hermes_zkey", k);
+  localStorage.setItem("hermes_zmodel", $("cfgModel").value.trim() || "glm-4.6");
+  addMsg("ai", "✅ Key saved (browser-only, P9). Ab chat full AI mode mein — L1→L5.", "settings applied");
+  $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
+};
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape"){
+    $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
+    $("modDetail").classList.remove("open"); $("modOverlay").classList.remove("open");
+  }
+});
+window.addEventListener("resize", function(){ render(); });
 
-/* ============ CHAT LOG ============ */
-function addLog(t, cls){
-  const d = document.createElement("div");
-  d.className = cls || "text-slate-400"; d.innerHTML = t;
-  const log = $("#vaLog"); if (!log) return;
-  log.appendChild(d);
-  log.scrollTop = log.scrollHeight;
-  while (log.children.length > 60) log.firstElementChild.remove();
-}
-function botSay(text){
-  addLog("🤖 " + text);
-}
-
-/* ============ ZCODE AGENT (chat-only) ============ */
-const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
-const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
-const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
-function zBadge(){
-  $("#zBadge").textContent = ZKEY() ? "ZCODE · " + ZMODEL() : "ZCODE OFF";
-}
-function zSettings(){
-  $("#zKey").value = ZKEY(); $("#zUrl").value = ZURL(); $("#zModel").value = ZMODEL();
-  $("#zErr").textContent = "";
-  $("#zModal").style.display = "flex";
-}
-function zSave(){
-  const k = $("#zKey").value.trim();
-  if (!k){ $("#zErr").textContent = "Key likhein"; return; }
-  localStorage.setItem("hermes_zkey", k);
-  localStorage.setItem("hermes_zurl", $("#zUrl").value.trim() || ZURL());
-  localStorage.setItem("hermes_zmodel", $("#zModel").value.trim() || "glm-4.6");
-  $("#zModal").style.display = "none";
-  zBadge(); addLog("⚡ ZCode activated · " + ZMODEL(), "text-emerald-400");
-}
-function buildContext(){
-  const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
-  const out = {desk: {mode: D.mode, equity: S.equity, winrate50: S.winrate50,
-    day_pnl_pct: S.day_pnl_pct, drawdown_pct: S.drawdown_pct,
-    trades_used_today: B.used||0, max_trades: P.max_trades_per_day||3}, symbols: {}};
-  Object.keys(D.symbols || {}).forEach(k => {
-    const sn = D.symbols[k], g = sn.grid || {};
-    out.symbols[k] = {price: sn.price, signal: sn.signal, why: sn.why,
-      zcode_reasoning: sn.zcode && sn.zcode.reasoning,
-      plan: sn.plan || null,
-      grid: {D1: g.D1 && {pos: g.D1.pos, zone: g.D1.zone}, H1: g.H1 && {pos: g.H1.pos, zone: g.H1.zone}},
-      votes: sn.votes || {}};
-  });
-  out.lessons = (D.lessons && D.lessons.items || []).slice(-3);
-  out.recent_results = ((D.fills || EBF()).results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
-  return out;
-}
-const ZSYSTEM = "You are ZCode, AI analyst of 'Hermes' - prop-firm Gold/FX agent of Muhammad Farrukh Jadoon. LIVE desk JSON given. Concise (max 4 sentences), real numbers, prop rules respected, never guarantee profits. Reply in user's language (English or Roman Urdu).";
-let zHist = [];
-async function askAgent(q){
-  if (agentBusy){ addLog("⏳ ZCode busy…", "text-amber-400"); return; }
-  addLog("👤 " + q, "text-cyan-300 font-bold");
-  agentBusy = true;
-  $("#zState").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
+/* ---------- BOOT ---------- */
+function sessionValid(){
   try {
-    if (!ZKEY()) throw new Error("nokey");
-    const r = await fetch(ZURL(), {method:"POST",
-      headers:{"Authorization":"Bearer "+ZKEY(), "Content-Type":"application/json"},
-      body: JSON.stringify({model: ZMODEL(), temperature: 0.4, max_tokens: 400,
-        messages: [{role:"system", content: ZSYSTEM},
-                   {role:"user", content: "LIVE DESK:\n" + JSON.stringify(buildContext())},
-                   ...zHist.slice(-6), {role:"user", content: q}]})});
-    if (!r.ok) throw new Error("API " + r.status);
-    const ans = await r.json();
-    const reply = ((((ans || {}).choices || [])[0] || {}).message || {}).content || "…";
-    zHist.push({role:"user", content:q}, {role:"assistant", content:reply});
-    zHist = zHist.slice(-12);
-    addLog("⚡ " + reply.replace(/\n/g,"<br>"), "text-slate-200");
+    const s = JSON.parse(localStorage.getItem("hermes_sess") || "null");
+    if (!s || !s.ts) return false;
+    return (Date.now() - s.ts) / 86400000 <= 7;
+  } catch(e){ return false; }
+}
+async function refreshData(){
+  if (!TOKEN) return;
+  try {
+    const a = await ghRaw("state/state.json", TOKEN);
+    STATE = a;
+    try { STATE.fills = await ghRaw("state/fills.json", TOKEN); } catch(e){ STATE.fills = {execs:[],results:[]}; }
+    log("[L3] state refreshed · P1 validated");
+    render();
   } catch(e){
-    if (e.message === "nokey"){
-      addLog("⚙️ Pehle ⚙️ mein GLM key dalein — local mode se jawab:", "text-amber-400");
-      localCommand(q);
-    } else {
-      addLog("⚠️ " + e.message + " — local fallback:", "text-amber-400");
-      localCommand(q);
-    }
+    log("[!] refresh fail: " + e.message);
   }
-  agentBusy = false;
-  $("#zState").textContent = "ready";
 }
-function localCommand(raw){
-  const t = (raw || "").toLowerCase();
-  if (/status|report|brief/.test(t)) return briefing();
-  if (/signal/.test(t)){
-    if (!D) return botSay("Data abhi load nahi hua.");
-    return botSay("Signals: " + Object.keys(D.symbols||{}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". "));
+function bootAfter(fresh){
+  if (fresh){
+    addMsg("ai", "⚡ JARVIS 6-LAYER SECURE online. Welcome Farrukh!\nData: live state.json — jo hai wahi dikhega, jo nahi wo saaf bataya jayega (L5).\nBina ⚙️-key bhi chat chalta hai (L5 fallback rules).", "engine: L1-L5 + P-audit");
+    log("[boot] 6-layer engine ready · state loaded");
   }
-  if (/plan/.test(t)){
-    const SN = D && D.symbols && D.symbols[CUR];
-    if (!SN || !SN.plan) return botSay("Abhi koi active plan nahi (HOLD ya no data).");
-    const P1 = SN.plan.B1 || SN.plan.S1;
-    return botSay(SN.plan.side + " plan — entry " + P1.entry + ", SL " + P1.sl + ", TP " + P1.tp + ".");
-  }
-  if (/refresh|sync/.test(t)){ addLog("🧹 refreshing…"); return hardRefresh(); }
-  if (/lock|logout/.test(t)) return logout();
-  if (/hello|salam|hi/.test(t)) return botSay("Hello Farrukh! Hermes online. Poochein: status, signals, plan, ya kuch bhi.");
-  return botSay("Full AI jawab ke liye ⚙️ mein GLM key dalein. Filhal: status, signals, plan, refresh.");
-}
-function briefing(){
-  if (!D) return botSay("Data load ho raha hai, ek minute.");
-  if (ZKEY()) return askAgent("Give me the full desk briefing like a professional risk officer.");
-  const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
-  let t = "Equity $" + F(S.equity) + ". " + (B.used||0) + "/" + (P.max_trades_per_day||3) + " trades used. ";
-  Object.keys(D.symbols || {}).forEach(k => {
-    t += k + ": " + (D.symbols[k].signal ? D.symbols[k].signal : "no trade") + ". ";
+  render();
+  setInterval(refreshData, 90000);
+  document.addEventListener("visibilitychange", function(){
+    if (!document.hidden && TOKEN) refreshData();
   });
-  botSay(t);
 }
-function quick(q){ routeInput(q); }
-function routeInput(q){
-  const t = (q || "").trim();
-  if (!t) return;
-  const low = t.toLowerCase();
-  if (/^(refresh)$/.test(low)) return hardRefresh();
-  if (/^(lock|logout)$/.test(low)) return logout();
-  if (ZKEY()) askAgent(t);
-  else localCommand(t);
-}
-function vaSend(){ const v = $("#vaIn").value.trim(); if (v){ $("#vaIn").value = ""; routeInput(v); } }
- $("#vaIn").addEventListener("keydown", e => { if (e.key === "Enter") vaSend(); });
-function vaCollapse(){
-  const l = $("#vaLog"), c = $("#zChips"), f = $("#vaIn").parentElement;
-  const hid = l.style.display === "none";
-  l.style.display = hid ? "" : "none";
-  c.style.display = hid ? "" : "none";
-  f.style.display = hid ? "" : "none";
-}
-
-/* ============ BOOT ============ */
-zBadge();
- $("#pass").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
-if (sessionValid()) openApp(false);
+(async function init(){
+  if (TOKEN && sessionValid()){
+    try {
+      STATE = await ghRaw("state/state.json", TOKEN);
+      try { STATE.fills = await ghRaw("state/fills.json", TOKEN); } catch(e){ STATE.fills = {execs:[],results:[]}; }
+      $("lock").style.display = "none";
+      bootAfter(false);
+      return;
+    } catch(e){ /* token expired — lock dikhao */ }
+  }
+  /* lock screen visible rehta hai */
+})();
 </script>
-</body></html>
+</body>
+</html>

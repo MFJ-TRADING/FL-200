@@ -14,7 +14,6 @@ body{background:radial-gradient(1200px 600px at 20% -10%,rgba(245,196,81,.06),tr
 .btn-a:hover{background:rgba(245,196,81,.22)}
 .btn-g{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.3)}
 .btn-r{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
-.btn-r:hover{background:rgba(59,130,246,.22);box-shadow:0 0 18px rgba(59,130,246,.2)}
 .chip{border-radius:9999px;padding:.15rem .6rem;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #17223b;color:#64748b;background:transparent}
 .chip.on{color:#f5c451;border-color:rgba(245,196,81,.4);background:rgba(245,196,81,.08)}
 input{outline:none}
@@ -22,6 +21,11 @@ input{outline:none}
 .micro{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
 @keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(16,185,129,0)}}
 .dot-live{animation:pulse-dot 1.6s ease infinite}
+@keyframes pulse-amber{0%,100%{opacity:1}50%{opacity:.45}}
+.dot-standby{animation:pulse-amber 2.2s ease infinite}
+@keyframes think{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.think span{display:inline-block;width:4px;height:4px;margin-right:2px;border-radius:50%;background:#f5c451;animation:think 1.2s infinite}
+.think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;animation:spin 1s linear infinite}
 </style></head>
@@ -33,7 +37,7 @@ input{outline:none}
     <div class="mb-6 text-center">
       <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-yellow-600 font-mono text-lg font-bold text-[#060913]">H</div>
       <h1 class="text-lg font-extrabold">FL-200 · HERMES</h1>
-      <p class="font-mono text-[10px] text-slate-500">v4.0 · ZCode-Primary · hard-refresh</p>
+      <p class="font-mono text-[10px] text-slate-500">v5.1 · simple-v6 brain · hard-refresh</p>
     </div>
     <input id="gtok" type="password" placeholder="GitHub Token" class="mb-3 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 font-mono text-xs"/>
     <input id="pass" type="password" placeholder="Password" class="mb-4 w-full rounded-xl border border-ink-800 bg-ink-900 px-4 py-2.5 text-sm"/>
@@ -50,7 +54,7 @@ input{outline:none}
     <div>
       <div class="flex items-center gap-2">
         <span id="agentDot" class="dot-live h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-        <h1 class="text-base font-extrabold">HERMES AGENT</h1>
+        <h1 class="text-base font-extrabold" id="hTitle">HERMES AGENT</h1>
         <span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-400">ONLINE</span>
         <span id="zBadge" class="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-500">ZCODE OFF</span>
       </div>
@@ -59,7 +63,7 @@ input{outline:none}
     <div class="ml-auto flex flex-wrap items-center gap-2">
       <span id="wr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">WR50 –</span>
       <span id="thr" class="rounded-lg bg-ink-900 px-3 py-1.5 font-mono text-[11px]">THR –</span>
-      <button onclick="hardRefresh()" class="btn btn-r" title="cache clear + fresh GitHub data + full reset">🧹 Hard Refresh</button>
+      <button onclick="hardRefresh()" class="btn btn-r">🧹 Hard Refresh</button>
       <button id="bVoice" onclick="toggleVoice()" class="btn btn-a">🔊</button>
       <button id="bWake" onclick="toggleWake()" class="btn btn-g">🎧 Wake ON</button>
       <button onclick="zSettings()" class="btn btn-a">⚙️</button>
@@ -71,6 +75,7 @@ input{outline:none}
 
   <div id="dplan"></div>
   <div id="zcard"></div>
+  <div id="splan"></div>
 
   <div class="flex flex-wrap items-center gap-2">
     <div id="tabs" class="flex flex-wrap gap-2"></div>
@@ -128,7 +133,7 @@ input{outline:none}
         </div>
       </div>
       <table class="mt-3 w-full text-left font-mono text-[11px]">
-        <thead><tr class="micro text-slate-500"><th class="py-1.5">Feature / Model</th><th class="py-1.5 text-right">W</th><th class="py-1.5 text-right">Vote</th><th class="py-1.5 text-right">Contrib</th></tr></thead>
+        <thead><tr class="micro text-slate-500"><th class="py-1.5">Model</th><th class="py-1.5">Bias</th><th class="py-1.5 text-right">Conf</th><th class="py-1.5 text-right">W</th><th class="py-1.5 text-right">Contrib</th></tr></thead>
         <tbody id="mxRows"></tbody>
       </table>
     </div>
@@ -145,7 +150,7 @@ input{outline:none}
   </div>
 
   <div class="card p-4">
-    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">📅 Daily History (5AM PKT)</h3>
+    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">📅 Daily History</h3>
     <div id="history" class="mt-3 space-y-2"></div>
   </div>
 
@@ -153,6 +158,7 @@ input{outline:none}
     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">🛡️ Skills & Health <span id="hOk" class="ml-2"></span></h3>
     <div id="accRow" class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-5"></div>
     <div id="skillList" class="mt-3 space-y-1.5 font-mono text-[10px]"></div>
+    <div id="stratInfo" class="mt-2 font-mono text-[10px] text-sky-300"></div>
   </div>
 
   <div class="card p-4">
@@ -205,7 +211,7 @@ input{outline:none}
 </div>
 
 <script>
-console.log("HERMES DASH v4.0 — candles-fix + hard-refresh");
+console.log("HERMES DASH v5.1 — complete + candles-guaranteed");
 const $ = s => document.querySelector(s);
 const CFG = HERMES_CONFIG, LS = "hermes_auth";
 let D = null, CUR = null, agentBusy = false;
@@ -252,11 +258,11 @@ function logout(){
   localStorage.removeItem(LS); localStorage.removeItem("hermes_tok");
   location.reload();
 }
-/* ===== HARD REFRESH: sab clear + fresh GitHub + full reset ===== */
 async function hardRefresh(){
-  const b = event ? event.target : null;
+  let b = null;
+  document.querySelectorAll("button").forEach(x => { if (x.textContent.indexOf("Hard Refresh") >= 0) b = x; });
   if (b){ b.innerHTML = '<span class="spin">⟳</span> Loading...'; b.disabled = true; }
-  addLog("🧹 Hard refresh: cache clear ho raha hai…");
+  addLog("🧹 Hard refresh: cache clear + fresh data…");
   try{ synth && synth.cancel(); }catch(e){}
   try{ rec && rec.abort(); }catch(e){}
   const tok = localStorage.getItem("hermes_tok");
@@ -274,11 +280,11 @@ async function hardRefresh(){
       localStorage.setItem(LS, JSON.stringify({ts: Date.now()}));
       CUR = null;
       render();
-      addLog("✅ Fresh data load ho gaya · " + (D.updated||"").replace("T"," ").slice(0,16) + "Z", "text-emerald-400");
+      addLog("✅ Fresh data loaded · " + (D.updated||"").replace("T"," ").slice(0,16) + "Z", "text-emerald-400");
       speak("Hard refresh complete. System is fresh and ready.");
     } else { location.reload(); }
   } catch(e){
-    addLog("⚠️ Fresh load fail: " + e.message + " — page reload", "text-amber-400");
+    addLog("⚠️ Fresh load fail: " + e.message, "text-amber-400");
     location.reload();
   }
   if (b){ setTimeout(() => { b.innerHTML = "🧹 Hard Refresh"; b.disabled = false; }, 1500); }
@@ -306,14 +312,38 @@ async function refresh(){
   const tok = localStorage.getItem("hermes_tok");
   if (!tok){ logout(); return; }
   const t0 = performance.now();
-  const [a, b] = await Promise.allSettled([ghRaw("state/state.json", tok), ghRaw("state/fills.json", tok)]);
+  const [a, b, u] = await Promise.allSettled([
+    ghRaw("state/state.json", tok),
+    ghRaw("state/fills.json", tok),
+    ghRaw("state/uiconfig.json", tok)
+  ]);
   if (a.status === "fulfilled"){
     D = a.value;
     D.fills = b.status === "fulfilled" ? (b.value || EBF()) : EBF();
+    if (u.status === "fulfilled" && u.value) applyUI(u.value);
     try { localStorage.setItem("hermes_cache", JSON.stringify(D)); } catch(e){}
     render();
     $("#mUpd").textContent = (D.updated||"").replace("T"," ").slice(0,16) + "Z · " + Math.round(performance.now()-t0) + "ms";
   } else if (a.reason && String(a.reason).indexOf("401") >= 0) logout();
+}
+
+/* ============ UI CONFIG ============ */
+let _uiTimer = null;
+function applyUI(ui){
+  try {
+    if (ui.title){ document.title = ui.title; const h = $("#hTitle"); if (h) h.textContent = ui.title; }
+    if (ui.accent){
+      let st = document.getElementById("uistyle");
+      if (!st){ st = document.createElement("style"); st.id = "uistyle"; document.head.appendChild(st); }
+      st.textContent = ".btn-a{color:" + ui.accent + ";border-color:" + ui.accent + "55;background:" + ui.accent + "1f}" +
+        ".chip.on{color:" + ui.accent + ";border-color:" + ui.accent + "66;background:" + ui.accent + "14}";
+    }
+    (ui.hidden || []).forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+    if (ui.refresh_sec){
+      clearInterval(_uiTimer);
+      _uiTimer = setInterval(refresh, ui.refresh_sec * 1000);
+    }
+  } catch(e){}
 }
 
 /* ============ GRID OPTS ============ */
@@ -345,7 +375,6 @@ function modelCard(name, v, acc){
 function render(){
   if (!D) return;
   D.fills = (D.fills && D.fills.execs) ? D.fills : EBF();
-  console.log("render: symbols=" + Object.keys(D.symbols||{}).join(",") + " fills=" + D.fills.execs.length);
   $("#mMode").textContent = (D.mode || "").toUpperCase();
   $("#mEq").textContent = "$" + F(D.stats && D.stats.equity);
   $("#wr").textContent = "WR50 " + F(D.stats && D.stats.winrate50, 1) + "%";
@@ -372,11 +401,10 @@ function render(){
   /* DAILY PLAN */
   const DP = (D.daily_plan && D.daily_plan.symbols) ? D.daily_plan.symbols[CUR] : null;
   if (DP && DP.yesterday_D1){
-    const zd = DP.zcode_daily || {};
     $("#dplan").innerHTML = '<div class="card p-4">' +
       '<div class="flex flex-wrap items-center gap-2">' +
-      '<span class="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-sky-300 ring-1 ring-sky-500/25">🌅 DAILY PLAN · 5AM PKT</span>' +
-      '<b class="' + (zd.bias==='BULLISH'?'text-emerald-400':zd.bias==='BEARISH'?'text-red-400':'text-slate-400') + '">' + (zd.bias || '—') + '</b>' +
+      '<span class="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-sky-300 ring-1 ring-sky-500/25">🌅 DAILY PLAN</span>' +
+      '<b class="' + (DP.yesterday_dir==='up'?'text-emerald-400':'text-red-400') + '">yest ' + DP.yesterday_dir + ' ' + DP.yesterday_range_pips + 'p</b>' +
       '<span class="ml-auto font-mono text-[9px] text-slate-600">' + (D.daily_plan.date||'') + '</span></div>' +
       '<div class="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4 font-mono text-[10px]">' +
       '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">Yest D1</div>' +
@@ -386,9 +414,7 @@ function render(){
       '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">BUY Zones</div>' +
         'B1 ' + (DP.zones?DP.zones.BUY1:'–') + '<br>B2 ' + (DP.zones?DP.zones.BUY2:'–') + '</div>' +
       '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">SELL Zones</div>' +
-        'S1 ' + (DP.zones?DP.zones.SELL1:'–') + '<br>S2 ' + (DP.zones?DP.zones.SELL2:'–') + '</div></div>' +
-      (zd.outlook ? '<p class="mt-2 text-[11px] text-slate-300">💬 ' + zd.outlook + '</p>' : '') +
-      '</div>';
+        'S1 ' + (DP.zones?DP.zones.SELL1:'–') + '<br>S2 ' + (DP.zones?DP.zones.SELL2:'–') + '</div></div></div>';
   } else $("#dplan").innerHTML = '';
 
   /* ZCODE PRIMARY */
@@ -396,26 +422,49 @@ function render(){
   $("#zcard").innerHTML = (SN && (Z.signal || SN.signal)) ?
     '<div class="card p-4">' +
     '<div class="flex flex-wrap items-center gap-2">' +
-    '<span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE-PRIMARY</span>' +
+    '<span class="rounded bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-violet-300 ring-1 ring-violet-500/25">⚡ ZCODE</span>' +
     '<b class="' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal||'NO_TRADE') + '</b>' +
-    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span></div>' +
+    '<span class="font-mono text-[10px] text-slate-500">conf ' + Math.round((Z.confidence||0)*100) + '% · risk ' + (Z.risk||'—') + '</span>' +
+    (SN.signal_by ? '<span class="ml-auto rounded bg-ink-950 px-1.5 py-0.5 font-mono text-[9px] text-slate-500">' + SN.signal_by + '</span>' : '') + '</div>' +
     (Z.reasoning ? '<p class="mt-2 text-[11.5px] text-slate-300">💬 ' + Z.reasoning + '</p>' : '') +
     (Z.key_factors && Z.key_factors.length ? '<div class="mt-2 flex flex-wrap gap-1">' +
       Z.key_factors.map(f => '<span class="rounded bg-ink-950 px-2 py-0.5 font-mono text-[9px] text-slate-400 ring-1 ring-ink-800">' + f + '</span>').join('') + '</div>' : '') +
     '</div>' : '';
 
-  if (!SN){
-    console.warn("render: SN nahi mila — D.symbols khali hai. Bot run check karein.");
-    return;
-  }
+  /* STRATEGY PLAN */
+  const SP = SN ? SN.plan : null;
+  const VT = SN ? (SN.votes || {}) : {};
+  if (SP){
+    const P1 = SP.B1 || SP.S1, P2 = SP.B2 || SP.S2, lbl = SP.side === "BUY" ? ["B1","B2"] : ["S1","S2"];
+    $("#splan").innerHTML = '<div class="card p-4">' +
+      '<div class="flex flex-wrap items-center gap-2">' +
+      '<span class="rounded bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300 ring-1 ring-emerald-500/25">📐 STRATEGY PLAN · fade-first-touch</span>' +
+      '<b class="' + (SP.side==='BUY'?'text-emerald-400':'text-red-400') + '">' + SP.side + ' · ' + lbl[0] + '/' + lbl[1] + '</b></div>' +
+      '<div class="mt-2 grid grid-cols-2 gap-2 font-mono text-[10.5px]">' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + lbl[0] + ' (primary)</div>' +
+        'entry ' + P1.entry + '<br><span class="text-red-400">SL ' + P1.sl + '</span><br><span class="text-emerald-400">TP ' + P1.tp + '</span></div>' +
+      '<div class="rounded-lg bg-ink-950/60 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + lbl[1] + ' (deeper)</div>' +
+        'entry ' + P2.entry + '<br><span class="text-red-400">SL ' + P2.sl + '</span><br><span class="text-emerald-400">TP ' + P2.tp + '</span></div></div>' +
+      '<div class="mt-2 font-mono text-[10px] text-slate-400">Grid: ' +
+      Object.keys(SP.levels).map(k => '<b class="text-slate-300">' + k + '</b> ' + SP.levels[k]).join(' · ') + '</div>' +
+      '<table class="mt-2 w-full text-left font-mono text-[10px]"><thead><tr class="micro text-slate-500">' +
+      '<th>Agent</th><th>Bias</th><th>Conf</th><th>First Zone</th></tr></thead><tbody>' +
+      Object.keys(VT).filter(k => VT[k] && VT[k].next_hour_bias).map(k =>
+        '<tr class="border-t border-ink-800/50"><td class="py-1">' + k + '</td>' +
+        '<td class="' + (VT[k].next_hour_bias==='BUY'?'text-emerald-400':VT[k].next_hour_bias==='SELL'?'text-red-400':'text-slate-400') + '">' + VT[k].next_hour_bias + '</td>' +
+        '<td>' + VT[k].confidence + '%</td><td class="text-slate-500">' + VT[k].first_zone_guess + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  } else $("#splan").innerHTML = '';
+
+  if (!SN){ console.warn("render: no symbol data — bot run check karein"); return; }
   const acc = D.acc || {};
   $("#models").innerHTML =
     modelCard("Stat",    SN.models && SN.models.stat,    acc.m_stat    ? avg(acc.m_stat)    : null) +
     modelCard("Quant",   SN.models && SN.models.quant,   acc.m_quant   ? avg(acc.m_quant)   : null) +
     modelCard("Kronos",  SN.models && SN.models.kronos,  acc.m_kronos  ? avg(acc.m_kronos)  : null) +
     modelCard("TimesFM", SN.models && SN.models.timesfm, acc.m_timesfm ? avg(acc.m_timesfm) : null) +
-    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">ZCode Final</span>' +
-    '<span class="font-mono text-[9px] text-slate-600">primary</span></div>' +
+    '<div class="card p-3"><div class="flex items-center justify-between"><span class="micro font-bold text-amber-300">Final</span>' +
+    '<span class="font-mono text-[9px] text-slate-600">' + (SN.signal_by || "matrix") + '</span></div>' +
     '<div class="mt-1 font-mono text-lg font-bold ' + (SN.signal==='BUY'?'text-emerald-400':SN.signal==='SELL'?'text-red-400':'text-slate-400') + '">' + (SN.signal || "WAIT") + '</div>' +
     '<div class="mt-1.5 h-1 overflow-hidden rounded-full bg-ink-800"><div class="h-full rounded-full bg-violet-400/70" style="width:' + ((Z.confidence||0)*100) + '%"></div></div>' +
     '<div class="mt-1 truncate text-right text-[9px] text-slate-500">' + (Z.risk || "—") + '</div></div>';
@@ -425,18 +474,18 @@ function render(){
   sb.textContent = SN.signal || "WAIT";
   sb.className = "rounded-xl px-4 py-2 text-2xl font-extrabold " +
     (SN.signal === "BUY" ? "bg-emerald-500/15 text-emerald-400" : SN.signal === "SELL" ? "bg-red-500/15 text-red-400" : "bg-ink-800 text-slate-500");
-  $("#pTxt").textContent = "P(up) " + F((M.p_up || .5) * 100, 1) + "%";
-  $("#thrTxt").textContent = "THR " + F((M.thr || .6) * 100, 0) + "%";
-  $("#pBar").style.width = ((M.p_up || .5) * 100) + "%";
-  $("#pDot").style.left = "calc(" + ((M.p_up || .5) * 100) + "% - 2px)";
-  $("#thrMark").style.left = ((M.thr || .6) * 100) + "%";
+  $("#pTxt").textContent = "Score " + F(M.score || 0, 3);
+  $("#thrTxt").textContent = "THR " + F(MTHR_DEFAULT, 2);
+  $("#pBar").style.width = (50 + (M.score || 0) * 100) + "%";
+  $("#pDot").style.left = "calc(" + (50 + (M.score || 0) * 100) + "% - 2px)";
   $("#mxRows").innerHTML = (M.rows || []).map(r =>
     '<tr class="border-t border-ink-800/50"><td class="py-1.5 text-slate-400">' + r.k + '</td>' +
-    '<td class="py-1.5 text-right text-slate-500">' + r.w.toFixed(2) + '</td>' +
-    '<td class="py-1.5 text-right ' + (r.v >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.v.toFixed(2) + '</td>' +
-    '<td class="py-1.5 text-right ' + (r.c >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + r.c.toFixed(2) + '</td></tr>').join("");
+    '<td class="py-1.5 ' + ((r.bias||'')==='BUY'?'text-emerald-400':(r.bias||'')==='SELL'?'text-red-400':'text-slate-400') + '">' + (r.bias||'—') + '</td>' +
+    '<td class="py-1.5 text-right text-slate-300">' + (r.conf||'–') + '%</td>' +
+    '<td class="py-1.5 text-right text-slate-500">' + (r.w!=null?r.w.toFixed(2):'–') + '</td>' +
+    '<td class="py-1.5 text-right ' + ((r.c||0) >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (r.c!=null?r.c.toFixed(3):'–') + '</td></tr>').join("");
   if (SN.why && !SN.signal)
-    $("#mxRows").innerHTML += '<tr><td colspan="4" class="py-1.5 text-[10px] text-slate-600">no trade · <b class="text-slate-400">' + SN.why + '</b></td></tr>';
+    $("#mxRows").innerHTML += '<tr><td colspan="5" class="py-1.5 text-[10px] text-slate-600">no trade · <b class="text-slate-400">' + SN.why + '</b></td></tr>';
 
   $("#lessons").innerHTML = (D.lessons && D.lessons.items && D.lessons.items.length)
     ? D.lessons.items.slice().reverse().map(l => '<div>• ' + l + '</div>').join("")
@@ -449,42 +498,43 @@ function render(){
       '<span class="ml-auto rounded px-1.5 text-[9px] font-bold ' + (m.outcome==='win'?'text-emerald-400':m.outcome==='loss'?'text-red-400':'text-slate-500') + '">' + (m.outcome||'pending').toUpperCase() + '</span></div>').join("")
     : '<div class="text-slate-600">memory khali</div>';
 
-  /* HISTORY */
   $("#history").innerHTML = (D.history && D.history.length)
     ? D.history.slice().reverse().slice(0,7).map(dh => {
         const rows = Object.keys(dh.symbols || {}).map(k => {
           const e = dh.symbols[k];
           if (e.error) return '<span class="text-slate-600">' + k + ': err</span>';
-          const zd = e.zcode_daily || {};
           return '<b class="text-slate-300">' + k + '</b> ' +
             '<span class="' + (e.yesterday_dir==='up'?'text-emerald-400':'text-red-400') + '">' + (e.yesterday_dir==='up'?'▲':'▼') + ' ' + e.yesterday_range_pips + 'p</span>' +
-            ' · trades ' + e.trades.trades + ' (W' + e.trades.wins + ') $' + e.trades.pnl +
-            (zd.bias ? ' · <span class="text-sky-300">' + zd.bias + '</span>' : '');
+            ' · trades ' + e.trades.trades + ' (W' + e.trades.wins + ') $' + e.trades.pnl;
         }).join('<span class="text-slate-700"> | </span>');
         return '<div class="rounded-xl bg-ink-950/50 p-2.5 ring-1 ring-ink-800 font-mono text-[10.5px]">' +
           '<span class="micro text-amber-300">' + dh.date + '</span><div class="mt-1">' + rows + '</div></div>';
       }).join("")
-    : '<div class="text-slate-600">history khali — workflow → mode=daily run karein</div>';
+    : '<div class="text-slate-600">history khali — raat ke run par auto banti hai</div>';
 
-  /* SKILLS + HEALTH + ACCURACY */
   const MH = D.manager && D.manager.health ? D.manager.health : null;
   $("#hOk").innerHTML = MH ? (MH.ok
     ? '<span class="rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[9px] text-emerald-400">ok: true</span>'
     : '<span class="rounded bg-red-500/10 px-1.5 py-0.5 font-mono text-[9px] text-red-400">ok: false</span>') : '';
-  const AC = D.accuracy && D.accuracy.symbols ? (D.accuracy.symbols[CUR] || {}) : {};
-  $("#accRow").innerHTML = Object.keys(AC).filter(k => AC[k] && AC[k].bars).map(k =>
-    '<div class="rounded-xl bg-ink-950/50 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + k + ' acc</div>' +
-    '<div class="font-mono text-sm font-bold ' + (AC[k].pct >= 55 ? 'text-emerald-400' : AC[k].pct >= 50 ? 'text-amber-300' : 'text-red-400') + '">' + AC[k].pct + '%</div>' +
-    '<div class="text-[8px] text-slate-600">' + AC[k].bars + ' H1 bars</div></div>').join("") || '';
+  const AC = D.accuracy || {};
+  const accSym = AC.symbols ? AC.symbols[CUR] : null;
+  $("#accRow").innerHTML = accSym ? Object.keys(accSym).filter(k => accSym[k] && accSym[k].bars).map(k =>
+    '<div class="rounded-xl bg-ink-950/50 p-2 ring-1 ring-ink-800"><div class="micro text-slate-500">' + k + '</div>' +
+    '<div class="font-mono text-sm font-bold ' + (accSym[k].pct >= 55 ? 'text-emerald-400' : accSym[k].pct >= 50 ? 'text-amber-300' : 'text-red-400') + '">' + accSym[k].pct + '%</div>' +
+    '<div class="text-[8px] text-slate-600">' + accSym[k].bars + ' bars</div></div>').join("") || '' : '';
   const SK = D.skills || {};
   $("#skillList").innerHTML = Object.keys(SK).map(k =>
     '<div><b class="text-slate-300">' + k + '</b> <span class="text-slate-600">w' + SK[k].weight + '</span> — ' +
     (SK[k].skills || []).join(", ") + '</div>').join("");
+  const SM = D.strategy_file || {};
+  $("#stratInfo").innerHTML = SM.loaded
+    ? '📄 STRATEGY.md: <b class="text-emerald-400">loaded</b> · ' + SM.chars + ' chars · sha ' + SM.sha
+    : '📄 STRATEGY.md: <span class="text-amber-400">not loaded</span> — built-in prompt';
 
   $("#cmds").innerHTML = (D.commands || []).slice(0,6).map(c => {
     const cls = c.status === "executed" ? "text-emerald-400" : c.status === "expired" ? "text-slate-600" : "text-amber-300";
     return '<div class="flex items-center gap-2"><b class="' + (c.side === 'BUY' ? 'text-emerald-400' : 'text-red-400') + '">' + c.side + '</b>' +
-      '<span class="text-slate-300">' + c.sym + '</span><span class="text-slate-500">' + c.lots + ' lots · SL ' + F(c.sl,4) + ' · TP2 ' + F(c.tp2,4) + '</span>' +
+      '<span class="text-slate-300">' + c.sym + '</span><span class="text-slate-500">' + c.lots + ' lots · SL ' + F(c.sl,4) + ' · TP ' + F(c.tp2,4) + '</span>' +
       '<span class="ml-auto rounded px-1.5 text-[9px] font-bold uppercase ' + cls + '">● ' + c.status + '</span></div>';
   }).join("") || '<div class="text-slate-600">no commands yet</div>';
 
@@ -514,7 +564,7 @@ function render(){
       '<td class="px-3 py-2.5"><span class="rounded px-1.5 py-0.5 text-[9px] font-bold ' + (open ? 'bg-cyan-500/10 text-cyan-300' : t.outcome === 'win' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400') + '">' + (open ? "OPEN" + (t.tp1_done ? " ·BE" : "") : t.outcome.toUpperCase()) + '</span></td></tr>';
   }).join("") || '<tr><td colspan="8" class="px-3 py-4 text-center text-slate-600">no trades yet</td></tr>';
 
-  /* ===== CANDLES — hamesha render ke end mein, guaranteed ===== */
+  /* CANDLES — guaranteed last, guarded */
   const G = SN.grid || {};
   $("#d1Sym").textContent = CUR; $("#h1Sym").textContent = CUR;
   try {
@@ -523,7 +573,6 @@ function render(){
       drawFarrukh($("#cvD1"), G.D1.candles);
     } else {
       $("#d1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
-      console.warn("D1 candles missing — bot run check karein (state.symbols." + CUR + ".grid.D1.candles)");
       drawFarrukh($("#cvD1"), null);
     }
     if (G.H1 && G.H1.candles && G.H1.candles.length >= 2){
@@ -531,11 +580,11 @@ function render(){
       drawFarrukh($("#cvH1"), G.H1.candles);
     } else {
       $("#h1Meta").innerHTML = '<span class="text-amber-400">no candle data</span>';
-      console.warn("H1 candles missing — bot run check karein (state.symbols." + CUR + ".grid.H1.candles)");
       drawFarrukh($("#cvH1"), null);
     }
   } catch(e){ console.error("candles draw error:", e); }
 }
+const MTHR_DEFAULT = 0.10;
 
 /* ============ FARRUKH GRID ============ */
 function drawFarrukh(cv, cs){
@@ -703,15 +752,14 @@ function buildContext(){
     const sn = D.symbols[k], g = sn.grid || {};
     out.symbols[k] = {price: sn.price, signal: sn.signal, why: sn.why,
       zcode_reasoning: sn.zcode && sn.zcode.reasoning,
+      plan: sn.plan || null,
       grid: {D1: g.D1 && {pos: g.D1.pos, zone: g.D1.zone}, H1: g.H1 && {pos: g.H1.pos, zone: g.H1.zone}},
-      models: sn.models || {}, plan: sn.plan || null};
+      votes: sn.votes || {}};
   });
-  out.daily_plan = D.daily_plan || null;
   out.lessons = (D.lessons && D.lessons.items || []).slice(-3);
-  out.recent_results = ((D.fills || EBF()).results || []).slice(-5).map(r => ({sym: r.sym, pnl: r.pnl}));
   return out;
 }
-const ZSYSTEM = "You are ZCode, AI analyst of 'Hermes' - prop-firm Gold/FX agent of Muhammad Farrukh Jadoon. You get LIVE desk state JSON. Be concise (max 4 sentences), reference real numbers, respect prop rules, never guarantee profits. Reply in user's language.";
+const ZSYSTEM = "You are ZCode, AI analyst of 'Hermes' - prop-firm Gold/FX agent of Muhammad Farrukh Jadoon. LIVE desk JSON given. Concise (max 4 sentences), real numbers, prop rules respected, never guarantee profits. Reply in user's language.";
 let zHist = [];
 async function askAgent(q){
   if (agentBusy){ addLog("⏳ busy…", "text-amber-400"); return; }
@@ -745,9 +793,15 @@ function localCommand(raw){
     if (!D) return speak("no data");
     return speak("Signals: " + Object.keys(D.symbols||{}).map(k => k + " " + (D.symbols[k].signal || "wait")).join(". "));
   }
+  if (/plan/.test(t)){
+    const SN = D && D.symbols && D.symbols[CUR];
+    if (!SN || !SN.plan) return speak("No active plan.");
+    const P1 = SN.plan.B1 || SN.plan.S1;
+    return speak(SN.plan.side + " plan. Entry " + P1.entry + ", stop " + P1.sl + ", target " + P1.tp + ".");
+  }
   if (/refresh/.test(t)){ return hardRefresh(); }
   if (/lock|logout/.test(t)) return logout();
-  return speak("Say: status, signals, refresh. Ya ZCode key settings mein dalein.");
+  return speak("Say: status, signals, plan, refresh.");
 }
 function briefing(){
   if (!D) return speak("Data load ho raha hai.");
@@ -755,8 +809,7 @@ function briefing(){
   const S = D.stats || {}, P = D.prop || {}, B = P.budget || {};
   let t = "Equity " + F(S.equity) + " dollars. " + (B.used||0) + " of " + (P.max_trades_per_day||3) + " trades used.";
   Object.keys(D.symbols || {}).forEach(k => {
-    const sn = D.symbols[k];
-    t += " " + k + ": " + (sn.signal ? sn.signal : "no trade");
+    t += " " + k + ": " + (D.symbols[k].signal ? D.symbols[k].signal : "no trade");
   });
   speak(t);
 }

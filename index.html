@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>JARVIS AI QUANT · 6-LAYER SECURE v5.1</title>
+<title>JARVIS AI QUANT · v5.2 PHASE-2</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#64748b}
@@ -18,10 +18,11 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;ba
 .nav-links{display:flex;gap:2px}
 .nav-btn{font-family:'Orbitron';font-size:.65rem;color:var(--muted);padding:5px 10px;border-radius:4px;border:1px solid transparent;background:transparent;cursor:pointer}
 .nav-btn:hover,.nav-btn.active{color:var(--cyan);background:rgba(0,243,255,.1);border-color:rgba(0,243,255,.3)}
-.nav-right{display:flex;align-items:center;gap:8px}
+.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .status{background:rgba(0,255,102,.08);border:1px solid rgba(0,255,102,.35);color:var(--green);padding:3px 8px;font-family:'Orbitron';font-size:.6rem;border-radius:4px;display:flex;align-items:center;gap:4px}
 .dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
 .layer-badge{font-family:'Orbitron';font-size:.55rem;padding:2px 6px;border-radius:3px;background:rgba(189,0,255,.08);border:1px solid rgba(189,0,255,.3);color:var(--purple)}
+.runtag{font-family:'JetBrains Mono';font-size:.55rem;color:var(--muted)}
 .control-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border)}
 .sym-btn,.tf-btn{font-family:'Orbitron';font-size:.68rem;padding:4px 11px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
 .sym-btn.active,.tf-btn.active{background:rgba(0,243,255,.15);color:var(--cyan);border-color:var(--cyan)}
@@ -41,6 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;ba
 .action-signal{font-size:1.3rem;font-family:'Orbitron';color:var(--green);font-weight:900}
 .action.closed .action-signal{color:var(--muted)}
 .byline{font-family:'JetBrains Mono';font-size:.58rem;color:var(--purple);margin-top:3px}
+.simgate{font-family:'JetBrains Mono';font-size:.56rem;color:var(--amber);margin-top:2px}
 .mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:7px 9px;border-radius:4px}
 .mlabel{font-size:.62rem;color:var(--muted)}
 .mval{font-family:'Orbitron';font-size:.88rem}
@@ -53,6 +55,7 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 .path-title{font-family:'Orbitron';font-size:.7rem;color:var(--cyan);margin-bottom:5px}
 .path-steps{display:flex;flex-wrap:wrap;gap:5px;font-size:.76rem;align-items:center}
 .step{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.22);padding:3px 8px;border-radius:3px}
+.step b{color:var(--cyan)}
 .model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:10px;cursor:pointer;transition:.2s}
 .mcard:hover{border-color:rgba(0,243,255,.45)}
@@ -73,9 +76,11 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 .wbadge.h{color:var(--green);background:rgba(0,255,102,.1);border:1px solid rgba(0,255,102,.3)}
 .wbadge.m{color:var(--amber);background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.25)}
 .wbadge.l{color:var(--muted);background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.25)}
-.pillar-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
-.pchip{font-family:'Orbitron';font-size:.52rem;padding:2px 6px;border-radius:3px;border:1px solid rgba(0,255,102,.3);color:var(--green);background:rgba(0,255,102,.06)}
-.pchip.fail{border-color:rgba(255,0,85,.4);color:var(--red);background:rgba(255,0,85,.06)}
+.pillar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pcard{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:6px;text-align:center}
+.pname{font-family:'Orbitron';font-size:.55rem;color:var(--muted)}
+.pstat{font-family:'Orbitron';font-size:.9rem;margin-top:2px}
+.pstat.ok{color:var(--green)}.pstat.warn{color:var(--amber)}
 .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:8px}
 .iname{font-family:'Orbitron';font-size:.72rem}
@@ -92,6 +97,7 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 .input-row{display:flex;gap:5px}
 .cinp{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:6px 9px;font-size:.82rem;border-radius:4px;outline:none}
 .sbtn{width:34px;height:34px;border-radius:4px;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan);cursor:pointer}
+.ledger-box{font-family:'JetBrains Mono';font-size:.68rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:9px;line-height:1.6}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;visibility:hidden;transition:.3s}
 .overlay.open{opacity:1;visibility:visible}
 .side{position:fixed;top:0;right:0;width:390px;max-width:100%;height:100vh;background:rgba(6,10,22,.98);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
@@ -108,22 +114,21 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 .lockcard input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-size:.85rem;border-radius:5px;outline:none;margin-bottom:9px;font-family:'JetBrains Mono'}
 .lockbtn{width:100%;font-family:'Orbitron';font-size:.75rem;padding:10px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
 .lerr{font-size:.72rem;color:var(--red);margin-top:8px;min-height:16px}
-@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.model-grid,.ind-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:580px){.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.ind-grid{grid-template-columns:1fr}.nav-links{display:none}.side{width:100%}}
+@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.model-grid,.ind-grid,.pillar-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:580px){.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.ind-grid,.pillar-grid{grid-template-columns:1fr}.nav-links{display:none}.side{width:100%}}
 </style>
 </head>
 <body>
 
-<!-- ============ LOCK (P9) ============ -->
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ JARVIS</div>
-    <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">6-LAYER SECURE ACCESS · v5.1</div>
+    <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">PHASE-2 · 10 PILLARS · v5.2</div>
     <input id="ltok" type="password" placeholder="GitHub Token">
     <input id="lpass" type="password" placeholder="Password (DASH_PASSWORD)">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
     <div class="lerr" id="lockErr"></div>
-    <div style="font-size:.6rem;color:var(--muted)">GitHub Pages par kholein (file:// par login kaam nahi karega)</div>
+    <div style="font-size:.6rem;color:var(--muted)">GitHub Pages par kholein</div>
   </div>
 </div>
 
@@ -135,10 +140,12 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 <button class="nav-btn" data-s="account">ACCOUNT</button>
 <button class="nav-btn" data-s="rules">RULES</button>
 <button class="nav-btn" data-s="reports">REPORTS</button>
+<button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="layer-badge" id="layerBadge" title="6-layer can't-fail engine">L1✓ L2✓ L3✓ L4✓ L5✓ L6✓</span>
-<div class="status"><div class="dot"></div> AI CORE v5.1</div>
+<span class="layer-badge">L1-L6</span>
+<span class="runtag" id="runTag">run: —</span>
+<div class="status"><div class="dot"></div> v5.2</div>
 <button class="nav-btn" id="openSet" style="border:1px solid var(--border)">⚙</button>
 </div>
 </nav>
@@ -168,6 +175,7 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 <div class="action-title">💡 RECOMMENDATION · <span id="recSym">—</span> · <span id="recTF">H1</span></div>
 <div style="color:var(--muted);font-size:.78rem;margin-top:2px" id="recNote">—</div>
 <div class="byline" id="recBy">—</div>
+<div class="simgate" id="recSim">—</div>
 </div>
 <div class="mbox"><div class="mlabel">ACTION</div><div class="action-signal" id="recAction">—</div></div>
 <div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
@@ -199,25 +207,29 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 <canvas id="cvGrid"></canvas>
 </div>
 <div class="path-box">
-<div class="path-title">📍 EXPECTED PATH (MODEL DRIVEN)</div>
+<div class="path-title">📍 EXPECTED PATH (MODEL DRIVEN · P8 TAGGED)</div>
 <div class="path-steps" id="pathSteps"></div>
 <div style="margin-top:5px;font-size:.7rem;color:var(--muted)" id="pathSource">—</div>
 </div>
-<div class="pillar-row" id="pillarRow"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🧬 MODELS · <span id="modLabel">—</span></span><span style="font-size:.6rem;color:var(--muted)">L3 live · L4 repaired · no fake numbers</span></div>
+<div class="ph"><span>🏛️ 10 PILLARS SCORECARD</span><span class="live" id="pillarScore">—</span></div>
+<div class="pillar-grid" id="pillarGrid"></div>
+</div>
+
+<div class="panel full">
+<div class="ph"><span>🧬 MODELS · <span id="modLabel">—</span></span><span style="font-size:.6rem;color:var(--muted)">click = live self-data (P2/P3)</span></div>
 <div class="model-grid" id="modelGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📉 INDICATORS</span><span style="font-size:.6rem;color:var(--muted)">P1: verified data only</span></div>
+<div class="ph"><span>📉 INDICATORS</span><span style="font-size:.6rem;color:var(--muted)">P1 verified only</span></div>
 <div class="ind-grid" id="indGrid"></div>
 </div>
 
 <div class="panel span2">
-<div class="ph"><span>💬 ZCODE CHAT</span><span id="chatMode" style="font-size:.6rem;color:var(--muted)">L1→L5 active</span></div>
+<div class="ph"><span>💬 ZCODE CHAT</span><span id="chatMode" style="font-size:.6rem;color:var(--muted)">L1→L5</span></div>
 <div class="chat">
 <div class="msgs" id="msgs"></div>
 <div class="input-row"><input class="cinp" id="cinp" placeholder="Ask ZCode…"><button class="sbtn" id="sbtn">➤</button></div>
@@ -232,16 +244,21 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:7px;text-align:center"><div style="font-size:.6rem;color:var(--muted)">COMPARE (P5)</div><div style="font-family:Orbitron;font-size:1.05rem;color:var(--amber)" id="cmpN">—</div></div>
 </div>
 </div>
+
+<div class="panel full">
+<div class="ph"><span>📒 PILLAR LEDGER (P4 · APPEND-ONLY · DELETE-PROOF)</span><span id="ledgerMeta" style="font-size:.6rem;color:var(--muted)"></span></div>
+<div class="ledger-box" id="ledgerBox">—</div>
+</div>
 </div>
 </div>
 
 <div class="section" id="strategy">
-<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB</span></div>
-<div class="inst" id="stratBox">STRATEGY.md status loading…</div>
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB (file-driven)</span></div>
+<div class="inst" id="stratBox">—</div>
 </div></div>
 
 <div class="section" id="account">
-<div class="panel full"><div class="ph"><span>💼 ACCOUNT</span><span style="font-size:.6rem;color:var(--muted)">L5: live state · no fake numbers</span></div>
+<div class="panel full"><div class="ph"><span>💼 ACCOUNT</span></div>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
 <div class="mbox" style="text-align:center"><div class="mlabel">EQUITY</div><div class="mval" id="accEq">—</div></div>
 <div class="mbox" style="text-align:center"><div class="mlabel">TRADES TODAY</div><div class="mval" id="accTr">—</div></div>
@@ -249,12 +266,30 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 </div></div></div>
 
 <div class="section" id="rules">
-<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE)</span></div>
+<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE · live config)</span></div>
 <div style="display:flex;flex-direction:column;gap:5px" id="rulesBox"></div></div></div>
 
 <div class="section" id="reports">
 <div class="panel full"><div class="ph"><span>📋 REPORTS</span></div>
 <div class="inst" id="repBox">—</div></div></div>
+
+<div class="section" id="pillars">
+<div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
+<div class="inst">P1 DATA INTEGRITY — fresh+valid data, weekend freeze. Bad data = HOLD.
+P2 ANALYZE — read own record + lessons before voting.
+P3 SELF-IMPROVE — conf-bias from own WR (clamped ±10, min 6 samples).
+P4 PERSIST — append-only hash-chained ledger. NOTHING deletable.
+P5 COMPARE — old vs new WR delta; "improving?" ka measured jawab.
+P6 LESSON LIFECYCLE — proposed→implemented→verified; max 12 active.
+P7 RISK ENFORCE — prop rules LLM ke baad bhi hard gate.
+P8 SIMULATE→DECIDE→TAG — form gate + reproducibility tag.
+P9 SECURITY — secrets sirf Secrets mein; weekly audit; owner-only.
+P10 HEALTH & DRIFT — feed fresh, error streaks, regime-shift flags.
+
+Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
+<div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3 LIVE)</span></div>
+<div class="inst" id="selfBox">—</div></div>
+</div>
 </div>
 
 <div class="overlay" id="setOverlay"></div>
@@ -266,8 +301,7 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 <input id="cfgKey" type="password" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:5px;border-radius:3px;margin-top:2px;font-family:JetBrains Mono"></div>
 <div style="margin-bottom:7px"><label style="font-size:.62rem;color:var(--muted)">MODEL</label>
 <input id="cfgModel" value="glm-4.6" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:5px;border-radius:3px;margin-top:2px;font-family:JetBrains Mono"></div>
-<button class="nav-btn" style="width:100%;border:1px solid var(--border);padding:8px;margin-top:4px" id="saveCfg">SAVE (browser-only · P9 safe)</button>
-<div style="margin-top:12px;font-size:.62rem;color:var(--muted);line-height:1.5">Key sirf is browser ke localStorage mein — repo/state/logs mein kabhi nahi jati (P9). Bina key bhi chat chalta hai — L5 fallback rules se.</div>
+<button class="nav-btn" style="width:100%;border:1px solid var(--border);padding:8px;margin-top:4px" id="saveCfg">SAVE (browser-only · P9)</button>
 </div>
 </div>
 
@@ -278,20 +312,11 @@ canvas{display:block;width:100%;height:270px;background:#060913}
 </div>
 
 <script>
-/* ================================================================
-   JARVIS 6-LAYER SECURE v5.1 — static full-trace tested
-   L1 Contract | L2 Structured | L3 Parse | L4 Repair+Retry |
-   L5 Fallback Engine | L6 Audit Tag
-   LAW: koi fake data nahi — jo hai wahi, jo nahi wo saaf.
-================================================================ */
-console.log("JARVIS 6-LAYER v5.1 — weaknesses removed, full-trace tested");
-
-/* ---------- helpers ---------- */
+console.log("JARVIS v5.2 — Phase 2 complete: path strip + pillars + ledger + live modals");
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (v,d) => { d = d==null?2:d; return (v==null||isNaN(v)) ? "—" : (+v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); };
 
-/* ---------- state ---------- */
 const CONFIG = {
   symbols: { XAUUSD:{name:'Gold',type:'metal'}, EURUSD:{name:'Euro',type:'forex'}, ETHUSD:{name:'Ethereum',type:'crypto'} },
   GH_REPO: "MFJ-TRADING/FL-200-Private",
@@ -302,7 +327,7 @@ let CUR_SYM = 'XAUUSD', CUR_TF = 'H1';
 const MTHR = 0.10;
 const VOTE_KEY = { GRID:"grid", KRONOS:"kronos", QUANT:"quant", TAURUS:"taurus", ZCODE:"zcode", STAT:"stat_advisory" };
 
-/* ---------- P1 DATA INTEGRITY ---------- */
+/* ---------- P1 ---------- */
 function validCandles(cs){
   if (!Array.isArray(cs) || cs.length < 2) return false;
   return cs.every(c => c && typeof c.h === 'number' && c.h >= c.l && c.h >= c.o && c.h >= c.c && c.l <= c.o && c.l <= c.c && c.h > 0);
@@ -322,32 +347,24 @@ async function ghRaw(path, tok){
   return await r.json();
 }
 
-/* ---------- L3 PARSE ---------- */
+/* ---------- L3/L4 ---------- */
 function extractJSON(txt){
   try { return JSON.parse(txt); } catch(e){}
   const a = txt.indexOf("{"), b = txt.lastIndexOf("}");
   if (a >= 0 && b > a){ try { return JSON.parse(txt.slice(a, b+1)); } catch(e){} }
   return null;
 }
-
-/* ---------- L4 REPAIR ---------- */
-function repairDecision(d){
+function repairAnswer(d){
   if (!d || typeof d !== "object") return null;
-  const out = {};
-  const sig = String(d.signal || d.next_hour_bias || d.bias || "").toUpperCase().trim();
-  out.signal = ["BUY","SELL","NO_TRADE","WAIT"].includes(sig) ? sig : null;
-  let conf = parseFloat(d.confidence != null ? d.confidence : (d.conf != null ? d.conf : 0.5));
+  const ans = String(d.answer || "").slice(0, 800);
+  if (!ans) return null;
+  let conf = parseFloat(d.confidence != null ? d.confidence : 0.5);
   if (isNaN(conf)) conf = 0.5;
   if (conf > 1 && conf <= 100) conf = conf / 100;
-  out.confidence = Math.max(0, Math.min(1, conf));
-  out.reasoning = String(d.reasoning || d.comment || "").slice(0, 200);
-  out.key_factors = Array.isArray(d.key_factors) ? d.key_factors.slice(0,4).map(x=>String(x).slice(0,60)) : [];
-  const rk = String(d.risk || "MEDIUM").toUpperCase();
-  out.risk = ["LOW","MEDIUM","HIGH"].includes(rk) ? rk : "MEDIUM";
-  return out.signal ? out : null;
+  return {answer: ans, confidence: Math.max(0, Math.min(1, conf))};
 }
 
-/* ---------- L1+L3+L4 AI CALL ---------- */
+/* ---------- LLM ---------- */
 const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
 const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
 const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
@@ -358,58 +375,29 @@ async function aiCall(messages, maxTokens){
     body: JSON.stringify({model:ZMODEL(), temperature:0.4, max_tokens:maxTokens||400, messages})});
   if (!r.ok) throw new Error("api " + r.status);
   const txt = (await r.json()).choices[0].message.content;
-  let d = extractJSON(txt);           // L3
+  let d = extractJSON(txt);
   let repaired = false;
-  if (d){ const fx = repairDecision(d); if (fx){ d = fx; } else { d = null; repaired = true; } }
-  if (!d){                            // L4 retry with feedback
-    addMsg("ai", "⚠️ Output invalid tha — L4 repair retry chal raha hai…");
+  if (d){ const fx = repairAnswer(d); if (fx){ d = fx; } else { d = null; repaired = true; } }
+  if (!d){
+    addMsg("ai", "⚠️ Format invalid — L4 repair retry…");
     const r2 = await fetch(ZURL(), {method:"POST",
       headers:{Authorization:"Bearer "+ZKEY(), "Content-Type":"application/json"},
       body: JSON.stringify({model:ZMODEL(), temperature:0.2, max_tokens:maxTokens||400,
-        messages: messages.concat([{role:"user", content:"Your previous reply was not valid JSON. Reply ONLY minified JSON per schema. No other text."}])})});
+        messages: messages.concat([{role:"user", content:"Previous reply invalid JSON. Reply ONLY minified JSON: {\"answer\":\"...\",\"confidence\":0-1}"}])})});
     if (r2.ok){
       d = extractJSON((await r2.json()).choices[0].message.content);
-      if (d) d = repairDecision(d);
+      if (d) d = repairAnswer(d);
       repaired = true;
     }
   }
   return {d: d, repaired: repaired};
 }
 
-/* ---------- L5 FALLBACK (rules — task phir bhi complete) ---------- */
-function briefingText(){
-  if (!STATE || !STATE.stats) return "State abhi load nahi hui.";
-  const S = STATE.stats;
-  let t = "Equity $" + fmt(S.equity) + ". Trades " + (S.trades_today||0) + "/" + (STATE.prop?.max_trades_per_day || 3) + ". ";
-  Object.keys(STATE.symbols || {}).forEach(k => { t += k + ": " + (STATE.symbols[k].signal || "HOLD") + ". "; });
-  return t;
-}
-function fallbackAnswer(q){
-  const low = (q || "").toLowerCase();
-  const open = isMarketOpen(CUR_SYM);
-  if (/status|report|brief/.test(low)) return briefingText();
-  if (!STATE || !STATE.symbols) return "State abhi load nahi hui — bot ka pehla run ya Hard Refresh chahiye.";
-  const SN = STATE.symbols[CUR_SYM];
-  if (!SN) return CUR_SYM + " ka data state mein nahi — config.json mein add karein.";
-  if (/signal/.test(low)) return "Rules-based: " + CUR_SYM + " " + (SN.signal || "HOLD") + " (score " + (SN.matrix ? SN.matrix.score : "–") + ")";
-  if (/plan/.test(low) && SN.plan){
-    const P1 = SN.plan.B1 || SN.plan.S1;
-    return "Plan " + SN.plan.side + ": entry " + P1.entry + ", SL " + P1.sl + ", TP " + P1.tp;
-  }
-  if (/lesson/.test(low)){
-    const L = (STATE.lessons && STATE.lessons.items) || [];
-    return L.length ? "Lessons: " + L.slice(-3).join(" | ") : "Abhi koi lesson nahi (nightly review ke baad aati hain).";
-  }
-  return open
-    ? CUR_SYM + " " + CUR_TF + ": live session. Full AI jawab ke liye ⚙️ mein GLM key dalein."
-    : CUR_SYM + " market closed (weekend). Structure frozen. ETHUSD 24/7 open hai.";
-}
-
-/* ---------- CHAT UI ---------- */
+/* ---------- CHAT ---------- */
 function addMsg(cls, text, tag){
   const d = document.createElement("div"); d.className = "msg " + cls;
-  let html = text.replace(/\n/g,"<br>");
-  if (cls === "user") html = esc(text);
+  let html = esc(text).replace(/\n/g,"<br>");
+  if (cls === "ai") html = text.replace(/\n/g,"<br>");
   d.innerHTML = html + (tag ? '<span class="tagline">' + esc(tag) + '</span>' : "")
     + '<span class="t">' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) + '</span>';
   const box = $("msgs");
@@ -422,7 +410,6 @@ function log(msg){
   el.innerHTML = '<div><span style="color:var(--muted)">[' + t + ']</span> ' + esc(msg) + '</div>' + el.innerHTML;
   while (el.children.length > 40) el.lastElementChild.remove();
 }
-
 function buildContext(){
   const S = (STATE && STATE.stats) || {};
   const syms = {};
@@ -430,13 +417,52 @@ function buildContext(){
     const sn = STATE.symbols[k];
     syms[k] = {signal: sn.signal || null, price: sn.price || null,
       plan: sn.plan ? {side: sn.plan.side} : null,
+      path: sn.path || null,
       grid: {H1: sn.grid && sn.grid.H1 ? {pos: sn.grid.H1.pos, zone: sn.grid.H1.zone} : null}};
   });
-  return {desk: {equity: S.equity, trades_today: S.trades_today, mode: STATE ? STATE.mode : null},
-    symbols: syms, lessons: ((STATE && STATE.lessons && STATE.lessons.items) || []).slice(-3)};
+  return {desk: {equity: S.equity, trades_today: S.trades_today, mode: STATE ? STATE.mode : null,
+    run_tag: STATE ? STATE.run_tag : null}, symbols: syms,
+    lessons: ((STATE && STATE.lessons && STATE.lessons.items) || []).slice(-3),
+    pillar_score: STATE ? STATE.pillar_score : null};
+}
+function briefingText(){
+  if (!STATE || !STATE.stats) return "State abhi load nahi hui.";
+  const S = STATE.stats;
+  let t = "Equity $" + fmt(S.equity) + ". Trades " + (S.trades_today||0) + "/" + ((STATE.prop||{}).max_trades_per_day||3) + ". ";
+  Object.keys(STATE.symbols || {}).forEach(k => { t += k + ": " + (STATE.symbols[k].signal || "HOLD") + ". "; });
+  if (STATE.pillar_score) t += "Pillars " + STATE.pillar_score.score + "/10.";
+  return t;
+}
+function fallbackAnswer(q){
+  const low = (q || "").toLowerCase();
+  const open = isMarketOpen(CUR_SYM);
+  if (/pillar/.test(low) && STATE && STATE.pillar_score){
+    return "Pillar score: " + STATE.pillar_score.score + "/10. " +
+      Object.keys(STATE.pillar_score).filter(k=>k.indexOf("P")===0).map(k=>k+":"+(STATE.pillar_score[k]?"✓":"✗")).join(" ");
+  }
+  if (/path/.test(low) && STATE && STATE.symbols){
+    const SN = STATE.symbols[CUR_SYM];
+    if (SN && SN.path) return "Expected path (" + CUR_SYM + "): " + SN.path.map(p=>p.step+". "+p.what).join(" → ");
+    return "Abhi koi active path nahi (signal ya bot run pending).";
+  }
+  if (/status|report|brief/.test(low)) return briefingText();
+  if (!STATE || !STATE.symbols) return "State abhi load nahi hui — bot run ya Hard Refresh chahiye.";
+  const SN = STATE.symbols[CUR_SYM];
+  if (!SN) return CUR_SYM + " ka data state mein nahi.";
+  if (/signal/.test(low)) return "Rules-based: " + CUR_SYM + " " + (SN.signal || "HOLD") + " (score " + (SN.matrix ? SN.matrix.score : "–") + ")";
+  if (/plan/.test(low) && SN.plan){
+    const P1 = SN.plan.B1 || SN.plan.S1;
+    return "Plan " + SN.plan.side + ": entry " + P1.entry + ", SL " + P1.sl + ", TP " + P1.tp;
+  }
+  if (/lesson/.test(low)){
+    const L = (STATE.lessons && STATE.lessons.items) || [];
+    return L.length ? "Lessons: " + L.slice(-3).map(i=>i.text||i).join(" | ") : "Abhi koi lesson nahi.";
+  }
+  return open
+    ? CUR_SYM + " " + CUR_TF + ": live session. Full AI ke liye ⚙️ mein key dalein."
+    : CUR_SYM + " market closed (weekend). ETHUSD 24/7 open.";
 }
 
-/* ---------- CHAT SEND (L1→L5) ---------- */
 async function chatSend(){
   const inp = $("cinp");
   const q = inp.value.trim(); if (!q) return;
@@ -444,11 +470,12 @@ async function chatSend(){
   addMsg("user", q);
   if (!ZKEY()){
     addMsg("ai", fallbackAnswer(q), "completed_by: fallback-rules (L5)");
-    log("[L5] fallback engine completed task");
+    log("[L5] fallback completed task");
     return;
   }
   $("chatMode").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
   const sys = "You are ZCode, AI analyst of HERMES (prop-firm Gold/FX desk of Muhammad Farrukh Jadoon). " +
+    "You get LIVE desk state incl pillar scores and model self-data. " +
     "Reply ONLY minified JSON: {\"answer\":\"max 5 sentences in user language\",\"confidence\":0-1}. " +
     "Respect prop rules, never guarantee profit.";
   const msgs = [{role:"system", content:sys},
@@ -457,15 +484,15 @@ async function chatSend(){
   try {
     const res = await aiCall(msgs, 400);
     if (res.d){
-      addMsg("ai", res.d.answer || "(empty)", "completed_by: ai" + (res.repaired ? " (L4-repaired)" : " (L3-clean)") + " · conf " + Math.round(res.d.confidence*100) + "%");
-      log("[L3] parsed" + (res.repaired ? " · [L4] repaired" : " clean") + " · task complete");
+      addMsg("ai", res.d.answer, "completed_by: ai" + (res.repaired ? " (L4-repaired)" : " (L3-clean)") + " · conf " + Math.round(res.d.confidence*100) + "%");
+      log("[L3] parsed" + (res.repaired ? " · [L4] repaired" : " clean"));
     } else {
-      addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — AI output unusable)");
-      log("[L5] AI unusable → fallback completed task");
+      addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — AI unusable)");
+      log("[L5] fallback completed task");
     }
   } catch(e){
     addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — " + e.message + ")");
-    log("[L5] api fail → fallback completed task");
+    log("[L5] api fail → fallback completed");
   }
   $("chatMode").textContent = "L1→L5 active";
 }
@@ -475,33 +502,39 @@ function render(){
   const open = isMarketOpen(CUR_SYM);
   const SN = (STATE && STATE.symbols) ? STATE.symbols[CUR_SYM] : null;
   const dec = CUR_SYM === 'EURUSD' ? 4 : 2;
+  const Z = SN ? (SN.zcode || {}) : {};
+
+  $("runTag").textContent = "run: " + ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
 
   const badge = $("mktBadge");
   if (open){ badge.className='badge-open'; badge.textContent='MARKET OPEN'; }
   else { badge.className='badge-closed'; badge.textContent='MARKET CLOSED'; }
   $("sysStatus").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long'}) + " · " +
-    (open ? "markets active" : "gold/forex closed · crypto open");
+    (open ? "active" : "gold/forex closed · crypto open");
 
   const rp = $("actionPanel");
   $("recSym").textContent = CUR_SYM;
   $("recTF").textContent = CUR_TF;
-  const Z = SN ? (SN.zcode || {}) : {};
   if (SN && SN.signal){
     rp.classList.toggle("closed", !open || SN.signal === "NO_TRADE" || SN.signal === "WAIT");
     const ra = $("recAction");
     ra.textContent = open ? (SN.signal === "NO_TRADE" ? "WAIT" : SN.signal) : "WAIT";
     ra.style.color = SN.signal === "BUY" ? "var(--green)" : SN.signal === "SELL" ? "var(--red)" : "var(--muted)";
     $("recNote").textContent = Z.reasoning || SN.why || "ensemble + grid";
-    $("recBy").textContent = "by: " + (SN.signal_by || "—") + " · tag: " + (Z ? "ai-fused" : "matrix") + " · reproducible: v6-schema";
+    $("recBy").textContent = "by: " + (SN.signal_by || "—") + " · reproducible: " +
+      ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
+    const simg = SN.sim || {};
+    $("recSim").textContent = simg.gate ? "🧪 P8 gate: " + simg.gate + (simg.note ? " · " + simg.note : "") : "—";
     const P1 = SN.plan ? (SN.plan.B1 || SN.plan.S1) : null;
     $("recEntry").textContent = P1 ? String(P1.entry) : "—";
     $("recTP").textContent = P1 ? "TP " + P1.tp + " (SL " + P1.sl + ")" : "—";
   } else {
     rp.classList.add("closed");
-    $("recAction").textContent = "AWAITING DATA";
+    $("recAction").textContent = SN ? "WAIT" : "AWAITING DATA";
     $("recAction").style.color = "var(--muted)";
-    $("recNote").textContent = "Bot ka pehla run hoga tab signal aayega (L5: koi fake signal nahi)";
-    $("recBy").textContent = "—";
+    $("recNote").textContent = SN ? (SN.why || "no trade conditions") : "bot run pending (L5: no fake signal)";
+    $("recBy").textContent = SN ? "by: " + (SN.signal_by || "matrix") : "—";
+    $("recSim").textContent = "—";
     $("recEntry").textContent = "—";
     $("recTP").textContent = "—";
   }
@@ -529,58 +562,51 @@ function render(){
   gs.textContent = CUR_TF + (SN ? (open ? " · LIVE" : " · FROZEN") : " · NO DATA");
   gs.className = SN ? "live" : "live warn";
 
-  /* TF → data mapping (P1 honest) */
   let gridData = null, tfNote = "";
   if (SN && SN.grid){
-    if (CUR_TF === "H1"){ gridData = SN.grid.H1; tfNote = ""; }
-    else if (CUR_TF === "D1"){ gridData = SN.grid.D1; tfNote = ""; }
-    else if (CUR_TF === "M30"){ gridData = SN.grid.H1; tfNote = "M30 proxy → H1 data"; }
-    else if (CUR_TF === "H4"){ gridData = SN.grid.H1; tfNote = "H4 proxy → H1 data"; }
-    else if (CUR_TF === "W1"){ gridData = SN.grid.D1; tfNote = "W1 proxy → D1 data"; }
+    if (CUR_TF === "H1"){ gridData = SN.grid.H1; }
+    else if (CUR_TF === "D1"){ gridData = SN.grid.D1; }
+    else if (CUR_TF === "M30"){ gridData = SN.grid.H1; tfNote = "M30 proxy→H1"; }
+    else if (CUR_TF === "H4"){ gridData = SN.grid.H1; tfNote = "H4 proxy→H1"; }
+    else if (CUR_TF === "W1"){ gridData = SN.grid.D1; tfNote = "W1 proxy→D1"; }
   }
   const okData = gridData && validCandles(gridData.candles);
   $("gridMeta").textContent = okData
     ? ("pos " + Math.round((gridData.pos||0)*100) + "% · " + (gridData.zone||"—") + (tfNote ? " · " + tfNote : ""))
     : (SN ? "candle data invalid" : "bot run pending");
 
-  /* Expected Path */
+  /* Expected Path strip (backend-driven) */
   const ps = $("pathSteps");
-  if (SN && SN.plan){
-    const side = SN.plan.side;
-    ps.innerHTML = '<div class="step">1. Price → ' + (side==='BUY'?'BUY':'SELL') + ' zone first</div><span style="color:var(--muted)">→</span>'
-      + '<div class="step">2. Push ' + (side==='BUY'?'ExpL → B1':'ExpH → S1') + '</div><span style="color:var(--muted)">→</span>'
-      + '<div class="step">3. Fade reaction</div><span style="color:var(--muted)">→</span>'
-      + '<div class="step">4. Target TP (1:2)</div>';
-    $("pathSource").textContent = "ensemble: grid+quant+kronos · fused by " + (SN.signal_by || "matrix") + (tfNote ? " · " + tfNote : "");
+  if (SN && SN.path && SN.path.length){
+    ps.innerHTML = SN.path.map(p => '<div class="step"><b>' + p.step + '.</b> ' + esc(p.what) + '</div>')
+      .join('<span style="color:var(--muted)">→</span>');
+    $("pathSource").textContent = "ensemble path · fused by " + (SN.signal_by || "matrix") +
+      " · tag " + ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
   } else {
-    ps.innerHTML = '<div class="step">Bot ke pehle run ke baad model-driven path yahan aayega</div>';
+    ps.innerHTML = '<div class="step">Bot ke run ke baad model-driven path yahan aayega</div>';
     $("pathSource").textContent = "L5: no fabricated path";
   }
 
-  /* Pillar chips */
-  const SEC = STATE ? STATE.security : null;
-  const MH = STATE ? STATE.manager : null;
-  const pillars = [
-    ["P1 DATA", !!SN],
-    ["P2 ANALYZE", !!SN],
-    ["P3 IMPROVE", Object.keys((STATE && STATE.model_self) || {}).length > 0],
-    ["P4 LEDGER " + ((STATE && STATE.pillar_ledger && STATE.pillar_ledger.entries) || 0), STATE && STATE.pillar_ledger ? STATE.pillar_ledger.integrity : false],
-    ["P5 COMPARE", !!STATE],
-    ["P6 LESSONS", ((STATE && STATE.lessons && STATE.lessons.items) || []).length > 0],
-    ["P7 RISK", true],
-    ["P8 SIM", true],
-    ["P9 SEC " + (SEC ? (SEC.ok ? "OK" : "!!") : "…"), SEC ? SEC.ok : false],
-    ["P10 HEALTH", MH ? MH.ok : false]
+  /* Pillar scorecard */
+  const PSC = (STATE && STATE.pillar_score) || null;
+  const pdefs = [
+    ["P1 DATA", "P1"], ["P2 ANALYZE", "P2"], ["P3 IMPROVE", "P3"], ["P4 PERSIST", "P4"], ["P5 COMPARE", "P5"],
+    ["P6 LESSONS", "P6"], ["P7 RISK", "P7"], ["P8 SIMULATE", "P8"], ["P9 SECURITY", "P9"], ["P10 HEALTH", "P10"]
   ];
-  $("pillarRow").innerHTML = pillars.map(p =>
-    '<span class="pchip ' + (p[1] ? '' : 'fail') + '">' + p[0] + (p[1] ? '✓' : '…') + '</span>').join("");
+  $("pillarScore").textContent = PSC ? ("SCORE " + PSC.score + "/10") : "—";
+  $("pillarScore").className = PSC ? (PSC.score >= 9 ? "live" : "live warn") : "live warn";
+  $("pillarGrid").innerHTML = pdefs.map(function(pd){
+    const v = PSC ? PSC[pd[1]] : null;
+    const ok = v === true;
+    return '<div class="pcard"><div class="pname">' + pd[0] + '</div><div class="pstat ' + (ok?'ok':'warn') + '">' + (ok?'✓':'…') + '</div></div>';
+  }).join("");
 
-  /* Models — L3 live, L4 awaiting */
+  /* Models */
   const votes = (SN && SN.votes) || {};
   const defs = [
-    ["GRID","grid","h","structural base"],
-    ["KRONOS","kronos","h","extreme fade + path"],
-    ["QUANT","quant","m","RSI+MACD fade"],
+    ["GRID","grid","h","structural base W.40"],
+    ["KRONOS","kronos","h","extreme fade W.35"],
+    ["QUANT","quant","m","RSI+MACD W.25"],
     ["TAURUS","taurus","m","regime modifier"],
     ["ZCODE","zcode","h","fusion engine"],
     ["STAT","stat_advisory","l","advisory"]
@@ -598,11 +624,10 @@ function render(){
     const acc = self && self.recent && self.recent.length
       ? Math.round(self.recent.reduce(function(a,b){return a+b;},0)/self.recent.length*100) + "% live"
       : "warming";
-    const sigLine = !SN ? "AWAITING DATA" : (bias ? confTxt + " · " + extra : "no vote");
     return '<div class="mcard ' + (w==='h'?'heavy':'') + '" data-m="' + n + '">'
       + '<div style="display:flex;justify-content:space-between"><div><div class="mname">' + n + '</div><div class="mtype">' + role + '</div></div><div class="wbadge ' + w + '">' + (w==='h'?'HEAVY':w==='m'?'MEDIUM':'LIGHT') + '</div></div>'
       + '<div class="mpred">' + (bias ? bias : (SN ? "HOLD" : "—")) + '</div>'
-      + '<div class="msig ' + (bias ? '' : 'na') + '">' + sigLine + '</div>'
+      + '<div class="msig ' + (bias ? '' : 'na') + '">' + (!SN ? "AWAITING DATA" : (bias ? confTxt + " · " + extra : "no vote")) + '</div>'
       + '<div class="mmeta"><span>Self-acc</span><span class="macc">' + acc + '</span></div>'
       + '<div class="wbar"><div class="wfill ' + w + '"></div></div></div>';
   }).join("");
@@ -612,35 +637,43 @@ function render(){
       const k = VOTE_KEY[n];
       const v = votes[k];
       const self = ((STATE && STATE.model_self) || {})[k];
-      const zdec = (SN && SN.zcode) || null;
       let lastVote = "awaiting bot run";
-      if (k === "zcode" && zdec){
-        lastVote = JSON.stringify({signal: zdec.signal, conf: zdec.confidence, risk: zdec.risk, why: zdec.reasoning});
+      if (k === "zcode" && Z && Z.signal){
+        lastVote = JSON.stringify({signal: Z.signal, conf: Z.confidence, risk: Z.risk, why: Z.reasoning});
       } else if (v){
         lastVote = JSON.stringify({bias: v.next_hour_bias, conf: v.confidence, zone: v.first_zone_guess, why: v.reasoning});
       }
-      $("modTitle").textContent = n;
+      const wr = self && self.recent && self.recent.length
+        ? Math.round(self.recent.reduce(function(a,b){return a+b;},0)/self.recent.length*100) : 50;
+      $("modTitle").textContent = n + " · LIVE SELF-DATA";
       $("modInst").textContent =
-        "ROLE: " + (n==="GRID" ? "Farrukh 33% structural base — fade-first-touch anchor (W 0.40)"
-        : n==="KRONOS" ? "Extreme-stretch fade + path forecast (W 0.35)"
-        : n==="QUANT" ? "RSI-14 + MACD zone-confirmed fade (W 0.25)"
-        : n==="TAURUS" ? "Regime + volatility modifier — never votes direction"
-        : n==="ZCODE" ? "FUSION ENGINE: heavy LLM, strategy-bound, memory+lessons aware, final authority"
-        : "Advisory p_up only — cannot override Grid") +
-        "\n\nPILLARS ON THIS MODEL:\n- P2 Analyze: reads own record before voting\n- P3 SelfImprove: conf-bias " + (self ? self.conf_bias : 0) + " (clamped ±10, anti-overfit: min 6 samples)\n- Streak: " + (self ? self.streak : 0) + "\n- Best zone: " + ((self && self.best_zone) || "learning…") + "\n- Worst zone: " + ((self && self.worst_zone) || "learning…") + "\n- Own note: " + ((self && self.last_note) || "none yet") +
+        "ROLE: " + (n==="GRID" ? "Farrukh 33% structural base (W 0.40)"
+        : n==="KRONOS" ? "Extreme-stretch fade + path (W 0.35)"
+        : n==="QUANT" ? "RSI-14 + MACD zone fade (W 0.25)"
+        : n==="TAURUS" ? "Regime + volatility modifier"
+        : n==="ZCODE" ? "FUSION ENGINE: heavy LLM, strategy-bound, final authority"
+        : "Advisory p_up only") +
+        "\n\n📊 PILLAR P2/P3 — OWN RECORD (live):" +
+        "\n- Recent WR: " + wr + "% (" + ((self && self.recent) ? self.recent.length : 0) + " samples)" +
+        "\n- Streak: " + ((self && self.streak) || 0) +
+        "\n- Conf-bias: " + ((self && self.conf_bias) || 0) + " (clamped ±10)" +
+        "\n- Best zone: " + ((self && self.best_zone) || "learning…") +
+        "\n- Worst zone: " + ((self && self.worst_zone) || "learning…") +
+        "\n- Self note: " + ((self && self.last_note) || "none yet") +
+        "\n\nANTI-OVERFIT: min 6 samples · bias clamp ±10 · sirf apna data" +
         "\n\nLAST VOTE:\n" + lastVote;
       $("modDetail").classList.add("open");
       $("modOverlay").classList.add("open");
     };
   });
 
-  /* Indicators — P1 verified only */
+  /* Indicators */
   const qReason = (SN && SN.votes && SN.votes.quant && SN.votes.quant.reasoning) || "";
   const rsiM = qReason.match(/RSI (\d+)/);
   const inds = [
     ["RSI", rsiM ? rsiM[1] : null, rsiM ? (parseInt(rsiM[1],10) > 55 ? "bull" : parseInt(rsiM[1],10) < 45 ? "bear" : "neu") : "na"],
     ["MACD", qReason.indexOf("MACD") >= 0 ? "in vote" : null, "na"],
-    ["REGIME", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.regime) || null, ((SN&&SN.votes&&SN.votes.taurus&&SN.votes.taurus.regime)||"").indexOf("TREND") === 0 ? "bull" : "neu"],
+    ["REGIME", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.regime) || null, "neu"],
     ["VOL", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.vol) || null, "neu"],
     ["MATRIX", SN && SN.matrix ? ((SN.matrix.score > 0 ? "+" : "") + SN.matrix.score) : null, ((SN&&SN.matrix&&SN.matrix.score)||0) > MTHR ? "bull" : ((SN&&SN.matrix&&SN.matrix.score)||0) < -MTHR ? "bear" : "neu"],
     ["H1 ZONE", SN && SN.grid && SN.grid.H1 ? SN.grid.H1.zone : null, (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="upper" ? "bear" : (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="lower" ? "bull" : "neu"]
@@ -650,26 +683,33 @@ function render(){
   }).join("");
 
   /* Self-learning */
-  $("ledgerN").textContent = (STATE && STATE.pillar_ledger) ? STATE.pillar_ledger.entries : "—";
+  const PL = (STATE && STATE.pillar_ledger) || null;
+  $("ledgerN").textContent = PL ? PL.entries : "—";
   const li = $("ledgerI");
-  if (STATE && STATE.pillar_ledger){
-    li.textContent = STATE.pillar_ledger.integrity ? "INTACT ✓" : "BROKEN!!";
-    li.style.color = STATE.pillar_ledger.integrity ? "var(--green)" : "var(--red)";
-  }
+  if (PL){ li.textContent = PL.ok ? "INTACT ✓" : "BROKEN!!"; li.style.color = PL.ok ? "var(--green)" : "var(--red)"; }
+  const SEC = (STATE && STATE.security) || null;
   const sc = $("secN");
-  if (STATE && STATE.security){
-    sc.textContent = STATE.security.ok ? "OK ✓" : "CHECK";
-    sc.style.color = STATE.security.ok ? "var(--green)" : "var(--red)";
-  }
+  if (SEC){ sc.textContent = SEC.ok ? "OK ✓" : "CHECK"; sc.style.color = SEC.ok ? "var(--green)" : "var(--red)"; }
+  const CMP = (STATE && STATE.comparison) || null;
   const cp = $("cmpN");
-  if (STATE && STATE.comparison && STATE.comparison.ready){
-    cp.textContent = STATE.comparison.verdict;
-    cp.style.color = STATE.comparison.delta > 0 ? "var(--green)" : STATE.comparison.delta < 0 ? "var(--red)" : "var(--amber)";
+  if (CMP && CMP.ready){
+    cp.textContent = CMP.verdict;
+    cp.style.color = CMP.delta > 0 ? "var(--green)" : CMP.delta < 0 ? "var(--red)" : "var(--amber)";
   }
 
-  /* Account + rules (L5 truth) */
+  /* Ledger viewer */
+  $("ledgerMeta").textContent = PL ? (PL.entries + " entries · broken " + PL.broken) : "";
+  $("ledgerBox").textContent = PL
+    ? "P4 PERSIST: append-only hash-chained ledger.\n" +
+      "entries: " + PL.entries + " | chain: " + (PL.ok ? "INTACT (koi entry delete/edit nahi hui)" : "BROKEN — security alert!") + "\n" +
+      "kinds: trade_outcome · model_result · ai_task · lesson_added\n" +
+      "har entry = {t, kind, prev_hash, data, hash} — tamper-proof chain.\n" +
+      "koi model/LLM ye data delete nahi kar sakta (P4 law)."
+    : "Ledger abhi khali — pehla run ke baad entries aayengi.";
+
+  /* Account + rules */
   $("accEq").textContent = (STATE && STATE.stats) ? "$" + fmt(STATE.stats.equity) : "—";
-  $("accTr").textContent = (STATE && STATE.stats) ? ((STATE.stats.trades_today||0) + "/" + ((STATE.prop && STATE.prop.max_trades_per_day) || 3)) : "—";
+  $("accTr").textContent = (STATE && STATE.stats) ? ((STATE.stats.trades_today||0) + "/" + ((STATE.prop||{}).max_trades_per_day||3)) : "—";
   const dp = $("accPnl");
   if (STATE && STATE.stats){
     dp.textContent = (STATE.stats.day_pnl_pct >= 0 ? "+" : "") + STATE.stats.day_pnl_pct.toFixed(2) + "%";
@@ -688,20 +728,32 @@ function render(){
   }).join("");
 
   $("repBox").textContent = (STATE && STATE.updated)
-    ? "Last brain run: " + STATE.updated.replace("T"," ").slice(0,16) + "Z · mode: " + (STATE.mode || "") + "\nHourly + nightly reports Discord par. Full history: state/memory.jsonl (append-only, P4)."
-    : "Bot ka pehla run pending — reports uske baad.";
+    ? "Last brain run: " + STATE.updated.replace("T"," ").slice(0,16) + "Z · mode: " + (STATE.mode || "") +
+      "\nPillar score: " + ((STATE.pillar_score && STATE.pillar_score.score) || "—") + "/10 · run sha: " + ((STATE.run_tag && STATE.run_tag.cfg_sha) || "—")
+    : "Bot ka pehla run pending.";
 
   $("stratBox").textContent = (STATE && STATE.strategy_file)
     ? (STATE.strategy_file.loaded
-        ? "STRATEGY.md LOADED — chars " + STATE.strategy_file.chars + " · sha " + STATE.strategy_file.sha + " · updated " + (STATE.strategy_file.mtime || "—") + "Z\n\nOwner is file ko Discord/GitHub se edit karta hai — bot agle run se naye rules follow karta hai."
-        : "STRATEGY.md not loaded — built-in prompt chal raha hai.")
+        ? "STRATEGY.md LOADED — chars " + STATE.strategy_file.chars + " · sha " + STATE.strategy_file.sha + "\n\nOwner STRATEGY.md edit karta hai (Discord/GitHub) — bot agle run se naye rules follow karta hai. File-driven system: strategy text = bot ki zubaan."
+        : "STRATEGY.md not loaded — built-in prompt.")
     : "State load nahi hui.";
 
-  /* Grid canvas — P1 valid only */
+  /* Pillars tab self-states */
+  const MS = (STATE && STATE.model_self) || {};
+  $("selfBox").textContent = Object.keys(MS).length
+    ? Object.keys(MS).map(function(k){
+        const m = MS[k];
+        const wr = m.recent && m.recent.length
+          ? Math.round(m.recent.reduce(function(a,b){return a+b;},0)/m.recent.length*100) : 50;
+        return k.toUpperCase() + ": WR " + wr + "% · streak " + m.streak + " · bias " + m.conf_bias +
+          " · best: " + (m.best_zone || "—") + " · worst: " + (m.worst_zone || "—") + "\n  note: " + (m.last_note || "—");
+      }).join("\n\n")
+    : "Models apna record bana rahe hain — 1-2 runs ke baad yahan live data aayega.";
+
   drawGrid(okData ? gridData.candles : null, open && okData);
 }
 
-/* ---------- GRID CANVAS ---------- */
+/* ---------- GRID ---------- */
 function drawGrid(cs, live){
   const cv = $("cvGrid");
   const dpr = window.devicePixelRatio || 1;
@@ -712,7 +764,7 @@ function drawGrid(cs, live){
   ctx.clearRect(0,0,w,h);
   if (!cs){
     ctx.fillStyle = "#475569"; ctx.font = "11px JetBrains Mono";
-    ctx.fillText("No candle data yet — L5: system fake data nahi dikhata. Bot run karein.", 16, h/2);
+    ctx.fillText("No candle data — L5: fake data nahi. Bot run karein.", 16, h/2);
     return;
   }
   const c1 = cs[0], c0 = cs[1];
@@ -784,30 +836,28 @@ function drawGrid(cs, live){
   ctx.textAlign = 'left';
 }
 
-/* ---------- LOCK (P9) ---------- */
+/* ---------- LOCK ---------- */
 async function sha256hex(s){
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2,"0"); }).join("");
 }
-function lockErr(m){ $("lockErr").textContent = m; }
 async function tryUnlock(){
   const tok = $("ltok").value.trim(), pass = $("lpass").value;
-  if (!tok || !pass){ lockErr("Token aur password dono likhein"); return; }
-  lockErr("Verifying…");
+  if (!tok || !pass){ $("lockErr").textContent = "Dono likhein"; return; }
+  $("lockErr").textContent = "Verifying…";
   let st;
   try { st = await ghRaw("state/state.json", tok); }
-  catch(e){ lockErr("Token invalid ya state abhi nahi bani (" + e.message + ")"); return; }
+  catch(e){ $("lockErr").textContent = "Token/state fail (" + e.message + ")"; return; }
   const h = st && st.auth ? st.auth.hash : null;
-  if (!h){ lockErr("DASH_PASSWORD secret set karke bot run karein"); return; }
+  if (!h){ $("lockErr").textContent = "DASH_PASSWORD secret + bot run karein"; return; }
   let calc = "";
-  try { calc = await sha256hex("hermes::" + pass); } catch(e){ lockErr("SHA-256 needs HTTPS (GitHub Pages)"); return; }
-  if (calc !== h){ lockErr("Galat password"); return; }
+  try { calc = await sha256hex("hermes::" + pass); } catch(e){ $("lockErr").textContent = "HTTPS chahiye"; return; }
+  if (calc !== h){ $("lockErr").textContent = "Galat password"; return; }
   TOKEN = tok;
   localStorage.setItem("hermes_tok", tok);
   localStorage.setItem("hermes_sess", JSON.stringify({ts: Date.now()}));
   STATE = st;
-  STATE.fills = {execs:[],results:[]};
-  try { STATE.fills = await ghRaw("state/fills.json", tok); } catch(e){}
+  try { STATE.fills = await ghRaw("state/fills.json", tok); } catch(e){ STATE.fills = {execs:[],results:[]}; }
   $("lock").style.display = "none";
   bootAfter(true);
 }
@@ -861,7 +911,7 @@ Array.prototype.forEach.call(document.querySelectorAll(".nav-btn[data-s]"), func
   const k = $("cfgKey").value.trim();
   if (k) localStorage.setItem("hermes_zkey", k);
   localStorage.setItem("hermes_zmodel", $("cfgModel").value.trim() || "glm-4.6");
-  addMsg("ai", "✅ Key saved (browser-only, P9). Ab chat full AI mode mein — L1→L5.", "settings applied");
+  addMsg("ai", "✅ Key saved (browser-only, P9). Chat full AI mode.", "settings applied");
   $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
 };
 document.addEventListener("keydown", function(e){
@@ -883,19 +933,15 @@ function sessionValid(){
 async function refreshData(){
   if (!TOKEN) return;
   try {
-    const a = await ghRaw("state/state.json", TOKEN);
-    STATE = a;
+    STATE = await ghRaw("state/state.json", TOKEN);
     try { STATE.fills = await ghRaw("state/fills.json", TOKEN); } catch(e){ STATE.fills = {execs:[],results:[]}; }
-    log("[L3] state refreshed · P1 validated");
     render();
-  } catch(e){
-    log("[!] refresh fail: " + e.message);
-  }
+  } catch(e){ log("[!] refresh: " + e.message); }
 }
 function bootAfter(fresh){
   if (fresh){
-    addMsg("ai", "⚡ JARVIS 6-LAYER SECURE online. Welcome Farrukh!\nData: live state.json — jo hai wahi dikhega, jo nahi wo saaf bataya jayega (L5).\nBina ⚙️-key bhi chat chalta hai (L5 fallback rules).", "engine: L1-L5 + P-audit");
-    log("[boot] 6-layer engine ready · state loaded");
+    addMsg("ai", "⚡ JARVIS v5.2 · Phase-2 online!\nNaya: Path strip · Pillar scorecard · Ledger viewer · Live model self-data · Sim gate · Run tag.\nChat try karein — \"pillars\" ya \"path\" poochein.", "P1-P10 wired");
+    log("[boot] phase-2 frontend ready");
   }
   render();
   setInterval(refreshData, 90000);
@@ -911,10 +957,9 @@ function bootAfter(fresh){
       $("lock").style.display = "none";
       bootAfter(false);
       return;
-    } catch(e){ /* token expired — lock dikhao */ }
+    } catch(e){}
   }
-  /* lock screen visible rehta hai */
 })();
 </script>
 </body>
-</html>
+  </html>

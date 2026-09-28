@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · AI QUANT COMMAND · v5.3 LIVE</title>
+<title>FL-200 · AI QUANT COMMAND · v6.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -20,8 +20,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .think span{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--cyan);animation:think 1.2s infinite}
 .think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
 .skel{background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.15),rgba(255,255,255,.05));background-size:200% 100%;animation:shim 1.1s infinite;border-radius:4px}
-.flash{animation:flash .7s}
-.blink{animation:pulse 1.2s infinite}
+.flash{animation:flash .7s}.blink{animation:pulse 1.2s infinite}
 #pollbar{position:fixed;top:0;left:0;height:3px;z-index:150;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));animation:pollfill 5s linear infinite;box-shadow:0 0 8px var(--cyan)}
 #pollbar.err{background:var(--red);box-shadow:0 0 8px var(--red)}
 .top-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;background:rgba(5,8,18,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
@@ -34,6 +33,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.2s infinite}
 .layer-badge{font-family:'Orbitron';font-size:.68rem;padding:3px 8px;border-radius:3px;background:rgba(189,0,255,.08);border:1px solid rgba(189,0,255,.3);color:var(--purple)}
 .runtag,.syncin{font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted)}
+.engbadge{font-family:'Orbitron';font-size:.78rem;padding:4px 10px;border-radius:4px;border:1px solid var(--border)}
 .control-bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:10px 16px;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border)}
 .sym-btn,.tf-btn{font-family:'Orbitron';font-size:.82rem;padding:5px 13px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
 .sym-btn.active,.tf-btn.active{background:rgba(0,243,255,.15);color:var(--cyan);border-color:var(--cyan)}
@@ -47,9 +47,8 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .full{grid-column:span 3}.span2{grid-column:span 2}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:13px;position:relative}
 .panel::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
-.ph{font-family:'Orbitron';font-size:1rem;color:var(--cyan);letter-spacing:1px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:6px}
-.live{font-size:.78rem;color:var(--green)}
-.live.warn{color:var(--amber)}
+.ph{font-family:'Orbitron';font-size:1rem;color:var(--cyan);letter-spacing:1px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:6px}
+.live{font-size:.78rem;color:var(--green)}.live.warn{color:var(--amber)}
 .action{background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);display:grid;grid-template-columns:2fr 1fr 1fr 1.1fr;gap:9px;align-items:center;padding:13px 15px}
 .action-title{font-family:'Orbitron';font-size:1.15rem}
 .action-signal{font-size:1.7rem;font-family:'Orbitron';color:var(--green);font-weight:900}
@@ -61,6 +60,15 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .mval{font-family:'Orbitron';font-size:1.1rem}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .price{font-family:'Orbitron';font-size:2.1rem;font-weight:800}
+.pulse-box{font-family:'JetBrains Mono';font-size:.8rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;height:150px;overflow-y:auto;line-height:1.75}
+.pulse-box div{animation:slidein .25s}
+.pulse-box .pg{color:var(--green)}.pulse-box .pr{color:var(--red)}.pulse-box .pa{color:var(--amber)}
+.eng-grid{display:grid;grid-template-columns:1fr;gap:7px}
+.eng{display:grid;grid-template-columns:170px 130px 1fr;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;opacity:.6}
+.eng.act{opacity:1;border-color:var(--green);box-shadow:0 0 10px rgba(0,255,102,.2)}
+.eng .en{font-family:'Orbitron';font-size:.85rem;color:var(--cyan)}
+.eng .es{font-family:'Orbitron';font-size:.78rem}
+.eng .ed{font-family:'JetBrains Mono';font-size:.78rem;color:var(--muted)}
 .candle-wrap{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;overflow:hidden}
 .candle-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem}
 canvas{display:block;width:100%;height:280px;background:#060913}
@@ -69,36 +77,37 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .path-steps{display:flex;flex-wrap:wrap;gap:6px;font-size:.9rem;align-items:center}
 .step{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.22);padding:4px 9px;border-radius:3px;animation:slidein .4s}
 .step b{color:var(--cyan)}
-.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:12px;cursor:pointer;transition:.2s}
 .mcard:hover{border-color:rgba(0,243,255,.45);transform:translateY(-2px)}
-.mcard.heavy{border-color:rgba(0,255,102,.28)}
-.mname{font-family:'Orbitron';font-size:.95rem;font-weight:700}
-.mtype{font-size:.72rem;color:var(--muted)}
-.mpred{font-family:'Orbitron';font-size:1.25rem;color:var(--cyan);font-weight:800;margin:5px 0 3px}
-.msig{font-size:.8rem;font-weight:700;color:var(--green)}
+.mname{font-family:'Orbitron';font-size:.85rem;font-weight:700}
+.mtype{font-size:.7rem;color:var(--muted)}
+.mpred{font-family:'Orbitron';font-size:1.2rem;color:var(--cyan);font-weight:800;margin:5px 0 3px}
+.msig{font-size:.78rem;font-weight:700;color:var(--green)}
 .msig.na{color:var(--muted)}
-.mmeta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:4px}
-.macc{font-family:'Orbitron';color:var(--cyan)}
+.mmeta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
 .wbar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:5px;overflow:hidden}
-.wfill{height:100%;border-radius:2px}
-.wfill.h{width:100%;background:linear-gradient(90deg,var(--green),#00ffaa)}
-.wfill.m{width:66%;background:linear-gradient(90deg,var(--amber),#ffcc44)}
-.wfill.l{width:33%;background:var(--muted)}
-.wbadge{font-family:'Orbitron';font-size:.68rem;padding:2px 6px;border-radius:3px}
-.wbadge.h{color:var(--green);background:rgba(0,255,102,.1);border:1px solid rgba(0,255,102,.3)}
-.wbadge.m{color:var(--amber);background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.25)}
-.wbadge.l{color:var(--muted);background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.25)}
-.pillar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-.pcard{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:8px;text-align:center}
-.pname{font-family:'Orbitron';font-size:.68rem;color:var(--muted)}
-.pstat{font-family:'Orbitron';font-size:1.05rem;margin-top:3px}
+.wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),#00ffaa)}
+.wfill.m{background:linear-gradient(90deg,var(--amber),#ffcc44)}
+.wfill.l{background:var(--muted)}
+.pillar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.pcard{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:8px 4px;text-align:center}
+.pname{font-family:'Orbitron';font-size:.62rem;color:var(--muted)}
+.pstat{font-family:'Orbitron';font-size:1rem;margin-top:3px}
 .pstat.ok{color:var(--green)}.pstat.warn{color:var(--amber)}
+.imp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.imp{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:10px}
+.ih{display:flex;justify-content:space-between;align-items:baseline;font-family:'Orbitron';font-size:.85rem}
+.ia{font-size:1.15rem;color:var(--cyan)}
+.in{font-size:.75rem;color:var(--muted);margin-top:4px}
+.sysacc{text-align:center;padding:8px 0}
+.sysacc .big{font-family:'Orbitron';font-size:2.4rem;font-weight:900;color:var(--green)}
+.sysacc .sub{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
 .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:9px}
 .iname{font-family:'Orbitron';font-size:.85rem}
 .ival{font-family:'Orbitron';font-size:1.2rem;margin:3px 0}
-.ival.bull{color:var(--green)}.ival.bear{color:var(--red)}.ival.neu{color:var(--amber)}.ival.na{color:var(--muted);font-size:.85rem}
+.ival.na{color:var(--muted);font-size:.85rem}
 .istat{font-size:.75rem;color:var(--muted)}
 .chat{display:flex;flex-direction:column;height:250px}
 .msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin-bottom:7px}
@@ -112,7 +121,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .sbtn{width:38px;height:38px;border-radius:4px;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan);cursor:pointer;font-size:1rem}
 .ledger-box{font-family:'JetBrains Mono';font-size:.85rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;line-height:1.7;max-height:220px;overflow-y:auto}
 .ledger-box div{animation:slidein .3s}
-.rep-sum{font-size:1rem;line-height:1.8;white-space:pre-wrap;font-family:'Rajdhani'}
+.rep-sum{font-size:1rem;line-height:1.85;white-space:pre-wrap}
 .rep-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;margin-bottom:7px;animation:slidein .3s}
 .rep-file .fn{font-family:'JetBrains Mono';font-size:.88rem;flex:1}
 .rep-file .fs{font-family:'JetBrains Mono';font-size:.75rem;color:var(--muted)}
@@ -122,7 +131,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .rule{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px 12px;font-size:.95rem}
 .rule b{font-family:'Orbitron';color:var(--cyan)}
 .rule i{font-family:'Orbitron';font-style:normal;font-size:.78rem}
-.rule.ok i{color:var(--green)}.rule.bad i{color:var(--red)}
+.rule.ok i{color:var(--green)}
 .guide{font-size:.95rem;line-height:1.85}
 .guide b{color:var(--cyan)}.guide code{font-family:'JetBrains Mono';color:var(--amber);background:rgba(0,0,0,.4);padding:1px 5px;border-radius:3px}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;visibility:hidden;transition:.3s}
@@ -142,23 +151,22 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .lockcard input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:11px 13px;font-size:.95rem;border-radius:5px;outline:none;margin-bottom:9px;font-family:'JetBrains Mono'}
 .lockbtn{width:100%;font-family:'Orbitron';font-size:.85rem;padding:11px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
 .lerr{font-size:.8rem;color:var(--red);margin-top:9px;min-height:18px}
-@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.model-grid,.ind-grid,.pillar-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:580px){body{font-size:15px}.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.ind-grid,.pillar-grid{grid-template-columns:1fr}.nav-links{display:none}.side{width:100%}}
+@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.imp-grid{grid-template-columns:repeat(2,1fr)}.model-grid{grid-template-columns:repeat(2,1fr)}.pillar-grid{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:580px){body{font-size:15px}.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.imp-grid,.ind-grid{grid-template-columns:1fr}.pillar-grid{grid-template-columns:repeat(5,1fr)}.nav-links{display:none}.side{width:100%}.eng{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
 <div id="pollbar"></div>
 
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">AI QUANT COMMAND · 10 PILLARS · v5.3</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">AI QUANT COMMAND · ENGINE CASCADE v6.0</div>
     <input id="ltok" type="password" placeholder="GitHub Token">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
     <div class="lerr" id="lockErr"></div>
-    <div style="font-size:.72rem;color:var(--muted)">GitHub Pages par kholein · data GitHub repo se live aata hai</div>
+    <div style="font-size:.72rem;color:var(--muted)">Token = repo (read+write) scope · Colab bot isi repo mein state publish karta hai</div>
   </div>
 </div>
 
@@ -173,10 +181,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="layer-badge">L1-L6</span>
+<span class="layer-badge">AI→BOT→MATRIX</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v5.3</div>
+<div class="status"><div class="dot"></div> v6.0</div>
 <button class="nav-btn" id="openSet" style="border:1px solid var(--border)">⚙</button>
 </div>
 </nav>
@@ -194,7 +202,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <button class="tf-btn" data-tf="H4">H4</button>
 <button class="tf-btn" data-tf="D1">D1</button>
 <button class="tf-btn" data-tf="W1">W1</button>
-<button class="rbtn" id="btnSync" style="margin-left:auto">⟳ SYNC NOW</button>
+<span id="engBadge" class="engbadge" style="margin-left:auto;color:var(--muted)">ENGINE: …</span>
+<button class="rbtn" id="btnSync">⟳ SYNC</button>
 <span style="font-size:.85rem;color:var(--muted)" id="sysStatus">—</span>
 </div>
 
@@ -220,31 +229,45 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="ph"><span>📊 MARKET · <span id="mktSym">—</span></span><span id="mktLive" class="live">—</span></div>
 <div class="mgrid">
 <div class="mbox"><div class="mlabel">PRICE</div><div class="price" id="livePrice">—</div></div>
-<div class="mbox"><div class="mlabel">D1 ExpH / ExpL</div><div class="mval" style="font-size:.95rem;margin-top:3px" id="hlVal">—</div></div>
 <div class="mbox"><div class="mlabel">DATA LAYER (P1)</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
+<div class="mbox"><div class="mlabel">STATE AGE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:3px" id="sessionVal">—</div></div>
 </div>
 </div>
 
 <div class="panel">
-<div class="ph"><span>🧠 AI WORKFLOW</span><span class="blink" style="font-size:.7rem;color:var(--cyan)">●</span></div>
-<div style="font-family:'JetBrains Mono';font-size:.82rem;color:#a5f3fc;height:130px;overflow-y:auto" id="logBox"></div>
+<div class="ph"><span>❤️ SYSTEM PULSE</span><span id="hbCount" style="font-size:.75rem;color:var(--cyan)">HB 0</span></div>
+<div class="pulse-box" id="pulseBox"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🕯️ FARRUKH GRID · CANDLE[1]+[0]</span><span id="gridStatus" class="live">—</span></div>
+<div class="ph"><span>🛡️ DECISION ENGINE — AI → BOT → MATRIX (per timeframe)</span><span class="live" id="engWhy">—</span></div>
+<div class="eng-grid" id="engGrid"></div>
+</div>
+
+<div class="panel full">
+<div class="ph"><span>🕯️ FARRUKH GRID · <span id="gridTitle">—</span></span><span id="gridStatus" class="live">—</span></div>
 <div class="candle-wrap">
 <div class="candle-head">
-<span style="font-family:'Orbitron';font-size:.85rem;color:var(--cyan)" id="gridTitle">—</span>
+<span style="font-family:'Orbitron';font-size:.85rem;color:var(--cyan)" id="gridSrc">—</span>
 <span style="font-size:.82rem;color:var(--muted)" id="gridMeta">—</span>
 </div>
 <canvas id="cvGrid"></canvas>
 </div>
 <div class="path-box">
-<div class="path-title">📍 EXPECTED PATH (MODEL DRIVEN · P8 TAGGED)</div>
+<div class="path-title">📍 EXPECTED PATH · <span id="pathTF">H1</span> (model driven)</div>
 <div class="path-steps" id="pathSteps"></div>
 <div style="margin-top:6px;font-size:.85rem;color:var(--muted)" id="pathSource">—</div>
 </div>
+</div>
+
+<div class="panel span2">
+<div class="ph"><span>📈 MODEL IMPROVEMENT — KITNI % BARHA</span><span id="impMeta" style="font-size:.75rem;color:var(--muted)">—</span></div>
+<div class="imp-grid" id="impGrid"></div>
+</div>
+<div class="panel">
+<div class="ph"><span>🎯 SYSTEM ACCURACY</span></div>
+<div class="sysacc" id="sysAcc">—</div>
 </div>
 
 <div class="panel full">
@@ -253,20 +276,20 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🧬 MODELS · <span id="modLabel">—</span></span><span style="font-size:.75rem;color:var(--muted)">click = live self-data (P2/P3)</span></div>
+<div class="ph"><span>🧬 MODEL VOTES · <span id="modLabel">—</span> · <span id="modTF">H1</span></span><span style="font-size:.75rem;color:var(--muted)">click = detail</span></div>
 <div class="model-grid" id="modelGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📉 INDICATORS</span><span style="font-size:.75rem;color:var(--muted)">P1 verified only</span></div>
+<div class="ph"><span>📉 INDICATORS (P1 verified)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
 <div class="ind-grid" id="indGrid"></div>
 </div>
 
 <div class="panel span2">
-<div class="ph"><span>💬 ZCODE CHAT</span><span id="chatMode" style="font-size:.75rem;color:var(--muted)">L1→L5</span></div>
+<div class="ph"><span>💬 ZCODE CHAT</span><span style="display:flex;gap:8px;align-items:center"><span id="aiStat" style="font-size:.75rem;color:var(--amber)">AI: ?</span><span id="chatMode" style="font-size:.75rem;color:var(--muted)">L1→L5</span></span></div>
 <div class="chat">
 <div class="msgs" id="msgs"></div>
-<div class="input-row"><input class="cinp" id="cinp" placeholder="Ask ZCode… (e.g. report, signal, path, pillars)"><button class="sbtn" id="sbtn">➤</button></div>
+<div class="input-row"><input class="cinp" id="cinp" placeholder="Ask ZCode… (report / signal / path / pillars)"><button class="sbtn" id="sbtn">➤</button></div>
 </div>
 </div>
 <div class="panel">
@@ -274,13 +297,13 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
 <div class="mbox" style="text-align:center"><div class="mlabel">LEDGER (P4)</div><div class="mval" style="color:var(--cyan)" id="ledgerN">—</div></div>
 <div class="mbox" style="text-align:center"><div class="mlabel">INTEGRITY</div><div class="mval" style="color:var(--amber)" id="ledgerI">—</div></div>
-<div class="mbox" style="text-align:center"><div class="mlabel">SECURITY (P9)</div><div class="mval" style="color:var(--amber)" id="secN">—</div></div>
+<div class="mbox" style="text-align:center"><div class="mlabel">OPEN PREDS</div><div class="mval" style="color:var(--purple)" id="openN">—</div></div>
 <div class="mbox" style="text-align:center"><div class="mlabel">COMPARE (P5)</div><div class="mval" style="color:var(--amber)" id="cmpN">—</div></div>
 </div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📒 PILLAR LEDGER (P4 · APPEND-ONLY · DELETE-PROOF)</span><span id="ledgerMeta" style="font-size:.75rem;color:var(--muted)"></span></div>
+<div class="ph"><span>📒 PILLAR LEDGER (P4 · APPEND-ONLY · HASH-CHAINED)</span><span id="ledgerMeta" style="font-size:.75rem;color:var(--muted)"></span></div>
 <div class="ledger-box" id="ledgerBox">—</div>
 </div>
 </div>
@@ -300,32 +323,25 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div></div></div>
 
 <div class="section" id="rules">
-<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE · live config)</span></div>
+<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE)</span></div>
 <div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
 
 <div class="section" id="reports">
-<div class="panel full"><div class="ph"><span>🩺 LIVE RUN — KYA HO RAHA HAI</span><button class="rbtn" id="repRefresh">⟳ REFRESH</button></div>
+<div class="panel full"><div class="ph"><span>🩺 LIVE RUN — KYA HO RAHA HAI (har heartbeat update)</span><button class="rbtn" id="repRefresh">⟳ RESCAN FILES</button></div>
 <div class="rep-sum" id="repSummary">State load ho rahi hai…</div></div>
-<div class="panel full"><div class="ph"><span>📥 REPO FILES — DOWNLOAD / PREVIEW</span><span style="font-size:.75rem;color:var(--muted)">repo: MFJ-TRADING/FL-200-Private</span></div>
+<div class="panel full"><div class="ph"><span>📥 REPO FILES — PREVIEW / DOWNLOAD</span><span style="font-size:.75rem;color:var(--muted)" id="repScan">—</span></div>
 <div id="repFiles">Scanning repo…</div></div>
-<div class="panel full"><div class="ph"><span>📖 GUIDE — REPORTS KAISE PARHEIN</span></div>
-<div class="guide" id="repGuide">
+<div class="panel full"><div class="ph"><span>📖 REPORTS KAISE PARHEIN</span></div>
+<div class="guide">
 <b>Kahan se reports milengi?</b><br>
-1. Isi tab mein upar wale box se <b>PREVIEW / DOWNLOAD</b> button dabayen.<br>
-2. Ya GitHub repo <code>MFJ-TRADING/FL-200-Private</code> → folder <code>reports/</code> (ya root) → file par click → <code>Download raw file</code>.<br>
-3. Bot ke run logs ke liye: repo → <code>Actions</code> tab → latest workflow run → <code>run-bot</code> → console logs.<br><br>
+1. Upar wale box se har file ka <b>👁 PREVIEW / ⬇ DOWNLOAD</b> button.<br>
+2. Direct: GitHub repo → file → <code>Download raw file</code>. Bot logs: repo → <code>Actions</code> (agar Actions se chala rahe ho) ya Colab output.<br><br>
 <b>File decoder:</b><br>
-• <code>state.json</code> — bot ka current live dimagh: last run time, mode, har symbol ka signal/plan, pillar score. <b>Yeh sab se important hai.</b><br>
-• <code>backtest_report.json</code> — backtest ki poori report. Parhne ka tareeqa:<br>
-&nbsp;&nbsp;- <code>return_pct</code> = total profit % · <code>max_drawdown_pct</code> = sab se bara ghrata (−ve acha)<br>
-&nbsp;&nbsp;- <code>sharpe</code> = profit per unit risk (&gt;1 acha, &gt;2 bohat acha)<br>
-&nbsp;&nbsp;- <code>profit_factor</code> = profit ÷ loss (&gt;1.3 acha)<br>
-&nbsp;&nbsp;- <code>win_rate_pct</code> + <code>avg_r</code> — R matlab risk ka multiple (+2R = 2x risk kamaya)<br>
-• <code>trades.csv</code> — har trade ki entry/exit, reason, R-multiple. <code>exit_reason</code> dekhein: TP1/TP2 = win path, SL = loss, TIME_STOP = timeout.<br>
-• <code>equity_curve.csv / equity_curve.png</code> — account value ka graph. Smooth upar jata hua = healthy.<br>
-• <code>predictions.csv</code> — har candle par Grid/Chronos/Quant ke scores (model diagnostics).<br>
-• <code>ledger.jsonl</code> — append-only record (P4). Har line ek event; hash-chain integrity ke liye.<br><br>
-<b>Kab fikar karein?</b> Data STALE ho (bot run nahi hua), pillar score gire, ya equity curve neeche jaye — tab Actions/logs check karein.
+• <code>state.json</code> — bot ka live dimagh: <code>updated</code> = last run, <code>engine</code> = AI ya bot, <code>timeframes</code> = har TF ka signal/score/entry/SL/TP/path, <code>candles</code> = matrix ka fuel.<br>
+• <code>perf.json</code> — <b>model improvement</b>: har model ki resolved accuracy (acc), pichli run se delta (delta_pct), samples (n). <code>system</code> = overall ensemble accuracy.<br>
+• <code>ledger.jsonl</code> — append-only record (P4); har line = ek run ka proof.<br>
+• <code>trades.csv / backtest_report.json</code> (agar heavy backtest chalaya ho) — R-multiple, profit factor, drawdown.<br><br>
+<b>Kab fikar karein?</b> state STALE (bot band), perf.json absent (bot purana version), ya system accuracy lagatar girti rahe.
 </div></div>
 </div>
 
@@ -343,7 +359,7 @@ P9 SECURITY — secrets sirf Secrets mein; weekly audit; owner-only.
 P10 HEALTH & DRIFT — feed fresh, error streaks, regime-shift flags.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
-<div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3 LIVE)</span></div>
+<div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
 <div class="inst" id="selfBox">—</div></div>
 </div>
 </div>
@@ -352,14 +368,16 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="side" id="settings">
 <div class="side-h"><div class="side-t">⚙ CENTRAL CONFIG</div><button class="close" id="closeSet">✕</button></div>
 <div class="side-b">
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--muted);margin-bottom:8px">CHAT AI (L1-L5)</div>
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--muted);margin-bottom:8px">AI LAYER (L1 · chat + signal)</div>
 <div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">GLM API KEY</label>
 <input id="cfgKey" type="password" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
 <div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">MODEL</label>
 <input id="cfgModel" value="glm-4.6" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
-<div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">API URL</label>
+<div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">API URL (CORS block ho to Cloudflare Worker proxy URL dalein)</label>
 <input id="cfgUrl" value="https://api.z.ai/api/paas/v4/chat/completions" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
 <button class="nav-btn" style="width:100%;border:1px solid var(--border);padding:9px;margin-top:4px" id="saveCfg">SAVE (browser-only · P9)</button>
+<button class="rbtn" style="width:100%;padding:9px;margin-top:6px" id="btnTestAI">🧪 TEST AI CONNECTION</button>
+<div id="aiTestOut" style="font-size:.78rem;margin-top:7px;min-height:20px;line-height:1.5">—</div>
 </div>
 </div>
 
@@ -376,57 +394,54 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 </div>
 
 <script>
-console.log("FL-200 v5.3 — LIVE dashboard: ticker + shimmer + sync bar + reports viewer + ledger");
-
+console.log("FL-200 v6.0 — engine cascade + per-TF flow + per-heartbeat pulse + model improvement");
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
+const dec=()=>CUR_SYM==="EURUSD"?4:2;
 
-/* ============ CONFIG ============ */
+/* ================= CONFIG ================= */
 const CONFIG={
   symbols:{XAUUSD:{name:"Gold",type:"metal"},EURUSD:{name:"Euro",type:"forex"},ETHUSD:{name:"Ethereum",type:"crypto"}},
   GH_REPO:"MFJ-TRADING/FL-200-Private",
   GH_BRANCH:"main"
 };
-const STATE_PATHS=["state.json","state/state.json","dashboard/state.json","fl200/state.json"];
-const LIST_DIRS=["","reports","backtest_results","output","logs","state"];
-const LEDGER_PATHS=["ledger.jsonl","ledger/ledger.jsonl","state/ledger.jsonl"];
-const STRAT_PATHS=["strategy.md","strategy.txt","strategy/strategy.md"];
-const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",jpg:"image/jpeg",html:"text/html"};
+const STATE_PATHS=["state.json","state/state.json","dashboard/state.json"];
+const LIST_DIRS=["","reports","backtest_results","logs","state"];
+const LEDGER_PATHS=["ledger.jsonl","state/ledger.jsonl"];
+const STRAT_PATHS=["strategy.md","strategy/strategy.md"];
+const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",jpg:"image/jpeg"};
+const REPORT_DESC={"state.json":"bot ka live dimagh (per-TF signals + candles)","perf.json":"model improvement % + system accuracy","backtest_report.json":"backtest metrics + config","trades.csv":"har trade ka record","equity_curve.csv":"equity data","equity_curve.png":"equity graph","predictions.csv":"per-candle model scores","ledger.jsonl":"append-only pillar ledger","strategy.md":"strategy source"};
 const PILLAR_NAMES={P1:"DATA",P2:"ANALYZE",P3:"SELF-IMP",P4:"PERSIST",P5:"COMPARE",P6:"LESSONS",P7:"RISK",P8:"SIMULATE",P9:"SECURITY",P10:"HEALTH"};
-const MODELS=[["GRID","grid","deterministic technical"],["CHRONOS","kronos","time-series foundation"],["QUANT","quant","XGBoost classifier"],["TAURUS","taurus","trend/regime"],["ZCODE","zcode","LLM reasoner"],["STAT","stat_advisory","statistical advisory"]];
-const VOTE_KEY={GRID:"grid",KRONOS:"kronos",QUANT:"quant",TAURUS:"taurus",ZCODE:"zcode",STAT:"stat_advisory"};
 
-/* ============ STATE ============ */
+/* ================= STATE ================= */
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="XAUUSD",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null,FILES=new Map();
-
+let HB=0,DIRECT=null,DIRECT_KEY="",lastLedgerSeq=null;
+const ENGINE={layer:null,ai:{},eff:null};
+const AI_CACHE=new Map();const AI_TTL=5*60*1000;
+let stats=JSON.parse(localStorage.getItem("fl200_stats")||'{"ai_ok":0,"ai_err":0,"ai":0,"bot":0,"mx":0}');
+const saveStats=()=>localStorage.setItem("fl200_stats",JSON.stringify(stats));
 const LIVE={pollMs:5000,staleMs:30000,deadMs:120000,timer:null,busy:false,failures:0,lastFetch:0};
 
-/* ============ GITHUB ============ */
+/* ================= GITHUB ================= */
 async function ghList(path){
-  const url="https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+(path?path:"")+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now();
-  const r=await fetch(url,{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);
-  return r.json();
+  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+(path||"")+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
+  if(!r.ok)throw new Error("gh "+r.status);return r.json();
 }
 async function ghRaw(path){
-  const url="https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now();
-  const r=await fetch(url,{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw+json"},cache:"no-store"});
+  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw+json"},cache:"no-store"});
   if(!r.ok)throw new Error("gh "+r.status);
-  const txt=await r.text();
-  try{return JSON.parse(txt);}catch(e){return txt;}
+  const t=await r.text();try{return JSON.parse(t);}catch(e){return t;}
 }
 async function ghBlob(path){
-  const url="https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now();
-  const r=await fetch(url,{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);
-  return r.arrayBuffer();
+  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw"},cache:"no-store"});
+  if(!r.ok)throw new Error("gh "+r.status);return r.arrayBuffer();
 }
 const ext=p=>(p.split(".").pop()||"").toLowerCase();
 const isBin=p=>["png","jpg","jpeg","gif","webp"].includes(ext(p));
 
-/* ============ LIVE STATE AGE ============ */
+/* ================= LIVE AGE ================= */
 function stateUpdatedMs(){if(!STATE||!STATE.updated)return 0;const t=Date.parse(STATE.updated);return isNaN(t)?0:t;}
 function stateAgeMs(){const t=stateUpdatedMs();return t?Math.max(0,Date.now()-t):Infinity;}
 function stateAgeText(){const a=stateAgeMs();if(!isFinite(a))return"NO TIMESTAMP";const s=Math.floor(a/1000);
@@ -439,32 +454,186 @@ function getLiveState(){
   return{status:"STALE",cls:"warn",text:"STALE · "+stateAgeText()};
 }
 
-/* ============ UI HELPERS ============ */
+/* ================= PULSE / UI HELPERS ================= */
 const prevVals={};
-function setTxt(id,txt,fl){
-  const el=$(id);if(!el)return;const t=String(txt);
+function setTxt(id,txt,fl){const el=$(id);if(!el)return;const t=String(txt);
   if(prevVals[id]!==t){prevVals[id]=t;el.textContent=t;
-    if(fl!==false){el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");}}
-}
-function log(msg){
-  const el=$("logBox");if(!el)return;
-  const t=new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    if(fl!==false){el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");}}}
+function pulse(msg,cls){
+  const el=$("pulseBox");if(!el)return;
   const d=document.createElement("div");
-  d.innerHTML='<span style="color:var(--muted)">['+t+"]</span> "+esc(msg);
+  const t=new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  d.innerHTML='<span style="color:var(--muted)">['+t+']</span> <span class="'+(cls||"")+'">'+esc(msg)+"</span>";
   el.insertBefore(d,el.firstChild);
-  while(el.children.length>40)el.lastElementChild.remove();
+  while(el.children.length>60)el.lastElementChild.remove();
+}
+function log(msg){pulse(msg,"");}
+
+/* ================= CANDLES (bot → direct feed) ================= */
+function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
+function isMarketOpen(sym){const s=CONFIG.symbols[sym];if(!s)return false;
+  if(s.type==="crypto")return true;const d=new Date().getUTCDay();return !(d===6||d===0);}
+function getCandles(){
+  const SN=curSN();
+  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
+  if(cs&&cs.length)return cs;
+  if(DIRECT_KEY===CUR_SYM+"|"+CUR_TF&&DIRECT)return DIRECT;
+  return null;
+}
+async function directFeed(){
+  if(CUR_SYM!=="ETHUSD")return null;
+  const map={M30:"30m",H1:"1h",H4:"4h",D1:"1d",W1:"1w"};
+  try{
+    const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol=ETHUSDT&interval="+(map[CUR_TF]||"1h")+"&limit=120");
+    if(!r.ok)return null;
+    return (await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
+  }catch(e){return null;}
+}
+async function ensureDirect(){
+  if(CUR_SYM!=="ETHUSD")return;
+  const key=CUR_SYM+"|"+CUR_TF;
+  if(DIRECT_KEY===key)return;
+  const cs=await directFeed();
+  if(cs){DIRECT=cs;DIRECT_KEY=key;pulse("direct feed ✓ Binance "+CUR_TF+" ("+cs.length+" candles) → matrix live","g");renderAll();}
+  else pulse("direct feed fail (matrix needs bot candles)","r");
 }
 
-/* ============ HEARTBEAT UI ============ */
+/* ================= LOCAL MATRIX (L3) — same formula as bot GRID ================= */
+function emaArr(a,n){const k=2/(n+1),o=[];let e=a[0];a.forEach((v,i)=>{e=i?v*k+e*(1-k):v;o.push(e);});return o;}
+function rsiArr(a,n=14){const o=[50];let g=0,l=0;
+  for(let i=1;i<a.length;i++){const d=a[i]-a[i-1],up=Math.max(d,0),dn=Math.max(-d,0);
+    if(i<=n){g+=up;l+=dn;if(i===n){g/=n;l/=n;}}else{g=(g*(n-1)+up)/n;l=(l*(n-1)+dn)/n;}
+    o.push(l===0?100:100-100/(1+g/l));}return o;}
+function atrArr(h,l,c,n=14){const tr=[0];
+  for(let i=1;i<h.length;i++)tr.push(Math.max(h[i]-l[i],Math.abs(h[i]-c[i-1]),Math.abs(l[i]-c[i-1])));
+  const o=[];let s=0;for(let i=0;i<tr.length;i++){if(i<n){s+=tr[i];o.push(s/(i+1));}else o.push((o[i-1]*(n-1)+tr[i])/n);}return o;}
+function matrixLocal(){
+  const cs=getCandles();if(!cs||cs.length<60)return null;
+  const o=cs.map(x=>+x.o),h=cs.map(x=>+x.h),l=cs.map(x=>+x.l),c=cs.map(x=>+x.c);
+  const i=c.length-2;if(i<55)return null;
+  const a=atrArr(h,l,c)[i]||1e-9,e50=emaArr(c,50)[i],r=rsiArr(c)[i];
+  const b0=c[i]-o[i],b1=c[i-1]-o[i-1];
+  const s=0.35*Math.tanh(b0/(0.5*a))+0.20*Math.tanh(b1/(0.5*a))+0.30*Math.tanh((c[i]-e50)/a)+0.15*((r-50)/50);
+  const sig=s>0.12?"BUY":s<-0.12?"SELL":"WAIT",d=dec();
+  return{signal:sig,score:+s.toFixed(3),entry:+c[i].toFixed(d),sl:+(c[i]-1.5*a).toFixed(d),tp:+(c[i]+3*a).toFixed(d),src:"matrix-local"};
+}
+
+/* ================= ENGINE CASCADE (AI → BOT → MATRIX) ================= */
+function botSignal(SN){
+  if(!SN)return null;
+  const t=SN.timeframes&&SN.timeframes[CUR_TF];
+  if(t&&t.signal)return Object.assign({},t,{src:"bot"});
+  if(SN.signal){const P1=SN.plan&&(SN.plan.B1||SN.plan.S1);
+    return{signal:SN.signal,entry:P1?P1.entry:null,sl:P1?P1.sl:null,tp:P1?P1.tp:null,src:"bot-legacy",why:SN.why};}
+  return null;
+}
+const ZKEY=()=>localStorage.getItem("hermes_zkey")||"";
+const ZURL=()=>localStorage.getItem("hermes_zurl")||"https://api.z.ai/api/paas/v4/chat/completions";
+const ZMODEL=()=>localStorage.getItem("hermes_zmodel")||"glm-4.6";
+async function aiDecide(){
+  if(!ZKEY())return null;
+  const key=CUR_SYM+"|"+CUR_TF;
+  const c=AI_CACHE.get(key);
+  if(c&&Date.now()-c.ts<AI_TTL)return c.d;
+  const SN=curSN(),bt=botSignal(SN),mx=matrixLocal();
+  const ctx={symbol:CUR_SYM,tf:CUR_TF,price:SN?SN.price:null,
+    bot:bt?{signal:bt.signal,score:bt.score||null}:null,
+    matrix:mx?{signal:mx.signal,score:mx.score}:null,
+    pillars:(STATE&&STATE.pillar_score)?STATE.pillar_score.score:null};
+  const t0=Date.now();
+  try{
+    const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
+      body:JSON.stringify({model:ZMODEL(),temperature:0.2,max_tokens:140,messages:[
+        {role:"system",content:'You are FL-200 signal validator. Reply ONLY minified JSON {"signal":"BUY|SELL|WAIT","confidence":0-1,"reason":"max 2 sentences"}. Never guarantee profit.'},
+        {role:"user",content:JSON.stringify(ctx)}]})});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const j=extractJSON((await r.json()).choices[0].message.content);
+    if(!j||!j.signal)throw new Error("bad json");
+    let conf=parseFloat(j.confidence);if(isNaN(conf))conf=.5;if(conf>1&&conf<=100)conf/=100;
+    const d={signal:j.signal,confidence:Math.max(0,Math.min(1,conf)),reason:String(j.reason||"").slice(0,240)};
+    AI_CACHE.set(key,{ts:Date.now(),d:d});stats.ai_ok++;saveStats();
+    pulse("AI ✓ "+key+" → "+d.signal+" ("+Math.round(d.confidence*100)+"%) "+(Date.now()-t0)+"ms","pg");
+    return d;
+  }catch(e){
+    stats.ai_err++;saveStats();AI_CACHE.set(key,{ts:Date.now(),d:null});
+    pulse("AI ✗ "+e.message+" → L2/L3 fallback","pr");return null;
+  }
+}
+function resolveLayer(){
+  const SN=curSN(),L=getLiveState();
+  const ai=ENGINE.ai,bt=botSignal(SN),mx=matrixLocal();
+  if(ai&&ai.ok&&ai.conf>=0.55&&ai.signal){ENGINE.layer="AI";ENGINE.eff={signal:ai.signal,why:ai.reason,src:"ai"};}
+  else if(bt&&L.status!=="OFFLINE"&&L.status!=="STALE"){ENGINE.layer="BOT";
+    ENGINE.eff={signal:bt.signal,score:bt.score,entry:bt.entry,sl:bt.sl,tp:bt.tp,why:bt.why||"bot ensemble",src:bt.src||"bot"};}
+  else if(mx){ENGINE.layer="MATRIX";ENGINE.eff=mx;}
+  else{ENGINE.layer="NONE";ENGINE.eff=null;}
+  if(ENGINE.layer!=="NONE"){stats[ENGINE.layer==="AI"?"ai":ENGINE.layer==="BOT"?"bot":"mx"]++;saveStats();}
+}
+function engineTick(){
+  if(ZKEY()){aiDecide().then(function(d){
+    ENGINE.ai=d?{ok:true,conf:d.confidence,signal:d.signal,reason:d.reason}:{ok:false,msg:"fail"};
+    resolveLayer();renderEngine();renderAction();});}
+  else ENGINE.ai={ok:false,msg:"no key"};
+  resolveLayer();renderEngine();renderAction();
+}
+function renderEngine(){
+  const L=getLiveState(),ai=ENGINE.ai,bt=botSignal(curSN()),mx=matrixLocal();
+  const actKey={AI:"ai",BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
+  const rows=[
+    ["L1 · AI (GLM)", ai&&ai.ok?"✓ READY":(ZKEY()?(ai&&ai.ok===false?"✗ FAIL":"⏳ CALLING…"):"— NO KEY"),
+     ai&&ai.ok?("conf "+Math.round(ai.conf*100)+"% · "+(ai.signal||"")):(ai&&ai.ok===false?(ai.msg||"fail"):"⚙ mein key + (CORS ho to Worker URL)")],
+    ["L2 · COLAB BOT",(STATE&&L.status!=="OFFLINE"&&L.status!=="STALE")?"✓ STATE "+stateAgeText():"✗ NO/STALE STATE",
+     bt?("H1 "+bt.signal+(bt.score!=null?" · score "+bt.score:"")):"Colab bot run/publish karein (FILE 2)"],
+    ["L3 · LOCAL MATRIX",mx?"✓ READY":"— NODATA",
+     mx?("score "+mx.score+" → "+mx.signal+" (candles "+(getCandles()?getCandles().length:0)+")"):(CUR_SYM==="ETHUSD"?"feed fail":"bot candles chahiye (XAU/EUR)")]];
+  $("engGrid").innerHTML=rows.map(function(r,i){
+    const k=["ai","bot","mx"][i];
+    return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--amber)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
+  $("engBadge").textContent="ENGINE: "+(ENGINE.layer||"…");
+  $("engBadge").style.color=ENGINE.layer==="AI"?"var(--green)":ENGINE.layer==="BOT"?"var(--cyan)":ENGINE.layer==="MATRIX"?"var(--amber)":"var(--red)";
+  $("engWhy").textContent=ENGINE.eff?("active: "+ENGINE.eff.src+" · "+(ENGINE.eff.signal||"")):"cascade pending";
+}
+
+/* ================= SYNC ================= */
+async function refreshData(){
+  if(!TOKEN||LIVE.busy)return;
+  LIVE.busy=true;
+  try{
+    let raw=null,used=null,lastErr=null;
+    for(const p of (FOUND_STATE_PATH?[FOUND_STATE_PATH]:STATE_PATHS)){
+      try{raw=await ghRaw(p);used=p;break;}catch(e){lastErr=e;}
+    }
+    if(raw==null)throw lastErr||new Error("state.json not found");
+    FOUND_STATE_PATH=used;
+    STATE=(typeof raw==="string")?JSON.parse(raw):raw;
+    LIVE.lastFetch=Date.now();LIVE.failures=0;
+    $("pollbar").classList.remove("err");
+    HB++;$("hbCount").textContent="HB "+HB;
+    pulse("HB"+HB+" · sync ✓ · "+(used||"state.json")+" · age "+stateAgeText(),"pg");
+    renderAll();engineTick();renderReportsSummary();loadLedger();
+  }catch(e){
+    LIVE.failures++;$("pollbar").classList.add("err");
+    pulse("sync ✗ "+e.message+" (retry 5s)","pr");
+  }finally{LIVE.busy=false;}
+}
+
+/* ================= RENDER ================= */
+function renderAll(){
+  updateLiveUI();renderTicker();renderAction();renderEngine();
+  renderPillars();renderModels();renderIndicators();renderPath();renderSelfLearn();renderAccount();renderRules();renderImp();
+}
 function updateLiveUI(){
   const L=getLiveState();
   const badge=$("mktBadge");
   if(badge){badge.className=L.status==="LIVE"?"badge-open":"badge-closed";badge.textContent=L.text;}
   const lv=$("mktLive");if(lv){lv.textContent=L.status;lv.className=L.status==="LIVE"?"live":"live warn";}
   $("sysStatus").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long"})+" · "+L.text;
+  setTxt("ageVal",stateAgeText(),false);
   const dl=$("dataLayer");
-  if(dl&&!STATE){
-    if(L.status==="OFFLINE"){dl.textContent="P1 ⚠ NO DATA";dl.style.color="var(--red)";}
+  if(dl){
+    if(!STATE){dl.textContent="P1 ⚠ NO DATA";dl.style.color="var(--red)";}
+    else if(L.status==="LIVE"){dl.textContent="P1 ✓ LIVE";dl.style.color="var(--green)";}
+    else{dl.textContent="P1 ⚠ "+L.status;dl.style.color="var(--amber)";}
   }
   const rem=Math.max(0,LIVE.pollMs-(Date.now()-LIVE.lastFetch));
   $("syncIn").textContent="sync "+(TOKEN?(LIVE.busy?"now…":Math.ceil(rem/1000)+"s"):"—");
@@ -476,199 +645,116 @@ function startHeartbeat(){
     if(document.hidden)return;
     if(TOKEN)refreshData();
   },LIVE.pollMs);
-  log("[LIVE] heartbeat started · every "+(LIVE.pollMs/1000)+"s");
+  pulse("heartbeat started · every "+(LIVE.pollMs/1000)+"s · engine AI→BOT→MATRIX","pa");
 }
-document.addEventListener("visibilitychange",function(){
-  if(!document.hidden&&TOKEN){log("[LIVE] dashboard active → instant sync");refreshData();}
-});
-window.addEventListener("online",function(){log("[LIVE] internet restored → sync");if(TOKEN)refreshData();});
-window.addEventListener("offline",function(){log("[LIVE] browser offline");const dl=$("dataLayer");if(dl){dl.textContent="P1 ⚠ OFFLINE";dl.style.color="var(--red)";}});
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&TOKEN)refreshData();});
+window.addEventListener("online",function(){pulse("internet restored → sync","pa");if(TOKEN)refreshData();});
+window.addEventListener("offline",function(){pulse("browser offline","pr");});
 setInterval(updateLiveUI,1000);
+setInterval(function(){if(TOKEN&&!document.hidden)engineTick();},15000); /* AI cache refresh cycle */
 
-/* ============ DATA SYNC ============ */
-async function refreshData(){
-  if(!TOKEN||LIVE.busy)return;
-  LIVE.busy=true;
-  try{
-    let raw=null,used=null,lastErr=null;
-    for(const p of (FOUND_STATE_PATH?[FOUND_STATE_PATH]:STATE_PATHS)){
-      try{raw=await ghRaw(p);used=p;break;}catch(e){lastErr=e;}
-    }
-    if(raw==null)throw lastErr||new Error("state.json not found in repo");
-    FOUND_STATE_PATH=used;
-    STATE=(typeof raw==="string")?JSON.parse(raw):raw;
-    LIVE.lastFetch=Date.now();LIVE.failures=0;
-    $("pollbar").classList.remove("err");
-    render();loadLedger();
-  }catch(e){
-    LIVE.failures++;
-    $("pollbar").classList.add("err");
-    if(LIVE.failures===1)log("[NET] state fetch failed: "+e.message+" (repo/state.json check karein)");
-  }finally{LIVE.busy=false;}
-}
-
-/* ============ TICKER ============ */
 function renderTicker(){
-  const L=getLiveState();
-  let items=[];
-  Object.keys(CONFIG.symbols).forEach(k=>{
+  const L=getLiveState();let items=[];
+  Object.keys(CONFIG.symbols).forEach(function(k){
     const sn=(STATE&&STATE.symbols)?STATE.symbols[k]:null;
-    const sig=sn?(sn.signal||"HOLD"):"—";
-    const cls=sig==="BUY"?"g":sig==="SELL"?"r":"";
-    items.push("<b>"+k+"</b> "+fmt(sn?sn.price:null,2)+" · "+'<span class="'+cls+'">'+sig+"</span>");
+    let sig="—",cls="";
+    if(sn){const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
+      sig=(t&&t.signal)||(sn.signal||"HOLD");}
+    if(sig==="BUY")cls="g";if(sig==="SELL")cls="r";
+    items.push("<b>"+k+"</b> "+fmt(sn?sn.price:null,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+")");
   });
   const eq=(STATE&&STATE.stats)?STATE.stats.equity:null;
-  const ps=(STATE&&STATE.pillar_score)?STATE.pillar_score.score:null;
-  const head="<b>⚡ FL-200</b> "+L.text+" &nbsp;|&nbsp; ";
-  const tail=" EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; PILLARS <b>"+(ps==null?"—":ps+"/10")+"</b> &nbsp;|&nbsp; ";
-  const seg=head+items.join(" &nbsp;|&nbsp; ")+tail;
-  $("ticker").innerHTML=seg+seg; /* seamless loop */
+  const sa=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.overall!=null)?STATE.system_accuracy.overall+"%":"—";
+  const seg="<b>⚡ FL-200</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; SYS-ACC <b>"+sa+"</b> &nbsp;|&nbsp; ";
+  $("ticker").innerHTML=seg+seg;
 }
-
-/* ============ CUR SN ============ */
-function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
-function isMarketOpen(sym){
-  const s=CONFIG.symbols[sym];if(!s)return false;
-  if(s.type==="crypto")return true;
-  const d=new Date().getUTCDay();return !(d===6||d===0);
-}
-
-/* ============ RENDER ============ */
-function render(){
-  updateLiveUI();renderTicker();
-  const open=isMarketOpen(CUR_SYM);
-  const SN=curSN();
-  const dec=CUR_SYM==="EURUSD"?4:2;
-  const Z=SN?(SN.zcode||{}):{};
-
-  setTxt("runTag","run: "+((STATE&&STATE.run_tag&&STATE.run_tag.cfg_sha)?STATE.run_tag.cfg_sha:"—"),false);
-
-  const rp=$("actionPanel");
+function renderAction(){
+  const SN=curSN(),open=isMarketOpen(CUR_SYM),rp=$("actionPanel");
   $("recSym").textContent=CUR_SYM;$("recTF").textContent=CUR_TF;
-  if(SN&&SN.signal){
-    rp.classList.toggle("closed",!open||SN.signal==="NO_TRADE"||SN.signal==="WAIT");
-    const ra=$("recAction");
-    ra.textContent=open?(SN.signal==="NO_TRADE"?"WAIT":SN.signal):"WAIT";
-    ra.style.color=SN.signal==="BUY"?"var(--green)":SN.signal==="SELL"?"var(--red)":"var(--muted)";
-    $("recNote").textContent=Z.reasoning||SN.why||"ensemble + grid";
-    $("recBy").textContent="by: "+(SN.signal_by||"—")+" · reproducible: "+((STATE&&STATE.run_tag&&STATE.run_tag.cfg_sha)?STATE.run_tag.cfg_sha:"—");
-    const sg=SN.sim||{};
-    $("recSim").textContent=sg.gate?("🧪 P8 gate: "+sg.gate+(sg.note?" · "+sg.note:"")):"—";
-    const P1=SN.plan?(SN.plan.B1||SN.plan.S1):null;
-    $("recEntry").textContent=P1?String(P1.entry):"—";
-    $("recTP").textContent=P1?("TP "+P1.tp+" (SL "+P1.sl+")"):"—";
-  }else{
-    rp.classList.add("closed");
-    const ra=$("recAction");ra.textContent=SN?"WAIT":"AWAITING DATA";ra.style.color="var(--muted)";
-    if(!SN)ra.classList.add("blink");
-    $("recNote").textContent=SN?(SN.why||"no trade conditions"):"bot run pending (state.json chahiye)";
-    $("recBy").textContent=SN?("by: "+(SN.signal_by||"matrix")):"—";
-    $("recSim").textContent="—";$("recEntry").textContent="—";$("recTP").textContent="—";
-  }
-
-  $("mktSym").textContent=CUR_SYM;
-  const lp=$("livePrice");
-  if(SN){lp.classList.remove("skel");lp.classList.remove("blink");setTxt("livePrice",fmt(SN.price,dec));
-    setTxt("hlVal",fmt(SN.grid&&SN.grid.D1?SN.grid.D1.expected_high:null,dec)+" / "+fmt(SN.grid&&SN.grid.D1?SN.grid.D1.expected_low:null,dec),false);
-    setTxt("dataLayer","P1 ✓ LIVE DATA",false);$("dataLayer").style.color="var(--green)";
-  }else{lp.classList.add("skel");setTxt("hlVal","—",false);setTxt("dataLayer","awaiting bot run",false);$("dataLayer").style.color="var(--amber)";}
-  $("sessionVal").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long"});
-
-  setTxt("gridTitle",CUR_SYM+" · "+CUR_TF,false);
-  const L=getLiveState();
-  setTxt("gridStatus",CUR_TF+" · "+L.status+" · "+stateAgeText(),false);
-  $("gridStatus").className=L.status==="LIVE"?"live":"live warn";
-  setTxt("gridMeta",SN?(new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})+" UTC-scan"):"scanline active",false);
-
-  renderPillars();renderModels();renderIndicators();renderPath();renderSelfLearn();renderAccount();renderRules();
-  if((document.querySelector("#reports")||{}).classList&&document.querySelector("#reports").classList.contains("active")){renderReportsSummary();}
+  const eff=ENGINE.eff;
+  let sig=eff?eff.signal:null,by=ENGINE.layer,why=eff?(eff.why||eff.src||""):"";
+  let entry=eff?eff.entry:null,sl=eff?eff.sl:null,tp=eff?eff.tp:null;
+  if(!sig&&SN&&SN.signal){sig=SN.signal;by=SN.signal_by||"bot";why=SN.why||"";
+    const P1=SN.plan&&(SN.plan.B1||SN.plan.S1);if(P1){entry=P1.entry;tp=P1.tp;sl=P1.sl;}}
+  rp.classList.toggle("closed",!sig||!open||sig==="WAIT"||sig==="NO_TRADE");
+  const ra=$("recAction");
+  ra.textContent=sig?(open?(sig==="NO_TRADE"?"WAIT":sig):"WAIT"):"AWAITING DATA";
+  ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
+  $("recNote").textContent=why||"engine cascade pending (AI key / bot state / candles chahiye)";
+  $("recBy").textContent="engine: "+(by||"—")+" · repro: "+((STATE&&STATE.run_tag&&STATE.run_tag.cfg_sha)||"—");
+  $("recSim").textContent="P7 risk gate ✓ · src "+(ENGINE.eff?ENGINE.eff.src:"—");
+  $("recEntry").textContent=entry!=null?String(entry):"—";
+  $("recTP").textContent=(tp!=null&&sl!=null)?("TP "+tp+" (SL "+sl+")"):"—";
 }
-
 function renderPillars(){
   const ps=(STATE&&STATE.pillar_score)||null;
-  setTxt("pillarScore",ps?(ps.score+"/10"+(ps.trend?" · "+ps.trend:"")):"awaiting state",false);
-  const g=$("pillarGrid");
-  let h="";
+  setTxt("pillarScore",ps?(ps.score+"/10"+(ps.trend?" · "+ps.trend:"")):"awaiting bot",false);
+  const g=$("pillarGrid");let h="";
   for(let i=1;i<=10;i++){
-    const k="P"+i;const v=ps?(ps[k]!==undefined?ps[k]:null):null;
+    const k="P"+i,v=ps?(ps[k]!==undefined?ps[k]:null):null;
     const ok=v===true||v==="ok"||v===1;
-    h+='<div class="pcard"><div class="pname">'+k+" · "+PILLAR_NAMES[k]+'</div><div class="pstat '+(v==null?"warn":(ok?"ok":"warn"))+'">'+(v==null?"⏳":(ok?"✓":"✗"))+"</div></div>";
+    h+='<div class="pcard"><div class="pname">'+k+" "+PILLAR_NAMES[k]+'</div><div class="pstat '+(v==null?"warn":(ok?"ok":"warn"))+'">'+(v==null?"⏳":(ok?"✓":"✗"))+"</div></div>";
   }
   g.innerHTML=h;
 }
-
 function renderModels(){
-  setTxt("modLabel",CUR_SYM,false);
-  const SN=curSN();const g=$("modelGrid");let h="";
-  MODELS.forEach(function(M){
-    const key=VOTE_KEY[M[1]];
-    const md=(SN&&SN.models&&SN.models[key])||(SN&&SN.votes&&SN.votes[key])||null;
-    const pred=md?(md.pred||md.prediction||md.vote||md.signal||"—"):"—";
-    const col=String(pred).toUpperCase().indexOf("BUY")>=0?"var(--green)":String(pred).toUpperCase().indexOf("SELL")>=0?"var(--red)":"var(--cyan)";
-    const sig=md?(md.sig!=null?md.sig:(md.confidence!=null?Math.round(md.confidence*100)+"%":"—")):"—";
-    const acc=md?(md.acc!=null?md.acc:(md.accuracy!=null?md.accuracy:"—")):"—";
-    const wt=md?(md.weight!=null?md.weight:"—"):"—";
-    const wl=wt==="—"?".l":(parseFloat(wt)>=0.3?".h":parseFloat(wt)>=0.15?".m":".l");
-    const wb=wl===".h"?"h":wl===".m"?"m":"l";
-    h+='<div class="mcard'+(M[0]==="CHRONOS"||M[0]==="QUANT"?" heavy":"")+'" data-m="'+key+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center"><span class="mname">'+M[0]+'</span><span class="wbadge '+wb+'">W '+wt+'</span></div>'
-      +'<div class="mtype">'+M[2]+'</div>'
-      +'<div class="mpred" style="color:'+col+'">'+esc(pred)+'</div>'
-      +'<div class="msig'+(sig==="—"?" na":"")+'">sig: '+esc(sig)+'</div>'
-      +'<div class="mmeta"><span>acc <span class="macc">'+esc(acc)+'</span></span><span>n '+(md&&md.n!=null?md.n:"—")+'</span></div>'
-      +'<div class="wbar"><div class="wfill'+wl+'"></div></div></div>';
+  setTxt("modLabel",CUR_SYM,false);setTxt("modTF",CUR_TF,false);
+  const SN=curSN();const t=SN&&SN.timeframes?SN.timeframes[CUR_TF]:null;
+  const votes=(t&&t.models)||{};
+  const cards=[
+    ["GRID","grid",votes.grid?votes.grid.vote:null,"Farrukh candle[1]+[0]"],
+    ["CHRONOS-LITE","chronos",votes.chronos?votes.chronos.vote:null,"momentum projector"],
+    ["QUANT","quant",votes.quant?votes.quant.vote:null,"logistic ML · p_up "+(votes.quant&&votes.quant.p_up!=null?votes.quant.p_up:"—")],
+    ["AI (L1)",null,ENGINE.ai&&ENGINE.ai.ok?Math.round(ENGINE.ai.conf*100)/100:null,"GLM validator · "+(ENGINE.ai&&ENGINE.ai.signal||"—")],
+    ["ENSEMBLE",null,t?(t.score!=null?t.score:null):null,(t&&t.signal)||"—"]];
+  $("modelGrid").innerHTML=cards.map(function(c){
+    const v=c[2];
+    const col=v==null?"var(--cyan)":v>0.12?"var(--green)":v<-0.12?"var(--red)":"var(--muted)";
+    const lbl=v==null?"—":(c[1]===null&&c[0]==="AI (L1)"?String(v):(v>0?"+"+v:v));
+    const wl=v==null?"l":Math.abs(v)>0.3?"":Math.abs(v)>0.12?"m":"l";
+    const detail=t?JSON.stringify({signal:t.signal,score:t.score,entry:t.entry,sl:t.sl,tp:t.tp,models:votes},null,2):"bot TF data pending";
+    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+c[0]+'</div><div class="mtype">'+c[3]+'</div><div class="mpred" style="color:'+col+'">'+lbl+'</div><div class="msig'+(v==null?" na":"")+'">'+(v==null?"no vote":(v>0.12?"BULLISH":v<-0.12?"BEARISH":"NEUTRAL"))+'</div><div class="wbar"><div class="wfill '+wl+'" style="width:'+(v==null?8:Math.min(100,Math.abs(v)*100+8))+'%"></div></div></div>';
+  }).join("");
+  document.querySelectorAll("#modelGrid .mcard").forEach(function(el){
+    el.addEventListener("click",function(){$("modTitle").textContent="TF DETAIL · "+CUR_SYM+" "+CUR_TF;$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
   });
-  g.innerHTML=h;
-  g.querySelectorAll(".mcard").forEach(c=>c.addEventListener("click",function(){openModel(this.dataset.m);}));
 }
-
-function openModel(key){
-  const SN=curSN();
-  const md=(SN&&SN.models&&SN.models[key])||(SN&&SN.votes&&SN.votes[key])||null;
-  $("modTitle").textContent=key.toUpperCase()+" · SELF-DATA (P2/P3)";
-  $("modInst").textContent=md?JSON.stringify(md,null,2):"Is waqt state mein is model ka self-record nahi.\n\nBot run ke baad yahan model ka apna data aayega:\n- last prediction + confidence\n- own win-rate (P3 bias)\n- samples count\n- weight\n\nState path: "+(FOUND_STATE_PATH||"state.json");
-  $("modOverlay").classList.add("open");$("modDetail").classList.add("open");
-}
-
 function renderIndicators(){
-  const SN=curSN();const g=$("indGrid");
-  const ind=(SN&&SN.indicators)||null;
-  const defs=ind?Object.keys(ind).slice(0,9):[];
-  if(!defs.length){
-    g.innerHTML=["RSI","ATR","EMA200","BB","ADX","VOL"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳ pending</div><div class="istat">bot run ke baad (P1 verified)</div></div>').join("");
+  const SN=curSN();const ind=(SN&&SN.indicators)||null;
+  setTxt("indTF",ind?"last closed candle":"bot run pending",false);
+  const g=$("indGrid");
+  if(!ind||!Object.keys(ind).length){
+    g.innerHTML=["RSI","ATR","EMA20/50"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳ pending</div><div class="istat">bot publish ke baad</div></div>').join("");
     return;
   }
-  g.innerHTML=defs.map(function(k){
-    const v=ind[k];const val=(v&&v.v!=null)?v.v:(typeof v==="number"?v:"—");
-    const s=(v&&v.s)||"";
-    const cls=String(s).toLowerCase().indexOf("bull")>=0?"bull":String(s).toLowerCase().indexOf("bear")>=0?"bear":"neu";
-    return '<div class="ind"><div class="iname">'+esc(k.toUpperCase())+'</div><div class="ival '+cls+'">'+esc(String(val))+'</div><div class="istat">'+esc(String(s))+"</div></div>";
-  }).join("");
+  g.innerHTML=Object.keys(ind).slice(0,9).map(k=>'<div class="ind"><div class="iname">'+esc(k.toUpperCase())+'</div><div class="ival">'+esc(String(ind[k]))+'</div><div class="istat">P1 ✓</div></div>').join("");
 }
-
 function renderPath(){
-  const SN=curSN();
-  const p=(SN&&SN.path)||null;
-  const el=$("pathSteps");
+  setTxt("pathTF",CUR_TF,false);
+  const SN=curSN();const t=SN&&SN.timeframes?SN.timeframes[CUR_TF]:null;
+  const p=t&&t.path;
   if(p&&p.length){
-    el.innerHTML=p.map(s=>'<span class="step"><b>'+esc(s.step||"•")+"</b> "+esc(s.what||"")+"</span>").join('<span style="color:var(--muted)">→</span>');
-    $("pathSource").textContent="source: "+((SN&&SN.path_source)||"model ensemble · P8 tagged")+" · state age "+stateAgeText();
+    $("pathSteps").innerHTML=p.map(s=>'<span class="step"><b>'+esc(s.step||"•")+"</b> "+esc(s.what||"")+"</span>").join('<span style="color:var(--muted)">→</span>');
+    $("pathSource").textContent="src: "+((t&&t.src)||"bot")+" · "+CUR_TF+" · signal "+(t?t.signal:"—")+" · score "+(t&&t.score!=null?t.score:"—");
   }else{
-    el.innerHTML='<span class="step blink" style="color:var(--muted)">⏳ awaiting model path (bot run pending)</span>';
-    $("pathSource").textContent="no fake path — P1/P8 rule: bina data ke path generate nahi hota";
+    const mx=matrixLocal();
+    if(mx){
+      $("pathSteps").innerHTML='<span class="step"><b>S1</b> matrix signal '+mx.signal+" (score "+mx.score+")</span><span class='step'><b>S2</b> TP zone "+mx.tp+"</span><span class='step'><b>S3</b> invalid below "+mx.sl+"</span>";
+      $("pathSource").textContent="src: local matrix (L3) · "+CUR_TF;
+    }else{
+      $("pathSteps").innerHTML='<span class="step blink" style="color:var(--muted)">⏳ path pending — bot candles ya direct feed chahiye</span>';
+      $("pathSource").textContent="no fake path (P1/P8)";
+    }
   }
 }
-
 function renderSelfLearn(){
-  const S=(STATE&&STATE.stats)||{};
   const led=(STATE&&STATE.ledger)||{};
-  setTxt("ledgerN",String(led.count!=null?led.count:(S.ledger_entries!=null?S.ledger_entries:"—")),false);
+  setTxt("ledgerN",String(led.count!=null?led.count:"—"),false);
   setTxt("ledgerI",led.integrity||"—",false);
-  setTxt("secN",(STATE&&STATE.security&&STATE.security.status)||"OK",false);
-  const cmp=(STATE&&STATE.compare)||{};
-  setTxt("cmpN",cmp.wr_delta!=null?((cmp.wr_delta>=0?"+":"")+cmp.wr_delta+" WR"):"—",false);
+  setTxt("openN",String(STATE&&STATE.perf_open!=null?STATE.perf_open:"—"),false);
+  const d=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.delta_pct);
+  setTxt("cmpN",d!=null?((d>=0?"+":"")+d+"% ACC"):"—",false);
 }
-
 function renderAccount(){
   const S=(STATE&&STATE.stats)||{};
   setTxt("accEq",fmt(S.equity,2),true);
@@ -676,236 +762,209 @@ function renderAccount(){
   setTxt("accPnl",(S.day_pnl!=null?fmt(S.day_pnl,2):"—"),false);
   $("accPnl").style.color=(+S.day_pnl>=0)?"var(--green)":"var(--red)";
 }
-
 function renderRules(){
-  const P=(STATE&&STATE.prop)||{};const S=(STATE&&STATE.stats)||{};
-  const tt=S.trades_today!=null?S.trades_today:0;const mt=P.max_trades_per_day!=null?P.max_trades_per_day:3;
-  const rows=[
-    ["Max trades / day",tt+" / "+mt,tt<=mt],
+  const P=(STATE&&STATE.prop)||{},S=(STATE&&STATE.stats)||{};
+  const tt=S.trades_today!=null?S.trades_today:0,mt=P.max_trades_per_day!=null?P.max_trades_per_day:3;
+  const rows=[["Max trades / day",tt+" / "+mt,tt<=mt],
     ["Risk per trade",(P.risk_per_trade_pct!=null?P.risk_per_trade_pct:"1.0")+"%",true],
     ["Daily loss limit",(P.daily_loss_limit_pct!=null?P.daily_loss_limit_pct:"3.0")+"%",true],
-    ["Max drawdown",(P.max_drawdown_pct!=null?P.max_drawdown_pct:"10.0")+"%",true],
-    ["Session gate",P.session_gate?"ON":"—",true],
-  ];
-  $("rulesBox").innerHTML=rows.map(r=>'<div class="rule '+(r[2]?"ok":"bad")+'"><span>'+r[0]+"</span><b>"+esc(r[1])+"</b><i>"+(r[2]?"✓ PASS":"✗ CHECK")+"</i></div>").join("");
+    ["Max drawdown",(P.max_drawdown_pct!=null?P.max_drawdown_pct:"10.0")+"%",true]];
+  $("rulesBox").innerHTML=rows.map(r=>'<div class="rule '+(r[2]?"ok":"")+'"><span>'+r[0]+"</span><b>"+esc(String(r[1]))+"</b><i>"+(r[2]?"✓ PASS":"✗ CHECK")+"</i></div>").join("");
+}
+function renderImp(){
+  const g=$("impGrid");const M=(STATE&&STATE.models)||null;
+  if(M&&Object.keys(M).length){
+    setTxt("impMeta","bot perf.json ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0"),false);
+    g.innerHTML=Object.keys(M).map(function(k){
+      const m=M[k],d=m.delta_pct;
+      const arrow=d==null||d===0?"":d>0?' <span style="color:var(--green);font-size:.85rem">▲ +'+d+"%</span>":' <span style="color:var(--red);font-size:.85rem">▼ '+d+"%</span>";
+      const w=Math.max(4,Math.min(100,m.acc||0));
+      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div><div class="in">'+(m.n||0)+" resolved · "+(m.per_symbol?Object.keys(m.per_symbol).length+" symbols":"")+"</div></div>";
+    }).join("");
+  }else{
+    setTxt("impMeta","bot perf pending · live engine stats (local)",false);
+    g.innerHTML='<div class="imp"><div class="ih"><b>AI SUCCESS</b><span class="ia">'+((stats.ai_ok+stats.ai_err)?Math.round(stats.ai_ok/(stats.ai_ok+stats.ai_err)*100)+"%":"—")+'</span></div><div class="in">'+stats.ai_ok+" ok / "+stats.ai_err+" fail</div></div>"
+      +'<div class="imp"><div class="ih"><b>DECISIONS</b><span class="ia">'+(stats.ai+stats.bot+stats.mx)+'</span></div><div class="in">AI '+stats.ai+" · BOT "+stats.bot+" · MATRIX "+stats.mx+"</div></div>"
+      +'<div class="imp"><div class="ih"><b>PERF.JSON</b><span class="ia">—</span></div><div class="in">FILE 2 bot publish karega (accuracy deltas)</div></div>';
+  }
+  const sa=(STATE&&STATE.system_accuracy)||null;
+  $("sysAcc").innerHTML=sa&&sa.overall!=null
+    ?'<div class="big">'+sa.overall+'%</div><div class="sub">'+(sa.delta_pct!=null?((sa.delta_pct>=0?"▲ +":"▼ ")+sa.delta_pct+"% vs last run"):"baseline")+"<br>ensemble resolved accuracy</div>"
+    :'<div class="big" style="color:var(--muted)">—</div><div class="sub">FILE 2 bot ke perf.json ke baad<br>overall accuracy yahan update hogi</div>';
+  if(STATE&&STATE.models)$("selfBox").textContent=JSON.stringify({models:STATE.models,system_accuracy:STATE.system_accuracy},null,2);
+  else $("selfBox").textContent="Bot perf.json pending.\n\nBot (FILE 2) har run par har model ke predictions resolve karke accuracy + delta publish karta hai.";
 }
 
-/* ============ LEDGER ============ */
+/* ================= LEDGER ================= */
 async function loadLedger(){
   let lines=null;
-  if(STATE&&STATE.ledger&&(STATE.ledger.items||STATE.ledger.lines)){
-    lines=STATE.ledger.items||STATE.ledger.lines;
-  }else{
+  if(STATE&&STATE.ledger&&STATE.ledger.count!=null&&lastLedgerSeq===STATE.ledger.count&&$("ledgerBox").dataset.filled)return;
+  if(STATE&&STATE.ledger&&(STATE.ledger.items||STATE.ledger.lines)){lines=STATE.ledger.items||STATE.ledger.lines;}
+  else{
     for(const p of (FOUND_LEDGER_PATH?[FOUND_LEDGER_PATH]:LEDGER_PATHS)){
       try{const t=await ghRaw(p);FOUND_LEDGER_PATH=p;
-        lines=String(t).trim().split("\n").filter(Boolean).slice(-60).reverse();
-        break;}catch(e){}
+        lines=String(t).trim().split("\n").filter(Boolean).slice(-60).reverse();break;}catch(e){}
     }
   }
   const box=$("ledgerBox");
   if(!lines||!lines.length){
-    box.innerHTML='<span class="blink" style="color:var(--muted)">⏳ ledger nahi mila — bot pehla run karega (ledger.jsonl)</span>';
+    box.innerHTML='<span class="blink" style="color:var(--muted)">⏳ ledger nahi mila — FILE 2 bot run karein (ledger.jsonl auto ban jayegi)</span>';
     $("ledgerMeta").textContent="";return;
   }
+  box.dataset.filled="1";
+  if(STATE&&STATE.ledger)lastLedgerSeq=STATE.ledger.count;
   box.innerHTML=lines.slice(0,14).map(function(l){
     try{const o=typeof l==="string"?JSON.parse(l):l;
-      return "<div>#"+esc(o.seq!=null?o.seq:"?")+" ["+esc((o.t||o.time||"").toString().slice(0,19))+"] "+esc(o.event||o.type||o.action||"")+" · "+esc((o.note||o.detail||o.hash||"").toString().slice(0,80))+"</div>";
+      return "<div>#"+esc(o.seq!=null?o.seq:"?")+" ["+esc(String(o.t||"").slice(0,19))+"] "+esc(o.event||"")+" · "+esc(String(o.note||o.hash||"").slice(0,90))+"</div>";
     }catch(e){return "<div>"+esc(String(l).slice(0,120))+"</div>";}
   }).join("");
-  $("ledgerMeta").textContent=(lines.length)+" recent · hash-chained · delete-proof";
+  $("ledgerMeta").textContent=lines.length+" recent · hash-chained · delete-proof";
   setTxt("ledgerI","OK ✓",false);$("ledgerI").style.color="var(--green)";
 }
 
-/* ============ STRATEGY ============ */
+/* ================= STRATEGY ================= */
 async function loadStrategy(){
   for(const p of STRAT_PATHS){
     try{const t=await ghRaw(p);$("stratBox").textContent=String(t).slice(0,4000);return;}catch(e){}
   }
-  $("stratBox").textContent="strategy.md repo mein nahi mila.\n\nRepo root par strategy.md rakhein — yahan khud load ho jayega.\n\nDefault: FARRUKH GRID candle[1]+[0] formation + ensemble vote (Grid/Chronos/Quant) + P7 prop-risk hard gate.";
+  $("stratBox").textContent="strategy.md repo mein nahi (FILE 3 upload karein — optional).\n\nDEFAULT FLOW (v6.0):\nL1 AI (GLM) signal validate karta hai →\nL2 Colab bot (GRID + CHRONOS-LITE + QUANT per TF) →\nL3 dashboard ka local matrix (same GRID formula, candles se).\n\nTF M30/H1/H4/D1/W1 — har TF ka apna score, entry, SL/TP, path.\nRisk: 1%/trade · 3 trades/day · 3% daily stop · 10% max DD (P7 hard gate).";
 }
 
-/* ============ REPORTS ============ */
-const REPORT_DESC={
-  "state.json":"bot ka live dimagh — last run, signals, pillars",
-  "backtest_report.json":"backtest report — metrics + config + trades",
-  "trades.csv":"har trade ka record (entry/exit/R/reason)",
-  "equity_curve.csv":"equity graph ka raw data",
-  "equity_curve.png":"equity graph (image)",
-  "drawdown.png":"drawdown graph (image)",
-  "monthly_returns.png":"monthly returns chart",
-  "trade_pnl_hist.png":"trade PnL histogram",
-  "predictions.csv":"per-candle model scores (Grid/Chronos/Quant)",
-  "ledger.jsonl":"append-only pillar ledger (P4)",
-  "strategy.md":"strategy hub ka source file"
-};
+/* ================= REPORTS ================= */
 async function loadReports(){
-  const box=$("repFiles");box.innerHTML='<div class="blink" style="color:var(--muted)">📡 Scanning repo folders…</div>';
+  const box=$("repFiles");
+  box.innerHTML='<div class="blink" style="color:var(--muted)">📡 Scanning repo…</div>';
   FILES=new Map();
   await Promise.all(LIST_DIRS.map(async function(d){
-    try{
-      const items=await ghList(d);
-      if(Array.isArray(items))items.forEach(function(f){if(f.type==="file")FILES.set(f.path,f);});
-    }catch(e){}
+    try{const items=await ghList(d);
+      if(Array.isArray(items))items.forEach(function(f){if(f.type==="file")FILES.set(f.path,f);});}catch(e){}
   }));
-  if(!FILES.size){box.innerHTML='<span style="color:var(--amber)">Koi file nahi mili — repo mein state.json / reports folder check karein.</span>';return;}
-  const prio=["state.json","backtest_report.json","trades.csv","equity_curve.csv","equity_curve.png","predictions.csv","ledger.jsonl"];
+  setTxt("repScan",FILES.size+" files · "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}),false);
+  if(!FILES.size){box.innerHTML='<span style="color:var(--amber)">Koi file nahi mili — FILE 2 bot run karein (state.json ban jayegi).</span>';return;}
+  const prio=["state.json","perf.json","ledger.jsonl","backtest_report.json","trades.csv","equity_curve.csv","equity_curve.png"];
   const paths=[...FILES.keys()].sort(function(a,b){
     const ia=prio.indexOf(a),ib=prio.indexOf(b);
-    return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);
-  });
+    return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
   box.innerHTML=paths.map(function(p){
-    const f=FILES.get(p);const kb=f.size?(f.size/1024).toFixed(1)+" KB":"";
-    const desc=REPORT_DESC[p.split("/").pop()]||"";
+    const f=FILES.get(p),kb=f.size?(f.size/1024).toFixed(1)+" KB":"";
+    const dsc=REPORT_DESC[p.split("/").pop()]||"";
     const bin=isBin(p);
-    return '<div class="rep-file"><span>'+(bin?"🖼️":ext(p)==="csv"?"📊":ext(p)==="json"?"🧾":"📄")+'</span>'
-      +'<span class="fn">'+esc(p)+(desc?'<div class="fd">'+esc(desc)+"</div>":"")+'</span>'
-      +'<span class="fs">'+kb+'</span>'
-      +'<button class="rbtn" data-act="prev" data-p="'+esc(p)+'">👁 PREVIEW</button>'
-      +'<button class="rbtn dl" data-act="dl" data-p="'+esc(p)+'">⬇ DOWNLOAD</button></div>';
+    return '<div class="rep-file"><span>'+(bin?"🖼️":ext(p)==="csv"?"📊":ext(p)==="json"?"🧾":"📄")+'</span><span class="fn">'+esc(p)+(dsc?'<div class="fd">'+esc(dsc)+"</div>":"")+'</span><span class="fs">'+kb+'</span><button class="rbtn" data-act="prev" data-p="'+esc(p)+'">👁 PREVIEW</button><button class="rbtn dl" data-act="dl" data-p="'+esc(p)+'">⬇ DOWNLOAD</button></div>';
   }).join("");
   box.querySelectorAll(".rbtn").forEach(function(b){
     b.addEventListener("click",function(){const p=this.dataset.p;this.dataset.act==="dl"?dlFile(p):previewFile(p);});
   });
-  renderReportsSummary();
 }
 function renderReportsSummary(){
   const el=$("repSummary");const L=getLiveState();
-  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi hui — SYNC dabayen ya token check karein.</span>';return;}
-  const S=STATE.stats||{};const ps=STATE.pillar_score||{};
-  let h="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")\n"
-    +"<b>🤖 Mode:</b> "+esc(STATE.mode||"—")+" · <b>Run SHA:</b> "+esc((STATE.run_tag&&STATE.run_tag.cfg_sha)||"—")+"\n"
-    +"<b>📡 Data:</b> "+L.status+" — "+L.text+"\n"
-    +"<b>💼 Equity:</b> $"+fmt(S.equity,2)+" · <b>Trades today:</b> "+(S.trades_today!=null?S.trades_today:"—")+"\n"
-    +"<b>🏛️ Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n\n";
+  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi hui — Colab bot (FILE 2) run karein, phir SYNC.</span>';return;}
+  const S=STATE.stats||{},ps=STATE.pillar_score||{};
+  let h="<b>🕒 Last bot run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(STATE.engine||"—")+"  ·  <b>Run SHA:</b> "+esc((STATE.run_tag&&STATE.run_tag.cfg_sha)||"—")+"\n"
+    +"<b>📡 Data:</b> "+L.status+" — "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"  ·  <b>Equity:</b> $"+fmt(S.equity,2)+"\n";
+  if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
+    h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"% vs last run)"):"")+"\n";
+  if(STATE.models)h+="<b>📈 Models:</b> "+Object.keys(STATE.models).map(function(k){const m=STATE.models[k];return k+" "+(m.acc!=null?m.acc+"%":"—")+(m.delta_pct?((m.delta_pct>=0?" ↑":" ↓")+Math.abs(m.delta_pct)+"%"):"");}).join(" · ")+"\n";
+  h+="\n";
   Object.keys(CONFIG.symbols).forEach(function(k){
     const sn=STATE.symbols?STATE.symbols[k]:null;
-    if(!sn){h+="▫ "+k+": data pending\n";return;}
-    const P1=sn.plan?(sn.plan.B1||sn.plan.S1):null;
-    h+="▫ <b>"+k+"</b>: "+esc(sn.signal||"HOLD")+(P1?(" @ "+esc(P1.entry)+" (TP "+esc(P1.tp)+" / SL "+esc(P1.sl)+")"):"")
-      +" — "+esc((sn.zcode&&sn.zcode.reasoning)||sn.why||"ensemble decision").slice(0,140)+"\n";
+    if(!sn){h+="▫ "+k+": NODATA\n";return;}
+    const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
+    h+="▫ <b>"+k+"</b> ["+CUR_TF+"] "+esc((t&&t.signal)||sn.signal||"HOLD")+(t&&t.score!=null?" (score "+t.score+")":"")+" — "+esc(String((sn.zcode&&sn.zcode.reasoning)||sn.why||"ensemble").slice(0,120))+"\n";
+    if(t&&t.path)h+="   path: "+t.path.map(p=>p.what).slice(0,3).join(" → ")+"\n";
   });
-  if(L.status!=="LIVE")h+="\n⚠️ <b>STALE/SYNCING?</b> Bot ka scheduled run miss hua. GitHub repo → Actions → latest run dekhein (logs wahan hote hain).";
+  if(L.status!=="LIVE")h+="\n⚠️ STALE? Bot loop band ho gaya — Colab dobara run karein (FILE 2).";
   el.innerHTML=h;
 }
 async function dlFile(p){
-  log("[DL] downloading "+p);
+  pulse("[DL] "+p,"pa");
   try{
     let blob;
-    if(isBin(p)){blob=new Blob([await ghBlob(p)],{type:MIME[ext(p)]||"application/octet-stream"});}
+    if(isBin(p))blob=new Blob([await ghBlob(p)],{type:MIME[ext(p)]||"application/octet-stream"});
     else{const d=await ghRaw(p);blob=new Blob([typeof d==="string"?d:JSON.stringify(d,null,2)],{type:MIME[ext(p)]||"text/plain"});}
     const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=p.split("/").pop();a.click();
-    log("[DL] saved "+p.split("/").pop());
-  }catch(e){log("[DL] FAILED "+p+" — "+e.message);}
+    pulse("[DL] saved "+p.split("/").pop(),"pg");
+  }catch(e){pulse("[DL] FAILED "+p+" — "+e.message,"pr");}
 }
 async function previewFile(p){
   $("fvTitle").textContent=p;$("fvBody").innerHTML='<div class="blink">Loading…</div>';
   $("fileOverlay").classList.add("open");$("fileViewer").classList.add("open");
   try{
-    if(isBin(p)){
-      const url=URL.createObjectURL(new Blob([await ghBlob(p)],{type:MIME[ext(p)]}));
-      $("fvBody").innerHTML='<img src="'+url+'" style="max-width:100%;border-radius:4px">';
-    }else{
-      const d=await ghRaw(p);
-      const t=typeof d==="string"?d:JSON.stringify(d,null,2);
-      $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>60000?t.slice(0,60000)+"\n… (truncated)":t)+"</div>";
-    }
+    if(isBin(p)){$("fvBody").innerHTML='<img src="'+URL.createObjectURL(new Blob([await ghBlob(p)],{type:MIME[ext(p)]}))+'" style="max-width:100%">';}
+    else{const d=await ghRaw(p);const t=typeof d==="string"?d:JSON.stringify(d,null,2);
+      $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>60000?t.slice(0,60000)+"\n… (truncated)":t)+"</div>";}
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ============ CANVAS — LIVE GRID ============ */
-function getCandles(){
-  const SN=curSN();if(!SN)return null;
-  if(Array.isArray(SN.candles)&&SN.candles.length)return SN.candles;
-  const g=SN.grid&&SN.grid[CUR_TF];
-  if(g){if(Array.isArray(g.candles)&&g.candles.length)return g.candles;
-    const pair=[g.c1,g.c0].filter(Boolean);if(pair.length)return pair;}
-  return null;
-}
-function validCandles(cs){
-  if(!Array.isArray(cs)||cs.length<2)return false;
-  return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);
-}
+/* ================= CANVAS ================= */
+function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
+  return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function drawGrid(){
   const cv=$("cvGrid");if(!cv)return;
-  const ctx=cv.getContext("2d");
-  const W=cv.clientWidth||900,H=280;
+  const ctx=cv.getContext("2d");const W=cv.clientWidth||900,H=280;
   if(cv.width!==W*2){cv.width=W*2;cv.height=H*2;}
   ctx.setTransform(2,0,0,2,0,0);
   ctx.fillStyle="#060913";ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle="rgba(0,243,255,.06)";ctx.lineWidth=1;
+  ctx.strokeStyle="rgba(0,243,255,.06)";
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   const t=Date.now();
-  /* scanline */
   const sx=((t%3000)/3000)*W;
   const grad=ctx.createLinearGradient(sx-30,0,sx+30,0);
   grad.addColorStop(0,"rgba(0,243,255,0)");grad.addColorStop(.5,"rgba(0,243,255,.14)");grad.addColorStop(1,"rgba(0,243,255,0)");
   ctx.fillStyle=grad;ctx.fillRect(sx-30,0,60,H);
-  const SN=curSN();
-  const cs=getCandles();
-  const dec=CUR_SYM==="EURUSD"?4:2;
+  const cs=getCandles();const SN=curSN();
   if(cs&&validCandles(cs)){
     const view=cs.slice(-60);
-    const expH=SN&&SN.grid&&SN.grid.D1?SN.grid.D1.expected_high:null;
-    const expL=SN&&SN.grid&&SN.grid.D1?SN.grid.D1.expected_low:null;
     let lo=Math.min(...view.map(c=>c.l)),hi=Math.max(...view.map(c=>c.h));
-    [expH,expL].forEach(v=>{if(typeof v==="number"&&v>0){lo=Math.min(lo,v);hi=Math.max(hi,v);}});
     const pad=(hi-lo)*0.08||1;lo-=pad;hi+=pad;
     const y=p=>H-10-((p-lo)/(hi-lo))*(H-20);
-    const step=W/Math.max(view.length,10);
-    const bw=Math.max(3,step*0.55);
+    const step=W/Math.max(view.length,10),bw=Math.max(3,step*0.55);
     view.forEach(function(c,i){
       const x=i*step+step/2;
-      ctx.strokeStyle=c.c>=c.o?"#00ff66":"#ff0055";
-      ctx.fillStyle=ctx.strokeStyle;
+      ctx.strokeStyle=c.c>=c.o?"#00ff66":"#ff0055";ctx.fillStyle=ctx.strokeStyle;
       ctx.beginPath();ctx.moveTo(x,y(c.h));ctx.lineTo(x,y(c.l));ctx.stroke();
-      const yo=y(Math.max(c.o,c.c)),hgt=Math.max(1.5,Math.abs(y(c.o)-y(c.c)));
-      ctx.fillRect(x-bw/2,yo,bw,hgt);
+      const yo=y(Math.max(c.o,c.c));
+      ctx.fillRect(x-bw/2,yo,bw,Math.max(1.5,Math.abs(y(c.o)-y(c.c))));
     });
-    if(typeof expH==="number"){ctx.strokeStyle="rgba(255,170,0,.5)";ctx.setLineDash([6,5]);
-      ctx.beginPath();ctx.moveTo(0,y(expH));ctx.lineTo(W,y(expH));ctx.stroke();
-      ctx.fillStyle="#ffaa00";ctx.font="11px JetBrains Mono";ctx.fillText("D1 ExpH "+expH.toFixed(dec),6,y(expH)-4);ctx.setLineDash([]);}
-    if(typeof expL==="number"){ctx.strokeStyle="rgba(255,170,0,.5)";ctx.setLineDash([6,5]);
-      ctx.beginPath();ctx.moveTo(0,y(expL));ctx.lineTo(W,y(expL));ctx.stroke();
-      ctx.fillStyle="#ffaa00";ctx.font="11px JetBrains Mono";ctx.fillText("D1 ExpL "+expL.toFixed(dec),6,y(expL)+14);ctx.setLineDash([]);}
     const last=view[view.length-1];
-    const pulse=.45+.4*Math.sin(t/280);
-    ctx.strokeStyle="rgba(0,243,255,"+pulse+")";ctx.setLineDash([3,4]);
+    const pl=.45+.4*Math.sin(t/280);
+    ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
     ctx.beginPath();ctx.moveTo(0,y(last.c));ctx.lineTo(W,y(last.c));ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle="rgba(0,243,255,"+(pulse+.3)+")";ctx.font="bold 13px JetBrains Mono";
-    ctx.fillText(last.c.toFixed(dec),W-90,y(last.c)-6);
+    ctx.fillStyle="rgba(0,243,255,"+(pl+.3)+")";ctx.font="bold 13px JetBrains Mono";
+    ctx.fillText(last.c.toFixed(dec()),W-90,y(last.c)-6);
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+(SN&&SN.candles&&SN.candles[CUR_TF]?"bot candles":"direct feed"),false);
   }else{
     ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
     ctx.font="bold 16px Orbitron";ctx.textAlign="center";
     ctx.fillText("⏳ AWAITING CANDLE DATA · P1",W/2,H/2-8);
     ctx.font="12px JetBrains Mono";
-    ctx.fillText("bot run ke baad candles yahan live draw hongi",W/2,H/2+16);
+    ctx.fillText(CUR_SYM+" — bot publish karein (FILE 2) · ETHUSD ka direct feed auto hai",W/2,H/2+16);
     ctx.textAlign="left";
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · no data",false);
   }
+  setTxt("gridMeta",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})+" · scanline active",false);
+  setTxt("gridStatus",CUR_TF+" · "+getLiveState().status+" · "+stateAgeText(),false);
+  $("gridStatus").className=getLiveState().status==="LIVE"?"live":"live warn";
   requestAnimationFrame(drawGrid);
 }
 requestAnimationFrame(drawGrid);
 
-/* ============ LLM / CHAT ============ */
-const ZKEY=()=>localStorage.getItem("hermes_zkey")||"";
-const ZURL=()=>localStorage.getItem("hermes_zurl")||"https://api.z.ai/api/paas/v4/chat/completions";
-const ZMODEL=()=>localStorage.getItem("hermes_zmodel")||"glm-4.6";
+/* ================= CHAT ================= */
 function extractJSON(txt){try{return JSON.parse(txt);}catch(e){}
   const a=txt.indexOf("{"),b=txt.lastIndexOf("}");
-  if(a>=0&&b>a){try{return JSON.parse(txt.slice(a,b+1));}catch(e){}}
-  return null;}
+  if(a>=0&&b>a){try{return JSON.parse(txt.slice(a,b+1));}catch(e){}}return null;}
 function repairAnswer(d){
   if(!d||typeof d!=="object")return null;
   const ans=String(d.answer||"").slice(0,800);if(!ans)return null;
   let conf=parseFloat(d.confidence!=null?d.confidence:0.5);if(isNaN(conf))conf=0.5;
-  if(conf>1&&conf<=100)conf=conf/100;
+  if(conf>1&&conf<=100)conf/=100;
   return{answer:ans,confidence:Math.max(0,Math.min(1,conf))};}
 async function aiCall(messages,maxTokens){
   const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
     body:JSON.stringify({model:ZMODEL(),temperature:0.4,max_tokens:maxTokens||400,messages})});
   if(!r.ok)throw new Error("api "+r.status);
   const txt=(await r.json()).choices[0].message.content;
-  let d=extractJSON(txt);let repaired=false;
+  let d=extractJSON(txt),repaired=false;
   if(d){const fx=repairAnswer(d);if(fx)d=fx;else{d=null;repaired=true;}}
   if(!d){
     addMsg("ai","⚠️ Format invalid — L4 repair retry…");
@@ -928,145 +987,147 @@ function buildContext(){
   const S=(STATE&&STATE.stats)||{};const syms={};
   Object.keys((STATE&&STATE.symbols)||{}).forEach(function(k){
     const sn=STATE.symbols[k];
-    syms[k]={signal:sn.signal||null,price:sn.price||null,
-      plan:sn.plan?{side:sn.plan.side}:null,path:sn.path||null,
-      grid:{H1:sn.grid&&sn.grid.H1?{pos:sn.grid.H1.pos,zone:sn.grid.H1.zone}:null}};
+    syms[k]={signal:sn.signal,price:sn.price,timeframes:sn.timeframes?Object.fromEntries(Object.entries(sn.timeframes).map(([tf,v])=>[tf,{signal:v.signal,score:v.score}])):null};
   });
-  return{desk:{equity:S.equity,trades_today:S.trades_today,mode:STATE?STATE.mode:null,run_tag:STATE?STATE.run_tag:null},
-    symbols:syms,lessons:(((STATE&&STATE.lessons&&STATE.lessons.items)||[])).slice(-3),
-    pillar_score:STATE?STATE.pillar_score:null};
+  return{sym:CUR_SYM,tf:CUR_TF,engine:ENGINE.layer,desk:{equity:S.equity,trades_today:S.trades_today},
+    symbols:syms,pillar_score:STATE?STATE.pillar_score:null,system_accuracy:STATE?STATE.system_accuracy:null};
 }
 function briefingText(){
-  if(!STATE||!STATE.stats)return"State abhi load nahi hui.";
-  const S=STATE.stats;
-  let t="Equity $"+fmt(S.equity)+". Trades "+(S.trades_today||0)+"/"+((STATE.prop||{}).max_trades_per_day||3)+". ";
-  Object.keys(STATE.symbols||{}).forEach(function(k){t+=k+": "+(STATE.symbols[k].signal||"HOLD")+". ";});
-  if(STATE.pillar_score)t+="Pillars "+STATE.pillar_score.score+"/10.";
+  if(!STATE)return"State abhi load nahi hui — Colab bot (FILE 2) run karein.";
+  const S=STATE.stats||{};
+  let t="Engine: "+(ENGINE.layer||"—")+" · State "+stateAgeText()+". Equity $"+fmt(S.equity)+".\n";
+  Object.keys(CONFIG.symbols).forEach(function(k){
+    const sn=STATE.symbols?STATE.symbols[k]:null;
+    const tf=sn&&sn.timeframes?sn.timeframes[CUR_TF]:null;
+    t+=k+" ["+CUR_TF+"]: "+((tf&&tf.signal)||"HOLD")+" (score "+(tf&&tf.score!=null?tf.score:"—")+"). ";});
+  if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)t+="System acc "+STATE.system_accuracy.overall+"%.";
   return t;
 }
 function fallbackAnswer(q){
   const low=(q||"").toLowerCase();
-  if(/report|download/.test(low)){
-    return "REPORTS tab kholein — wahan repo ki saari files PREVIEW/DOWN buttons ke saath hain.\nLive run summary bhi usi tab ke top par hai.\nDirect GitHub: repo → reports/ folder → file → Download raw.";
-  }
-  if(/pillar/.test(low)&&STATE&&STATE.pillar_score){
-    return "Pillar score: "+STATE.pillar_score.score+"/10. "+
-      Object.keys(STATE.pillar_score).filter(k=>k.indexOf("P")===0).map(k=>k+":"+(STATE.pillar_score[k]?"✓":"✗")).join(" ");
-  }
-  if(/path/.test(low)&&STATE&&STATE.symbols){
-    const SN=curSN();
-    if(SN&&SN.path)return"Expected path ("+CUR_SYM+"): "+SN.path.map(p=>p.step+". "+p.what).join(" → ");
-    return"Abhi koi active path nahi (signal ya bot run pending).";
-  }
-  if(/status|report|brief|kya ho/.test(low))return briefingText();
-  if(!STATE||!STATE.symbols)return"State abhi load nahi hui — bot run ya SYNC button dabayen.";
-  const SN=curSN();
-  if(!SN)return CUR_SYM+" ka data state mein nahi.";
-  if(/signal/.test(low))return"Rules-based: "+CUR_SYM+" "+(SN.signal||"HOLD")+" (score "+(SN.matrix?SN.matrix.score:"–")+")";
-  if(/plan/.test(low)&&SN.plan){
-    const P1=SN.plan.B1||SN.plan.S1;
-    return"Plan "+SN.plan.side+": entry "+P1.entry+", SL "+P1.sl+", TP "+P1.tp;
-  }
-  if(/lesson/.test(low)){
-    const L=(STATE.lessons&&STATE.lessons.items)||[];
-    return L.length?"Lessons: "+L.slice(-3).map(i=>i.text||i).join(" | "):"Abhi koi lesson nahi.";
-  }
-  return isMarketOpen(CUR_SYM)
-    ?CUR_SYM+" "+CUR_TF+": live session. Full AI ke liye ⚙️ mein key dalein."
-    :CUR_SYM+" market closed (weekend). ETHUSD 24/7 open.";
+  if(/report|download/.test(low))return"REPORTS tab — wahan har repo file ka PREVIEW/DOWNLOAD button hai. Live run summary bhi wahan har heartbeat update hoti hai.";
+  if(/pillar/.test(low)&&STATE&&STATE.pillar_score)return"Pillar score: "+STATE.pillar_score.score+"/10. "+
+    Object.keys(STATE.pillar_score).filter(k=>k.indexOf("P")===0).map(k=>k+":"+(STATE.pillar_score[k]?"✓":"✗")).join(" ");
+  if(/improve|accuracy|barh/.test(low)){
+    if(STATE&&STATE.models)return"Model improvement:\n"+Object.keys(STATE.models).map(k=>k+": "+(STATE.models[k].acc!=null?STATE.models[k].acc+"%":"—")+(STATE.models[k].delta_pct?" ("+(STATE.models[k].delta_pct>=0?"+":"")+STATE.models[k].delta_pct+"%)":"")).join("\n")+"\nSystem: "+(STATE.system_accuracy?STATE.system_accuracy.overall+"%":"—");
+    return"Model improvement bot ke perf.json se aati hai — FILE 2 bot run karein.";}
+  if(/path/.test(low)){const t=curSN()&&curSN().timeframes?curSN().timeframes[CUR_TF]:null;
+    return t&&t.path?"Path "+CUR_TF+": "+t.path.map(p=>p.step+". "+p.what).join(" → "):"Path pending — bot run chahiye.";}
+  if(/status|brief|kya ho/.test(low))return briefingText();
+  if(!STATE)return"State abhi load nahi hui — Colab bot run karein ya SYNC dabayen.";
+  const bt=botSignal(curSN());
+  if(/signal/.test(low)&&bt)return"Rules-based ["+CUR_TF+"]: "+CUR_SYM+" "+bt.signal+" (score "+(bt.score!=null?bt.score:"–")+") · engine "+ENGINE.layer;
+  if(/plan/.test(low)&&bt&&bt.entry)return"Plan ["+CUR_TF+"]: entry "+bt.entry+", SL "+bt.sl+", TP "+bt.tp;
+  return isMarketOpen(CUR_SYM)?CUR_SYM+" "+CUR_TF+": live session. Full AI ke liye ⚙️ mein key dalein.":CUR_SYM+" market closed (weekend). ETHUSD 24/7 open.";
 }
 async function chatSend(){
-  const inp=$("cinp");const q=inp.value.trim();if(!q)return;
+  const inp=$("cinp"),q=inp.value.trim();if(!q)return;
   inp.value="";addMsg("user",q);
-  if(!ZKEY()){addMsg("ai",fallbackAnswer(q),"completed_by: fallback-rules (L5)");log("[L5] fallback completed task");return;}
+  if(!ZKEY()){addMsg("ai","⚙️ AI key save nahi — rules-based jawab.\n\nAI ON: ⚙ → key → SAVE → 🧪 TEST → green ✓","completed_by: fallback (L5 · key missing)");return;}
   $("chatMode").innerHTML='<span class="think"><span></span><span></span><span></span></span>';
-  const sys="You are ZCode, AI analyst of FL-200 (AI quant command desk). "
-    +"You get LIVE desk state incl pillar scores and model self-data. "
-    +'Reply ONLY minified JSON: {"answer":"max 5 sentences in user language","confidence":0-1}. '
-    +"Respect prop rules, never guarantee profit.";
-  const msgs=[{role:"system",content:sys},
-    {role:"user",content:"LIVE DESK:\n"+JSON.stringify(buildContext())},
-    {role:"user",content:q}];
+  const sys="You are ZCode, AI analyst of FL-200 quant desk. You get LIVE state incl engine cascade, per-TF signals, model improvements, pillar scores. "+
+    'Reply ONLY minified JSON: {"answer":"max 5 sentences in user language","confidence":0-1}. Respect prop rules, never guarantee profit.';
+  const msgs=[{role:"system",content:sys},{role:"user",content:"LIVE DESK:\n"+JSON.stringify(buildContext())},{role:"user",content:q}];
   try{
     const res=await aiCall(msgs,400);
-    if(res.d){
-      addMsg("ai",res.d.answer,"completed_by: ai"+(res.repaired?" (L4-repaired)":" (L3-clean)")+" · conf "+Math.round(res.d.confidence*100)+"%");
-      log("[L3] parsed"+(res.repaired?" · [L4] repaired":" clean"));
-    }else{addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — AI unusable)");log("[L5] fallback completed task");}
+    if(res.d){addMsg("ai",res.d.answer,"completed_by: ai"+(res.repaired?" (L4-repaired)":" (L3-clean)")+" · conf "+Math.round(res.d.confidence*100)+"%");}
+    else{addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — AI unusable)");}
   }catch(e){
-    addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — "+e.message+")");
-    log("[L5] api fail → fallback completed");
+    const m=String(e.message||"");
+    if(/fetch/i.test(m))addMsg("ai","⚠️ Request blocked (network/CORS).\nFix: ⚙️ → 🧪 TEST → Worker proxy URL use karein (settings mein URL field).","completed_by: blocked (network)");
+    else addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — "+m+")");
   }
   $("chatMode").textContent="L1→L5 active";
 }
 
-/* ============ NAV / SETTINGS / LOCK / INIT ============ */
+/* ================= AI STATUS / TEST ================= */
+function updateAIStat(){
+  const el=$("aiStat");if(!el)return;
+  if(!ZKEY()){el.textContent="AI: OFF (key nahi)";el.style.color="var(--amber)";}
+  else{el.textContent="AI: ON";el.style.color="var(--green)";}
+}
+async function testAI(){
+  const out=$("aiTestOut");
+  if(!ZKEY()){out.innerHTML='<span style="color:var(--amber)">Pehle key dalein → SAVE → phir TEST.</span>';return;}
+  out.innerHTML="Testing "+esc(ZMODEL())+"…";
+  const t0=Date.now();
+  try{
+    const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
+      body:JSON.stringify({model:ZMODEL(),temperature:0.1,max_tokens:20,messages:[{role:"user",content:'Reply ONLY: {"answer":"OK","confidence":1}'}]})});
+    const ms=Date.now()-t0;
+    if(!r.ok){
+      let detail="";try{const j=await r.json();detail=(j.error&&j.error.message)||JSON.stringify(j).slice(0,140);}catch(e2){}
+      const hint=r.status===401?"<br><span style='color:var(--amber)'>Key galat/expired.</span>":r.status===404?"<br><span style='color:var(--amber)'>Model name check karein (glm-4-flash try).</span>":"";
+      out.innerHTML='<span style="color:var(--red)">✗ HTTP '+r.status+"</span> ("+ms+"ms)<br><span style='font-size:.72rem;color:var(--muted)'>"+esc(detail)+"</span>"+hint;return;}
+    const j=await r.json();
+    const msg=(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||"";
+    out.innerHTML='<span style="color:var(--green)">✓ AI LIVE ✓</span> ('+ms+"ms)<br><span style='font-size:.72rem;color:var(--muted)'>"+esc(String(msg).slice(0,100))+"</span>";
+    updateAIStat();
+  }catch(e){
+    out.innerHTML='<span style="color:var(--red)">✗ CORS/Network: '+esc(e.message)+'</span><br><span style="font-size:.72rem;color:var(--amber)">Fix: Cloudflare Worker proxy bana kar us URL ko API URL field mein dalein (guide: chat mein poochein).</span>';
+  }
+}
+
+/* ================= EVENTS ================= */
 document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll(".nav-btn[data-s]").forEach(x=>x.classList.remove("active"));
     this.classList.add("active");
     document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    const sec=$(this.dataset.s);sec.classList.add("active");
+    $(this.dataset.s).classList.add("active");
     if(this.dataset.s==="reports"){renderReportsSummary();loadReports();}
     if(this.dataset.s==="strategy")loadStrategy();
   });
 });
 document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".sym-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_SYM=this.dataset.sym;render();
+  this.classList.add("active");CUR_SYM=this.dataset.sym;DIRECT=null;DIRECT_KEY="";
+  pulse("SYMBOL → "+CUR_SYM+" · engine re-eval","pa");ensureDirect().then(()=>{renderAll();engineTick();});
 }));
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_TF=this.dataset.tf;render();
+  this.classList.add("active");CUR_TF=this.dataset.tf;DIRECT=null;DIRECT_KEY="";
+  pulse("TIMEFRAME → "+CUR_TF+" · poora flow re-eval (signal/models/path/engine)","pa");
+  ensureDirect().then(()=>{renderAll();engineTick();renderReportsSummary();});
 }));
  $("sbtn").addEventListener("click",chatSend);
  $("cinp").addEventListener("keydown",e=>{if(e.key==="Enter")chatSend();});
- $("btnSync").addEventListener("click",function(){log("[SYNC] manual refresh");refreshData();});
- $("repRefresh").addEventListener("click",function(){log("[REPORTS] rescanning repo");loadReports();});
-
+ $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();});
+ $("repRefresh").addEventListener("click",loadReports);
  $("openSet").addEventListener("click",function(){
   $("cfgKey").value=ZKEY();$("cfgModel").value=ZMODEL();$("cfgUrl").value=ZURL();
-  $("setOverlay").classList.add("open");$("settings").classList.add("open");
-});
+  $("setOverlay").classList.add("open");$("settings").classList.add("open");});
  $("closeSet").addEventListener("click",function(){$("setOverlay").classList.remove("open");$("settings").classList.remove("open");});
  $("saveCfg").addEventListener("click",function(){
   localStorage.setItem("hermes_zkey",$("cfgKey").value.trim());
   localStorage.setItem("hermes_zmodel",$("cfgModel").value.trim()||"glm-4.6");
   localStorage.setItem("hermes_zurl",$("cfgUrl").value.trim());
-  log("[P9] config saved (browser-local only)");$("closeSet").click();
-});
+  updateAIStat();pulse("[P9] AI config saved (browser-local)","pg");$("closeSet").click();});
+ $("btnTestAI").addEventListener("click",testAI);
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
- $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
+ $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
  $("fileOverlay").addEventListener("click",function(){this.classList.remove("open");$("fileViewer").classList.remove("open");});
 
+/* ================= LOCK / INIT ================= */
 function unlockUI(){
   $("lock").style.display="none";
-  startHeartbeat();refreshData();loadStrategy();
+  startHeartbeat();refreshData();loadStrategy();ensureDirect();
+  updateAIStat();
 }
  $("lockBtn").addEventListener("click",async function(){
-  const tok=$("ltok").value.trim();const pass=$("lpass").value.trim();
-  const err=$("lockErr");
+  const tok=$("ltok").value.trim(),pass=$("lpass").value.trim(),err=$("lockErr");
   const saved=localStorage.getItem("fl200_pass");
   if(saved&&pass&&saved!==pass){err.textContent="Galat password.";return;}
-  if(!saved&&pass){localStorage.setItem("fl200_pass",pass);}
+  if(!saved&&pass)localStorage.setItem("fl200_pass",pass);
   if(!tok){err.textContent="GitHub token zaroori hai.";return;}
   err.textContent="Verifying…";
-  try{
-    TOKEN=tok;localStorage.setItem("hermes_tok",tok);
-    await ghList("");        /* token verify */
-    unlockUI();
-  }catch(e){err.textContent="Token invalid ya repo access nahi ("+e.message+")";}
+  try{TOKEN=tok;localStorage.setItem("hermes_tok",tok);await ghList("");unlockUI();}
+  catch(e){err.textContent="Token invalid ya repo access nahi ("+e.message+")";}
 });
  $("ltok").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
  $("lpass").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
-
-/* auto-unlock if saved token */
-(async function(){
-  if(TOKEN){
-    try{await ghList("");unlockUI();return;}catch(e){log("[AUTH] saved token expired — lock screen");}
-  }
-})();
+(async function(){if(TOKEN){try{await ghList("");unlockUI();return;}catch(e){pulse("saved token expired — lock screen","pr");}}})();
 </script>
 </body>
 </html>

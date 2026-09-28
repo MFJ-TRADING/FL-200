@@ -310,656 +310,4849 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="side-h"><div class="side-t" id="modTitle">MODEL</div><button class="close" id="closeMod">✕</button></div>
 <div class="side-b"><div class="inst" id="modInst"></div></div>
 </div>
-
 <script>
-console.log("JARVIS v5.2 — Phase 2 complete: path strip + pillars + ledger + live modals");
+  console.log("JARVIS v5.2 — Phase 2 LIVE: path strip + pillars + ledger + live modals + heartbeat");
+
 const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt = (v,d) => { d = d==null?2:d; return (v==null||isNaN(v)) ? "—" : (+v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); };
+
+const esc = s =>
+  String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+
+const fmt = (v,d) => {
+  d = d == null ? 2 : d;
+  return (v == null || isNaN(v))
+    ? "—"
+    : (+v).toLocaleString("en-US", {
+        minimumFractionDigits:d,
+        maximumFractionDigits:d
+      });
+};
+
+
+/* ============================================================
+   CONFIG
+   ============================================================ */
 
 const CONFIG = {
-  symbols: { XAUUSD:{name:'Gold',type:'metal'}, EURUSD:{name:'Euro',type:'forex'}, ETHUSD:{name:'Ethereum',type:'crypto'} },
+
+  symbols: {
+    XAUUSD: {
+      name:"Gold",
+      type:"metal"
+    },
+
+    EURUSD: {
+      name:"Euro",
+      type:"forex"
+    },
+
+    ETHUSD: {
+      name:"Ethereum",
+      type:"crypto"
+    }
+  },
+
   GH_REPO: "MFJ-TRADING/FL-200-Private",
+
   GH_BRANCH: "main"
 };
-let STATE = null, TOKEN = localStorage.getItem("hermes_tok") || "";
-let CUR_SYM = 'XAUUSD', CUR_TF = 'H1';
-const MTHR = 0.10;
-const VOTE_KEY = { GRID:"grid", KRONOS:"kronos", QUANT:"quant", TAURUS:"taurus", ZCODE:"zcode", STAT:"stat_advisory" };
 
-/* ---------- P1 ---------- */
+
+/* ============================================================
+   GLOBAL STATE
+   ============================================================ */
+
+let STATE = null;
+
+let TOKEN =
+  localStorage.getItem("hermes_tok") || "";
+
+let CUR_SYM = "XAUUSD";
+
+let CUR_TF = "H1";
+
+const MTHR = 0.10;
+
+const VOTE_KEY = {
+  GRID:"grid",
+  KRONOS:"kronos",
+  QUANT:"quant",
+  TAURUS:"taurus",
+  ZCODE:"zcode",
+  STAT:"stat_advisory"
+};
+
+
+/* ============================================================
+   LIVE ENGINE
+   ============================================================ */
+
+const LIVE = {
+
+  /* frontend polling interval */
+  pollMs: 5000,
+
+  /* warning after 30 seconds */
+  staleMs: 30000,
+
+  /* dead/stale after 2 minutes */
+  deadMs: 120000,
+
+  timer: null,
+
+  busy: false,
+
+  visible: true,
+
+  failures: 0,
+
+  lastFetch: 0,
+
+  lastStateUpdated: null,
+
+  lastSuccessfulSync: 0
+
+};
+
+
+/* ============================================================
+   P1 — VALIDATION
+   ============================================================ */
+
 function validCandles(cs){
-  if (!Array.isArray(cs) || cs.length < 2) return false;
-  return cs.every(c => c && typeof c.h === 'number' && c.h >= c.l && c.h >= c.o && c.h >= c.c && c.l <= c.o && c.l <= c.c && c.h > 0);
+
+  if (!Array.isArray(cs) || cs.length < 2){
+    return false;
+  }
+
+  return cs.every(c =>
+    c &&
+    typeof c.h === "number" &&
+    c.h >= c.l &&
+    c.h >= c.o &&
+    c.h >= c.c &&
+    c.l <= c.o &&
+    c.l <= c.c &&
+    c.h > 0
+  );
 }
+
+
 function isMarketOpen(sym){
-  const s = CONFIG.symbols[sym]; if (!s) return false;
-  if (s.type === 'crypto') return true;
+
+  const s = CONFIG.symbols[sym];
+
+  if (!s){
+    return false;
+  }
+
+  if (s.type === "crypto"){
+    return true;
+  }
+
   const day = new Date().getUTCDay();
+
   return !(day === 6 || day === 0);
 }
 
-/* ---------- GH ---------- */
+
+/* ============================================================
+   GITHUB DATA
+   ============================================================ */
+
 async function ghRaw(path, tok){
-  const url = "https://api.github.com/repos/" + CONFIG.GH_REPO + "/contents/" + path + "?ref=" + CONFIG.GH_BRANCH + "&t=" + Date.now();
-  const r = await fetch(url, {headers:{Authorization:"Bearer "+tok, Accept:"application/vnd.github.raw"}});
-  if (!r.ok) throw new Error("gh " + r.status);
+
+  const url =
+    "https://api.github.com/repos/" +
+    CONFIG.GH_REPO +
+    "/contents/" +
+    path +
+    "?ref=" +
+    encodeURIComponent(CONFIG.GH_BRANCH) +
+    "&_live=" +
+    Date.now();
+
+  const r = await fetch(url, {
+
+    method:"GET",
+
+    headers:{
+      Authorization:"Bearer " + tok,
+
+      Accept:"application/vnd.github.raw+json",
+
+      "X-GitHub-Api-Version":"2026-03-10",
+
+      "Cache-Control":"no-cache",
+
+      Pragma:"no-cache"
+    },
+
+    cache:"no-store"
+  });
+
+  if (!r.ok){
+    throw new Error("gh " + r.status);
+  }
+
   return await r.json();
 }
 
-/* ---------- L3/L4 ---------- */
+
+/* ============================================================
+   LIVE STATE AGE
+   ============================================================ */
+
+function stateUpdatedMs(){
+
+  if (!STATE || !STATE.updated){
+    return 0;
+  }
+
+  const t = Date.parse(STATE.updated);
+
+  if (isNaN(t)){
+    return 0;
+  }
+
+  return t;
+}
+
+
+function stateAgeMs(){
+
+  const t = stateUpdatedMs();
+
+  if (!t){
+    return Infinity;
+  }
+
+  return Math.max(0, Date.now() - t);
+}
+
+
+function stateAgeText(){
+
+  const age = stateAgeMs();
+
+  if (!isFinite(age)){
+    return "NO TIMESTAMP";
+  }
+
+  const sec =
+    Math.floor(age / 1000);
+
+  if (sec < 2){
+    return "JUST NOW";
+  }
+
+  if (sec < 60){
+    return sec + "s AGO";
+  }
+
+  const min =
+    Math.floor(sec / 60);
+
+  if (min < 60){
+    return min + "m AGO";
+  }
+
+  return Math.floor(min / 60) + "h AGO";
+}
+
+
+function getLiveState(){
+
+  const age = stateAgeMs();
+
+  if (!STATE){
+
+    return {
+      status:"OFFLINE",
+      cls:"warn",
+      text:"NO DATA"
+    };
+
+  }
+
+  if (age <= LIVE.staleMs){
+
+    return {
+      status:"LIVE",
+      cls:"live",
+      text:"LIVE · " + stateAgeText()
+    };
+
+  }
+
+  if (age <= LIVE.deadMs){
+
+    return {
+      status:"SYNCING",
+      cls:"warn",
+      text:"SYNCING · " + stateAgeText()
+    };
+
+  }
+
+  return {
+
+    status:"STALE",
+
+    cls:"warn",
+
+    text:"STALE · " + stateAgeText()
+  };
+}
+
+
+/* ============================================================
+   LIVE UI HEARTBEAT
+   ============================================================ */
+
+function updateLiveUI(){
+
+  const L = getLiveState();
+
+
+  /* Main market badge */
+
+  const badge = $("mktBadge");
+
+  if (badge){
+
+    badge.className =
+      L.status === "LIVE"
+        ? "badge-open"
+        : "badge-closed";
+
+    badge.textContent = L.text;
+  }
+
+
+  /* Market live badge */
+
+  const live = $("mktLive");
+
+  if (live){
+
+    live.textContent = L.status;
+
+    live.className =
+      L.status === "LIVE"
+        ? "live"
+        : "live warn";
+  }
+
+
+  /* System status */
+
+  const sys = $("sysStatus");
+
+  if (sys){
+
+    const now = new Date();
+
+    sys.textContent =
+      now.toLocaleDateString(
+        "en-GB",
+        {
+          weekday:"long"
+        }
+      ) +
+      " · " +
+      L.text;
+  }
+
+
+  /* Data layer */
+
+  const dl = $("dataLayer");
+
+  if (dl){
+
+    if (L.status === "LIVE"){
+
+      dl.textContent =
+        "P1 ✓ LIVE DATA";
+
+      dl.style.color =
+        "var(--green)";
+
+    }
+    else if (L.status === "SYNCING"){
+
+      dl.textContent =
+        "P1 ↻ SYNCING";
+
+      dl.style.color =
+        "var(--amber)";
+
+    }
+    else{
+
+      dl.textContent =
+        "P1 ⚠ STALE DATA";
+
+      dl.style.color =
+        "var(--red)";
+    }
+  }
+
+
+  /* Grid status */
+
+  const gs = $("gridStatus");
+
+  if (gs && STATE){
+
+    gs.textContent =
+      CUR_TF +
+      " · " +
+      L.status +
+      " · " +
+      stateAgeText();
+
+    gs.className =
+      L.status === "LIVE"
+        ? "live"
+        : "live warn";
+  }
+
+
+  /* Report */
+
+  const rep = $("repBox");
+
+  if (rep && STATE && STATE.updated){
+
+    rep.textContent =
+      "Last brain run: " +
+      STATE.updated
+        .replace("T"," ")
+        .slice(0,19) +
+      " UTC" +
+
+      "\nData age: " +
+      stateAgeText() +
+
+      "\nConnection: " +
+      L.status +
+
+      "\nMode: " +
+      (STATE.mode || "—") +
+
+      "\nPillar score: " +
+      (
+        (STATE.pillar_score &&
+        STATE.pillar_score.score) ||
+        "—"
+      ) +
+      "/10" +
+
+      "\nRun SHA: " +
+      (
+        (STATE.run_tag &&
+        STATE.run_tag.cfg_sha) ||
+        "—"
+      );
+  }
+}
+
+
+/* ============================================================
+   LIVE HEARTBEAT
+   ============================================================ */
+
+function startHeartbeat(){
+
+  if (LIVE.timer){
+
+    clearInterval(
+      LIVE.timer
+    );
+  }
+
+  LIVE.timer =
+    setInterval(function(){
+
+      /*
+       * Update clock/status every 5 sec
+       */
+      updateLiveUI();
+
+
+      /*
+       * Don't hit GitHub while hidden
+       */
+      if (document.hidden){
+        return;
+      }
+
+
+      /*
+       * Fetch latest backend state
+       */
+      if (TOKEN){
+
+        refreshData();
+      }
+
+    }, LIVE.pollMs);
+
+
+  updateLiveUI();
+
+  log(
+    "[LIVE] heartbeat started · " +
+    LIVE.pollMs +
+    "ms"
+  );
+}
+
+
+/* ============================================================
+   VISIBILITY CHANGE
+   ============================================================ */
+
+document.addEventListener(
+  "visibilitychange",
+  function(){
+
+    LIVE.visible =
+      !document.hidden;
+
+    if (!document.hidden && TOKEN){
+
+      log(
+        "[LIVE] dashboard active → instant sync"
+      );
+
+      refreshData();
+    }
+
+  }
+);
+
+
+/* ============================================================
+   NETWORK ONLINE
+   ============================================================ */
+
+window.addEventListener(
+  "online",
+  function(){
+
+    log(
+      "[LIVE] internet restored → sync"
+    );
+
+    if (TOKEN){
+
+      refreshData();
+    }
+
+  }
+);
+
+
+/* ============================================================
+   NETWORK OFFLINE
+   ============================================================ */
+
+window.addEventListener(
+  "offline",
+  function(){
+
+    log(
+      "[LIVE] browser offline"
+    );
+
+    const dl =
+      $("dataLayer");
+
+    if (dl){
+
+      dl.textContent =
+        "P1 ⚠ OFFLINE";
+
+      dl.style.color =
+        "var(--red)";
+    }
+
+  }
+);
+
+
+/* ============================================================
+   SECOND CLOCK
+   ============================================================ */
+
+setInterval(
+  function(){
+
+    updateLiveUI();
+
+  },
+  1000
+);
+
+
+/* ============================================================
+   L3 / L4
+   ============================================================ */
+
 function extractJSON(txt){
-  try { return JSON.parse(txt); } catch(e){}
-  const a = txt.indexOf("{"), b = txt.lastIndexOf("}");
-  if (a >= 0 && b > a){ try { return JSON.parse(txt.slice(a, b+1)); } catch(e){} }
+
+  try{
+
+    return JSON.parse(txt);
+
+  }
+  catch(e){}
+
+
+  const a =
+    txt.indexOf("{");
+
+  const b =
+    txt.lastIndexOf("}");
+
+  if (a >= 0 && b > a){
+
+    try{
+
+      return JSON.parse(
+        txt.slice(
+          a,
+          b + 1
+        )
+      );
+
+    }
+    catch(e){}
+  }
+
   return null;
 }
+
+
 function repairAnswer(d){
-  if (!d || typeof d !== "object") return null;
-  const ans = String(d.answer || "").slice(0, 800);
-  if (!ans) return null;
-  let conf = parseFloat(d.confidence != null ? d.confidence : 0.5);
-  if (isNaN(conf)) conf = 0.5;
-  if (conf > 1 && conf <= 100) conf = conf / 100;
-  return {answer: ans, confidence: Math.max(0, Math.min(1, conf))};
+
+  if (!d || typeof d !== "object"){
+    return null;
+  }
+
+  const ans =
+    String(
+      d.answer || ""
+    ).slice(0,800);
+
+  if (!ans){
+    return null;
+  }
+
+  let conf =
+    parseFloat(
+      d.confidence != null
+        ? d.confidence
+        : 0.5
+    );
+
+  if (isNaN(conf)){
+    conf = 0.5;
+  }
+
+  if (conf > 1 && conf <= 100){
+    conf = conf / 100;
+  }
+
+  return {
+
+    answer:ans,
+
+    confidence:
+      Math.max(
+        0,
+        Math.min(
+          1,
+          conf
+        )
+      )
+  };
 }
 
-/* ---------- LLM ---------- */
-const ZKEY = () => localStorage.getItem("hermes_zkey") || "";
-const ZURL = () => localStorage.getItem("hermes_zurl") || "https://api.z.ai/api/paas/v4/chat/completions";
-const ZMODEL = () => localStorage.getItem("hermes_zmodel") || "glm-4.6";
 
-async function aiCall(messages, maxTokens){
-  const r = await fetch(ZURL(), {method:"POST",
-    headers:{Authorization:"Bearer "+ZKEY(), "Content-Type":"application/json"},
-    body: JSON.stringify({model:ZMODEL(), temperature:0.4, max_tokens:maxTokens||400, messages})});
-  if (!r.ok) throw new Error("api " + r.status);
-  const txt = (await r.json()).choices[0].message.content;
-  let d = extractJSON(txt);
-  let repaired = false;
-  if (d){ const fx = repairAnswer(d); if (fx){ d = fx; } else { d = null; repaired = true; } }
-  if (!d){
-    addMsg("ai", "⚠️ Format invalid — L4 repair retry…");
-    const r2 = await fetch(ZURL(), {method:"POST",
-      headers:{Authorization:"Bearer "+ZKEY(), "Content-Type":"application/json"},
-      body: JSON.stringify({model:ZMODEL(), temperature:0.2, max_tokens:maxTokens||400,
-        messages: messages.concat([{role:"user", content:"Previous reply invalid JSON. Reply ONLY minified JSON: {\"answer\":\"...\",\"confidence\":0-1}"}])})});
-    if (r2.ok){
-      d = extractJSON((await r2.json()).choices[0].message.content);
-      if (d) d = repairAnswer(d);
+/* ============================================================
+   ZCODE CONFIG
+   ============================================================ */
+
+const ZKEY = () =>
+  localStorage.getItem(
+    "hermes_zkey"
+  ) || "";
+
+
+const ZURL = () =>
+  localStorage.getItem(
+    "hermes_zurl"
+  ) ||
+  "https://api.z.ai/api/paas/v4/chat/completions";
+
+
+const ZMODEL = () =>
+  localStorage.getItem(
+    "hermes_zmodel"
+  ) ||
+  "glm-4.6";
+
+
+/* ============================================================
+   LLM
+   ============================================================ */
+
+async function aiCall(
+  messages,
+  maxTokens
+){
+
+  const r =
+    await fetch(
+      ZURL(),
+      {
+        method:"POST",
+
+        headers:{
+          Authorization:
+            "Bearer " +
+            ZKEY(),
+
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+
+            model:ZMODEL(),
+
+            temperature:0.4,
+
+            max_tokens:
+              maxTokens || 400,
+
+            messages
+
+          })
+      }
+    );
+
+
+  if (!r.ok){
+
+    throw new Error(
+      "api " + r.status
+    );
+  }
+
+
+  const txt =
+    (
+      await r.json()
+    )
+    .choices[0]
+    .message
+    .content;
+
+
+  let d =
+    extractJSON(txt);
+
+  let repaired =
+    false;
+
+
+  if (d){
+
+    const fx =
+      repairAnswer(d);
+
+    if (fx){
+
+      d = fx;
+
+    }
+    else{
+
+      d = null;
+
       repaired = true;
     }
   }
-  return {d: d, repaired: repaired};
+
+
+  if (!d){
+
+    addMsg(
+      "ai",
+      "⚠️ Format invalid — L4 repair retry…"
+    );
+
+
+    const r2 =
+      await fetch(
+        ZURL(),
+        {
+          method:"POST",
+
+          headers:{
+            Authorization:
+              "Bearer " +
+              ZKEY(),
+
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              model:
+                ZMODEL(),
+
+              temperature:
+                0.2,
+
+              max_tokens:
+                maxTokens || 400,
+
+              messages:
+                messages.concat([
+                  {
+                    role:"user",
+
+                    content:
+                      "Previous reply invalid JSON. Reply ONLY minified JSON: {\"answer\":\"...\",\"confidence\":0-1}"
+                  }
+                ])
+
+            })
+        }
+      );
+
+
+    if (r2.ok){
+
+      d =
+        extractJSON(
+          (
+            await r2.json()
+          )
+          .choices[0]
+          .message
+          .content
+        );
+
+      if (d){
+
+        d =
+          repairAnswer(d);
+      }
+
+      repaired = true;
+    }
+  }
+
+
+  return {
+    d:d,
+    repaired:repaired
+  };
 }
 
-/* ---------- CHAT ---------- */
-function addMsg(cls, text, tag){
-  const d = document.createElement("div"); d.className = "msg " + cls;
-  let html = esc(text).replace(/\n/g,"<br>");
-  if (cls === "ai") html = text.replace(/\n/g,"<br>");
-  d.innerHTML = html + (tag ? '<span class="tagline">' + esc(tag) + '</span>' : "")
-    + '<span class="t">' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) + '</span>';
-  const box = $("msgs");
-  box.appendChild(d); box.scrollTop = 9999;
-  while (box.children.length > 50) box.firstElementChild.remove();
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+
+function addMsg(
+  cls,
+  text,
+  tag
+){
+
+  const d =
+    document.createElement(
+      "div"
+    );
+
+  d.className =
+    "msg " + cls;
+
+
+  let html =
+    esc(text)
+      .replace(
+        /\n/g,
+        "<br>"
+      );
+
+
+  if (cls === "ai"){
+
+    html =
+      text.replace(
+        /\n/g,
+        "<br>"
+      );
+  }
+
+
+  d.innerHTML =
+    html +
+
+    (
+      tag
+        ? '<span class="tagline">' +
+          esc(tag) +
+          '</span>'
+        : ""
+    ) +
+
+    '<span class="t">' +
+    new Date()
+      .toLocaleTimeString(
+        "en-GB",
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      ) +
+    "</span>";
+
+
+  const box =
+    $("msgs");
+
+
+  box.appendChild(d);
+
+  box.scrollTop =
+    9999;
+
+
+  while (
+    box.children.length > 50
+  ){
+
+    box.firstElementChild
+      .remove();
+  }
 }
+
+
+/* ============================================================
+   LOG
+   ============================================================ */
+
 function log(msg){
-  const el = $("logBox");
-  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  el.innerHTML = '<div><span style="color:var(--muted)">[' + t + ']</span> ' + esc(msg) + '</div>' + el.innerHTML;
-  while (el.children.length > 40) el.lastElementChild.remove();
-}
-function buildContext(){
-  const S = (STATE && STATE.stats) || {};
-  const syms = {};
-  Object.keys((STATE && STATE.symbols) || {}).forEach(k => {
-    const sn = STATE.symbols[k];
-    syms[k] = {signal: sn.signal || null, price: sn.price || null,
-      plan: sn.plan ? {side: sn.plan.side} : null,
-      path: sn.path || null,
-      grid: {H1: sn.grid && sn.grid.H1 ? {pos: sn.grid.H1.pos, zone: sn.grid.H1.zone} : null}};
-  });
-  return {desk: {equity: S.equity, trades_today: S.trades_today, mode: STATE ? STATE.mode : null,
-    run_tag: STATE ? STATE.run_tag : null}, symbols: syms,
-    lessons: ((STATE && STATE.lessons && STATE.lessons.items) || []).slice(-3),
-    pillar_score: STATE ? STATE.pillar_score : null};
-}
-function briefingText(){
-  if (!STATE || !STATE.stats) return "State abhi load nahi hui.";
-  const S = STATE.stats;
-  let t = "Equity $" + fmt(S.equity) + ". Trades " + (S.trades_today||0) + "/" + ((STATE.prop||{}).max_trades_per_day||3) + ". ";
-  Object.keys(STATE.symbols || {}).forEach(k => { t += k + ": " + (STATE.symbols[k].signal || "HOLD") + ". "; });
-  if (STATE.pillar_score) t += "Pillars " + STATE.pillar_score.score + "/10.";
-  return t;
-}
-function fallbackAnswer(q){
-  const low = (q || "").toLowerCase();
-  const open = isMarketOpen(CUR_SYM);
-  if (/pillar/.test(low) && STATE && STATE.pillar_score){
-    return "Pillar score: " + STATE.pillar_score.score + "/10. " +
-      Object.keys(STATE.pillar_score).filter(k=>k.indexOf("P")===0).map(k=>k+":"+(STATE.pillar_score[k]?"✓":"✗")).join(" ");
-  }
-  if (/path/.test(low) && STATE && STATE.symbols){
-    const SN = STATE.symbols[CUR_SYM];
-    if (SN && SN.path) return "Expected path (" + CUR_SYM + "): " + SN.path.map(p=>p.step+". "+p.what).join(" → ");
-    return "Abhi koi active path nahi (signal ya bot run pending).";
-  }
-  if (/status|report|brief/.test(low)) return briefingText();
-  if (!STATE || !STATE.symbols) return "State abhi load nahi hui — bot run ya Hard Refresh chahiye.";
-  const SN = STATE.symbols[CUR_SYM];
-  if (!SN) return CUR_SYM + " ka data state mein nahi.";
-  if (/signal/.test(low)) return "Rules-based: " + CUR_SYM + " " + (SN.signal || "HOLD") + " (score " + (SN.matrix ? SN.matrix.score : "–") + ")";
-  if (/plan/.test(low) && SN.plan){
-    const P1 = SN.plan.B1 || SN.plan.S1;
-    return "Plan " + SN.plan.side + ": entry " + P1.entry + ", SL " + P1.sl + ", TP " + P1.tp;
-  }
-  if (/lesson/.test(low)){
-    const L = (STATE.lessons && STATE.lessons.items) || [];
-    return L.length ? "Lessons: " + L.slice(-3).map(i=>i.text||i).join(" | ") : "Abhi koi lesson nahi.";
-  }
-  return open
-    ? CUR_SYM + " " + CUR_TF + ": live session. Full AI ke liye ⚙️ mein key dalein."
-    : CUR_SYM + " market closed (weekend). ETHUSD 24/7 open.";
-}
 
-async function chatSend(){
-  const inp = $("cinp");
-  const q = inp.value.trim(); if (!q) return;
-  inp.value = "";
-  addMsg("user", q);
-  if (!ZKEY()){
-    addMsg("ai", fallbackAnswer(q), "completed_by: fallback-rules (L5)");
-    log("[L5] fallback completed task");
+  const el =
+    $("logBox");
+
+  if (!el){
     return;
   }
-  $("chatMode").innerHTML = '<span class="think"><span></span><span></span><span></span></span>';
-  const sys = "You are ZCode, AI analyst of HERMES (prop-firm Gold/FX desk of Muhammad Farrukh Jadoon). " +
+
+  const t =
+    new Date()
+      .toLocaleTimeString(
+        "en-GB",
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+
+  el.innerHTML =
+    '<div>' +
+    '<span style="color:var(--muted)">' +
+    "[" +
+    t +
+    "]" +
+    "</span> " +
+    esc(msg) +
+    "</div>" +
+    el.innerHTML;
+
+
+  while (
+    el.children.length > 40
+  ){
+
+    el.lastElementChild
+      .remove();
+  }
+}
+
+
+/* ============================================================
+   BUILD CONTEXT
+   ============================================================ */
+
+function buildContext(){
+
+  const S =
+    (STATE && STATE.stats) || {};
+
+
+  const syms = {};
+
+
+  Object.keys(
+    (STATE && STATE.symbols) || {}
+  ).forEach(
+    function(k){
+
+      const sn =
+        STATE.symbols[k];
+
+
+      syms[k] = {
+
+        signal:
+          sn.signal || null,
+
+        price:
+          sn.price || null,
+
+        plan:
+          sn.plan
+            ? {
+                side:
+                  sn.plan.side
+              }
+            : null,
+
+        path:
+          sn.path || null,
+
+        grid:{
+          H1:
+            sn.grid &&
+            sn.grid.H1
+              ? {
+                  pos:
+                    sn.grid.H1.pos,
+
+                  zone:
+                    sn.grid.H1.zone
+                }
+              : null
+        }
+
+      };
+
+    }
+  );
+
+
+  return {
+
+    desk:{
+
+      equity:
+        S.equity,
+
+      trades_today:
+        S.trades_today,
+
+      mode:
+        STATE
+          ? STATE.mode
+          : null,
+
+      run_tag:
+        STATE
+          ? STATE.run_tag
+          : null
+
+    },
+
+    symbols:syms,
+
+    lessons:
+      (
+        (STATE &&
+        STATE.lessons &&
+        STATE.lessons.items) ||
+        []
+      ).slice(-3),
+
+    pillar_score:
+      STATE
+        ? STATE.pillar_score
+        : null
+  };
+}
+
+
+/* ============================================================
+   BRIEFING
+   ============================================================ */
+
+function briefingText(){
+
+  if (!STATE || !STATE.stats){
+
+    return "State abhi load nahi hui.";
+  }
+
+
+  const S =
+    STATE.stats;
+
+
+  let t =
+    "Equity $" +
+    fmt(S.equity) +
+    ". Trades " +
+    (S.trades_today || 0) +
+    "/" +
+    (
+      (STATE.prop || {})
+        .max_trades_per_day || 3
+    ) +
+    ". ";
+
+
+  Object.keys(
+    STATE.symbols || {}
+  ).forEach(
+    function(k){
+
+      t +=
+        k +
+        ": " +
+        (
+          STATE.symbols[k]
+            .signal ||
+          "HOLD"
+        ) +
+        ". ";
+
+    }
+  );
+
+
+  if (STATE.pillar_score){
+
+    t +=
+      "Pillars " +
+      STATE.pillar_score.score +
+      "/10.";
+  }
+
+
+  return t;
+}
+
+
+/* ============================================================
+   FALLBACK
+   ============================================================ */
+
+function fallbackAnswer(q){
+
+  const low =
+    (q || "").toLowerCase();
+
+
+  const open =
+    isMarketOpen(
+      CUR_SYM
+    );
+
+
+  if (
+    /pillar/.test(low) &&
+    STATE &&
+    STATE.pillar_score
+  ){
+
+    return (
+      "Pillar score: " +
+      STATE.pillar_score.score +
+      "/10. " +
+
+      Object.keys(
+        STATE.pillar_score
+      )
+      .filter(
+        k =>
+          k.indexOf("P") === 0
+      )
+      .map(
+        k =>
+          k +
+          ":" +
+          (
+            STATE.pillar_score[k]
+              ? "✓"
+              : "✗"
+          )
+      )
+      .join(" ")
+    );
+  }
+
+
+  if (
+    /path/.test(low) &&
+    STATE &&
+    STATE.symbols
+  ){
+
+    const SN =
+      STATE.symbols[
+        CUR_SYM
+      ];
+
+
+    if (
+      SN &&
+      SN.path
+    ){
+
+      return (
+        "Expected path (" +
+        CUR_SYM +
+        "): " +
+
+        SN.path
+          .map(
+            p =>
+              p.step +
+              ". " +
+              p.what
+          )
+          .join(" → ")
+      );
+    }
+
+
+    return (
+      "Abhi koi active path nahi (signal ya bot run pending)."
+    );
+  }
+
+
+  if (
+    /status|report|brief/
+      .test(low)
+  ){
+
+    return briefingText();
+  }
+
+
+  if (
+    !STATE ||
+    !STATE.symbols
+  ){
+
+    return (
+      "State abhi load nahi hui — bot run ya Hard Refresh chahiye."
+    );
+  }
+
+
+  const SN =
+    STATE.symbols[
+      CUR_SYM
+    ];
+
+
+  if (!SN){
+
+    return (
+      CUR_SYM +
+      " ka data state mein nahi."
+    );
+  }
+
+
+  if (/signal/.test(low)){
+
+    return (
+      "Rules-based: " +
+      CUR_SYM +
+      " " +
+      (
+        SN.signal ||
+        "HOLD"
+      ) +
+      " (score " +
+      (
+        SN.matrix
+          ? SN.matrix.score
+          : "–"
+      ) +
+      ")"
+    );
+  }
+
+
+  if (
+    /plan/.test(low) &&
+    SN.plan
+  ){
+
+    const P1 =
+      SN.plan.B1 ||
+      SN.plan.S1;
+
+
+    return (
+      "Plan " +
+      SN.plan.side +
+      ": entry " +
+      P1.entry +
+      ", SL " +
+      P1.sl +
+      ", TP " +
+      P1.tp
+    );
+  }
+
+
+  if (/lesson/.test(low)){
+
+    const L =
+      (
+        STATE.lessons &&
+        STATE.lessons.items
+      ) || [];
+
+
+    return L.length
+
+      ? "Lessons: " +
+        L.slice(-3)
+          .map(
+            i =>
+              i.text || i
+          )
+          .join(" | ")
+
+      : "Abhi koi lesson nahi.";
+  }
+
+
+  return open
+
+    ? CUR_SYM +
+      " " +
+      CUR_TF +
+      ": live session. " +
+      "Full AI ke liye ⚙️ mein key dalein."
+
+    : CUR_SYM +
+      " market closed (weekend). " +
+      "ETHUSD 24/7 open.";
+}
+
+
+/* ============================================================
+   CHAT SEND
+   ============================================================ */
+
+async function chatSend(){
+
+  const inp =
+    $("cinp");
+
+
+  const q =
+    inp.value.trim();
+
+
+  if (!q){
+    return;
+  }
+
+
+  inp.value = "";
+
+
+  addMsg(
+    "user",
+    q
+  );
+
+
+  if (!ZKEY()){
+
+    addMsg(
+      "ai",
+      fallbackAnswer(q),
+      "completed_by: fallback-rules (L5)"
+    );
+
+    log(
+      "[L5] fallback completed task"
+    );
+
+    return;
+  }
+
+
+  $("chatMode").innerHTML =
+    '<span class="think">' +
+    '<span></span>' +
+    '<span></span>' +
+    '<span></span>' +
+    "</span>";
+
+
+  const sys =
+    "You are ZCode, AI analyst of HERMES (prop-firm Gold/FX desk of Muhammad Farrukh Jadoon). " +
     "You get LIVE desk state incl pillar scores and model self-data. " +
     "Reply ONLY minified JSON: {\"answer\":\"max 5 sentences in user language\",\"confidence\":0-1}. " +
     "Respect prop rules, never guarantee profit.";
-  const msgs = [{role:"system", content:sys},
-    {role:"user", content:"LIVE DESK:\n" + JSON.stringify(buildContext())},
-    {role:"user", content:q}];
-  try {
-    const res = await aiCall(msgs, 400);
+
+
+  const msgs = [
+
+    {
+      role:"system",
+      content:sys
+    },
+
+    {
+      role:"user",
+      content:
+        "LIVE DESK:\n" +
+        JSON.stringify(
+          buildContext()
+        )
+    },
+
+    {
+      role:"user",
+      content:q
+    }
+
+  ];
+
+
+  try{
+
+    const res =
+      await aiCall(
+        msgs,
+        400
+      );
+
+
     if (res.d){
-      addMsg("ai", res.d.answer, "completed_by: ai" + (res.repaired ? " (L4-repaired)" : " (L3-clean)") + " · conf " + Math.round(res.d.confidence*100) + "%");
-      log("[L3] parsed" + (res.repaired ? " · [L4] repaired" : " clean"));
-    } else {
-      addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — AI unusable)");
-      log("[L5] fallback completed task");
+
+      addMsg(
+        "ai",
+        res.d.answer,
+        "completed_by: ai" +
+        (
+          res.repaired
+            ? " (L4-repaired)"
+            : " (L3-clean)"
+        ) +
+        " · conf " +
+        Math.round(
+          res.d.confidence * 100
+        ) +
+        "%"
+      );
+
+
+      log(
+        "[L3] parsed" +
+        (
+          res.repaired
+            ? " · [L4] repaired"
+            : " clean"
+        )
+      );
+
     }
-  } catch(e){
-    addMsg("ai", fallbackAnswer(q), "completed_by: fallback (L5 — " + e.message + ")");
-    log("[L5] api fail → fallback completed");
+    else{
+
+      addMsg(
+        "ai",
+        fallbackAnswer(q),
+        "completed_by: fallback (L5 — AI unusable)"
+      );
+
+      log(
+        "[L5] fallback completed task"
+      );
+    }
+
   }
-  $("chatMode").textContent = "L1→L5 active";
+  catch(e){
+
+    addMsg(
+      "ai",
+      fallbackAnswer(q),
+      "completed_by: fallback (L5 — " +
+      e.message +
+      ")"
+    );
+
+
+    log(
+      "[L5] api fail → fallback completed"
+    );
+  }
+
+
+  $("chatMode").textContent =
+    "L1→L5 active";
 }
 
-/* ---------- RENDER ---------- */
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+
 function render(){
-  const open = isMarketOpen(CUR_SYM);
-  const SN = (STATE && STATE.symbols) ? STATE.symbols[CUR_SYM] : null;
-  const dec = CUR_SYM === 'EURUSD' ? 4 : 2;
-  const Z = SN ? (SN.zcode || {}) : {};
 
-  $("runTag").textContent = "run: " + ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
+  /*
+   * Always update live status
+   */
+  updateLiveUI();
 
-  const badge = $("mktBadge");
-  if (open){ badge.className='badge-open'; badge.textContent='MARKET OPEN'; }
-  else { badge.className='badge-closed'; badge.textContent='MARKET CLOSED'; }
-  $("sysStatus").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long'}) + " · " +
-    (open ? "active" : "gold/forex closed · crypto open");
 
-  const rp = $("actionPanel");
-  $("recSym").textContent = CUR_SYM;
-  $("recTF").textContent = CUR_TF;
-  if (SN && SN.signal){
-    rp.classList.toggle("closed", !open || SN.signal === "NO_TRADE" || SN.signal === "WAIT");
-    const ra = $("recAction");
-    ra.textContent = open ? (SN.signal === "NO_TRADE" ? "WAIT" : SN.signal) : "WAIT";
-    ra.style.color = SN.signal === "BUY" ? "var(--green)" : SN.signal === "SELL" ? "var(--red)" : "var(--muted)";
-    $("recNote").textContent = Z.reasoning || SN.why || "ensemble + grid";
-    $("recBy").textContent = "by: " + (SN.signal_by || "—") + " · reproducible: " +
-      ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
-    const simg = SN.sim || {};
-    $("recSim").textContent = simg.gate ? "🧪 P8 gate: " + simg.gate + (simg.note ? " · " + simg.note : "") : "—";
-    const P1 = SN.plan ? (SN.plan.B1 || SN.plan.S1) : null;
-    $("recEntry").textContent = P1 ? String(P1.entry) : "—";
-    $("recTP").textContent = P1 ? "TP " + P1.tp + " (SL " + P1.sl + ")" : "—";
-  } else {
-    rp.classList.add("closed");
-    $("recAction").textContent = SN ? "WAIT" : "AWAITING DATA";
-    $("recAction").style.color = "var(--muted)";
-    $("recNote").textContent = SN ? (SN.why || "no trade conditions") : "bot run pending (L5: no fake signal)";
-    $("recBy").textContent = SN ? "by: " + (SN.signal_by || "matrix") : "—";
-    $("recSim").textContent = "—";
-    $("recEntry").textContent = "—";
-    $("recTP").textContent = "—";
-  }
+  const open =
+    isMarketOpen(
+      CUR_SYM
+    );
 
-  $("mktSym").textContent = CUR_SYM;
-  const live = $("mktLive");
-  live.textContent = open ? "LIVE" : "CLOSED";
-  live.className = open ? "live" : "live warn";
-  if (SN){
-    $("livePrice").textContent = fmt(SN.price, dec);
-    $("hlVal").textContent = fmt(SN.grid?.D1?.expected_high, dec) + " / " + fmt(SN.grid?.D1?.expected_low, dec);
-    $("dataLayer").textContent = "P1 ✓ validated";
-    $("dataLayer").style.color = "var(--green)";
-  } else {
-    $("livePrice").textContent = "—";
-    $("hlVal").textContent = "—";
-    $("dataLayer").textContent = "awaiting bot";
-    $("dataLayer").style.color = "var(--amber)";
-  }
-  $("sessionVal").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long'});
 
-  $("gridTitle").textContent = CUR_SYM + " · " + CUR_TF;
-  $("modLabel").textContent = CUR_SYM + " " + CUR_TF;
-  const gs = $("gridStatus");
-  gs.textContent = CUR_TF + (SN ? (open ? " · LIVE" : " · FROZEN") : " · NO DATA");
-  gs.className = SN ? "live" : "live warn";
+  const SN =
+    (
+      STATE &&
+      STATE.symbols
+    )
+      ? STATE.symbols[CUR_SYM]
+      : null;
 
-  let gridData = null, tfNote = "";
-  if (SN && SN.grid){
-    if (CUR_TF === "H1"){ gridData = SN.grid.H1; }
-    else if (CUR_TF === "D1"){ gridData = SN.grid.D1; }
-    else if (CUR_TF === "M30"){ gridData = SN.grid.H1; tfNote = "M30 proxy→H1"; }
-    else if (CUR_TF === "H4"){ gridData = SN.grid.H1; tfNote = "H4 proxy→H1"; }
-    else if (CUR_TF === "W1"){ gridData = SN.grid.D1; tfNote = "W1 proxy→D1"; }
-  }
-  const okData = gridData && validCandles(gridData.candles);
-  $("gridMeta").textContent = okData
-    ? ("pos " + Math.round((gridData.pos||0)*100) + "% · " + (gridData.zone||"—") + (tfNote ? " · " + tfNote : ""))
-    : (SN ? "candle data invalid" : "bot run pending");
 
-  /* Expected Path strip (backend-driven) */
-  const ps = $("pathSteps");
-  if (SN && SN.path && SN.path.length){
-    ps.innerHTML = SN.path.map(p => '<div class="step"><b>' + p.step + '.</b> ' + esc(p.what) + '</div>')
-      .join('<span style="color:var(--muted)">→</span>');
-    $("pathSource").textContent = "ensemble path · fused by " + (SN.signal_by || "matrix") +
-      " · tag " + ((STATE && STATE.run_tag && STATE.run_tag.cfg_sha) || "—");
-  } else {
-    ps.innerHTML = '<div class="step">Bot ke run ke baad model-driven path yahan aayega</div>';
-    $("pathSource").textContent = "L5: no fabricated path";
-  }
+  const dec =
+    CUR_SYM === "EURUSD"
+      ? 4
+      : 2;
 
-  /* Pillar scorecard */
-  const PSC = (STATE && STATE.pillar_score) || null;
-  const pdefs = [
-    ["P1 DATA", "P1"], ["P2 ANALYZE", "P2"], ["P3 IMPROVE", "P3"], ["P4 PERSIST", "P4"], ["P5 COMPARE", "P5"],
-    ["P6 LESSONS", "P6"], ["P7 RISK", "P7"], ["P8 SIMULATE", "P8"], ["P9 SECURITY", "P9"], ["P10 HEALTH", "P10"]
-  ];
-  $("pillarScore").textContent = PSC ? ("SCORE " + PSC.score + "/10") : "—";
-  $("pillarScore").className = PSC ? (PSC.score >= 9 ? "live" : "live warn") : "live warn";
-  $("pillarGrid").innerHTML = pdefs.map(function(pd){
-    const v = PSC ? PSC[pd[1]] : null;
-    const ok = v === true;
-    return '<div class="pcard"><div class="pname">' + pd[0] + '</div><div class="pstat ' + (ok?'ok':'warn') + '">' + (ok?'✓':'…') + '</div></div>';
-  }).join("");
 
-  /* Models */
-  const votes = (SN && SN.votes) || {};
-  const defs = [
-    ["GRID","grid","h","structural base W.40"],
-    ["KRONOS","kronos","h","extreme fade W.35"],
-    ["QUANT","quant","m","RSI+MACD W.25"],
-    ["TAURUS","taurus","m","regime modifier"],
-    ["ZCODE","zcode","h","fusion engine"],
-    ["STAT","stat_advisory","l","advisory"]
-  ];
-  $("modelGrid").innerHTML = defs.map(function(df){
-    const n = df[0], k = df[1], w = df[2], role = df[3];
-    let bias = null, confTxt = "", extra = "";
-    if (k === "zcode"){
-      if (Z && Z.signal){ bias = Z.signal; confTxt = Math.round((Z.confidence||0)*100) + "%"; extra = Z.risk || ""; }
-    } else {
-      const v = votes[k];
-      if (v && v.next_hour_bias){ bias = v.next_hour_bias; confTxt = v.confidence + "%"; extra = v.first_zone_guess || ""; }
+  const Z =
+    SN
+      ? (SN.zcode || {})
+      : {};
+
+
+  /* Run tag */
+
+  $("runTag").textContent =
+    "run: " +
+    (
+      STATE &&
+      STATE.run_tag &&
+      STATE.run_tag.cfg_sha
+        ? STATE.run_tag.cfg_sha
+        : "—"
+    );
+
+
+  /* Market badge */
+
+  const badge =
+    $("mktBadge");
+
+
+  if (badge){
+
+    if (open){
+
+      badge.className =
+        "badge-open";
+
+      badge.textContent =
+        "MARKET OPEN";
+
     }
-    const self = ((STATE && STATE.model_self) || {})[k];
-    const acc = self && self.recent && self.recent.length
-      ? Math.round(self.recent.reduce(function(a,b){return a+b;},0)/self.recent.length*100) + "% live"
-      : "warming";
-    return '<div class="mcard ' + (w==='h'?'heavy':'') + '" data-m="' + n + '">'
-      + '<div style="display:flex;justify-content:space-between"><div><div class="mname">' + n + '</div><div class="mtype">' + role + '</div></div><div class="wbadge ' + w + '">' + (w==='h'?'HEAVY':w==='m'?'MEDIUM':'LIGHT') + '</div></div>'
-      + '<div class="mpred">' + (bias ? bias : (SN ? "HOLD" : "—")) + '</div>'
-      + '<div class="msig ' + (bias ? '' : 'na') + '">' + (!SN ? "AWAITING DATA" : (bias ? confTxt + " · " + extra : "no vote")) + '</div>'
-      + '<div class="mmeta"><span>Self-acc</span><span class="macc">' + acc + '</span></div>'
-      + '<div class="wbar"><div class="wfill ' + w + '"></div></div></div>';
-  }).join("");
-  Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function(c){
-    c.onclick = function(){
-      const n = c.getAttribute("data-m");
-      const k = VOTE_KEY[n];
-      const v = votes[k];
-      const self = ((STATE && STATE.model_self) || {})[k];
-      let lastVote = "awaiting bot run";
-      if (k === "zcode" && Z && Z.signal){
-        lastVote = JSON.stringify({signal: Z.signal, conf: Z.confidence, risk: Z.risk, why: Z.reasoning});
-      } else if (v){
-        lastVote = JSON.stringify({bias: v.next_hour_bias, conf: v.confidence, zone: v.first_zone_guess, why: v.reasoning});
-      }
-      const wr = self && self.recent && self.recent.length
-        ? Math.round(self.recent.reduce(function(a,b){return a+b;},0)/self.recent.length*100) : 50;
-      $("modTitle").textContent = n + " · LIVE SELF-DATA";
-      $("modInst").textContent =
-        "ROLE: " + (n==="GRID" ? "Farrukh 33% structural base (W 0.40)"
-        : n==="KRONOS" ? "Extreme-stretch fade + path (W 0.35)"
-        : n==="QUANT" ? "RSI-14 + MACD zone fade (W 0.25)"
-        : n==="TAURUS" ? "Regime + volatility modifier"
-        : n==="ZCODE" ? "FUSION ENGINE: heavy LLM, strategy-bound, final authority"
-        : "Advisory p_up only") +
-        "\n\n📊 PILLAR P2/P3 — OWN RECORD (live):" +
-        "\n- Recent WR: " + wr + "% (" + ((self && self.recent) ? self.recent.length : 0) + " samples)" +
-        "\n- Streak: " + ((self && self.streak) || 0) +
-        "\n- Conf-bias: " + ((self && self.conf_bias) || 0) + " (clamped ±10)" +
-        "\n- Best zone: " + ((self && self.best_zone) || "learning…") +
-        "\n- Worst zone: " + ((self && self.worst_zone) || "learning…") +
-        "\n- Self note: " + ((self && self.last_note) || "none yet") +
-        "\n\nANTI-OVERFIT: min 6 samples · bias clamp ±10 · sirf apna data" +
-        "\n\nLAST VOTE:\n" + lastVote;
-      $("modDetail").classList.add("open");
-      $("modOverlay").classList.add("open");
-    };
-  });
+    else{
 
-  /* Indicators */
-  const qReason = (SN && SN.votes && SN.votes.quant && SN.votes.quant.reasoning) || "";
-  const rsiM = qReason.match(/RSI (\d+)/);
-  const inds = [
-    ["RSI", rsiM ? rsiM[1] : null, rsiM ? (parseInt(rsiM[1],10) > 55 ? "bull" : parseInt(rsiM[1],10) < 45 ? "bear" : "neu") : "na"],
-    ["MACD", qReason.indexOf("MACD") >= 0 ? "in vote" : null, "na"],
-    ["REGIME", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.regime) || null, "neu"],
-    ["VOL", (SN && SN.votes && SN.votes.taurus && SN.votes.taurus.vol) || null, "neu"],
-    ["MATRIX", SN && SN.matrix ? ((SN.matrix.score > 0 ? "+" : "") + SN.matrix.score) : null, ((SN&&SN.matrix&&SN.matrix.score)||0) > MTHR ? "bull" : ((SN&&SN.matrix&&SN.matrix.score)||0) < -MTHR ? "bear" : "neu"],
-    ["H1 ZONE", SN && SN.grid && SN.grid.H1 ? SN.grid.H1.zone : null, (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="upper" ? "bear" : (SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)==="lower" ? "bull" : "neu"]
+      badge.className =
+        "badge-closed";
+
+      badge.textContent =
+        "MARKET CLOSED";
+    }
+  }
+
+
+  /* System */
+
+  $("sysStatus").textContent =
+    new Date()
+      .toLocaleDateString(
+        "en-GB",
+        {
+          weekday:"long"
+        }
+      ) +
+    " · " +
+    (
+      open
+        ? "active"
+        : "gold/forex closed · crypto open"
+    );
+
+
+  /* Action panel */
+
+  const rp =
+    $("actionPanel");
+
+
+  $("recSym").textContent =
+    CUR_SYM;
+
+
+  $("recTF").textContent =
+    CUR_TF;
+
+
+  if (
+    SN &&
+    SN.signal
+  ){
+
+    rp.classList.toggle(
+      "closed",
+      !open ||
+      SN.signal === "NO_TRADE" ||
+      SN.signal === "WAIT"
+    );
+
+
+    const ra =
+      $("recAction");
+
+
+    ra.textContent =
+      open
+        ? (
+            SN.signal === "NO_TRADE"
+              ? "WAIT"
+              : SN.signal
+          )
+        : "WAIT";
+
+
+    ra.style.color =
+      SN.signal === "BUY"
+        ? "var(--green)"
+        : SN.signal === "SELL"
+          ? "var(--red)"
+          : "var(--muted)";
+
+
+    $("recNote").textContent =
+      Z.reasoning ||
+      SN.why ||
+      "ensemble + grid";
+
+
+    $("recBy").textContent =
+      "by: " +
+      (
+        SN.signal_by ||
+        "—"
+      ) +
+      " · reproducible: " +
+      (
+        STATE &&
+        STATE.run_tag &&
+        STATE.run_tag.cfg_sha
+          ? STATE.run_tag.cfg_sha
+          : "—"
+      );
+
+
+    const simg =
+      SN.sim || {};
+
+
+    $("recSim").textContent =
+      simg.gate
+        ? "🧪 P8 gate: " +
+          simg.gate +
+          (
+            simg.note
+              ? " · " +
+                simg.note
+              : ""
+          )
+        : "—";
+
+
+    const P1 =
+      SN.plan
+        ? (
+            SN.plan.B1 ||
+            SN.plan.S1
+          )
+        : null;
+
+
+    $("recEntry").textContent =
+      P1
+        ? String(P1.entry)
+        : "—";
+
+
+    $("recTP").textContent =
+      P1
+        ? "TP " +
+          P1.tp +
+          " (SL " +
+          P1.sl +
+          ")"
+        : "—";
+
+  }
+  else{
+
+    rp.classList.add(
+      "closed"
+    );
+
+
+    $("recAction").textContent =
+      SN
+        ? "WAIT"
+        : "AWAITING DATA";
+
+
+    $("recAction").style.color =
+      "var(--muted)";
+
+
+    $("recNote").textContent =
+      SN
+        ? (
+            SN.why ||
+            "no trade conditions"
+          )
+        : "bot run pending (L5: no fake signal)";
+
+
+    $("recBy").textContent =
+      SN
+        ? "by: " +
+          (
+            SN.signal_by ||
+            "matrix"
+          )
+        : "—";
+
+
+    $("recSim").textContent =
+      "—";
+
+
+    $("recEntry").textContent =
+      "—";
+
+
+    $("recTP").textContent =
+      "—";
+  }
+
+
+  /* Market */
+
+  $("mktSym").textContent =
+    CUR_SYM;
+
+
+  const live =
+    $("mktLive");
+
+
+  live.textContent =
+    open
+      ? "LIVE"
+      : "CLOSED";
+
+
+  live.className =
+    open
+      ? "live"
+      : "live warn";
+
+
+  if (SN){
+
+    $("livePrice").textContent =
+      fmt(
+        SN.price,
+        dec
+      );
+
+
+    $("hlVal").textContent =
+      fmt(
+        SN.grid?.D1?.expected_high,
+        dec
+      ) +
+      " / " +
+      fmt(
+        SN.grid?.D1?.expected_low,
+        dec
+      );
+
+
+    $("dataLayer").textContent =
+      "P1 ✓ LIVE DATA";
+
+
+    $("dataLayer").style.color =
+      "var(--green)";
+
+  }
+  else{
+
+    $("livePrice").textContent =
+      "—";
+
+
+    $("hlVal").textContent =
+      "—";
+
+
+    $("dataLayer").textContent =
+      "awaiting bot";
+
+
+    $("dataLayer").style.color =
+      "var(--amber)";
+  }
+
+
+  $("sessionVal").textContent =
+    new Date()
+      .toLocaleDateString(
+        "en-GB",
+        {
+          weekday:"long"
+        }
+      );
+
+
+  /* Grid */
+
+  $("gridTitle").textContent =
+    CUR_SYM +
+    " · " +
+    CUR_TF;
+
+
+  $("modLabel").textContent =
+    CUR_SYM +
+    " " +
+    CUR_TF;
+
+
+  const gs =
+    $("gridStatus");
+
+
+  gs.textContent =
+    CUR_TF +
+    (
+      SN
+        ? (
+            open
+              ? " · LIVE"
+              : " · FROZEN"
+          )
+        : " · NO DATA"
+    );
+
+
+  gs.className =
+    SN
+      ? "live"
+      : "live warn";
+
+
+  let gridData =
+    null;
+
+
+  let tfNote =
+    "";
+
+
+  if (
+    SN &&
+    SN.grid
+  ){
+
+    if (
+      CUR_TF === "H1"
+    ){
+
+      gridData =
+        SN.grid.H1;
+
+    }
+    else if (
+      CUR_TF === "D1"
+    ){
+
+      gridData =
+        SN.grid.D1;
+
+    }
+    else if (
+      CUR_TF === "M30"
+    ){
+
+      gridData =
+        SN.grid.H1;
+
+      tfNote =
+        "M30 proxy→H1";
+
+    }
+    else if (
+      CUR_TF === "H4"
+    ){
+
+      gridData =
+        SN.grid.H1;
+
+      tfNote =
+        "H4 proxy→H1";
+
+    }
+    else if (
+      CUR_TF === "W1"
+    ){
+
+      gridData =
+        SN.grid.D1;
+
+      tfNote =
+        "W1 proxy→D1";
+    }
+  }
+
+
+  const okData =
+    gridData &&
+    validCandles(
+      gridData.candles
+    );
+
+
+  $("gridMeta").textContent =
+    okData
+
+      ? (
+          "pos " +
+          Math.round(
+            (gridData.pos || 0) *
+            100
+          ) +
+          "% · " +
+          (
+            gridData.zone ||
+            "—"
+          ) +
+          (
+            tfNote
+              ? " · " +
+                tfNote
+              : ""
+          )
+        )
+
+      : (
+          SN
+            ? "candle data invalid"
+            : "bot run pending"
+        );
+
+
+  /* ========================================================
+     EXPECTED PATH
+     ======================================================== */
+
+  const ps =
+    $("pathSteps");
+
+
+  if (
+    SN &&
+    SN.path &&
+    SN.path.length
+  ){
+
+    ps.innerHTML =
+      SN.path
+        .map(
+          p =>
+            '<div class="step">' +
+            "<b>" +
+            p.step +
+            ".</b> " +
+            esc(p.what) +
+            "</div>"
+        )
+        .join(
+          '<span style="color:var(--muted)">→</span>'
+        );
+
+
+    $("pathSource").textContent =
+      "ensemble path · fused by " +
+      (
+        SN.signal_by ||
+        "matrix"
+      ) +
+      " · tag " +
+      (
+        STATE &&
+        STATE.run_tag &&
+        STATE.run_tag.cfg_sha
+          ? STATE.run_tag.cfg_sha
+          : "—"
+      );
+
+  }
+  else{
+
+    ps.innerHTML =
+      '<div class="step">' +
+      "Bot ke run ke baad model-driven path yahan aayega" +
+      "</div>";
+
+
+    $("pathSource").textContent =
+      "L5: no fabricated path";
+  }
+
+
+  /* ========================================================
+     PILLAR SCORECARD
+     ======================================================== */
+
+  const PSC =
+    (
+      STATE &&
+      STATE.pillar_score
+    ) || null;
+
+
+  const pdefs = [
+
+    ["P1 DATA","P1"],
+
+    ["P2 ANALYZE","P2"],
+
+    ["P3 IMPROVE","P3"],
+
+    ["P4 PERSIST","P4"],
+
+    ["P5 COMPARE","P5"],
+
+    ["P6 LESSONS","P6"],
+
+    ["P7 RISK","P7"],
+
+    ["P8 SIMULATE","P8"],
+
+    ["P9 SECURITY","P9"],
+
+    ["P10 HEALTH","P10"]
+
   ];
-  $("indGrid").innerHTML = inds.map(function(x){
-    return '<div class="ind"><div class="iname">' + x[0] + '</div><div class="ival ' + (x[1] ? x[2] : 'na') + '">' + (x[1] || "AWAITING") + '</div><div class="istat">' + (x[1] ? "P1 verified" : "bot run pending") + '</div></div>';
-  }).join("");
 
-  /* Self-learning */
-  const PL = (STATE && STATE.pillar_ledger) || null;
-  $("ledgerN").textContent = PL ? PL.entries : "—";
-  const li = $("ledgerI");
-  if (PL){ li.textContent = PL.ok ? "INTACT ✓" : "BROKEN!!"; li.style.color = PL.ok ? "var(--green)" : "var(--red)"; }
-  const SEC = (STATE && STATE.security) || null;
-  const sc = $("secN");
-  if (SEC){ sc.textContent = SEC.ok ? "OK ✓" : "CHECK"; sc.style.color = SEC.ok ? "var(--green)" : "var(--red)"; }
-  const CMP = (STATE && STATE.comparison) || null;
-  const cp = $("cmpN");
-  if (CMP && CMP.ready){
-    cp.textContent = CMP.verdict;
-    cp.style.color = CMP.delta > 0 ? "var(--green)" : CMP.delta < 0 ? "var(--red)" : "var(--amber)";
+
+  $("pillarScore").textContent =
+    PSC
+      ? "SCORE " +
+        PSC.score +
+        "/10"
+      : "—";
+
+
+  $("pillarScore").className =
+    PSC
+      ? (
+          PSC.score >= 9
+            ? "live"
+            : "live warn"
+        )
+      : "live warn";
+
+
+  $("pillarGrid").innerHTML =
+    pdefs
+      .map(
+        function(pd){
+
+          const v =
+            PSC
+              ? PSC[pd[1]]
+              : null;
+
+
+          const ok =
+            v === true;
+
+
+          return (
+            '<div class="pcard">' +
+
+              '<div class="pname">' +
+              pd[0] +
+              "</div>" +
+
+              '<div class="pstat ' +
+              (
+                ok
+                  ? "ok"
+                  : "warn"
+              ) +
+              '">' +
+
+              (
+                ok
+                  ? "✓"
+                  : "…"
+              ) +
+
+              "</div>" +
+
+            "</div>"
+          );
+
+        }
+      )
+      .join("");
+
+
+  /* ========================================================
+     MODELS
+     ======================================================== */
+
+  const votes =
+    (
+      SN &&
+      SN.votes
+    ) || {};
+
+
+  const defs = [
+
+    [
+      "GRID",
+      "grid",
+      "h",
+      "structural base W.40"
+    ],
+
+    [
+      "KRONOS",
+      "kronos",
+      "h",
+      "extreme fade W.35"
+    ],
+
+    [
+      "QUANT",
+      "quant",
+      "m",
+      "RSI+MACD W.25"
+    ],
+
+    [
+      "TAURUS",
+      "taurus",
+      "m",
+      "regime modifier"
+    ],
+
+    [
+      "ZCODE",
+      "zcode",
+      "h",
+      "fusion engine"
+    ],
+
+    [
+      "STAT",
+      "stat_advisory",
+      "l",
+      "advisory"
+    ]
+
+  ];
+
+
+  $("modelGrid").innerHTML =
+    defs
+      .map(
+        function(df){
+
+          const n =
+            df[0];
+
+          const k =
+            df[1];
+
+          const w =
+            df[2];
+
+          const role =
+            df[3];
+
+
+          let bias =
+            null;
+
+          let confTxt =
+            "";
+
+          let extra =
+            "";
+
+
+          if (
+            k === "zcode"
+          ){
+
+            if (
+              Z &&
+              Z.signal
+            ){
+
+              bias =
+                Z.signal;
+
+              confTxt =
+                Math.round(
+                  (
+                    Z.confidence ||
+                    0
+                  ) *
+                  100
+                ) +
+                "%";
+
+              extra =
+                Z.risk ||
+                "";
+            }
+
+          }
+          else{
+
+            const v =
+              votes[k];
+
+
+            if (
+              v &&
+              v.next_hour_bias
+            ){
+
+              bias =
+                v.next_hour_bias;
+
+              confTxt =
+                v.confidence +
+                "%";
+
+              extra =
+                v.first_zone_guess ||
+                "";
+            }
+          }
+
+
+          const self =
+            (
+              STATE &&
+              STATE.model_self
+            || {}
+            )[k];
+
+
+          const acc =
+            self &&
+            self.recent &&
+            self.recent.length
+
+              ? Math.round(
+                  self.recent
+                    .reduce(
+                      function(a,b){
+                        return a+b;
+                      },
+                      0
+                    ) /
+                  self.recent.length *
+                  100
+                ) +
+                "% live"
+
+              : "warming";
+
+
+          return (
+
+            '<div class="mcard ' +
+            (
+              w === "h"
+                ? "heavy"
+                : ""
+            ) +
+            '" data-m="' +
+            n +
+            '">' +
+
+              '<div style="display:flex;justify-content:space-between">' +
+
+                "<div>" +
+
+                  '<div class="mname">' +
+                  n +
+                  "</div>" +
+
+                  '<div class="mtype">' +
+                  role +
+                  "</div>" +
+
+                "</div>" +
+
+                '<div class="wbadge ' +
+                w +
+                '">' +
+
+                (
+                  w === "h"
+                    ? "HEAVY"
+                    : w === "m"
+                      ? "MEDIUM"
+                      : "LIGHT"
+                ) +
+
+                "</div>" +
+
+              "</div>" +
+
+              '<div class="mpred">' +
+              (
+                bias
+                  ? bias
+                  : (
+                      SN
+                        ? "HOLD"
+                        : "—"
+                    )
+              ) +
+              "</div>" +
+
+              '<div class="msig ' +
+              (
+                bias
+                  ? ""
+                  : "na"
+              ) +
+              '">' +
+
+              (
+                !SN
+                  ? "AWAITING DATA"
+                  : (
+                      bias
+                        ? confTxt +
+                          " · " +
+                          extra
+                        : "no vote"
+                    )
+              ) +
+
+              "</div>" +
+
+              '<div class="mmeta">' +
+
+                "<span>Self-acc</span>" +
+
+                '<span class="macc">' +
+                acc +
+                "</span>" +
+
+              "</div>" +
+
+              '<div class="wbar">' +
+
+                '<div class="wfill ' +
+                w +
+                '"></div>' +
+
+              "</div>" +
+
+            "</div>"
+          );
+
+        }
+      )
+      .join("");
+
+
+  /* ========================================================
+     MODEL MODALS
+     ======================================================== */
+
+  Array.prototype.forEach.call(
+
+    document.querySelectorAll(
+      ".mcard"
+    ),
+
+    function(c){
+
+      c.onclick =
+        function(){
+
+          const n =
+            c.getAttribute(
+              "data-m"
+            );
+
+
+          const k =
+            VOTE_KEY[n];
+
+
+          const v =
+            votes[k];
+
+
+          const self =
+            (
+              STATE &&
+              STATE.model_self
+            || {}
+            )[k];
+
+
+          let lastVote =
+            "awaiting bot run";
+
+
+          if (
+            k === "zcode" &&
+            Z &&
+            Z.signal
+          ){
+
+            lastVote =
+              JSON.stringify({
+                signal:
+                  Z.signal,
+
+                conf:
+                  Z.confidence,
+
+                risk:
+                  Z.risk,
+
+                why:
+                  Z.reasoning
+              });
+
+          }
+          else if (v){
+
+            lastVote =
+              JSON.stringify({
+
+                bias:
+                  v.next_hour_bias,
+
+                conf:
+                  v.confidence,
+
+                zone:
+                  v.first_zone_guess,
+
+                why:
+                  v.reasoning
+              });
+          }
+
+
+          const wr =
+            self &&
+            self.recent &&
+            self.recent.length
+
+              ? Math.round(
+                  self.recent
+                    .reduce(
+                      function(a,b){
+                        return a+b;
+                      },
+                      0
+                    ) /
+                  self.recent.length *
+                  100
+                )
+
+              : 50;
+
+
+          $("modTitle").textContent =
+            n +
+            " · LIVE SELF-DATA";
+
+
+          $("modInst").textContent =
+
+            "ROLE: " +
+
+            (
+              n === "GRID"
+                ? "Farrukh 33% structural base (W 0.40)"
+
+                : n === "KRONOS"
+                  ? "Extreme-stretch fade + path (W 0.35)"
+
+                  : n === "QUANT"
+                    ? "RSI-14 + MACD zone fade (W 0.25)"
+
+                    : n === "TAURUS"
+                      ? "Regime + volatility modifier"
+
+                      : n === "ZCODE"
+                        ? "FUSION ENGINE: heavy LLM, strategy-bound, final authority"
+
+                        : "Advisory p_up only"
+            ) +
+
+            "\n\n📊 PILLAR P2/P3 — OWN RECORD (live):" +
+
+            "\n- Recent WR: " +
+            wr +
+            "% (" +
+            (
+              self &&
+              self.recent
+                ? self.recent.length
+                : 0
+            ) +
+            " samples)" +
+
+            "\n- Streak: " +
+            (
+              self &&
+              self.streak
+                ? self.streak
+                : 0
+            ) +
+
+            "\n- Conf-bias: " +
+            (
+              self &&
+              self.conf_bias
+                ? self.conf_bias
+                : 0
+            ) +
+            " (clamped ±10)" +
+
+            "\n- Best zone: " +
+            (
+              self &&
+              self.best_zone
+                ? self.best_zone
+                : "learning…"
+            ) +
+
+            "\n- Worst zone: " +
+            (
+              self &&
+              self.worst_zone
+                ? self.worst_zone
+                : "learning…"
+            ) +
+
+            "\n- Self note: " +
+            (
+              self &&
+              self.last_note
+                ? self.last_note
+                : "none yet"
+            ) +
+
+            "\n\nANTI-OVERFIT: min 6 samples · bias clamp ±10 · sirf apna data" +
+
+            "\n\nLAST VOTE:\n" +
+            lastVote;
+
+
+          $("modDetail")
+            .classList
+            .add("open");
+
+
+          $("modOverlay")
+            .classList
+            .add("open");
+        };
+
+    }
+  );
+
+
+  /* ========================================================
+     INDICATORS
+     ======================================================== */
+
+  const qReason =
+    (
+      SN &&
+      SN.votes &&
+      SN.votes.quant &&
+      SN.votes.quant.reasoning
+    ) || "";
+
+
+  const rsiM =
+    qReason.match(
+      /RSI (\d+)/
+    );
+
+
+  const inds = [
+
+    [
+      "RSI",
+
+      rsiM
+        ? rsiM[1]
+        : null,
+
+      rsiM
+        ? (
+            parseInt(
+              rsiM[1],
+              10
+            ) > 55
+              ? "bull"
+              : parseInt(
+                  rsiM[1],
+                  10
+                ) < 45
+                ? "bear"
+                : "neu"
+          )
+        : "na"
+    ],
+
+    [
+      "MACD",
+
+      qReason.indexOf("MACD") >= 0
+        ? "in vote"
+        : null,
+
+      "na"
+    ],
+
+    [
+      "REGIME",
+
+      (
+        SN &&
+        SN.votes &&
+        SN.votes.taurus &&
+        SN.votes.taurus.regime
+      ) || null,
+
+      "neu"
+    ],
+
+    [
+      "VOL",
+
+      (
+        SN &&
+        SN.votes &&
+        SN.votes.taurus &&
+        SN.votes.taurus.vol
+      ) || null,
+
+      "neu"
+    ],
+
+    [
+      "MATRIX",
+
+      SN && SN.matrix
+        ? (
+            (
+              SN.matrix.score > 0
+                ? "+"
+                : ""
+            ) +
+            SN.matrix.score
+          )
+        : null,
+
+      (
+        (
+          SN &&
+          SN.matrix &&
+          SN.matrix.score
+        ) || 0
+      ) > MTHR
+
+        ? "bull"
+
+        : (
+            (
+              (
+                SN &&
+                SN.matrix &&
+                SN.matrix.score
+              ) || 0
+            ) < -MTHR
+          )
+          ? "bear"
+          : "neu"
+    ],
+
+    [
+      "H1 ZONE",
+
+      SN &&
+      SN.grid &&
+      SN.grid.H1
+        ? SN.grid.H1.zone
+        : null,
+
+      (
+        SN &&
+        SN.grid &&
+        SN.grid.H1 &&
+        SN.grid.H1.zone
+      ) === "upper"
+
+        ? "bear"
+
+        : (
+            (
+              SN &&
+              SN.grid &&
+              SN.grid.H1 &&
+              SN.grid.H1.zone
+            ) === "lower"
+          )
+          ? "bull"
+          : "neu"
+    ]
+
+  ];
+
+
+  $("indGrid").innerHTML =
+    inds
+      .map(
+        function(x){
+
+          return (
+
+            '<div class="ind">' +
+
+              '<div class="iname">' +
+              x[0] +
+              "</div>" +
+
+              '<div class="ival ' +
+              (
+                x[1]
+                  ? x[2]
+                  : "na"
+              ) +
+              '">' +
+
+              (
+                x[1]
+                  ? x[1]
+                  : "AWAITING"
+              ) +
+
+              "</div>" +
+
+              '<div class="istat">' +
+
+              (
+                x[1]
+                  ? "P1 verified"
+                  : "bot run pending"
+              ) +
+
+              "</div>" +
+
+            "</div>"
+          );
+
+        }
+      )
+      .join("");
+
+
+  /* ========================================================
+     SELF LEARNING
+     ======================================================== */
+
+  const PL =
+    (
+      STATE &&
+      STATE.pillar_ledger
+    ) || null;
+
+
+  $("ledgerN").textContent =
+    PL
+      ? PL.entries
+      : "—";
+
+
+  const li =
+    $("ledgerI");
+
+
+  if (PL){
+
+    li.textContent =
+      PL.ok
+        ? "INTACT ✓"
+        : "BROKEN!!";
+
+
+    li.style.color =
+      PL.ok
+        ? "var(--green)"
+        : "var(--red)";
   }
 
-  /* Ledger viewer */
-  $("ledgerMeta").textContent = PL ? (PL.entries + " entries · broken " + PL.broken) : "";
-  $("ledgerBox").textContent = PL
-    ? "P4 PERSIST: append-only hash-chained ledger.\n" +
-      "entries: " + PL.entries + " | chain: " + (PL.ok ? "INTACT (koi entry delete/edit nahi hui)" : "BROKEN — security alert!") + "\n" +
-      "kinds: trade_outcome · model_result · ai_task · lesson_added\n" +
-      "har entry = {t, kind, prev_hash, data, hash} — tamper-proof chain.\n" +
-      "koi model/LLM ye data delete nahi kar sakta (P4 law)."
-    : "Ledger abhi khali — pehla run ke baad entries aayengi.";
 
-  /* Account + rules */
-  $("accEq").textContent = (STATE && STATE.stats) ? "$" + fmt(STATE.stats.equity) : "—";
-  $("accTr").textContent = (STATE && STATE.stats) ? ((STATE.stats.trades_today||0) + "/" + ((STATE.prop||{}).max_trades_per_day||3)) : "—";
-  const dp = $("accPnl");
-  if (STATE && STATE.stats){
-    dp.textContent = (STATE.stats.day_pnl_pct >= 0 ? "+" : "") + STATE.stats.day_pnl_pct.toFixed(2) + "%";
-    dp.style.color = STATE.stats.day_pnl_pct >= 0 ? "var(--green)" : "var(--red)";
+  const SEC =
+    (
+      STATE &&
+      STATE.security
+    ) || null;
+
+
+  const sc =
+    $("secN");
+
+
+  if (SEC){
+
+    sc.textContent =
+      SEC.ok
+        ? "OK ✓"
+        : "CHECK";
+
+
+    sc.style.color =
+      SEC.ok
+        ? "var(--green)"
+        : "var(--red)";
   }
-  const P = (STATE && STATE.prop) || {};
+
+
+  const CMP =
+    (
+      STATE &&
+      STATE.comparison
+    ) || null;
+
+
+  const cp =
+    $("cmpN");
+
+
+  if (
+    CMP &&
+    CMP.ready
+  ){
+
+    cp.textContent =
+      CMP.verdict;
+
+
+    cp.style.color =
+      CMP.delta > 0
+        ? "var(--green)"
+        : CMP.delta < 0
+          ? "var(--red)"
+          : "var(--amber)";
+  }
+
+
+  /* ========================================================
+     LEDGER VIEWER
+     ======================================================== */
+
+  $("ledgerMeta").textContent =
+    PL
+      ? (
+          PL.entries +
+          " entries · broken " +
+          PL.broken
+        )
+      : "";
+
+
+  $("ledgerBox").textContent =
+    PL
+
+      ? (
+          "P4 PERSIST: append-only hash-chained ledger.\n" +
+
+          "entries: " +
+          PL.entries +
+          " | chain: " +
+          (
+            PL.ok
+              ? "INTACT (koi entry delete/edit nahi hui)"
+              : "BROKEN — security alert!"
+          ) +
+
+          "\n" +
+
+          "kinds: trade_outcome · model_result · ai_task · lesson_added\n" +
+
+          "har entry = {t, kind, prev_hash, data, hash} — tamper-proof chain.\n" +
+
+          "koi model/LLM ye data delete nahi kar sakta (P4 law)."
+        )
+
+      : "Ledger abhi khali — pehla run ke baad entries aayengi.";
+
+
+  /* ========================================================
+     ACCOUNT + RULES
+     ======================================================== */
+
+  $("accEq").textContent =
+    (
+      STATE &&
+      STATE.stats
+    )
+      ? "$" +
+        fmt(
+          STATE.stats.equity
+        )
+      : "—";
+
+
+  $("accTr").textContent =
+    (
+      STATE &&
+      STATE.stats
+    )
+      ? (
+          (
+            STATE.stats.trades_today ||
+            0
+          ) +
+          "/" +
+          (
+            (STATE.prop || {})
+              .max_trades_per_day ||
+            3
+          )
+        )
+      : "—";
+
+
+  const dp =
+    $("accPnl");
+
+
+  if (
+    STATE &&
+    STATE.stats
+  ){
+
+    dp.textContent =
+      (
+        STATE.stats.day_pnl_pct >= 0
+          ? "+"
+          : ""
+      ) +
+      STATE.stats.day_pnl_pct
+        .toFixed(2) +
+      "%";
+
+
+    dp.style.color =
+      STATE.stats.day_pnl_pct >= 0
+        ? "var(--green)"
+        : "var(--red)";
+  }
+
+
+  const P =
+    (
+      STATE &&
+      STATE.prop
+    ) || {};
+
+
   $("rulesBox").innerHTML = [
-    ["Max Risk/Trade", fmt(P.risk_per_trade_pct != null ? P.risk_per_trade_pct : 1.0) + "%"],
-    ["Daily Loss Cap", fmt(P.daily_loss_limit_pct != null ? P.daily_loss_limit_pct : 3.0) + "%"],
-    ["Max Drawdown", fmt(P.max_drawdown_pct != null ? P.max_drawdown_pct : 10.0) + "%"],
-    ["Trades/Day", "max " + (P.max_trades_per_day || 3)],
-    ["3 Losses", "session stop"],
-    ["R:R Template", "min 1:2"]
-  ].map(function(r){
-    return '<div style="display:flex;justify-content:space-between;padding:6px;background:rgba(255,255,255,.03);border-radius:3px"><span>' + r[0] + '</span><span class="badge-run">' + r[1] + '</span></div>';
-  }).join("");
 
-  $("repBox").textContent = (STATE && STATE.updated)
-    ? "Last brain run: " + STATE.updated.replace("T"," ").slice(0,16) + "Z · mode: " + (STATE.mode || "") +
-      "\nPillar score: " + ((STATE.pillar_score && STATE.pillar_score.score) || "—") + "/10 · run sha: " + ((STATE.run_tag && STATE.run_tag.cfg_sha) || "—")
-    : "Bot ka pehla run pending.";
+    [
+      "Max Risk/Trade",
 
-  $("stratBox").textContent = (STATE && STATE.strategy_file)
-    ? (STATE.strategy_file.loaded
-        ? "STRATEGY.md LOADED — chars " + STATE.strategy_file.chars + " · sha " + STATE.strategy_file.sha + "\n\nOwner STRATEGY.md edit karta hai (Discord/GitHub) — bot agle run se naye rules follow karta hai. File-driven system: strategy text = bot ki zubaan."
-        : "STRATEGY.md not loaded — built-in prompt.")
-    : "State load nahi hui.";
+      fmt(
+        P.risk_per_trade_pct != null
+          ? P.risk_per_trade_pct
+          : 1.0
+      ) +
+      "%"
+    ],
 
-  /* Pillars tab self-states */
-  const MS = (STATE && STATE.model_self) || {};
-  $("selfBox").textContent = Object.keys(MS).length
-    ? Object.keys(MS).map(function(k){
-        const m = MS[k];
-        const wr = m.recent && m.recent.length
-          ? Math.round(m.recent.reduce(function(a,b){return a+b;},0)/m.recent.length*100) : 50;
-        return k.toUpperCase() + ": WR " + wr + "% · streak " + m.streak + " · bias " + m.conf_bias +
-          " · best: " + (m.best_zone || "—") + " · worst: " + (m.worst_zone || "—") + "\n  note: " + (m.last_note || "—");
-      }).join("\n\n")
-    : "Models apna record bana rahe hain — 1-2 runs ke baad yahan live data aayega.";
+    [
+      "Daily Loss Cap",
 
-  drawGrid(okData ? gridData.candles : null, open && okData);
+      fmt(
+        P.daily_loss_limit_pct != null
+          ? P.daily_loss_limit_pct
+          : 3.0
+      ) +
+      "%"
+    ],
+
+    [
+      "Max Drawdown",
+
+      fmt(
+        P.max_drawdown_pct != null
+          ? P.max_drawdown_pct
+          : 10.0
+      ) +
+      "%"
+    ],
+
+    [
+      "Trades/Day",
+
+      "max " +
+      (
+        P.max_trades_per_day ||
+        3
+      )
+    ],
+
+    [
+      "3 Losses",
+
+      "session stop"
+    ],
+
+    [
+      "R:R Template",
+
+      "min 1:2"
+    ]
+
+  ]
+  .map(
+    function(r){
+
+      return (
+
+        '<div style="display:flex;justify-content:space-between;padding:6px;background:rgba(255,255,255,.03);border-radius:3px">' +
+
+          "<span>" +
+          r[0] +
+          "</span>" +
+
+          '<span class="badge-run">' +
+          r[1] +
+          "</span>" +
+
+        "</div>"
+      );
+
+    }
+  )
+  .join("");
+
+
+  /* ========================================================
+     REPORT
+     ======================================================== */
+
+  $("repBox").textContent =
+    (
+      STATE &&
+      STATE.updated
+    )
+
+      ? (
+          "Last brain run: " +
+          STATE.updated
+            .replace("T"," ")
+            .slice(0,16) +
+          "Z · mode: " +
+          (
+            STATE.mode ||
+            ""
+          ) +
+
+          "\nData age: " +
+          stateAgeText() +
+
+          "\nConnection: " +
+          getLiveState().status +
+
+          "\nPillar score: " +
+          (
+            (
+              STATE.pillar_score &&
+              STATE.pillar_score.score
+            ) ||
+            "—"
+          ) +
+          "/10 · run sha: " +
+          (
+            (
+              STATE.run_tag &&
+              STATE.run_tag.cfg_sha
+            ) ||
+            "—"
+          )
+        )
+
+      : "Bot ka pehla run pending.";
+
+
+  /* ========================================================
+     STRATEGY
+     ======================================================== */
+
+  $("stratBox").textContent =
+    (
+      STATE &&
+      STATE.strategy_file
+    )
+
+      ? (
+          STATE.strategy_file.loaded
+
+            ? (
+                "STRATEGY.md LOADED — chars " +
+                STATE.strategy_file.chars +
+                " · sha " +
+                STATE.strategy_file.sha +
+
+                "\n\nOwner STRATEGY.md edit karta hai (Discord/GitHub) — bot agle run se naye rules follow karta hai. File-driven system: strategy text = bot ki zubaan."
+              )
+
+            : "STRATEGY.md not loaded — built-in prompt."
+        )
+
+      : "State load nahi hui.";
+
+
+  /* ========================================================
+     PILLAR SELF STATES
+     ======================================================== */
+
+  const MS =
+    (
+      STATE &&
+      STATE.model_self
+    ) || {};
+
+
+  $("selfBox").textContent =
+    Object.keys(MS).length
+
+      ? Object.keys(MS)
+          .map(
+            function(k){
+
+              const m =
+                MS[k];
+
+
+              const wr =
+                m.recent &&
+                m.recent.length
+
+                  ? Math.round(
+                      m.recent
+                        .reduce(
+                          function(a,b){
+                            return a+b;
+                          },
+                          0
+                        ) /
+                      m.recent.length *
+                      100
+                    )
+
+                  : 50;
+
+
+              return (
+                k.toUpperCase() +
+                ": WR " +
+                wr +
+                "% · streak " +
+                m.streak +
+                " · bias " +
+                m.conf_bias +
+                " · best: " +
+                (
+                  m.best_zone ||
+                  "—"
+                ) +
+                " · worst: " +
+                (
+                  m.worst_zone ||
+                  "—"
+                ) +
+
+                "\n  note: " +
+                (
+                  m.last_note ||
+                  "—"
+                )
+              );
+
+            }
+          )
+          .join("\n\n")
+
+      : "Models apna record bana rahe hain — 1-2 runs ke baad yahan live data aayega.";
+
+
+  /* ========================================================
+     DRAW GRID
+     ======================================================== */
+
+  drawGrid(
+    okData
+      ? gridData.candles
+      : null,
+
+    open &&
+    okData
+  );
 }
 
-/* ---------- GRID ---------- */
-function drawGrid(cs, live){
-  const cv = $("cvGrid");
-  const dpr = window.devicePixelRatio || 1;
-  const w = cv.clientWidth || 700, h = 270;
-  cv.width = w * dpr; cv.height = h * dpr;
-  const ctx = cv.getContext("2d");
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,w,h);
-  if (!cs){
-    ctx.fillStyle = "#475569"; ctx.font = "11px JetBrains Mono";
-    ctx.fillText("No candle data — L5: fake data nahi. Bot run karein.", 16, h/2);
+
+/* ============================================================
+   GRID
+   ============================================================ */
+
+function drawGrid(
+  cs,
+  live
+){
+
+  const cv =
+    $("cvGrid");
+
+
+  if (!cv){
     return;
   }
-  const c1 = cs[0], c0 = cs[1];
-  const decN = c1.c >= 100 ? 2 : c1.c >= 10 ? 3 : 5;
-  const red = c1.c < c1.o;
-  const H = c1.h, L = c1.l, R = (H - L) || 1e-9;
-  const step = 100/3;
-  const lvl = function(pct){ return red ? (H - pct/100*R) : (L + pct/100*R); };
-  const levels = [];
-  for (let k = -1; k <= 4; k++) levels.push(k*step);
-  const vals = levels.map(lvl).concat([c0.h, c0.l, H, L, c1.c + R/2, c1.c - R/2]);
-  let mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
-  const pd = (mx-mn)*.08; mn -= pd; mx += pd;
-  const padT = 10, padB = 20, padL = 6, padR = 145;
-  const pw = w - padL - padR, ph = h - padT - padB;
-  const Y = function(v){ return padT + (mx - v)/(mx - mn)*ph; };
 
-  ctx.fillStyle = 'rgba(16,185,129,.06)';
-  ctx.fillRect(padL, Y(lvl(33)), pw, Math.abs(Y(lvl(33)) - Y(lvl(0))));
-  ctx.fillStyle = 'rgba(239,68,68,.06)';
-  ctx.fillRect(padL, Y(lvl(100)), pw, Math.abs(Y(lvl(100)) - Y(lvl(133))));
 
-  levels.forEach(function(pct){
-    const p = lvl(pct), y = Y(p);
-    const isBuy = Math.abs(pct-0) < 1 || Math.abs(pct-33) < 1;
-    const isSell = Math.abs(pct-100) < 1 || Math.abs(pct-133) < 1;
-    ctx.strokeStyle = isBuy ? '#10b981' : isSell ? '#ef4444' : 'rgba(100,116,139,.3)';
-    ctx.setLineDash(isBuy || isSell ? [] : [3,3]);
-    ctx.lineWidth = isBuy || isSell ? 1.4 : 1;
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 4, y); ctx.stroke();
-    ctx.setLineDash([]);
-    let tag = '';
-    if (Math.abs(pct-0) < 1) tag = 'BUY2 ';
-    if (Math.abs(pct-33) < 1) tag = 'BUY1 ';
-    if (Math.abs(pct-100) < 1) tag = 'SELL1 ';
-    if (Math.abs(pct-133) < 1) tag = 'SELL2 ';
-    ctx.font = (isBuy || isSell ? 'bold ' : '') + '8px JetBrains Mono';
-    ctx.fillStyle = isBuy ? '#10b981' : isSell ? '#ef4444' : '#64748b';
-    ctx.fillText(tag + Math.round(pct) + '% [' + p.toFixed(decN) + ']', w - padR + 8, y + 3);
-  });
+  const dpr =
+    window.devicePixelRatio ||
+    1;
 
-  [[c1.c + R/2, '★ EXP HIGH', '#34d399'], [c1.c - R/2, '★ EXP LOW', '#fbbf24']].forEach(function(a){
-    const y = Y(a[0]);
-    ctx.strokeStyle = a[2]; ctx.setLineDash([5,3]); ctx.lineWidth = 1.1;
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR + 4, y); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = a[2]; ctx.font = 'bold 8px JetBrains Mono';
-    ctx.fillText(a[1] + ' ' + a[0].toFixed(decN), padL + 4, y - 3);
-  });
 
-  const cw = Math.max(20, Math.min(36, pw*.09));
-  const x1 = padL + pw*.22, x0 = padL + pw*.48;
-  function drawC(x, c, isLive){
-    const up = c.c >= c.o, col = up ? '#10b981' : '#ef4444';
-    ctx.strokeStyle = col; ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.moveTo(x, Y(c.h)); ctx.lineTo(x, Y(c.l)); ctx.stroke();
-    if (isLive && live){ ctx.shadowColor = col; ctx.shadowBlur = 12; }
-    ctx.fillStyle = col;
-    ctx.fillRect(x - cw/2, Math.min(Y(c.o), Y(c.c)), cw, Math.max(2, Math.abs(Y(c.o) - Y(c.c))));
-    ctx.shadowBlur = 0;
+  const w =
+    cv.clientWidth ||
+    700;
+
+
+  const h =
+    270;
+
+
+  cv.width =
+    w * dpr;
+
+
+  cv.height =
+    h * dpr;
+
+
+  const ctx =
+    cv.getContext(
+      "2d"
+    );
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+
+  ctx.clearRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  if (!cs){
+
+    ctx.fillStyle =
+      "#475569";
+
+
+    ctx.font =
+      "11px JetBrains Mono";
+
+
+    ctx.fillText(
+      "No candle data — L5: fake data nahi. Bot run karein.",
+      16,
+      h / 2
+    );
+
+
+    return;
   }
-  drawC(x1, c1, false);
-  drawC(x0, c0, true);
 
-  ctx.textAlign = 'center'; ctx.font = '8px JetBrains Mono';
-  ctx.fillStyle = '#475569'; ctx.fillText('candle[1]', x1, h - 8);
-  ctx.fillStyle = live ? '#10b981' : '#64748b';
-  ctx.fillText(live ? 'candle[0] LIVE' : 'candle[0] FROZEN', x0, h - 8);
-  ctx.textAlign = 'left';
+
+  const c1 =
+    cs[0];
+
+
+  const c0 =
+    cs[1];
+
+
+  const decN =
+    c1.c >= 100
+      ? 2
+      : c1.c >= 10
+        ? 3
+        : 5;
+
+
+  const red =
+    c1.c < c1.o;
+
+
+  const H =
+    c1.h;
+
+
+  const L =
+    c1.l;
+
+
+  const R =
+    (H - L) ||
+    1e-9;
+
+
+  const step =
+    100 / 3;
+
+
+  const lvl =
+    function(pct){
+
+      return red
+
+        ? (
+            H -
+            pct / 100 *
+            R
+          )
+
+        : (
+            L +
+            pct / 100 *
+            R
+          );
+    };
+
+
+  const levels = [];
+
+
+  for (
+    let k = -1;
+    k <= 4;
+    k++
+  ){
+
+    levels.push(
+      k * step
+    );
+  }
+
+
+  const vals =
+    levels
+      .map(lvl)
+      .concat([
+        c0.h,
+        c0.l,
+        H,
+        L,
+        c1.c + R / 2,
+        c1.c - R / 2
+      ]);
+
+
+  let mn =
+    Math.min.apply(
+      null,
+      vals
+    );
+
+
+  let mx =
+    Math.max.apply(
+      null,
+      vals
+    );
+
+
+  const pd =
+    (mx - mn) * 0.08;
+
+
+  mn -= pd;
+
+  mx += pd;
+
+
+  const padT =
+    10;
+
+  const padB =
+    20;
+
+  const padL =
+    6;
+
+  const padR =
+    145;
+
+
+  const pw =
+    w -
+    padL -
+    padR;
+
+
+  const ph =
+    h -
+    padT -
+    padB;
+
+
+  const Y =
+    function(v){
+
+      return (
+        padT +
+        (
+          mx - v
+        ) /
+        (
+          mx - mn
+        ) *
+        ph
+      );
+    };
+
+
+  /* Buy zone */
+
+  ctx.fillStyle =
+    "rgba(16,185,129,.06)";
+
+
+  ctx.fillRect(
+    padL,
+    Y(lvl(33)),
+    pw,
+    Math.abs(
+      Y(lvl(33)) -
+      Y(lvl(0))
+    )
+  );
+
+
+  /* Sell zone */
+
+  ctx.fillStyle =
+    "rgba(239,68,68,.06)";
+
+
+  ctx.fillRect(
+    padL,
+    Y(lvl(100)),
+    pw,
+    Math.abs(
+      Y(lvl(100)) -
+      Y(lvl(133))
+    )
+  );
+
+
+  /* Levels */
+
+  levels.forEach(
+    function(pct){
+
+      const p =
+        lvl(pct);
+
+
+      const y =
+        Y(p);
+
+
+      const isBuy =
+        Math.abs(
+          pct - 0
+        ) < 1 ||
+        Math.abs(
+          pct - 33
+        ) < 1;
+
+
+      const isSell =
+        Math.abs(
+          pct - 100
+        ) < 1 ||
+        Math.abs(
+          pct - 133
+        ) < 1;
+
+
+      ctx.strokeStyle =
+        isBuy
+
+          ? "#10b981"
+
+          : isSell
+            ? "#ef4444"
+            : "rgba(100,116,139,.3)";
+
+
+      ctx.setLineDash(
+        isBuy || isSell
+          ? []
+          : [3,3]
+      );
+
+
+      ctx.lineWidth =
+        isBuy || isSell
+          ? 1.4
+          : 1;
+
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        padL,
+        y
+      );
+
+      ctx.lineTo(
+        w - padR + 4,
+        y
+      );
+
+      ctx.stroke();
+
+
+      ctx.setLineDash([]);
+
+
+      let tag = "";
+
+
+      if (
+        Math.abs(
+          pct - 0
+        ) < 1
+      ){
+
+        tag =
+          "BUY2 ";
+      }
+
+
+      if (
+        Math.abs(
+          pct - 33
+        ) < 1
+      ){
+
+        tag =
+          "BUY1 ";
+      }
+
+
+      if (
+        Math.abs(
+          pct - 100
+        ) < 1
+      ){
+
+        tag =
+          "SELL1 ";
+      }
+
+
+      if (
+        Math.abs(
+          pct - 133
+        ) < 1
+      ){
+
+        tag =
+          "SELL2 ";
+      }
+
+
+      ctx.font =
+        (
+          isBuy || isSell
+            ? "bold "
+            : ""
+        ) +
+        "8px JetBrains Mono";
+
+
+      ctx.fillStyle =
+        isBuy
+
+          ? "#10b981"
+
+          : isSell
+            ? "#ef4444"
+            : "#64748b";
+
+
+      ctx.fillText(
+        tag +
+        Math.round(pct) +
+        "% [" +
+        p.toFixed(decN) +
+        "]",
+        w - padR + 8,
+        y + 3
+      );
+
+    }
+  );
+
+
+  /* Expected high/low */
+
+  [
+    [
+      c1.c + R / 2,
+      "★ EXP HIGH",
+      "#34d399"
+    ],
+
+    [
+      c1.c - R / 2,
+      "★ EXP LOW",
+      "#fbbf24"
+    ]
+
+  ]
+  .forEach(
+    function(a){
+
+      const y =
+        Y(a[0]);
+
+
+      ctx.strokeStyle =
+        a[2];
+
+
+      ctx.setLineDash(
+        [5,3]
+      );
+
+
+      ctx.lineWidth =
+        1.1;
+
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        padL,
+        y
+      );
+
+      ctx.lineTo(
+        w - padR + 4,
+        y
+      );
+
+      ctx.stroke();
+
+
+      ctx.setLineDash([]);
+
+
+      ctx.fillStyle =
+        a[2];
+
+
+      ctx.font =
+        "bold 8px JetBrains Mono";
+
+
+      ctx.fillText(
+        a[1] +
+        " " +
+        a[0].toFixed(decN),
+        padL + 4,
+        y - 3
+      );
+
+    }
+  );
+
+
+  const cw =
+    Math.max(
+      20,
+      Math.min(
+        36,
+        pw * 0.09
+      )
+    );
+
+
+  const x1 =
+    padL +
+    pw * 0.22;
+
+
+  const x0 =
+    padL +
+    pw * 0.48;
+
+
+  function drawC(
+    x,
+    c,
+    isLive
+  ){
+
+    const up =
+      c.c >= c.o;
+
+
+    const col =
+      up
+        ? "#10b981"
+        : "#ef4444";
+
+
+    ctx.strokeStyle =
+      col;
+
+
+    ctx.lineWidth =
+      1.4;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      Y(c.h)
+    );
+
+    ctx.lineTo(
+      x,
+      Y(c.l)
+    );
+
+    ctx.stroke();
+
+
+    if (
+      isLive &&
+      live
+    ){
+
+      ctx.shadowColor =
+        col;
+
+      ctx.shadowBlur =
+        12;
+    }
+
+
+    ctx.fillStyle =
+      col;
+
+
+    ctx.fillRect(
+
+      x - cw / 2,
+
+      Math.min(
+        Y(c.o),
+        Y(c.c)
+      ),
+
+      cw,
+
+      Math.max(
+        2,
+        Math.abs(
+          Y(c.o) -
+          Y(c.c)
+        )
+      )
+
+    );
+
+
+    ctx.shadowBlur =
+      0;
+  }
+
+
+  drawC(
+    x1,
+    c1,
+    false
+  );
+
+
+  drawC(
+    x0,
+    c0,
+    true
+  );
+
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.font =
+    "8px JetBrains Mono";
+
+
+  ctx.fillStyle =
+    "#475569";
+
+
+  ctx.fillText(
+    "candle[1]",
+    x1,
+    h - 8
+  );
+
+
+  ctx.fillStyle =
+    live
+      ? "#10b981"
+      : "#64748b";
+
+
+  ctx.fillText(
+    live
+      ? "candle[0] LIVE"
+      : "candle[0] FROZEN",
+    x0,
+    h - 8
+  );
+
+
+  ctx.textAlign =
+    "left";
 }
 
-/* ---------- LOCK ---------- */
+
+/* ============================================================
+   LOCK
+   ============================================================ */
+
 async function sha256hex(s){
-  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return Array.prototype.map.call(new Uint8Array(b), function(x){ return x.toString(16).padStart(2,"0"); }).join("");
+
+  const b =
+    await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(s)
+    );
+
+
+  return Array.prototype.map.call(
+    new Uint8Array(b),
+    function(x){
+
+      return x
+        .toString(16)
+        .padStart(2,"0");
+
+    }
+  ).join("");
 }
+
+
 async function tryUnlock(){
-  const tok = $("ltok").value.trim(), pass = $("lpass").value;
-  if (!tok || !pass){ $("lockErr").textContent = "Dono likhein"; return; }
-  $("lockErr").textContent = "Verifying…";
+
+  const tok =
+    $("ltok").value.trim();
+
+
+  const pass =
+    $("lpass").value;
+
+
+  if (
+    !tok ||
+    !pass
+  ){
+
+    $("lockErr").textContent =
+      "Dono likhein";
+
+    return;
+  }
+
+
+  $("lockErr").textContent =
+    "Verifying…";
+
+
   let st;
-  try { st = await ghRaw("state/state.json", tok); }
-  catch(e){ $("lockErr").textContent = "Token/state fail (" + e.message + ")"; return; }
-  const h = st && st.auth ? st.auth.hash : null;
-  if (!h){ $("lockErr").textContent = "DASH_PASSWORD secret + bot run karein"; return; }
+
+
+  try{
+
+    st =
+      await ghRaw(
+        "state/state.json",
+        tok
+      );
+
+  }
+  catch(e){
+
+    $("lockErr").textContent =
+      "Token/state fail (" +
+      e.message +
+      ")";
+
+    return;
+  }
+
+
+  const h =
+    st &&
+    st.auth
+      ? st.auth.hash
+      : null;
+
+
+  if (!h){
+
+    $("lockErr").textContent =
+      "DASH_PASSWORD secret + bot run karein";
+
+    return;
+  }
+
+
   let calc = "";
-  try { calc = await sha256hex("hermes::" + pass); } catch(e){ $("lockErr").textContent = "HTTPS chahiye"; return; }
-  if (calc !== h){ $("lockErr").textContent = "Galat password"; return; }
-  TOKEN = tok;
-  localStorage.setItem("hermes_tok", tok);
-  localStorage.setItem("hermes_sess", JSON.stringify({ts: Date.now()}));
-  STATE = st;
-  try { STATE.fills = await ghRaw("state/fills.json", tok); } catch(e){ STATE.fills = {execs:[],results:[]}; }
-  $("lock").style.display = "none";
+
+
+  try{
+
+    calc =
+      await sha256hex(
+        "hermes::" +
+        pass
+      );
+
+  }
+  catch(e){
+
+    $("lockErr").textContent =
+      "HTTPS chahiye";
+
+    return;
+  }
+
+
+  if (calc !== h){
+
+    $("lockErr").textContent =
+      "Galat password";
+
+    return;
+  }
+
+
+  TOKEN =
+    tok;
+
+
+  localStorage.setItem(
+    "hermes_tok",
+    tok
+  );
+
+
+  localStorage.setItem(
+    "hermes_sess",
+    JSON.stringify({
+      ts:Date.now()
+    })
+  );
+
+
+  STATE =
+    st;
+
+
+  try{
+
+    STATE.fills =
+      await ghRaw(
+        "state/fills.json",
+        tok
+      );
+
+  }
+  catch(e){
+
+    STATE.fills = {
+      execs:[],
+      results:[]
+    };
+  }
+
+
+  $("lock").style.display =
+    "none";
+
+
   bootAfter(true);
 }
- $("lockBtn").onclick = tryUnlock;
- $("lpass").addEventListener("keydown", function(e){ if (e.key === "Enter") tryUnlock(); });
 
-/* ---------- CONTROLS ---------- */
+
+$("lockBtn").onclick =
+  tryUnlock;
+
+
+$("lpass").addEventListener(
+  "keydown",
+  function(e){
+
+    if (
+      e.key === "Enter"
+    ){
+
+      tryUnlock();
+    }
+
+  }
+);
+
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+
 function setSymbol(sym){
-  CUR_SYM = sym;
-  Array.prototype.forEach.call(document.querySelectorAll(".sym-btn"), function(b){
-    b.classList.toggle("active", b.getAttribute("data-sym") === sym);
-    b.classList.toggle("closed", !isMarketOpen(b.getAttribute("data-sym")));
-  });
-  render();
-}
-function setTF(tf){
-  CUR_TF = tf;
-  Array.prototype.forEach.call(document.querySelectorAll(".tf-btn"), function(b){
-    b.classList.toggle("active", b.getAttribute("data-tf") === tf);
-  });
-  render();
-}
-Array.prototype.forEach.call(document.querySelectorAll(".sym-btn"), function(b){
-  b.onclick = function(){ setSymbol(b.getAttribute("data-sym")); };
-});
-Array.prototype.forEach.call(document.querySelectorAll(".tf-btn"), function(b){
-  b.onclick = function(){ setTF(b.getAttribute("data-tf")); };
-});
-Array.prototype.forEach.call(document.querySelectorAll(".nav-btn[data-s]"), function(b){
-  b.onclick = function(){
-    Array.prototype.forEach.call(document.querySelectorAll(".nav-btn[data-s]"), function(x){ x.classList.remove("active"); });
-    b.classList.add("active");
-    Array.prototype.forEach.call(document.querySelectorAll(".section"), function(s){ s.classList.remove("active"); });
-    $(b.getAttribute("data-s")).classList.add("active");
-  };
-});
- $("openSet").onclick = function(){
-  $("cfgKey").value = ZKEY();
-  $("cfgModel").value = ZMODEL();
-  $("settings").classList.add("open"); $("setOverlay").classList.add("open");
-};
- $("closeSet").onclick = $("setOverlay").onclick = function(){
-  $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
-};
- $("closeMod").onclick = $("modOverlay").onclick = function(){
-  $("modDetail").classList.remove("open"); $("modOverlay").classList.remove("open");
-};
- $("sbtn").onclick = chatSend;
- $("cinp").addEventListener("keydown", function(e){ if (e.key === "Enter") chatSend(); });
- $("saveCfg").onclick = function(){
-  const k = $("cfgKey").value.trim();
-  if (k) localStorage.setItem("hermes_zkey", k);
-  localStorage.setItem("hermes_zmodel", $("cfgModel").value.trim() || "glm-4.6");
-  addMsg("ai", "✅ Key saved (browser-only, P9). Chat full AI mode.", "settings applied");
-  $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
-};
-document.addEventListener("keydown", function(e){
-  if (e.key === "Escape"){
-    $("settings").classList.remove("open"); $("setOverlay").classList.remove("open");
-    $("modDetail").classList.remove("open"); $("modOverlay").classList.remove("open");
-  }
-});
-window.addEventListener("resize", function(){ render(); });
 
-/* ---------- BOOT ---------- */
-function sessionValid(){
-  try {
-    const s = JSON.parse(localStorage.getItem("hermes_sess") || "null");
-    if (!s || !s.ts) return false;
-    return (Date.now() - s.ts) / 86400000 <= 7;
-  } catch(e){ return false; }
-}
-async function refreshData(){
-  if (!TOKEN) return;
-  try {
-    STATE = await ghRaw("state/state.json", TOKEN);
-    try { STATE.fills = await ghRaw("state/fills.json", TOKEN); } catch(e){ STATE.fills = {execs:[],results:[]}; }
-    render();
-  } catch(e){ log("[!] refresh: " + e.message); }
-}
-function bootAfter(fresh){
-  if (fresh){
-    addMsg("ai", "⚡ JARVIS v5.2 · Phase-2 online!\nNaya: Path strip · Pillar scorecard · Ledger viewer · Live model self-data · Sim gate · Run tag.\nChat try karein — \"pillars\" ya \"path\" poochein.", "P1-P10 wired");
-    log("[boot] phase-2 frontend ready");
-  }
+  CUR_SYM =
+    sym;
+
+
+  Array.prototype.forEach.call(
+
+    document.querySelectorAll(
+      ".sym-btn"
+    ),
+
+    function(b){
+
+      b.classList.toggle(
+        "active",
+        b.getAttribute(
+          "data-sym"
+        ) === sym
+      );
+
+
+      b.classList.toggle(
+        "closed",
+        !isMarketOpen(
+          b.getAttribute(
+            "data-sym"
+          )
+        )
+      );
+
+    }
+  );
+
+
   render();
-  setInterval(refreshData, 90000);
-  document.addEventListener("visibilitychange", function(){
-    if (!document.hidden && TOKEN) refreshData();
-  });
 }
-(async function init(){
-  if (TOKEN && sessionValid()){
-    try {
-      STATE = await ghRaw("state/state.json", TOKEN);
-      try { STATE.fills = await ghRaw("state/fills.json", TOKEN); } catch(e){ STATE.fills = {execs:[],results:[]}; }
-      $("lock").style.display = "none";
-      bootAfter(false);
-      return;
-    } catch(e){}
+
+
+function setTF(tf){
+
+  CUR_TF =
+    tf;
+
+
+  Array.prototype.forEach.call(
+
+    document.querySelectorAll(
+      ".tf-btn"
+    ),
+
+    function(b){
+
+      b.classList.toggle(
+        "active",
+        b.getAttribute(
+          "data-tf"
+        ) === tf
+      );
+
+    }
+  );
+
+
+  render();
+}
+
+
+/* Symbols */
+
+Array.prototype.forEach.call(
+
+  document.querySelectorAll(
+    ".sym-btn"
+  ),
+
+  function(b){
+
+    b.onclick =
+      function(){
+
+        setSymbol(
+          b.getAttribute(
+            "data-sym"
+          )
+        );
+
+      };
+
   }
+);
+
+
+/* Timeframes */
+
+Array.prototype.forEach.call(
+
+  document.querySelectorAll(
+    ".tf-btn"
+  ),
+
+  function(b){
+
+    b.onclick =
+      function(){
+
+        setTF(
+          b.getAttribute(
+            "data-tf"
+          )
+        );
+
+      };
+
+  }
+);
+
+
+/* Navigation */
+
+Array.prototype.forEach.call(
+
+  document.querySelectorAll(
+    ".nav-btn[data-s]"
+  ),
+
+  function(b){
+
+    b.onclick =
+      function(){
+
+        Array.prototype.forEach.call(
+
+          document.querySelectorAll(
+            ".nav-btn[data-s]"
+          ),
+
+          function(x){
+
+            x.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+        b.classList.add(
+          "active"
+        );
+
+
+        Array.prototype.forEach.call(
+
+          document.querySelectorAll(
+            ".section"
+          ),
+
+          function(s){
+
+            s.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+        const target =
+          $(b.getAttribute(
+            "data-s"
+          ));
+
+
+        if (target){
+
+          target.classList.add(
+            "active"
+          );
+        }
+
+      };
+
+  }
+);
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+$("openSet").onclick =
+  function(){
+
+    $("cfgKey").value =
+      ZKEY();
+
+
+    $("cfgModel").value =
+      ZMODEL();
+
+
+    $("settings")
+      .classList
+      .add("open");
+
+
+    $("setOverlay")
+      .classList
+      .add("open");
+  };
+
+
+$("closeSet").onclick =
+  $("setOverlay").onclick =
+    function(){
+
+      $("settings")
+        .classList
+        .remove("open");
+
+
+      $("setOverlay")
+        .classList
+        .remove("open");
+    };
+
+
+/* ============================================================
+   MODEL MODAL
+   ============================================================ */
+
+$("closeMod").onclick =
+  $("modOverlay").onclick =
+    function(){
+
+      $("modDetail")
+        .classList
+        .remove("open");
+
+
+      $("modOverlay")
+        .classList
+        .remove("open");
+    };
+
+
+/* ============================================================
+   CHAT BUTTON
+   ============================================================ */
+
+$("sbtn").onclick =
+  chatSend;
+
+
+$("cinp").addEventListener(
+  "keydown",
+  function(e){
+
+    if (
+      e.key === "Enter"
+    ){
+
+      chatSend();
+    }
+
+  }
+);
+
+
+/* ============================================================
+   SAVE CONFIG
+   ============================================================ */
+
+$("saveCfg").onclick =
+  function(){
+
+    const k =
+      $("cfgKey")
+        .value
+        .trim();
+
+
+    if (k){
+
+      localStorage.setItem(
+        "hermes_zkey",
+        k
+      );
+    }
+
+
+    localStorage.setItem(
+      "hermes_zmodel",
+      $("cfgModel")
+        .value
+        .trim() ||
+      "glm-4.6"
+    );
+
+
+    addMsg(
+      "ai",
+      "✅ Key saved (browser-only, P9). Chat full AI mode.",
+      "settings applied"
+    );
+
+
+    $("settings")
+      .classList
+      .remove("open");
+
+
+    $("setOverlay")
+      .classList
+      .remove("open");
+  };
+
+
+/* ============================================================
+   ESCAPE
+   ============================================================ */
+
+document.addEventListener(
+  "keydown",
+  function(e){
+
+    if (
+      e.key === "Escape"
+    ){
+
+      $("settings")
+        .classList
+        .remove("open");
+
+
+      $("setOverlay")
+        .classList
+        .remove("open");
+
+
+      $("modDetail")
+        .classList
+        .remove("open");
+
+
+      $("modOverlay")
+        .classList
+        .remove("open");
+    }
+
+  }
+);
+
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+
+window.addEventListener(
+  "resize",
+  function(){
+
+    render();
+
+  }
+);
+
+
+/* ============================================================
+   SESSION
+   ============================================================ */
+
+function sessionValid(){
+
+  try{
+
+    const s =
+      JSON.parse(
+        localStorage.getItem(
+          "hermes_sess"
+        ) || "null"
+      );
+
+
+    if (
+      !s ||
+      !s.ts
+    ){
+
+      return false;
+    }
+
+
+    return (
+      Date.now() -
+      s.ts
+    ) /
+    86400000 <= 7;
+
+  }
+  catch(e){
+
+    return false;
+  }
+}
+
+
+/* ============================================================
+   LIVE DATA REFRESH
+   ============================================================ */
+
+async function refreshData(){
+
+  if (!TOKEN){
+    return;
+  }
+
+
+  /*
+   * Prevent overlapping requests.
+   *
+   * Example:
+   * previous request still running
+   * while next 5-second tick arrives.
+   */
+  if (LIVE.busy){
+    return;
+  }
+
+
+  LIVE.busy =
+    true;
+
+
+  const started =
+    Date.now();
+
+
+  try{
+
+    /*
+     * Remember previous backend state.
+     */
+    const previousUpdated =
+      STATE &&
+      STATE.updated
+        ? STATE.updated
+        : null;
+
+
+    const previousRun =
+      STATE &&
+      STATE.run_tag
+        ? JSON.stringify(
+            STATE.run_tag
+          )
+        : "";
+
+
+    /*
+     * Fetch latest state.
+     */
+    const nextState =
+      await ghRaw(
+        "state/state.json",
+        TOKEN
+      );
+
+
+    /*
+     * Determine whether
+     * backend actually changed.
+     */
+    const changed =
+      !STATE ||
+
+      nextState.updated !==
+      previousUpdated ||
+
+      JSON.stringify(
+        nextState.run_tag || {}
+      ) !== previousRun;
+
+
+    /*
+     * Replace state.
+     */
+    STATE =
+      nextState;
+
+
+    /*
+     * Secondary data.
+     *
+     * If fills fails,
+     * state still remains alive.
+     */
+    try{
+
+      STATE.fills =
+        await ghRaw(
+          "state/fills.json",
+          TOKEN
+        );
+
+    }
+    catch(e){
+
+      if (!STATE.fills){
+
+        STATE.fills = {
+          execs:[],
+          results:[]
+        };
+      }
+    }
+
+
+    LIVE.failures =
+      0;
+
+
+    LIVE.lastFetch =
+      Date.now();
+
+
+    LIVE.lastSuccessfulSync =
+      Date.now();
+
+
+    LIVE.lastStateUpdated =
+      STATE.updated ||
+      null;
+
+
+    /*
+     * NEW BACKEND STATE
+     */
+    if (changed){
+
+      log(
+        "[LIVE] NEW STATE · " +
+        (
+          STATE.updated ||
+          "unknown"
+        ) +
+        " · " +
+        (
+          Date.now() -
+          started
+        ) +
+        "ms"
+      );
+
+
+      render();
+
+    }
+    else{
+
+      /*
+       * State didn't change.
+       *
+       * But heartbeat stays alive.
+       */
+      updateLiveUI();
+    }
+
+  }
+  catch(e){
+
+    LIVE.failures++;
+
+
+    log(
+      "[LIVE] sync failed #" +
+      LIVE.failures +
+      " · " +
+      e.message
+    );
+
+
+    /*
+     * Do NOT destroy STATE.
+     *
+     * Existing valid state remains
+     * visible while connection recovers.
+     */
+    updateLiveUI();
+
+  }
+  finally{
+
+    LIVE.busy =
+      false;
+  }
+}
+
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+
+function bootAfter(
+  fresh
+){
+
+  if (fresh){
+
+    addMsg(
+
+      "ai",
+
+      "⚡ JARVIS v5.2 · Phase-2 LIVE!\n" +
+
+      "Path · Pillars · Ledger · Model Self-Data · Sim Gate · Run Tag.\n" +
+
+      "Live 5-second sync engine active.",
+
+      "P1-P10 · LIVE ENGINE"
+
+    );
+
+
+    log(
+      "[boot] phase-2 frontend ready"
+    );
+  }
+
+
+  /*
+   * Initial render.
+   */
+  render();
+
+
+  /*
+   * Immediately fetch newest backend state.
+   */
+  refreshData();
+
+
+  /*
+   * Start 5-second heartbeat.
+   */
+  startHeartbeat();
+}
+
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+
+(async function init(){
+
+  /*
+   * Existing valid session
+   */
+  if (
+    TOKEN &&
+    sessionValid()
+  ){
+
+    try{
+
+      STATE =
+        await ghRaw(
+          "state/state.json",
+          TOKEN
+        );
+
+
+      try{
+
+        STATE.fills =
+          await ghRaw(
+            "state/fills.json",
+            TOKEN
+          );
+
+      }
+      catch(e){
+
+        STATE.fills = {
+          execs:[],
+          results:[]
+        };
+      }
+
+
+      $("lock").style.display =
+        "none";
+
+
+      bootAfter(false);
+
+
+      return;
+
+    }
+    catch(e){
+
+      log(
+        "[boot] session refresh failed · " +
+        e.message
+      );
+    }
+  }
+
+
+  /*
+   * No valid session.
+   * Lock screen stays visible.
+   */
+
 })();
+
+
+/* ============================================================
+   FINAL STATUS
+   ============================================================ */
+
+console.log(
+  "JARVIS LIVE ENGINE READY — " +
+  "5s sync · heartbeat · stale detection · " +
+  "offline recovery · visibility sync"
+);
 </script>
 </body>
   </html>

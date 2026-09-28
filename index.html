@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · AI QUANT COMMAND · v6.0</title>
+<title>FL-200 · AI QUANT COMMAND · v6.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -85,7 +85,6 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .mpred{font-family:'Orbitron';font-size:1.2rem;color:var(--cyan);font-weight:800;margin:5px 0 3px}
 .msig{font-size:.78rem;font-weight:700;color:var(--green)}
 .msig.na{color:var(--muted)}
-.mmeta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
 .wbar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:5px;overflow:hidden}
 .wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),#00ffaa)}
 .wfill.m{background:linear-gradient(90deg,var(--amber),#ffcc44)}
@@ -136,7 +135,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .guide b{color:var(--cyan)}.guide code{font-family:'JetBrains Mono';color:var(--amber);background:rgba(0,0,0,.4);padding:1px 5px;border-radius:3px}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;visibility:hidden;transition:.3s}
 .overlay.open{opacity:1;visibility:visible}
-.side{position:fixed;top:0;right:0;width:420px;max-width:100%;height:100vh;background:rgba(6,10,22,.98);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
+.side{position:fixed;top:0;right:0;width:430px;max-width:100%;height:100vh;background:rgba(6,10,22,.98);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
 .side.open{transform:translateX(0)}
 .side-h{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .side-t{font-family:'Orbitron';font-size:1rem;color:var(--cyan)}
@@ -144,6 +143,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .side-b{flex:1;overflow-y:auto;padding:12px 14px}
 .inst{background:rgba(0,0,0,.4);border:1px solid rgba(0,243,255,.18);border-radius:4px;padding:12px;font-family:'JetBrains Mono';font-size:.88rem;line-height:1.6;white-space:pre-wrap}
 .fv-pre{font-family:'JetBrains Mono';font-size:.8rem;white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:4px;padding:10px;max-height:calc(100vh - 120px);overflow:auto;line-height:1.5}
+textarea{resize:vertical}
 .section{display:none}.section.active{display:block}
 .lockwrap{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg)}
 .lockcard{width:360px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:30px;text-align:center}
@@ -161,7 +161,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">AI QUANT COMMAND · ENGINE CASCADE v6.0</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">AI QUANT COMMAND · ENGINE CASCADE v6.1</div>
     <input id="ltok" type="password" placeholder="GitHub Token">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -184,7 +184,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <span class="layer-badge">AI→BOT→MATRIX</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v6.0</div>
+<div class="status"><div class="dot"></div> v6.1</div>
 <button class="nav-btn" id="openSet" style="border:1px solid var(--border)">⚙</button>
 </div>
 </nav>
@@ -335,13 +335,12 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="guide">
 <b>Kahan se reports milengi?</b><br>
 1. Upar wale box se har file ka <b>👁 PREVIEW / ⬇ DOWNLOAD</b> button.<br>
-2. Direct: GitHub repo → file → <code>Download raw file</code>. Bot logs: repo → <code>Actions</code> (agar Actions se chala rahe ho) ya Colab output.<br><br>
+2. Direct: GitHub repo → file → <code>Download raw file</code>. Bot logs: Colab output (ya repo → <code>Actions</code>).<br><br>
 <b>File decoder:</b><br>
 • <code>state.json</code> — bot ka live dimagh: <code>updated</code> = last run, <code>engine</code> = AI ya bot, <code>timeframes</code> = har TF ka signal/score/entry/SL/TP/path, <code>candles</code> = matrix ka fuel.<br>
 • <code>perf.json</code> — <b>model improvement</b>: har model ki resolved accuracy (acc), pichli run se delta (delta_pct), samples (n). <code>system</code> = overall ensemble accuracy.<br>
-• <code>ledger.jsonl</code> — append-only record (P4); har line = ek run ka proof.<br>
-• <code>trades.csv / backtest_report.json</code> (agar heavy backtest chalaya ho) — R-multiple, profit factor, drawdown.<br><br>
-<b>Kab fikar karein?</b> state STALE (bot band), perf.json absent (bot purana version), ya system accuracy lagatar girti rahe.
+• <code>ledger.jsonl</code> — append-only record (P4); har line = ek run ka proof.<br><br>
+<b>Kab fikar karein?</b> state STALE (bot band), perf.json absent, ya system accuracy lagatar girti rahe.
 </div></div>
 </div>
 
@@ -349,14 +348,14 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
 <div class="inst">P1 DATA INTEGRITY — fresh+valid data, weekend freeze. Bad data = HOLD.
 P2 ANALYZE — read own record + lessons before voting.
-P3 SELF-IMPROVE — conf-bias from own WR (clamped ±10, min 6 samples).
+P3 SELF-IMPROVE — conf-bias from own WR.
 P4 PERSIST — append-only hash-chained ledger. NOTHING deletable.
-P5 COMPARE — old vs new WR delta; "improving?" ka measured jawab.
-P6 LESSON LIFECYCLE — proposed→implemented→verified; max 12 active.
-P7 RISK ENFORCE — prop rules LLM ke baad bhi hard gate.
+P5 COMPARE — old vs new WR delta.
+P6 LESSON LIFECYCLE — max 12 active.
+P7 RISK ENFORCE — prop rules hard gate.
 P8 SIMULATE→DECIDE→TAG — form gate + reproducibility tag.
-P9 SECURITY — secrets sirf Secrets mein; weekly audit; owner-only.
-P10 HEALTH & DRIFT — feed fresh, error streaks, regime-shift flags.
+P9 SECURITY — keys browser-local / Secrets only.
+P10 HEALTH & DRIFT — feed fresh, error streaks.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
@@ -366,18 +365,34 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <div class="overlay" id="setOverlay"></div>
 <div class="side" id="settings">
-<div class="side-h"><div class="side-t">⚙ CENTRAL CONFIG</div><button class="close" id="closeSet">✕</button></div>
+<div class="side-h"><div class="side-t">⚙ API PROVIDERS (multi-AI)</div><button class="close" id="closeSet">✕</button></div>
 <div class="side-b">
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--muted);margin-bottom:8px">AI LAYER (L1 · chat + signal)</div>
-<div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">GLM API KEY</label>
-<input id="cfgKey" type="password" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
-<div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">MODEL</label>
-<input id="cfgModel" value="glm-4.6" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
-<div style="margin-bottom:8px"><label style="font-size:.78rem;color:var(--muted)">API URL (CORS block ho to Cloudflare Worker proxy URL dalein)</label>
-<input id="cfgUrl" value="https://api.z.ai/api/paas/v4/chat/completions" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-top:3px;font-family:JetBrains Mono"></div>
-<button class="nav-btn" style="width:100%;border:1px solid var(--border);padding:9px;margin-top:4px" id="saveCfg">SAVE (browser-only · P9)</button>
-<button class="rbtn" style="width:100%;padding:9px;margin-top:6px" id="btnTestAI">🧪 TEST AI CONNECTION</button>
-<div id="aiTestOut" style="font-size:.78rem;margin-top:7px;min-height:20px;line-height:1.5">—</div>
+
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin-bottom:6px">ACTIVE PROVIDERS (★ = use ho raha)</div>
+<div id="provList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">—</div>
+
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin-bottom:6px">➕ QUICK ADD</div>
+<select id="aiPreset" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:7px;border-radius:3px;margin-bottom:6px;font-family:JetBrains Mono">
+<option value="groq">Groq · llama-3.3-70b-versatile</option>
+<option value="glm">GLM / Z.ai · glm-4.6</option>
+<option value="openai">OpenAI · gpt-4o-mini</option>
+<option value="openrouter">OpenRouter · llama-3.3-70b</option>
+<option value="together">Together.ai · Llama-3.3-70B-Turbo</option>
+<option value="cerebras">Cerebras · llama-3.3-70b</option>
+<option value="custom">Custom (OpenAI-compatible)</option>
+</select>
+<input id="aiQuickName" placeholder="naam (e.g. groq_llama3)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
+<input id="aiQuickKey" type="password" placeholder="API KEY" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
+<input id="aiQuickUrl" placeholder="base_url (preset se auto)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
+<input id="aiQuickModel" placeholder="model_name (preset se auto)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:6px;font-family:JetBrains Mono">
+<button class="rbtn" style="width:100%;padding:9px" id="btnAddQuick">ADD PROVIDER</button>
+
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin:14px 0 6px">📋 JSON CONFIG (aapka format)</div>
+<textarea id="cfgJson" rows="11" spellcheck="false" style="width:100%;background:rgba(0,0,0,.45);border:1px solid var(--border);color:var(--cyan);padding:8px;border-radius:3px;font-family:JetBrains Mono;font-size:.78rem;white-space:pre"></textarea>
+<div style="font-size:.72rem;color:var(--muted);line-height:1.55;margin:5px 0">Har provider: {"provider":"Groq","api_key":"...","model_name":"...","base_url":"...","extra":{},"enabled":true}. Multiple allowed — failover auto. (JSON mein duplicate keys allowed nahi — dusri naam pehli ko replace karti hai.)</div>
+<button class="rbtn" style="width:100%;padding:9px" id="btnApplyJson">APPLY JSON</button>
+<button class="rbtn" style="width:100%;padding:9px;margin-top:6px" id="btnTestAI">🧪 TEST ALL PROVIDERS</button>
+<div id="aiTestOut" style="font-size:.78rem;margin-top:8px;min-height:20px;line-height:1.6">—</div>
 </div>
 </div>
 
@@ -394,7 +409,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 </div>
 
 <script>
-console.log("FL-200 v6.0 — engine cascade + per-TF flow + per-heartbeat pulse + model improvement");
+console.log("FL-200 v6.1 — multi-provider AI + engine cascade + per-TF flow + heartbeat pulse");
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
@@ -498,7 +513,7 @@ async function ensureDirect(){
   else pulse("direct feed fail (matrix needs bot candles)","r");
 }
 
-/* ================= LOCAL MATRIX (L3) — same formula as bot GRID ================= */
+/* ================= LOCAL MATRIX (L3) ================= */
 function emaArr(a,n){const k=2/(n+1),o=[];let e=a[0];a.forEach((v,i)=>{e=i?v*k+e*(1-k):v;o.push(e);});return o;}
 function rsiArr(a,n=14){const o=[50];let g=0,l=0;
   for(let i=1;i<a.length;i++){const d=a[i]-a[i-1],up=Math.max(d,0),dn=Math.max(-d,0);
@@ -518,7 +533,7 @@ function matrixLocal(){
   return{signal:sig,score:+s.toFixed(3),entry:+c[i].toFixed(d),sl:+(c[i]-1.5*a).toFixed(d),tp:+(c[i]+3*a).toFixed(d),src:"matrix-local"};
 }
 
-/* ================= ENGINE CASCADE (AI → BOT → MATRIX) ================= */
+/* ================= ENGINE CASCADE helpers ================= */
 function botSignal(SN){
   if(!SN)return null;
   const t=SN.timeframes&&SN.timeframes[CUR_TF];
@@ -527,9 +542,137 @@ function botSignal(SN){
     return{signal:SN.signal,entry:P1?P1.entry:null,sl:P1?P1.sl:null,tp:P1?P1.tp:null,src:"bot-legacy",why:SN.why};}
   return null;
 }
-const ZKEY=()=>localStorage.getItem("hermes_zkey")||"";
-const ZURL=()=>localStorage.getItem("hermes_zurl")||"https://api.z.ai/api/paas/v4/chat/completions";
-const ZMODEL=()=>localStorage.getItem("hermes_zmodel")||"glm-4.6";
+
+/* ================= API PROVIDER MANAGER (multi-AI · JSON · failover) ================= */
+const API_PRESETS={
+  groq:{label:"Groq",base:"https://api.groq.com/openai/v1",model:"llama-3.3-70b-versatile"},
+  glm:{label:"GLM / Z.ai",base:"https://api.z.ai/api/paas/v4",model:"glm-4.6"},
+  openai:{label:"OpenAI",base:"https://api.openai.com/v1",model:"gpt-4o-mini"},
+  openrouter:{label:"OpenRouter",base:"https://openrouter.ai/api/v1",model:"meta-llama/llama-3.3-70b-instruct"},
+  together:{label:"Together.ai",base:"https://api.together.xyz/v1",model:"meta-llama/Llama-3.3-70B-Instruct-Turbo"},
+  cerebras:{label:"Cerebras",base:"https://api.cerebras.ai/v1",model:"llama-3.3-70b"},
+  custom:{label:"Custom",base:"",model:""}
+};
+function APIS(){try{return JSON.parse(localStorage.getItem("fl200_apis")||"{}");}catch(e){return {};}}
+function saveApis(A){localStorage.setItem("fl200_apis",JSON.stringify(A));}
+function normCfg(c){
+  c=Object.assign({provider:"custom",api_key:"",model_name:"",base_url:"",extra:{},enabled:true},c||{});
+  const p=String(c.provider||"").toLowerCase();
+  const b=String(c.base_url||"").trim().replace(/\/+$/,"");
+  if(p.indexOf("groq")>=0&&(!b||/groq\.com$/i.test(b)))c.base_url="https://api.groq.com/openai/v1";
+  else if((p.indexOf("glm")>=0||p.indexOf("z.ai")>=0)&&(!b||/api\.z\.ai\/?$/i.test(b)))c.base_url="https://api.z.ai/api/paas/v4";
+  else if(p.indexOf("openai")>=0&&(!b||/^https:\/\/openai\.com\/?$/i.test(b)))c.base_url="https://api.openai.com/v1";
+  else c.base_url=b;
+  return c;
+}
+function cfgUrl(c){
+  const b=String(c.base_url||"").trim().replace(/\/+$/,"");
+  if(!b)return"";
+  return /\/chat\/completions$/i.test(b)?b:b+"/chat/completions";
+}
+function activeCfg(){
+  const A=APIS();let k=localStorage.getItem("fl200_api_active");
+  if(!k||!A[k]||!A[k].enabled){
+    k=Object.keys(A).find(function(x){return A[x].enabled;})||null;
+    if(k)localStorage.setItem("fl200_api_active",k);
+  }
+  return k?A[k]:null;
+}
+const ZKEY=()=>{const c=activeCfg();return c?String(c.api_key||""):"";};
+const ZURL=()=>{const c=activeCfg();return c?cfgUrl(c):"";};
+const ZMODEL=()=>{const c=activeCfg();return c?String(c.model_name||""):"";};
+
+async function aiFetch(body,timeoutMs){
+  timeoutMs=timeoutMs||45000;
+  const A=APIS();
+  let order=Object.keys(A).filter(function(k){return A[k].enabled&&A[k].api_key;});
+  const act=localStorage.getItem("fl200_api_active");
+  order.sort(function(a,b){if(a===act)return -1;if(b===act)return 1;return 0;});
+  let lastErr=null;
+  for(const k of order){
+    const c=A[k],url=cfgUrl(c);
+    if(!url){lastErr=new Error(k+": base_url missing");continue;}
+    const t0=Date.now();
+    try{
+      const ctl=new AbortController();const to=setTimeout(function(){ctl.abort();},timeoutMs);
+      const r=await fetch(url,{method:"POST",signal:ctl.signal,
+        headers:{Authorization:"Bearer "+c.api_key,"Content-Type":"application/json"},
+        body:JSON.stringify(Object.assign({model:c.model_name},body))});
+      clearTimeout(to);
+      if(!r.ok){
+        let d="";try{const j=await r.json();d=(j.error&&j.error.message)||JSON.stringify(j);}catch(e){d=await r.text().catch(function(){return"";});}
+        lastErr=new Error(k+": HTTP "+r.status+" "+String(d).slice(0,110));
+        pulse("AI ["+k+"] HTTP "+r.status+" → agla provider","pr");continue;
+      }
+      const j=await r.json();
+      const msg=(j.choices&&j.choices[0]&&j.choices[0].message)?j.choices[0].message.content:null;
+      if(msg==null)throw new Error(k+": response shape galat");
+      if(k!==act)localStorage.setItem("fl200_api_active",k);
+      stats.ai_ok++;saveStats();
+      return{content:String(msg),provider:k,ms:Date.now()-t0};
+    }catch(e){lastErr=e;pulse("AI ["+k+"] fail: "+e.message+" → agla provider","pr");}
+  }
+  stats.ai_err++;saveStats();
+  throw lastErr||new Error("koi enabled provider nahi");
+}
+function applyCfgJSON(){
+  const out=$("aiTestOut");
+  let obj=null;
+  try{obj=JSON.parse($("cfgJson").value);}
+  catch(e){out.innerHTML='<span style="color:var(--red)">✗ JSON invalid — comma/bracket check karein.</span>';return;}
+  if(!obj||typeof obj!=="object"||Array.isArray(obj)){out.innerHTML='<span style="color:var(--red)">✗ Format: {"naam":{...provider...}}</span>';return;}
+  const A=APIS();let n=0;
+  Object.keys(obj).forEach(function(k){
+    const c=normCfg(obj[k]);
+    if(!c.api_key||!c.model_name){pulse("provider '"+k+"' skip (api_key/model_name missing)","pa");return;}
+    A[k]=c;n++;});
+  if(!n){out.innerHTML='<span style="color:var(--red)">✗ Koi valid provider nahi mila.</span>';return;}
+  saveApis(A);
+  const first=Object.keys(A).find(function(x){return A[x].enabled;});
+  if(first)localStorage.setItem("fl200_api_active",first);
+  renderProviders();updateAIStat();
+  out.innerHTML='<span style="color:var(--green)">✓ '+n+' provider(s) saved · ACTIVE: '+esc(localStorage.getItem("fl200_api_active")||"—")+'</span>';
+  pulse("[API] "+n+" providers applied from JSON","pg");
+}
+function quickAdd(){
+  const pk=$("aiPreset").value,p=API_PRESETS[pk];
+  const key=$("aiQuickKey").value.trim();
+  if(!key){$("aiTestOut").innerHTML='<span style="color:var(--amber)">Pehle API key dalein.</span>';return;}
+  const name=($("aiQuickName").value.trim()||pk);
+  const A=APIS();
+  A[name]=normCfg({provider:p.label,api_key:key,model_name:$("aiQuickModel").value.trim()||p.model,
+                   base_url:$("aiQuickUrl").value.trim()||p.base,extra:{},enabled:true});
+  saveApis(A);localStorage.setItem("fl200_api_active",name);
+  $("aiQuickKey").value="";
+  renderProviders();updateAIStat();
+  $("aiTestOut").innerHTML='<span style="color:var(--green)">✓ '+esc(name)+' added + ACTIVE — ab TEST ALL dabayen.</span>';
+  pulse("[API] provider added: "+name,"pg");
+}
+function renderProviders(){
+  const el=$("provList");if(!el)return;
+  const A=APIS();const act=localStorage.getItem("fl200_api_active");
+  const keys=Object.keys(A);
+  if(!keys.length){el.innerHTML='<div style="font-size:.8rem;color:var(--muted)">Koi provider nahi — QUICK ADD ya JSON APPLY karein.</div>';return;}
+  el.innerHTML=keys.map(function(k){
+    const c=A[k];
+    const host=(cfgUrl(c)||"—").replace(/^https?:\/\//,"").split("/")[0];
+    const actB='<button class="rbtn pact'+(k===act?" dl":"")+'" data-k="'+esc(k)+'">'+(k===act?"★ ACTIVE":"set active")+"</button>";
+    const togB='<button class="rbtn ptog" data-k="'+esc(k)+'">'+(c.enabled?"ON":"OFF")+"</button>";
+    const delB='<button class="rbtn pdel" data-k="'+esc(k)+'" style="color:var(--red)">✕</button>';
+    return '<div class="rep-file">'+actB+'<span class="fn">'+esc(k)+'<div class="fd">'+esc(String(c.model_name||"—"))+" · "+esc(host)+(c.enabled?"":" · <b style='color:var(--red)'>OFF</b>")+"</div></span>"+togB+delB+"</div>";
+  }).join("");
+}
+/* purani single-key config auto-migrate */
+(function(){
+  if(!localStorage.getItem("fl200_apis")){
+    const old=localStorage.getItem("hermes_zkey")||"";
+    if(old)saveApis({glm:normCfg({provider:"GLM / Z.ai",api_key:old,
+      model_name:localStorage.getItem("hermes_zmodel")||"glm-4.6",
+      base_url:"https://api.z.ai/api/paas/v4",enabled:true})});
+  }
+})();
+
+/* ================= L1 AI DECISION (engine) ================= */
 async function aiDecide(){
   if(!ZKEY())return null;
   const key=CUR_SYM+"|"+CUR_TF;
@@ -540,22 +683,19 @@ async function aiDecide(){
     bot:bt?{signal:bt.signal,score:bt.score||null}:null,
     matrix:mx?{signal:mx.signal,score:mx.score}:null,
     pillars:(STATE&&STATE.pillar_score)?STATE.pillar_score.score:null};
-  const t0=Date.now();
   try{
-    const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
-      body:JSON.stringify({model:ZMODEL(),temperature:0.2,max_tokens:140,messages:[
-        {role:"system",content:'You are FL-200 signal validator. Reply ONLY minified JSON {"signal":"BUY|SELL|WAIT","confidence":0-1,"reason":"max 2 sentences"}. Never guarantee profit.'},
-        {role:"user",content:JSON.stringify(ctx)}]})});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    const j=extractJSON((await r.json()).choices[0].message.content);
+    const res=await aiFetch({temperature:0.2,max_tokens:140,messages:[
+      {role:"system",content:'You are FL-200 signal validator. Reply ONLY minified JSON {"signal":"BUY|SELL|WAIT","confidence":0-1,"reason":"max 2 sentences"}. Never guarantee profit.'},
+      {role:"user",content:JSON.stringify(ctx)}]});
+    const j=extractJSON(res.content);
     if(!j||!j.signal)throw new Error("bad json");
     let conf=parseFloat(j.confidence);if(isNaN(conf))conf=.5;if(conf>1&&conf<=100)conf/=100;
     const d={signal:j.signal,confidence:Math.max(0,Math.min(1,conf)),reason:String(j.reason||"").slice(0,240)};
-    AI_CACHE.set(key,{ts:Date.now(),d:d});stats.ai_ok++;saveStats();
-    pulse("AI ✓ "+key+" → "+d.signal+" ("+Math.round(d.confidence*100)+"%) "+(Date.now()-t0)+"ms","pg");
+    AI_CACHE.set(key,{ts:Date.now(),d:d});
+    pulse("AI ✓ ["+res.provider+"] "+key+" → "+d.signal+" ("+Math.round(d.confidence*100)+"%) "+res.ms+"ms","pg");
     return d;
   }catch(e){
-    stats.ai_err++;saveStats();AI_CACHE.set(key,{ts:Date.now(),d:null});
+    AI_CACHE.set(key,{ts:Date.now(),d:null});
     pulse("AI ✗ "+e.message+" → L2/L3 fallback","pr");return null;
   }
 }
@@ -580,8 +720,8 @@ function renderEngine(){
   const L=getLiveState(),ai=ENGINE.ai,bt=botSignal(curSN()),mx=matrixLocal();
   const actKey={AI:"ai",BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
-    ["L1 · AI (GLM)", ai&&ai.ok?"✓ READY":(ZKEY()?(ai&&ai.ok===false?"✗ FAIL":"⏳ CALLING…"):"— NO KEY"),
-     ai&&ai.ok?("conf "+Math.round(ai.conf*100)+"% · "+(ai.signal||"")):(ai&&ai.ok===false?(ai.msg||"fail"):"⚙ mein key + (CORS ho to Worker URL)")],
+    ["L1 · AI (GLM/GROQ)", ai&&ai.ok?"✓ READY":(ZKEY()?(ai&&ai.ok===false?"✗ FAIL":"⏳ CALLING…"):"— NO KEY"),
+     ai&&ai.ok?("conf "+Math.round(ai.conf*100)+"% · "+(ai.signal||"")):(ai&&ai.ok===false?(ai.msg||"fail"):"⚙ mein provider add karein (Groq/GLM/…)")],
     ["L2 · COLAB BOT",(STATE&&L.status!=="OFFLINE"&&L.status!=="STALE")?"✓ STATE "+stateAgeText():"✗ NO/STALE STATE",
      bt?("H1 "+bt.signal+(bt.score!=null?" · score "+bt.score:"")):"Colab bot run/publish karein (FILE 2)"],
     ["L3 · LOCAL MATRIX",mx?"✓ READY":"— NODATA",
@@ -651,7 +791,7 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden&&TOK
 window.addEventListener("online",function(){pulse("internet restored → sync","pa");if(TOKEN)refreshData();});
 window.addEventListener("offline",function(){pulse("browser offline","pr");});
 setInterval(updateLiveUI,1000);
-setInterval(function(){if(TOKEN&&!document.hidden)engineTick();},15000); /* AI cache refresh cycle */
+setInterval(function(){if(TOKEN&&!document.hidden)engineTick();},15000);
 
 function renderTicker(){
   const L=getLiveState();let items=[];
@@ -680,7 +820,7 @@ function renderAction(){
   const ra=$("recAction");
   ra.textContent=sig?(open?(sig==="NO_TRADE"?"WAIT":sig):"WAIT"):"AWAITING DATA";
   ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
-  $("recNote").textContent=why||"engine cascade pending (AI key / bot state / candles chahiye)";
+  $("recNote").textContent=why||"engine cascade pending (AI provider / bot state / candles chahiye)";
   $("recBy").textContent="engine: "+(by||"—")+" · repro: "+((STATE&&STATE.run_tag&&STATE.run_tag.cfg_sha)||"—");
   $("recSim").textContent="P7 risk gate ✓ · src "+(ENGINE.eff?ENGINE.eff.src:"—");
   $("recEntry").textContent=entry!=null?String(entry):"—";
@@ -705,7 +845,7 @@ function renderModels(){
     ["GRID","grid",votes.grid?votes.grid.vote:null,"Farrukh candle[1]+[0]"],
     ["CHRONOS-LITE","chronos",votes.chronos?votes.chronos.vote:null,"momentum projector"],
     ["QUANT","quant",votes.quant?votes.quant.vote:null,"logistic ML · p_up "+(votes.quant&&votes.quant.p_up!=null?votes.quant.p_up:"—")],
-    ["AI (L1)",null,ENGINE.ai&&ENGINE.ai.ok?Math.round(ENGINE.ai.conf*100)/100:null,"GLM validator · "+(ENGINE.ai&&ENGINE.ai.signal||"—")],
+    ["AI (L1)",null,ENGINE.ai&&ENGINE.ai.ok?Math.round(ENGINE.ai.conf*100)/100:null,"validator · "+((ENGINE.ai&&ENGINE.ai.signal)||"—")],
     ["ENSEMBLE",null,t?(t.score!=null?t.score:null):null,(t&&t.signal)||"—"]];
   $("modelGrid").innerHTML=cards.map(function(c){
     const v=c[2];
@@ -827,7 +967,7 @@ async function loadStrategy(){
   for(const p of STRAT_PATHS){
     try{const t=await ghRaw(p);$("stratBox").textContent=String(t).slice(0,4000);return;}catch(e){}
   }
-  $("stratBox").textContent="strategy.md repo mein nahi (FILE 3 upload karein — optional).\n\nDEFAULT FLOW (v6.0):\nL1 AI (GLM) signal validate karta hai →\nL2 Colab bot (GRID + CHRONOS-LITE + QUANT per TF) →\nL3 dashboard ka local matrix (same GRID formula, candles se).\n\nTF M30/H1/H4/D1/W1 — har TF ka apna score, entry, SL/TP, path.\nRisk: 1%/trade · 3 trades/day · 3% daily stop · 10% max DD (P7 hard gate).";
+  $("stratBox").textContent="strategy.md repo mein nahi (FILE 3 upload karein — optional).\n\nDEFAULT FLOW (v6.1):\nL1 AI (Groq/GLM/…) signal validate karta hai →\nL2 Colab bot (GRID + CHRONOS-LITE + QUANT per TF) →\nL3 dashboard ka local matrix (same GRID formula, candles se).\n\nTF M30/H1/H4/D1/W1 — har TF ka apna score, entry, SL/TP, path.\nRisk: 1%/trade · 3 trades/day · 3% daily stop · 10% max DD (P7 hard gate).";
 }
 
 /* ================= REPORTS ================= */
@@ -949,7 +1089,7 @@ function drawGrid(){
 }
 requestAnimationFrame(drawGrid);
 
-/* ================= CHAT ================= */
+/* ================= CHAT (L3/L4/L5) ================= */
 function extractJSON(txt){try{return JSON.parse(txt);}catch(e){}
   const a=txt.indexOf("{"),b=txt.lastIndexOf("}");
   if(a>=0&&b>a){try{return JSON.parse(txt.slice(a,b+1));}catch(e){}}return null;}
@@ -960,20 +1100,18 @@ function repairAnswer(d){
   if(conf>1&&conf<=100)conf/=100;
   return{answer:ans,confidence:Math.max(0,Math.min(1,conf))};}
 async function aiCall(messages,maxTokens){
-  const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
-    body:JSON.stringify({model:ZMODEL(),temperature:0.4,max_tokens:maxTokens||400,messages})});
-  if(!r.ok)throw new Error("api "+r.status);
-  const txt=(await r.json()).choices[0].message.content;
-  let d=extractJSON(txt),repaired=false;
+  const res=await aiFetch({temperature:0.4,max_tokens:maxTokens||400,messages});
+  let d=extractJSON(res.content),repaired=false;
   if(d){const fx=repairAnswer(d);if(fx)d=fx;else{d=null;repaired=true;}}
   if(!d){
     addMsg("ai","⚠️ Format invalid — L4 repair retry…");
-    const r2=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
-      body:JSON.stringify({model:ZMODEL(),temperature:0.2,max_tokens:maxTokens||400,
-        messages:messages.concat([{role:"user",content:'Previous reply invalid JSON. Reply ONLY minified JSON: {"answer":"...","confidence":0-1}'}])})});
-    if(r2.ok){d=extractJSON((await r2.json()).choices[0].message.content);if(d)d=repairAnswer(d);repaired=true;}
+    try{
+      const r2=await aiFetch({temperature:0.2,max_tokens:maxTokens||400,
+        messages:messages.concat([{role:"user",content:'Previous reply invalid JSON. Reply ONLY minified JSON: {"answer":"...","confidence":0-1}'}])});
+      d=extractJSON(r2.content);if(d)d=repairAnswer(d);repaired=true;
+    }catch(e){}
   }
-  return{d:d,repaired:repaired};
+  return{d:d,repaired:repaired,provider:res.provider};
 }
 function addMsg(cls,text,tag){
   const d=document.createElement("div");d.className="msg "+cls;
@@ -1018,54 +1156,64 @@ function fallbackAnswer(q){
   const bt=botSignal(curSN());
   if(/signal/.test(low)&&bt)return"Rules-based ["+CUR_TF+"]: "+CUR_SYM+" "+bt.signal+" (score "+(bt.score!=null?bt.score:"–")+") · engine "+ENGINE.layer;
   if(/plan/.test(low)&&bt&&bt.entry)return"Plan ["+CUR_TF+"]: entry "+bt.entry+", SL "+bt.sl+", TP "+bt.tp;
-  return isMarketOpen(CUR_SYM)?CUR_SYM+" "+CUR_TF+": live session. Full AI ke liye ⚙️ mein key dalein.":CUR_SYM+" market closed (weekend). ETHUSD 24/7 open.";
+  return isMarketOpen(CUR_SYM)?CUR_SYM+" "+CUR_TF+": live session. Full AI ke liye ⚙️ mein provider add karein.":CUR_SYM+" market closed (weekend). ETHUSD 24/7 open.";
 }
 async function chatSend(){
   const inp=$("cinp"),q=inp.value.trim();if(!q)return;
   inp.value="";addMsg("user",q);
-  if(!ZKEY()){addMsg("ai","⚙️ AI key save nahi — rules-based jawab.\n\nAI ON: ⚙ → key → SAVE → 🧪 TEST → green ✓","completed_by: fallback (L5 · key missing)");return;}
+  if(!ZKEY()){addMsg("ai","⚙️ Koi AI provider active nahi — rules-based jawab.\n\nAI ON: ⚙ → QUICK ADD ya JSON APPLY → 🧪 TEST ALL → green ✓","completed_by: fallback (L5 · no provider)");return;}
   $("chatMode").innerHTML='<span class="think"><span></span><span></span><span></span></span>';
   const sys="You are ZCode, AI analyst of FL-200 quant desk. You get LIVE state incl engine cascade, per-TF signals, model improvements, pillar scores. "+
     'Reply ONLY minified JSON: {"answer":"max 5 sentences in user language","confidence":0-1}. Respect prop rules, never guarantee profit.';
   const msgs=[{role:"system",content:sys},{role:"user",content:"LIVE DESK:\n"+JSON.stringify(buildContext())},{role:"user",content:q}];
   try{
     const res=await aiCall(msgs,400);
-    if(res.d){addMsg("ai",res.d.answer,"completed_by: ai"+(res.repaired?" (L4-repaired)":" (L3-clean)")+" · conf "+Math.round(res.d.confidence*100)+"%");}
+    if(res.d){addMsg("ai",res.d.answer,"completed_by: "+(res.provider||"ai")+(res.repaired?" (L4-repaired)":" (L3-clean)")+" · conf "+Math.round(res.d.confidence*100)+"%");}
     else{addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — AI unusable)");}
   }catch(e){
     const m=String(e.message||"");
-    if(/fetch/i.test(m))addMsg("ai","⚠️ Request blocked (network/CORS).\nFix: ⚙️ → 🧪 TEST → Worker proxy URL use karein (settings mein URL field).","completed_by: blocked (network)");
+    if(/fetch/i.test(m))addMsg("ai","⚠️ Request blocked (network/CORS).\nFix: ⚙️ → 🧪 TEST ALL — jo provider fail ho uska base_url check karein ya doosra provider ACTIVE karein.","completed_by: blocked (network)");
     else addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — "+m+")");
   }
   $("chatMode").textContent="L1→L5 active";
 }
 
-/* ================= AI STATUS / TEST ================= */
+/* ================= AI STATUS / TEST ALL ================= */
 function updateAIStat(){
   const el=$("aiStat");if(!el)return;
-  if(!ZKEY()){el.textContent="AI: OFF (key nahi)";el.style.color="var(--amber)";}
-  else{el.textContent="AI: ON";el.style.color="var(--green)";}
+  if(!ZKEY()){el.textContent="AI: OFF (provider nahi)";el.style.color="var(--amber)";}
+  else{el.textContent="AI: ON · "+(localStorage.getItem("fl200_api_active")||"");el.style.color="var(--green)";}
 }
 async function testAI(){
   const out=$("aiTestOut");
-  if(!ZKEY()){out.innerHTML='<span style="color:var(--amber)">Pehle key dalein → SAVE → phir TEST.</span>';return;}
-  out.innerHTML="Testing "+esc(ZMODEL())+"…";
-  const t0=Date.now();
-  try{
-    const r=await fetch(ZURL(),{method:"POST",headers:{Authorization:"Bearer "+ZKEY(),"Content-Type":"application/json"},
-      body:JSON.stringify({model:ZMODEL(),temperature:0.1,max_tokens:20,messages:[{role:"user",content:'Reply ONLY: {"answer":"OK","confidence":1}'}]})});
-    const ms=Date.now()-t0;
-    if(!r.ok){
-      let detail="";try{const j=await r.json();detail=(j.error&&j.error.message)||JSON.stringify(j).slice(0,140);}catch(e2){}
-      const hint=r.status===401?"<br><span style='color:var(--amber)'>Key galat/expired.</span>":r.status===404?"<br><span style='color:var(--amber)'>Model name check karein (glm-4-flash try).</span>":"";
-      out.innerHTML='<span style="color:var(--red)">✗ HTTP '+r.status+"</span> ("+ms+"ms)<br><span style='font-size:.72rem;color:var(--muted)'>"+esc(detail)+"</span>"+hint;return;}
-    const j=await r.json();
-    const msg=(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||"";
-    out.innerHTML='<span style="color:var(--green)">✓ AI LIVE ✓</span> ('+ms+"ms)<br><span style='font-size:.72rem;color:var(--muted)'>"+esc(String(msg).slice(0,100))+"</span>";
-    updateAIStat();
-  }catch(e){
-    out.innerHTML='<span style="color:var(--red)">✗ CORS/Network: '+esc(e.message)+'</span><br><span style="font-size:.72rem;color:var(--amber)">Fix: Cloudflare Worker proxy bana kar us URL ko API URL field mein dalein (guide: chat mein poochein).</span>';
+  const A=APIS();
+  const en=Object.keys(A).filter(function(k){return A[k].enabled;});
+  if(!en.length){out.innerHTML='<span style="color:var(--amber)">Koi enabled provider nahi — QUICK ADD ya JSON APPLY karein.</span>';return;}
+  out.innerHTML="Testing "+en.length+" provider(s)…";
+  let html="",firstOk=null;
+  for(const k of en){
+    const c=A[k],url=cfgUrl(c),t0=Date.now();
+    try{
+      const r=await fetch(url,{method:"POST",
+        headers:{Authorization:"Bearer "+c.api_key,"Content-Type":"application/json"},
+        body:JSON.stringify({model:c.model_name,temperature:0.1,max_tokens:20,
+          messages:[{role:"user",content:'Reply ONLY: {"answer":"OK","confidence":1}'}]})});
+      const ms=Date.now()-t0;
+      if(!r.ok){
+        let d="";try{d=(await r.json()).error.message||"";}catch(e){}
+        html+='<div style="color:var(--red)">✗ <b>'+esc(k)+'</b> HTTP '+r.status+" ("+ms+"ms) "+esc(String(d).slice(0,90))+"</div>";
+      }else{
+        await r.json();
+        html+='<div style="color:var(--green)">✓ <b>'+esc(k)+'</b> LIVE ('+ms+"ms) · "+esc(c.model_name)+"</div>";
+        if(!firstOk)firstOk=k;
+      }
+    }catch(e){
+      html+='<div style="color:var(--red)">✗ <b>'+esc(k)+'</b> '+esc(e.message)+
+        (String(e.message).indexOf("Failed to fetch")>=0?" <span style='color:var(--amber)'>(CORS? — Worker proxy URL base_url mein dalein)</span>":"")+"</div>";
+    }
   }
+  if(firstOk){localStorage.setItem("fl200_api_active",firstOk);html+='<div style="color:var(--cyan);margin-top:5px">ACTIVE → <b>'+esc(firstOk)+"</b></div>";}
+  out.innerHTML=html||"—";updateAIStat();renderProviders();
 }
 
 /* ================= EVENTS ================= */
@@ -1094,16 +1242,27 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
  $("cinp").addEventListener("keydown",e=>{if(e.key==="Enter")chatSend();});
  $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();});
  $("repRefresh").addEventListener("click",loadReports);
+
  $("openSet").addEventListener("click",function(){
-  $("cfgKey").value=ZKEY();$("cfgModel").value=ZMODEL();$("cfgUrl").value=ZURL();
+  $("cfgJson").value=JSON.stringify(APIS(),null,2);
+  renderProviders();
   $("setOverlay").classList.add("open");$("settings").classList.add("open");});
  $("closeSet").addEventListener("click",function(){$("setOverlay").classList.remove("open");$("settings").classList.remove("open");});
- $("saveCfg").addEventListener("click",function(){
-  localStorage.setItem("hermes_zkey",$("cfgKey").value.trim());
-  localStorage.setItem("hermes_zmodel",$("cfgModel").value.trim()||"glm-4.6");
-  localStorage.setItem("hermes_zurl",$("cfgUrl").value.trim());
-  updateAIStat();pulse("[P9] AI config saved (browser-local)","pg");$("closeSet").click();});
+ $("btnApplyJson").addEventListener("click",applyCfgJSON);
+ $("btnAddQuick").addEventListener("click",quickAdd);
  $("btnTestAI").addEventListener("click",testAI);
+ $("aiPreset").addEventListener("change",function(){
+  const p=API_PRESETS[this.value];if(!p)return;
+  $("aiQuickUrl").value=p.base;$("aiQuickModel").value=p.model;});
+ $("provList").addEventListener("click",function(e){
+  const b=e.target.closest("button");if(!b)return;
+  const k=b.dataset.k;if(!k)return;
+  const A=APIS();if(!A[k])return;
+  if(b.classList.contains("pact")){localStorage.setItem("fl200_api_active",k);renderProviders();updateAIStat();pulse("[API] ACTIVE → "+k,"pg");}
+  else if(b.classList.contains("ptog")){A[k].enabled=!A[k].enabled;saveApis(A);renderProviders();updateAIStat();}
+  else if(b.classList.contains("pdel")){delete A[k];saveApis(A);renderProviders();updateAIStat();}
+});
+
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
  $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
@@ -1113,7 +1272,7 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
 function unlockUI(){
   $("lock").style.display="none";
   startHeartbeat();refreshData();loadStrategy();ensureDirect();
-  updateAIStat();
+  updateAIStat();renderProviders();
 }
  $("lockBtn").addEventListener("click",async function(){
   const tok=$("ltok").value.trim(),pass=$("lpass").value.trim(),err=$("lockErr");

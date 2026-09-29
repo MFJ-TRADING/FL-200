@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · 33% GRID + L2 · FACE v10.0</title>
+<title>FL-200 · FACE v11.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -61,7 +61,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .pulse-box div{animation:slidein .25s}
 .pulse-box .pg{color:var(--green)}.pulse-box .pr{color:var(--red)}.pulse-box .pa{color:var(--amber)}
 .eng-grid{display:grid;grid-template-columns:1fr;gap:7px}
-.eng{display:grid;grid-template-columns:170px 130px 1fr;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;opacity:.6}
+.eng{display:grid;grid-template-columns:190px 150px 1fr;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;opacity:.6}
 .eng.act{opacity:1;border-color:var(--green);box-shadow:0 0 10px rgba(0,255,102,.2)}
 .eng .en{font-family:'Orbitron';font-size:.85rem;color:var(--cyan)}
 .eng .es{font-family:'Orbitron';font-size:.78rem}
@@ -158,8 +158,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">H1 33% GRID + LEVEL-2 · FACE·HEART·BRAIN v10</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">SIGNAL ONLY · FACE_TOKEN (read-only PAT)</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.0</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">REAL-TIME engine (token-gated) · formula public mein NAHI hai</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -168,7 +168,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <nav class="top-nav">
-<div class="brand">⚡ FL-200 <span>GRID·L2</span></div>
+<div class="brand">⚡ FL-200 <span>FACE</span></div>
 <div class="nav-links">
 <button class="nav-btn active" data-s="dash">DASHBOARD</button>
 <button class="nav-btn" data-s="strategy">STRATEGY</button>
@@ -178,10 +178,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">33%+L2 v10</span>
+<span class="tier-badge">REAL-TIME</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v10.0</div>
+<div class="status"><div class="dot"></div> v11.0</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -221,15 +221,14 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="mbox"><div class="mlabel">TP / SL</div><div class="mval" id="recTP">—</div></div>
 </div>
 
-<!-- ═══ SIGNAL DESK — 33% grid + L2 + plans + 7-part ═══ -->
 <div class="panel full">
-<div class="ph"><span>🎯 SIGNAL DESK — 33% GRID · L2 BOOK · PLANS · FINAL (7-part)</span><span id="sdSrc" class="live">—</span></div>
+<div class="ph"><span>🎯 SIGNAL DESK — 33% GRID · L2 BOOK · PLANS · FINAL</span><span id="sdSrc" class="live">—</span></div>
 <div class="glv" id="glvRow"></div>
 <div class="glv" id="l2Row"></div>
 <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
 <span class="zonebadge zb-mid" id="zPos">PRICE POSITION: —</span>
 <span class="zonebadge zb-mid" id="zAct">ZONE MAP: —</span>
-<span class="gz" id="fadeRule">RULE: lower band + buyers → BUY · upper band + sellers → SELL · else WAIT</span>
+<span class="gz">LIVE compute aapke browser mein · formula private heart se (token-gated)</span>
 </div>
 <div class="plans" id="planBoxes"></div>
 <div class="final-box" id="finalBox" style="margin-top:10px">—</div>
@@ -240,7 +239,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="mgrid">
 <div class="mbox"><div class="mlabel">PRICE (MID)</div><div class="price" id="livePrice">—</div></div>
 <div class="mbox"><div class="mlabel">DATA LAYER (P1)</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
-<div class="mbox"><div class="mlabel">STATE AGE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
+<div class="mbox"><div class="mlabel">REALTIME AGE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:3px">24/7</div></div>
 </div>
 </div>
@@ -251,12 +250,12 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🛡️ DECISION ENGINE — BRAIN(33%+L2) → MATRIX(engine.js)</span><span class="live" id="engWhy">—</span></div>
+<div class="ph"><span>🛡️ DECISION ENGINE — REALTIME(engine.js+live) → BRAIN state → candle-fallback</span><span class="live" id="engWhy">—</span></div>
 <div class="eng-grid" id="engGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🕯️ 33% GRID CHART · <span id="gridTitle">—</span> · anchor candle[1] + bands</span><span id="gridStatus" class="live">—</span></div>
+<div class="ph"><span>🕯️ 33% GRID CHART · <span id="gridTitle">—</span></span><span id="gridStatus" class="live">—</span></div>
 <div class="candle-wrap">
 <div class="candle-head">
 <span style="font-family:'Orbitron';font-size:.85rem;color:var(--cyan)" id="gridSrc">—</span>
@@ -267,7 +266,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel span2">
-<div class="ph"><span>📈 MODEL IMPROVEMENT — KITNI % BARHA</span><span id="impMeta" style="font-size:.75rem;color:var(--muted)">—</span></div>
+<div class="ph"><span>📈 MODEL IMPROVEMENT (brain perf)</span><span id="impMeta" style="font-size:.75rem;color:var(--muted)">—</span></div>
 <div class="imp-grid" id="impGrid"></div>
 </div>
 <div class="panel">
@@ -286,20 +285,20 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📉 INDICATORS (P1 verified · QUANT confirm)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
+<div class="ph"><span>📉 INDICATORS (P1)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
 <div class="ind-grid" id="indGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📒 PILLAR LEDGER (P4 · APPEND-ONLY · HASH-CHAINED)</span><span id="ledgerMeta" style="font-size:.75rem;color:var(--muted)"></span></div>
+<div class="ph"><span>📒 PILLAR LEDGER (P4 · HASH-CHAINED)</span><span id="ledgerMeta" style="font-size:.75rem;color:var(--muted)"></span></div>
 <div class="ledger-box" id="ledgerBox">—</div>
 </div>
 </div>
 </div>
 
 <div class="section" id="strategy">
-<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB (file-driven · heart repo)</span></div>
-<div class="inst" id="stratBox">Loading strategy file…</div>
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB (heart repo)</span></div>
+<div class="inst" id="stratBox">Loading…</div>
 </div></div>
 
 <div class="section" id="account">
@@ -319,27 +318,27 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="rep-sum" id="repSummary">State load ho rahi hai…</div></div>
 <div class="panel full"><div class="ph"><span>📥 HEART REPO FILES — PREVIEW / DOWNLOAD</span><span style="font-size:.75rem;color:var(--muted)" id="repScan">—</span></div>
 <div id="repFiles">Scanning…</div></div>
-<div class="panel full"><div class="ph"><span>📖 GUIDE</span></div>
+<div class="panel full"><div class="ph"><span>📖 SECURITY MODEL (P9)</span></div>
 <div class="guide">
-<b>Flow:</b> BRAIN (Colab) har 4s live panel + har 3 min publish: H1 33% grid (candle[1], color-based) + Level-2 imbalance/walls → signal + plan (RR 1:2) → 7-part FINAL. FACE usay dikhata hai; brain band ho to <code>engine.js</code> candle-only fallback chalata hai.<br>
-<b>Real-time seconds-level ke liye:</b> <code>live.html</code> (FACE repo) kholein — seedha Binance se.<br>
-<b>Signal rule:</b> GREEN: mid ≤33% + imb ≥+15% → BUY · mid ≥66% + imb ≤−15% → SELL · RED: mirror. Warna WAIT.<br>
-<b>Sirf signal</b> — koi execution nahi.
+<b>Formula kahan hai?</b> Sirf <code>engine.js</code> (private heart repo) mein. FACE usay <b>aapke FACE_TOKEN</b> se HTTPS par load karta hai aur <b>aapke browser mein</b> compute karta hai. Public repo mein zero formula, zero keys.<br>
+<b>Live data?</b> Binance public API — price/order-book public market data hai, secret nahi.<br>
+<b>Bina token stranger ko kya dikhega?</b> Sirf lock screen.<br>
+<b>BRAIN?</b> Colab compute + improvement (P3/P5) + audit (P9/P10) + future LLM plug — heart ko better karta hai.
 </div></div>
 </div>
 
 <div class="section" id="pillars">
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
-<div class="inst">P1 DATA — valid candles + L2 feed. Bad data = WAIT.
+<div class="inst">P1 DATA — valid candles + L2. Bad data = WAIT.
 P2 ANALYZE — models apna record dekh kar vote.
-P3 SELF-IMPROVE — grid/l2/ensemble accuracy from resolved preds.
+P3 SELF-IMPROVE — accuracy from resolved preds (brain).
 P4 PERSIST — append-only hash-chained ledger.
 P5 COMPARE — accuracy delta per run.
-P6 LESSONS — reserved (local-LLM era).
+P6 LESSONS — reserved (LLM era).
 P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
 P8 SIMULATE→DECIDE→TAG — reproducibility tag.
-P9 SECURITY — FACE read-only · BRAIN writer · zero AI keys.
-P10 HEALTH — brain band → MATRIX (engine.js) chalta rehta hai.
+P9 SECURITY — formula sirf heart mein · FACE read-only · zero keys public.
+P10 HEALTH — realtime feed fail → brain state → candle fallback.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
@@ -356,7 +355,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE.JS</button>
 <button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
 </div>
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin:14px 0 6px">LOCAL LLM (RESERVED)</div>
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin:14px 0 6px">LOCAL LLM (RESERVED — brain plug)</div>
 <input id="cfgLLM" placeholder="http://localhost:11434/v1/chat/completions (future)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;font-family:JetBrains Mono">
 <button class="rbtn" style="width:100%;padding:9px;margin-top:8px" id="saveLLM">SAVE (browser-only · P9)</button>
 <div id="cfgOut" style="font-size:.78rem;margin-top:8px;color:var(--muted)">—</div>
@@ -377,7 +376,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v10.0 FACE — 33% grid + L2 · brain publish → engine.js fallback");
+console.log("FL-200 v11.0 FACE — REALTIME: live Binance + private engine.js · formula public mein nahi");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -385,10 +384,12 @@ const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleSt
 
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null,FILES=new Map();
-let HB=0,DIRECT=null,DIRECT_KEY="",lastLedgerSeq=null;
+let HB=0,lastLedgerSeq=null;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
+const RT={data:null,ts:0,key:""};   /* realtime compute cache */
+const RT_TTL=15000;
 
 /* ============ GITHUB (read-only) ============ */
 async function ghFetch(repo,path,accept){
@@ -406,7 +407,7 @@ const ext=p=>(p.split(".").pop()||"").toLowerCase();
 const isBin=p=>["png","jpg","jpeg","webp"].includes(ext(p));
 const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",js:"text/javascript"};
 
-/* ============ ENGINE LOADER ============ */
+/* ============ ENGINE LOADER (private heart — token-gated) ============ */
 async function loadEngine(force){
   const now=Date.now();
   if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
@@ -415,9 +416,35 @@ async function loadEngine(force){
     (new Function(txt))();
     if(!window.FL200_ENGINE)throw new Error("FL200_ENGINE missing");
     ENGINE_OBJ=window.FL200_ENGINE;ENGINE_TS=now;
-    pulse("engine.js ✓ v"+ENGINE_OBJ.version+" (33% grid)","pg");
+    pulse("engine.js ✓ v"+ENGINE_OBJ.version+" loaded (private heart)","pg");
   }catch(e){pulse("engine load FAIL: "+e.message,"pr");ENGINE_OBJ=null;}
   return ENGINE_OBJ;
+}
+
+/* ============ LIVE Binance (public data — prices/orderbook) ============ */
+async function liveCandles(sym,tf){
+  const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+sym+"&interval="+(C.binTf[tf]||"1h")+"&limit=200");
+  if(!r.ok)throw new Error("kl "+r.status);
+  return (await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
+}
+async function liveDepth(sym){
+  const r=await fetch("https://data-api.binance.vision/api/v3/depth?symbol="+sym+"&limit="+(C.l2?C.l2.depth:20));
+  if(!r.ok)throw new Error("dp "+r.status);
+  return await r.json();
+}
+
+/* ============ REALTIME TICK (4s) — compute private engine se ============ */
+async function rtTick(){
+  if(!ENGINE_OBJ||document.hidden)return;
+  const key=CUR_SYM+"|"+CUR_TF;
+  try{
+    const [cs,d]=await Promise.all([liveCandles(CUR_SYM,CUR_TF),liveDepth(CUR_SYM)]);
+    RT.data=ENGINE_OBJ.fullSignalL2(cs,d,CUR_SYM,CUR_TF);
+    RT.ts=Date.now();RT.key=key;
+    renderSignalDesk();renderAction();renderEngine();
+  }catch(e){
+    if(RT.data&&Date.now()-RT.ts>RT_TTL*4)pulse("realtime feed fail: "+e.message,"pr");
+  }
 }
 
 /* ============ LIVE AGE / PULSE ============ */
@@ -425,7 +452,9 @@ function stateUpdatedMs(){if(!STATE||!STATE.updated)return 0;const t=Date.parse(
 function stateAgeMs(){const t=stateUpdatedMs();return t?Math.max(0,Date.now()-t):Infinity;}
 function stateAgeText(){const a=stateAgeMs();if(!isFinite(a))return"NO TIMESTAMP";const s=Math.floor(a/1000);
   if(s<2)return"JUST NOW";if(s<60)return s+"s AGO";if(s<3600)return Math.floor(s/60)+"m AGO";return Math.floor(s/3600)+"h AGO";}
+function rtAgeText(){if(!RT.data)return"—";const s=Math.floor((Date.now()-RT.ts)/1000);return s<2?"JUST NOW":s+"s AGO";}
 function getLiveState(){
+  if(RT.data&&Date.now()-RT.ts<RT_TTL)return{status:"LIVE",text:"REALTIME · "+rtAgeText()};
   if(!STATE)return{status:"OFFLINE",text:"NO DATA"};
   const a=stateAgeMs();
   if(a<=LIVE.staleMs)return{status:"LIVE",text:"LIVE · "+stateAgeText()};
@@ -445,56 +474,49 @@ function pulse(msg,cls){
   while(el.children.length>60)el.lastElementChild.remove();
 }
 
-/* ============ CANDLES (bot → direct feed) ============ */
-function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
-function getCandles(){
-  const SN=curSN();
-  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
-  if(cs&&cs.length)return cs;
-  if(DIRECT_KEY===CUR_SYM+"|"+CUR_TF&&DIRECT)return DIRECT;
-  return null;
-}
-async function ensureDirect(){
-  const key=CUR_SYM+"|"+CUR_TF;
-  if(DIRECT_KEY===key)return;
-  try{
-    const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+CUR_SYM+"&interval="+(C.binTf[CUR_TF]||"1h")+"&limit=200");
-    if(!r.ok)return;
-    const cs=(await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
-    if(cs&&cs.length){DIRECT=cs;DIRECT_KEY=key;pulse("direct feed ✓ Binance "+CUR_SYM+" "+CUR_TF,"pg");renderAll();}
-  }catch(e){}
-}
-
-/* ============ CASCADE ============ */
+/* ============ CASCADE: REALTIME → BRAIN → candle-fallback ============ */
 function botTF(){
   const SN=curSN();
   return (SN&&SN.timeframes)?SN.timeframes[CUR_TF]||null:null;
 }
+function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
 function resolveLayer(){
-  const SN=curSN(),L=getLiveState(),bt=botTF();
-  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BOT";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain-l2";}
-  else if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(getCandles(),CUR_TF);
-    if(f){ENGINE.layer="MATRIX";ENGINE.eff=f;ENGINE.eff.src="matrix-engine";}}
-  else{ENGINE.layer="NONE";ENGINE.eff=null;}
+  const L=getLiveState();
+  if(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL){
+    ENGINE.layer="REALTIME";ENGINE.eff=RT.data;ENGINE.eff.src="realtime-engine";return;
+  }
+  const bt=botTF();
+  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BRAIN";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain-l2";return;}
+  if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(botCandles(),CUR_TF);
+    if(f){ENGINE.layer="FALLBACK";ENGINE.eff=f;ENGINE.eff.src="matrix-candle";return;}}
+  ENGINE.layer="NONE";ENGINE.eff=null;
+}
+function botCandles(){
+  const SN=curSN();
+  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
+  if(cs&&cs.length)return cs;
+  return (RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:null;
 }
 function renderEngine(){
-  const L=getLiveState(),bt=botTF(),mx=ENGINE_OBJ?ENGINE_OBJ.fullSignal(getCandles(),CUR_TF):null;
-  const actKey={BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
+  const L=getLiveState(),bt=botTF();
+  const rtOk=RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL;
+  const actKey={REALTIME:"rt",BRAIN:"bot",FALLBACK:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
-    ["L2 · BRAIN (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ STATE "+stateAgeText():"✗ NO/STALE",
-     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · conf "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein — band ho to MATRIX chalta hai"],
-    ["L3 · MATRIX (engine.js)",mx?"✓ READY":"— NODATA",
-     mx?(CUR_TF+" "+mx.final.signal+" · conf "+mx.final.confidence+"% · "+(mx.grid?mx.grid.color:"")+" anchor"):(ENGINE_OBJ?"candles chahiye":"engine.js load FAIL — ⚙ reload")],
-    ["L1 · LOCAL LLM","RESERVED","Future plug-in (abhi zero AI keys)"]];
+    ["L0 · REALTIME (browser+engine.js)",rtOk?"✓ LIVE · "+rtAgeText():(ENGINE_OBJ?"⏳ connecting feed…":"— engine not loaded"),
+     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"% · imb "+(RT.data.l2?RT.data.l2.imb:"—")+"%"):"live candles + private engine se 4s compute"],
+    ["L1 · BRAIN state (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ "+stateAgeText():"✗ NO/STALE",
+     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · "+bt.final.confidence+"%"):"colab_LLM_brain.py publish karega"],
+    ["L2 · FALLBACK (candle-only)",ENGINE_OBJ?"✓ ready":"—",ENGINE_OBJ?"realtime+brain dono band ho to":"engine.js load FAIL — ⚙ reload"],
+    ["L3 · LOCAL LLM","RESERVED","future brain plug"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
-    const k=["bot","mx","llm"][i];
+    const k=["rt","bot","mx","llm"][i];
     return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--muted)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
   $("engBadge").textContent="ENGINE: "+(ENGINE.layer||"…");
-  $("engBadge").style.color=ENGINE.layer==="BOT"?"var(--cyan)":ENGINE.layer==="MATRIX"?"var(--amber)":"var(--red)";
+  $("engBadge").style.color=ENGINE.layer==="REALTIME"?"var(--green)":ENGINE.layer==="BRAIN"?"var(--cyan)":ENGINE.layer==="FALLBACK"?"var(--amber)":"var(--red)";
   $("engWhy").textContent=ENGINE.eff?("active: "+ENGINE.eff.src+" · "+(ENGINE.eff.final?ENGINE.eff.final.signal:"")):"cascade pending";
 }
 
-/* ============ SYNC ============ */
+/* ============ BRAIN SYNC (5s) ============ */
 async function refreshData(){
   if(!TOKEN||LIVE.busy)return;
   LIVE.busy=true;
@@ -508,12 +530,11 @@ async function refreshData(){
     LIVE.lastFetch=Date.now();LIVE.failures=0;
     $("pollbar").classList.remove("err");
     HB++;$("hbCount").textContent="HB "+HB;
-    pulse("HB"+HB+" · sync ✓ · "+stateAgeText(),"pg");
+    pulse("HB"+HB+" · brain sync ✓ · "+stateAgeText(),"pg");
     renderAll();renderReportsSummary();loadLedger();
     if(ENGINE_OBJ&&Date.now()-ENGINE_TS>C.engineTtlMs)loadEngine(true);
   }catch(e){
     LIVE.failures++;$("pollbar").classList.add("err");
-    pulse("sync ✗ "+e.message,"pr");
   }finally{LIVE.busy=false;}
 }
 
@@ -528,36 +549,37 @@ function updateLiveUI(){
   if(badge){badge.className=L.status==="LIVE"?"badge-open":"badge-closed";badge.textContent=L.text;}
   const lv=$("mktLive");if(lv){lv.textContent=L.status;lv.className=L.status==="LIVE"?"live":"live warn";}
   $("sysStatus").textContent="CRYPTO 24/7 · "+L.text;
-  setTxt("ageVal",stateAgeText(),false);
+  setTxt("ageVal",rtAgeText(),false);
   const dl=$("dataLayer");
   if(dl){
-    if(!STATE){dl.textContent="P1 ⚠ NO DATA";dl.style.color="var(--red)";}
+    if(!ENGINE_OBJ){dl.textContent="engine loading…";dl.style.color="var(--amber)";}
     else if(L.status==="LIVE"){dl.textContent="P1 ✓ LIVE";dl.style.color="var(--green)";}
     else{dl.textContent="P1 ⚠ "+L.status;dl.style.color="var(--amber)";}
   }
   const rem=Math.max(0,LIVE.pollMs-(Date.now()-LIVE.lastFetch));
-  $("syncIn").textContent="sync "+(LIVE.busy?"now…":Math.ceil(rem/1000)+"s");
+  $("syncIn").textContent="brain-sync "+(LIVE.busy?"now…":Math.ceil(rem/1000)+"s");
 }
 function startHeartbeat(){
   if(LIVE.timer)clearInterval(LIVE.timer);
   LIVE.timer=setInterval(function(){updateLiveUI();if(document.hidden)return;refreshData();},LIVE.pollMs);
-  pulse("heartbeat started · 33% grid + L2 · every "+(LIVE.pollMs/1000)+"s","pa");
+  pulse("heartbeat started · realtime 4s + brain "+(LIVE.pollMs/1000)+"s","pa");
 }
-document.addEventListener("visibilitychange",function(){if(!document.hidden)refreshData();});
-window.addEventListener("online",function(){pulse("internet restored → sync","pa");refreshData();});
+document.addEventListener("visibilitychange",function(){if(!document.hidden){refreshData();rtTick();}});
+window.addEventListener("online",function(){pulse("internet restored","pa");refreshData();rtTick();});
 window.addEventListener("offline",function(){pulse("browser offline","pr");});
 setInterval(updateLiveUI,1000);
-setInterval(function(){if(!document.hidden&&ENGINE_OBJ)renderSignalDesk();},15000);
 
 function renderTicker(){
   const L=getLiveState();let items=[];
   Object.keys(C.symbols).forEach(function(k){
     const sn=(STATE&&STATE.symbols)?STATE.symbols[k]:null;
     let sig="—",cls="";
-    if(sn){const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
+    if(RT.data&&RT.key===k+"|"+CUR_TF)sig=RT.data.final.signal;
+    else if(sn){const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
       sig=(t&&t.final&&t.final.signal)||(t&&t.signal)||(sn.signal||"HOLD");}
     if(sig==="BUY")cls="g";if(sig==="SELL")cls="r";
-    items.push("<b>"+k+"</b> "+fmt(sn?sn.price:null,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+")");
+    const px=RT.data&&RT.key===k+"|"+CUR_TF?RT.data.l2.mid:(sn?sn.price:null);
+    items.push("<b>"+k+"</b> "+fmt(px,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+")");
   });
   const eq=(STATE&&STATE.stats)?STATE.stats.equity:null;
   const sa=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.overall!=null)?STATE.system_accuracy.overall+"%":"—";
@@ -567,53 +589,51 @@ function renderTicker(){
 function renderAction(){
   const SN=curSN(),rp=$("actionPanel");
   $("recSym").textContent=CUR_SYM;$("recTF").textContent=CUR_TF;
+  resolveLayer();
   const eff=ENGINE.eff;
   const fin=eff&&eff.final?eff.final:null;
   let sig=fin?fin.signal:null;
   const plan=eff&&eff.plans?(sig==="BUY"?(eff.plans.B1||eff.plans.B2):(sig==="SELL"?(eff.plans.S1||eff.plans.S2):null)):null;
+  const ep=eff&&eff.entryPlan?eff.entryPlan:null;
   rp.classList.toggle("closed",!sig||sig==="WAIT"||sig==="HOLD"||sig==="NO_TRADE");
   const ra=$("recAction");
   ra.textContent=sig?(sig==="HOLD"?"HOLD":sig):"AWAITING DATA";
   ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
-  $("recNote").textContent=fin?(fin.why||""):"cascade pending (brain state ya candles chahiye)";
+  $("recNote").textContent=fin?(fin.why||""):"cascade pending";
   $("recBy").textContent="engine: "+(ENGINE.layer||"—")+" · conf: "+(fin?fin.confidence+"%":"—")+" · SIGNAL ONLY";
-  $("recEntry").textContent=plan?String(plan.entry):"—";
-  $("recTP").textContent=(plan&&plan.tp!=null&&plan.sl!=null)?("TP "+plan.tp+" (SL "+plan.sl+")"):"—";
-  const rz=$("recZone");
+  const show=ep||plan;
+  $("recEntry").textContent=show?String(show.entry):"—";
+  $("recTP").textContent=(show&&show.tp!=null&&show.sl!=null)?("TP "+show.tp+" (SL "+show.sl+")"):"—";
   const fz=fin&&fin.first_zone?fin.first_zone:null;
+  const rz=$("recZone");
   rz.textContent="ZONE: "+(fz||"—");
   rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
 }
 
-/* ═══ SIGNAL DESK ═══ */
 function renderSignalDesk(){
   resolveLayer();
   const eff=ENGINE.eff, SN=curSN();
   const G=eff&&eff.grid?eff.grid:null;
   const fin=eff&&eff.final?eff.final:null;
-  const l2=SN&&SN.l2?SN.l2:null;
-  setTxt("sdSrc","src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF,false);
+  const l2=eff&&eff.l2?eff.l2:(SN&&SN.l2?SN.l2:null);
+  setTxt("sdSrc","src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF+" · "+(ENGINE.layer==="REALTIME"?rtAgeText():stateAgeText()),false);
   if(G){
     const b=G.bands||{}, lv=G.levels||{};
-    const cells=[["COLOR",G.color||"—"],
+    const cells=[["ANCHOR",G.color||"—"],
       ["0%",fmt(b.l0!=null?b.l0:lv.BUY2,2)],
       ["33%",fmt(b.l33!=null?b.l33:lv.BUY1,2)],
       ["66%",fmt(b.l66!=null?b.l66:lv.SELL1,2)],
       ["100%",fmt(b.l100!=null?b.l100:lv.SELL2,2)],
       ["STEP",fmt(G.step,2)]];
     $("glvRow").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval">'+c[1]+"</div></div>").join("");
-  }else{
-    $("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';
-  }
+  }else $("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';
   if(l2){
     const cells=[["BEST BID",fmt(l2.bid,2),"g"],["BEST ASK",fmt(l2.ask,2),"r"],
-      ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(SN.price,2),""],
+      ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(l2.mid,2),""],
       ["IMBALANCE",(l2.imb>=0?"+":"")+l2.imb+"%",l2.imb>=0?"g":"r"],
       ["WALLS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
     $("l2Row").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval '+(c[2]||"")+'">'+c[1]+"</div></div>").join("");
-  }else{
-    $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">brain publish ke baad (live: live.html)</div></div>';
-  }
+  }else $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">realtime feed connecting…</div></div>';
   const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
   const zp=$("zPos");
   zp.textContent="PRICE POSITION: "+(pos||"—");
@@ -621,7 +641,7 @@ function renderSignalDesk(){
   const act=(SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)||pos;
   const za=$("zAct");za.textContent="ZONE MAP: "+(act||"—");
   za.className="zonebadge "+(act==="SELL_ZONE"?"zb-sell":act==="BUY_ZONE"?"zb-buy":"zb-mid");
-  const P=eff&&eff.plans?eff.plans:(G&&G.plans?G.plans:null);
+  const P=eff&&eff.plans?eff.plans:null;
   if(P&&P.B1){
     const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br><span style='color:var(--muted)'>"+extra+"</span>":"")+"</div></div>";
     $("planBoxes").innerHTML=
@@ -630,7 +650,7 @@ function renderSignalDesk(){
       box("S1 · primary SELL","sells",P.S1,"RR 1:2 min · shared SL")+
       box("S2 · higher SELL","sells",P.S2,"TP=S1 · SL 1 step above");
   }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid chahiye</div></div>';
-  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL pending — brain publish ya candles+engine chahiye";
+  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL pending — realtime feed + engine chahiye";
 }
 
 function renderPillars(){
@@ -648,11 +668,10 @@ function renderModels(){
   setTxt("modLabel",CUR_SYM,false);setTxt("modTF",CUR_TF,false);
   const eff=ENGINE.eff;
   const M=eff&&eff.models?eff.models:null;
-  const defs=[["GRID","33% zone position",M&&M.grid]];
-  if(M&&M.l2)defs.push(["L2 BOOK","imbalance ±"+C.l2.imbThreshold+"% · walls",M.l2]);
-  else if(M&&M.kronos)defs.push(["KRONOS","stretch fade (candle-only)",M.kronos]);
-  defs.push(["QUANT","RSI + MACD hist",M&&M.quant]);
-  defs.push(["TAURUS","regime/vol modifier",M&&M.taurus]);
+  const defs=[["GRID","33% zone position",M&&M.grid],
+    ["L2 BOOK","imbalance + walls (decisive)",M&&M.l2],
+    ["QUANT","RSI + MACD",M&&M.quant],
+    ["TAURUS","regime/vol modifier",M&&M.taurus]];
   $("modelGrid").innerHTML=defs.map(function(d){
     const m=d[2];
     const bias=m?(m.bias||m.next_hour_bias||"HOLD"):"—";
@@ -668,9 +687,10 @@ function renderModels(){
   });
 }
 function renderIndicators(){
-  const SN=curSN();
-  let ind=(SN&&SN.indicators)||null;
-  if(!ind&&ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(getCandles(),CUR_TF);ind=f?f.indicators:null;}
+  const eff=ENGINE.eff;
+  let ind=eff&&eff.indicators?eff.indicators:null;
+  if(!ind){const SN=curSN();ind=SN&&SN.indicators?SN.indicators:null;}
+  if(!ind&&ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(botCandles(),CUR_TF);ind=f?f.indicators:null;}
   setTxt("indTF",ind?"last closed candle":"pending",false);
   const g=$("indGrid");
   if(!ind){g.innerHTML=["RSI","MACD-HIST","EMA20","EMA50"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳</div><div class="istat">candles chahiye</div></div>').join("");return;}
@@ -772,10 +792,11 @@ async function loadReports(){
 }
 function renderReportsSummary(){
   const el=$("repSummary");const L=getLiveState();
-  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi — brain run karein (MATRIX phir bhi live hai).</span>';return;}
+  let h="<b>⚡ Realtime:</b> "+(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF?("LIVE · "+rtAgeText()+" · "+ENGINE.layer):"connecting…")+"\n";
+  if(!STATE){el.innerHTML=h+'<span class="blink">⏳ Brain state load nahi — realtime layer phir bhi chal raha hai.</span>';return;}
   const ps=STATE.pillar_score||{};
-  let h="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(ENGINE.layer||"—")+"  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
-    +"<b>📡 Data:</b> "+L.status+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n";
+  h+="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
+    +"<b>📡 Data:</b> "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
   if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
     h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"%)"):"")+"\n";
@@ -808,7 +829,7 @@ async function previewFile(p){
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ============ CANVAS — 33% bands draw ============ */
+/* ============ CANVAS — 33% bands ============ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function drawGrid(){
@@ -825,7 +846,7 @@ function drawGrid(){
   const grad=ctx.createLinearGradient(sx-30,0,sx+30,0);
   grad.addColorStop(0,"rgba(0,243,255,0)");grad.addColorStop(.5,"rgba(0,243,255,.14)");grad.addColorStop(1,"rgba(0,243,255,0)");
   ctx.fillStyle=grad;ctx.fillRect(sx-30,0,60,H);
-  const cs=getCandles();
+  const cs=(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:botCandles();
   if(cs&&validCandles(cs)){
     const view=cs.slice(-60);
     const G=ENGINE_OBJ?ENGINE_OBJ.gridFromCandles(cs):null;
@@ -861,8 +882,7 @@ function drawGrid(){
     ctx.beginPath();ctx.moveTo(0,y(last.c));ctx.lineTo(W,y(last.c));ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle="rgba(0,243,255,"+(pl+.3)+")";ctx.font="bold 13px JetBrains Mono";
     ctx.fillText(last.c.toFixed(2),W-90,y(last.c)-6);
-    const SN=curSN();
-    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+(SN&&SN.candles&&SN.candles[CUR_TF]?"brain candles":"direct feed"),false);
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · realtime feed",false);
   }else{
     ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
     ctx.font="bold 16px Orbitron";ctx.textAlign="center";
@@ -873,7 +893,7 @@ function drawGrid(){
     setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · no data",false);
   }
   setTxt("gridMeta",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),false);
-  setTxt("gridStatus",CUR_TF+" · "+getLiveState().status+" · "+stateAgeText(),false);
+  setTxt("gridStatus",CUR_TF+" · "+getLiveState().status,false);
   $("gridStatus").className=getLiveState().status==="LIVE"?"live":"live warn";
   requestAnimationFrame(drawGrid);
 }
@@ -892,35 +912,35 @@ document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
 });
 document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".sym-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_SYM=this.dataset.sym;DIRECT=null;DIRECT_KEY="";
-  pulse("SYMBOL → "+CUR_SYM,"pa");ensureDirect().then(()=>renderAll());
+  this.classList.add("active");CUR_SYM=this.dataset.sym;RT.data=null;RT.key="";
+  pulse("SYMBOL → "+CUR_SYM,"pa");rtTick().then(()=>renderAll());
 }));
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_TF=this.dataset.tf;DIRECT=null;DIRECT_KEY="";
-  pulse("TIMEFRAME → "+CUR_TF+" · grid+models re-eval","pa");
-  ensureDirect().then(()=>{renderAll();renderReportsSummary();});
+  this.classList.add("active");CUR_TF=this.dataset.tf;RT.data=null;RT.key="";
+  pulse("TIMEFRAME → "+CUR_TF+" · realtime re-eval","pa");
+  rtTick().then(()=>{renderAll();renderReportsSummary();});
 }));
- $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();});
+ $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();rtTick();});
  $("repRefresh").addEventListener("click",loadReports);
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
-    "FACE  : "+C.faceRepo+" (public)\nHEART : "+C.heartRepo+" (private)\nBRAIN : colab_LLM_brain.py v5.1\n"+
-    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" loaded"):"NOT LOADED")+"\n"+
-    "GRID  : H1 33% color-based · SL 0.25R · RR 1:2\n"+
-    "L2    : imbalance ±"+C.l2.imbThreshold+"% · depth "+C.l2.depth+" · walls B5/A60\n"+
-    "MODE  : SIGNAL ONLY — no auto execution";
+    "FACE  : "+C.faceRepo+" (public · yeh UI)\nHEART : "+C.heartRepo+" (private · engine.js + records)\n"+
+    "BRAIN : colab_LLM_brain.py v5.1 (Colab)\n"+
+    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · strategy constants ANDAR (private)"):"NOT LOADED")+"\n"+
+    "MODES : REALTIME 4s (browser) → BRAIN 3m → FALLBACK\n"+
+    "SECURE: formula public repo mein NAHI · token-gated · HTTPS";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
  $("closeCfg").addEventListener("click",function(){$("cfgOverlay").classList.remove("open");$("cfgPanel").classList.remove("open");});
  $("cfgOverlay").addEventListener("click",function(){this.classList.remove("open");$("cfgPanel").classList.remove("open");});
- $("btnEngineReload").addEventListener("click",async function(){ENGINE_OBJ=null;await loadEngine(true);renderAll();});
+ $("btnEngineReload").addEventListener("click",async function(){ENGINE_OBJ=null;await loadEngine(true);rtTick();renderAll();});
 function logout(){localStorage.removeItem("hermes_tok");location.reload();}
  $("btnLogout").addEventListener("click",logout);
  $("btnLogout2").addEventListener("click",logout);
  $("saveLLM").addEventListener("click",function(){
   localStorage.setItem("fl200_llm",$("cfgLLM").value.trim());
-  $("cfgOut").textContent="Saved (browser-only). Local LLM taiyar hone par plug hoga.";
+  $("cfgOut").textContent="Saved (browser-only). Brain local-LLM plug ke liye note rakhein.";
 });
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
@@ -930,8 +950,11 @@ function logout(){localStorage.removeItem("hermes_tok");location.reload();}
 /* ============ LOCK / INIT ============ */
 function unlockUI(){
   $("lock").style.display="none";
-  pulse("FACE online · 33% GRID + L2 armed (SIGNAL ONLY)","pa");
-  loadEngine(true).then(function(){startHeartbeat();refreshData();loadStrategy();ensureDirect();});
+  pulse("FACE online · engine load ho raha (private heart se)…","pa");
+  loadEngine(true).then(function(){
+    startHeartbeat();refreshData();loadStrategy();rtTick();
+    setInterval(function(){if(!document.hidden)rtTick();},4000);
+  });
 }
  $("lockBtn").addEventListener("click",async function(){
   const tok=$("ltok").value.trim(),pass=$("lpass").value.trim(),err=$("lockErr");

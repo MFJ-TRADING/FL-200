@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FARRUKH GRID FACE · v9.0</title>
+<title>FL-200 · 33% GRID + L2 · FACE v10.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -54,6 +54,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:8px 11px;border-radius:4px}
 .mlabel{font-size:.78rem;color:var(--muted)}
 .mval{font-family:'Orbitron';font-size:1.1rem}
+.mval.g{color:var(--green)}.mval.r{color:var(--red)}.mval.y{color:var(--amber)}.mval.na{color:var(--muted);font-size:.85rem}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .price{font-family:'Orbitron';font-size:2.1rem;font-weight:800}
 .pulse-box{font-family:'JetBrains Mono';font-size:.8rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;height:150px;overflow-y:auto;line-height:1.75}
@@ -71,11 +72,11 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .glv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
 .glv .mbox{text-align:center}
 .glv .mval{font-size:1rem}
-.gz{font-size:.78rem;font-family:'JetBrains Mono';color:var(--muted)}
 .zonebadge{font-family:'Orbitron';font-size:.85rem;padding:5px 12px;border-radius:4px;border:1px solid var(--border)}
 .zb-buy{color:var(--green);border-color:rgba(0,255,102,.4);background:rgba(0,255,102,.08)}
 .zb-sell{color:var(--red);border-color:rgba(255,0,85,.4);background:rgba(255,0,85,.08)}
 .zb-mid{color:var(--amber);border-color:rgba(255,170,0,.35);background:rgba(255,170,0,.07)}
+.gz{font-size:.78rem;font-family:'JetBrains Mono';color:var(--muted)}
 .final-box{font-family:'JetBrains Mono';font-size:.85rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:12px;line-height:1.8;white-space:pre-wrap}
 .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
 .plan{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px}
@@ -157,8 +158,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FARRUKH GRID · FACE·HEART·BRAIN — v9.0</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">SIGNAL ONLY · fade-first-touch · B1/B2/S1/S2 plans · FACE_TOKEN read-only</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">H1 33% GRID + LEVEL-2 · FACE·HEART·BRAIN v10</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">SIGNAL ONLY · FACE_TOKEN (read-only PAT)</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -167,7 +168,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <nav class="top-nav">
-<div class="brand">⚡ FL-200 <span>GRID FACE</span></div>
+<div class="brand">⚡ FL-200 <span>GRID·L2</span></div>
 <div class="nav-links">
 <button class="nav-btn active" data-s="dash">DASHBOARD</button>
 <button class="nav-btn" data-s="strategy">STRATEGY</button>
@@ -177,10 +178,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">GRID v9</span>
+<span class="tier-badge">33%+L2 v10</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v9.0</div>
+<div class="status"><div class="dot"></div> v10.0</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -216,18 +217,19 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="byline" id="recBy">—</div>
 </div>
 <div class="mbox"><div class="mlabel">ACTION</div><div class="action-signal" id="recAction">—</div></div>
-<div class="mbox"><div class="mlabel">ENTRY (primary)</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
+<div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
 <div class="mbox"><div class="mlabel">TP / SL</div><div class="mval" id="recTP">—</div></div>
 </div>
 
-<!-- ═══ SIGNAL DESK: point 0 + 1 + 2 + 3 + 5 ka live display ═══ -->
+<!-- ═══ SIGNAL DESK — 33% grid + L2 + plans + 7-part ═══ -->
 <div class="panel full">
-<div class="ph"><span>🎯 SIGNAL DESK — GRID LEVELS · FIRST ZONE · PLANS · FINAL (7-part)</span><span id="sdSrc" class="live">—</span></div>
+<div class="ph"><span>🎯 SIGNAL DESK — 33% GRID · L2 BOOK · PLANS · FINAL (7-part)</span><span id="sdSrc" class="live">—</span></div>
 <div class="glv" id="glvRow"></div>
+<div class="glv" id="l2Row"></div>
 <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-<span class="zonebadge zb-mid" id="zPrev">MODEL first-zone guess: —</span>
-<span class="zonebadge zb-mid" id="zAct">ACTUAL first touch (live): —</span>
-<span class="gz" id="fadeRule">RULE: SELL_ZONE first → fade BUY · BUY_ZONE first → fade SELL · MID → HOLD</span>
+<span class="zonebadge zb-mid" id="zPos">PRICE POSITION: —</span>
+<span class="zonebadge zb-mid" id="zAct">ZONE MAP: —</span>
+<span class="gz" id="fadeRule">RULE: lower band + buyers → BUY · upper band + sellers → SELL · else WAIT</span>
 </div>
 <div class="plans" id="planBoxes"></div>
 <div class="final-box" id="finalBox" style="margin-top:10px">—</div>
@@ -236,7 +238,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="panel span2">
 <div class="ph"><span>📊 MARKET · <span id="mktSym">—</span></span><span id="mktLive" class="live">—</span></div>
 <div class="mgrid">
-<div class="mbox"><div class="mlabel">PRICE</div><div class="price" id="livePrice">—</div></div>
+<div class="mbox"><div class="mlabel">PRICE (MID)</div><div class="price" id="livePrice">—</div></div>
 <div class="mbox"><div class="mlabel">DATA LAYER (P1)</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">STATE AGE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:3px">24/7</div></div>
@@ -249,12 +251,12 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🛡️ DECISION ENGINE — BRAIN(BOT) → MATRIX(engine.js full strategy)</span><span class="live" id="engWhy">—</span></div>
+<div class="ph"><span>🛡️ DECISION ENGINE — BRAIN(33%+L2) → MATRIX(engine.js)</span><span class="live" id="engWhy">—</span></div>
 <div class="eng-grid" id="engGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🕯️ FARRUKH GRID CHART · <span id="gridTitle">—</span> · anchor candle[1] + zone lines</span><span id="gridStatus" class="live">—</span></div>
+<div class="ph"><span>🕯️ 33% GRID CHART · <span id="gridTitle">—</span> · anchor candle[1] + bands</span><span id="gridStatus" class="live">—</span></div>
 <div class="candle-wrap">
 <div class="candle-head">
 <span style="font-family:'Orbitron';font-size:.85rem;color:var(--cyan)" id="gridSrc">—</span>
@@ -279,12 +281,12 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🧬 MODEL VOTES · <span id="modLabel">—</span> · <span id="modTF">H1</span> · bias | conf | first_zone_guess</span><span style="font-size:.75rem;color:var(--muted)">click = detail</span></div>
+<div class="ph"><span>🧬 MODEL VOTES · <span id="modLabel">—</span> · <span id="modTF">H1</span></span><span style="font-size:.75rem;color:var(--muted)">click = detail</span></div>
 <div class="model-grid" id="modelGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📉 INDICATORS (P1 verified · RSI + MACD feed QUANT)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
+<div class="ph"><span>📉 INDICATORS (P1 verified · QUANT confirm)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
 <div class="ind-grid" id="indGrid"></div>
 </div>
 
@@ -309,7 +311,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div></div></div>
 
 <div class="section" id="rules">
-<div class="panel full"><div class="ph"><span>📜 RISK RULES (P7 · SIGNAL ONLY — user decides)</span></div>
+<div class="panel full"><div class="ph"><span>📜 RISK RULES (P7 · SIGNAL ONLY)</span></div>
 <div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
 
 <div class="section" id="reports">
@@ -319,24 +321,25 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div id="repFiles">Scanning…</div></div>
 <div class="panel full"><div class="ph"><span>📖 GUIDE</span></div>
 <div class="guide">
-<b>Flow:</b> BRAIN (Colab) har H1 close par <code>grid_from_candles</code> → 4 models → <code>decision_matrix</code> → 7-part FINAL publish karta hai. FACE usay dikhata hai; aur agar BRAIN band ho, <code>engine.js</code> wahi math candles se khud chalata hai (MATRIX layer).<br>
-<b>Strategy:</b> candle[1] anchor grid · pehli zone touch ka ulta (fade) · BUY→B1/B2 · SELL→S1/S2 · R:R min 1:2 (B1/S1) · TP(B2)=B1 · TP(S2)=S1.<br>
+<b>Flow:</b> BRAIN (Colab) har 4s live panel + har 3 min publish: H1 33% grid (candle[1], color-based) + Level-2 imbalance/walls → signal + plan (RR 1:2) → 7-part FINAL. FACE usay dikhata hai; brain band ho to <code>engine.js</code> candle-only fallback chalata hai.<br>
+<b>Real-time seconds-level ke liye:</b> <code>live.html</code> (FACE repo) kholein — seedha Binance se.<br>
+<b>Signal rule:</b> GREEN: mid ≤33% + imb ≥+15% → BUY · mid ≥66% + imb ≤−15% → SELL · RED: mirror. Warna WAIT.<br>
 <b>Sirf signal</b> — koi execution nahi.
 </div></div>
 </div>
 
 <div class="section" id="pillars">
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
-<div class="inst">P1 DATA — valid candles, bad data = HOLD.
+<div class="inst">P1 DATA — valid candles + L2 feed. Bad data = WAIT.
 P2 ANALYZE — models apna record dekh kar vote.
-P3 SELF-IMPROVE — accuracy from resolved predictions.
+P3 SELF-IMPROVE — grid/l2/ensemble accuracy from resolved preds.
 P4 PERSIST — append-only hash-chained ledger.
 P5 COMPARE — accuracy delta per run.
 P6 LESSONS — reserved (local-LLM era).
 P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
 P8 SIMULATE→DECIDE→TAG — reproducibility tag.
 P9 SECURITY — FACE read-only · BRAIN writer · zero AI keys.
-P10 HEALTH — Colab band → MATRIX layer khud chalta rehta hai.
+P10 HEALTH — brain band → MATRIX (engine.js) chalta rehta hai.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
@@ -353,6 +356,10 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE.JS</button>
 <button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
 </div>
+<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin:14px 0 6px">LOCAL LLM (RESERVED)</div>
+<input id="cfgLLM" placeholder="http://localhost:11434/v1/chat/completions (future)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;font-family:JetBrains Mono">
+<button class="rbtn" style="width:100%;padding:9px;margin-top:8px" id="saveLLM">SAVE (browser-only · P9)</button>
+<div id="cfgOut" style="font-size:.78rem;margin-top:8px;color:var(--muted)">—</div>
 </div>
 </div>
 
@@ -370,7 +377,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v9.0 — Farrukh Grid Strategy: fade-first-touch · B1/B2/S1/S2 · 4-model matrix");
+console.log("FL-200 v10.0 FACE — 33% grid + L2 · brain publish → engine.js fallback");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -383,7 +390,7 @@ const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
 
-/* ============ GITHUB (read-only FACE_TOKEN) ============ */
+/* ============ GITHUB (read-only) ============ */
 async function ghFetch(repo,path,accept){
   const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+path+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:accept||"application/vnd.github.raw+json"},cache:"no-store"});
   if(!r.ok)throw new Error("gh "+r.status);return r;
@@ -399,7 +406,7 @@ const ext=p=>(p.split(".").pop()||"").toLowerCase();
 const isBin=p=>["png","jpg","jpeg","webp"].includes(ext(p));
 const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",js:"text/javascript"};
 
-/* ============ ENGINE LOADER (heart) ============ */
+/* ============ ENGINE LOADER ============ */
 async function loadEngine(force){
   const now=Date.now();
   if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
@@ -408,7 +415,7 @@ async function loadEngine(force){
     (new Function(txt))();
     if(!window.FL200_ENGINE)throw new Error("FL200_ENGINE missing");
     ENGINE_OBJ=window.FL200_ENGINE;ENGINE_TS=now;
-    pulse("engine.js ✓ v"+ENGINE_OBJ.version+" (grid+models+matrix)","pg");
+    pulse("engine.js ✓ v"+ENGINE_OBJ.version+" (33% grid)","pg");
   }catch(e){pulse("engine load FAIL: "+e.message,"pr");ENGINE_OBJ=null;}
   return ENGINE_OBJ;
 }
@@ -458,14 +465,14 @@ async function ensureDirect(){
   }catch(e){}
 }
 
-/* ============ CASCADE + STRATEGY SOURCES ============ */
+/* ============ CASCADE ============ */
 function botTF(){
   const SN=curSN();
   return (SN&&SN.timeframes)?SN.timeframes[CUR_TF]||null:null;
 }
 function resolveLayer(){
   const SN=curSN(),L=getLiveState(),bt=botTF();
-  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BOT";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain";}
+  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BOT";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain-l2";}
   else if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(getCandles(),CUR_TF);
     if(f){ENGINE.layer="MATRIX";ENGINE.eff=f;ENGINE.eff.src="matrix-engine";}}
   else{ENGINE.layer="NONE";ENGINE.eff=null;}
@@ -475,9 +482,9 @@ function renderEngine(){
   const actKey={BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
     ["L2 · BRAIN (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ STATE "+stateAgeText():"✗ NO/STALE",
-     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · conf "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein — band ho to MATRIX khud chalta hai"],
+     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · conf "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein — band ho to MATRIX chalta hai"],
     ["L3 · MATRIX (engine.js)",mx?"✓ READY":"— NODATA",
-     mx?(CUR_TF+" "+mx.final.signal+" · conf "+mx.final.confidence+"% · zone "+(mx.firstZone?mx.firstZone.zone:"—")):(ENGINE_OBJ?"candles chahiye":"engine.js load FAIL — ⚙ reload")],
+     mx?(CUR_TF+" "+mx.final.signal+" · conf "+mx.final.confidence+"% · "+(mx.grid?mx.grid.color:"")+" anchor"):(ENGINE_OBJ?"candles chahiye":"engine.js load FAIL — ⚙ reload")],
     ["L1 · LOCAL LLM","RESERVED","Future plug-in (abhi zero AI keys)"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
     const k=["bot","mx","llm"][i];
@@ -534,13 +541,12 @@ function updateLiveUI(){
 function startHeartbeat(){
   if(LIVE.timer)clearInterval(LIVE.timer);
   LIVE.timer=setInterval(function(){updateLiveUI();if(document.hidden)return;refreshData();},LIVE.pollMs);
-  pulse("heartbeat started · fade-first-touch loop · every "+(LIVE.pollMs/1000)+"s","pa");
+  pulse("heartbeat started · 33% grid + L2 · every "+(LIVE.pollMs/1000)+"s","pa");
 }
 document.addEventListener("visibilitychange",function(){if(!document.hidden)refreshData();});
 window.addEventListener("online",function(){pulse("internet restored → sync","pa");refreshData();});
 window.addEventListener("offline",function(){pulse("browser offline","pr");});
 setInterval(updateLiveUI,1000);
-/* live recompute every 15s (user can't sit all day — auto loop, point 7) */
 setInterval(function(){if(!document.hidden&&ENGINE_OBJ)renderSignalDesk();},15000);
 
 function renderTicker(){
@@ -555,7 +561,7 @@ function renderTicker(){
   });
   const eq=(STATE&&STATE.stats)?STATE.stats.equity:null;
   const sa=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.overall!=null)?STATE.system_accuracy.overall+"%":"—";
-  const seg="<b>⚡ FL-200 GRID</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; SYS-ACC <b>"+sa+"</b> &nbsp;|&nbsp; ";
+  const seg="<b>⚡ FL-200</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; SYS-ACC <b>"+sa+"</b> &nbsp;|&nbsp; ";
   $("ticker").innerHTML=seg+seg;
 }
 function renderAction(){
@@ -565,7 +571,7 @@ function renderAction(){
   const fin=eff&&eff.final?eff.final:null;
   let sig=fin?fin.signal:null;
   const plan=eff&&eff.plans?(sig==="BUY"?(eff.plans.B1||eff.plans.B2):(sig==="SELL"?(eff.plans.S1||eff.plans.S2):null)):null;
-  rp.classList.toggle("closed",!sig||sig==="HOLD"||sig==="WAIT"||sig==="NO_TRADE");
+  rp.classList.toggle("closed",!sig||sig==="WAIT"||sig==="HOLD"||sig==="NO_TRADE");
   const ra=$("recAction");
   ra.textContent=sig?(sig==="HOLD"?"HOLD":sig):"AWAITING DATA";
   ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
@@ -573,46 +579,58 @@ function renderAction(){
   $("recBy").textContent="engine: "+(ENGINE.layer||"—")+" · conf: "+(fin?fin.confidence+"%":"—")+" · SIGNAL ONLY";
   $("recEntry").textContent=plan?String(plan.entry):"—";
   $("recTP").textContent=(plan&&plan.tp!=null&&plan.sl!=null)?("TP "+plan.tp+" (SL "+plan.sl+")"):"—";
+  const rz=$("recZone");
+  const fz=fin&&fin.first_zone?fin.first_zone:null;
+  rz.textContent="ZONE: "+(fz||"—");
+  rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
 }
 
-/* ═══ SIGNAL DESK — point 0/1/2/3/5 ka poora display ═══ */
+/* ═══ SIGNAL DESK ═══ */
 function renderSignalDesk(){
   resolveLayer();
-  const eff=ENGINE.eff;
-  const G=eff&&eff.grid?eff.grid:(ENGINE_OBJ?((ENGINE_OBJ.fullSignal(getCandles(),CUR_TF)||{}).grid):null);
+  const eff=ENGINE.eff, SN=curSN();
+  const G=eff&&eff.grid?eff.grid:null;
   const fin=eff&&eff.final?eff.final:null;
-  const fz=eff&&eff.firstZone?eff.firstZone:null;
-  const gPrev=eff&&eff.models?eff.models:null;
-  $("sdSrc").textContent="src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF;
+  const l2=SN&&SN.l2?SN.l2:null;
+  setTxt("sdSrc","src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF,false);
   if(G){
-    const cells=[["ANCHOR C[1]",fmt(G.anchor?G.anchor.C:null,2)],["BUY2",fmt(G.levels.BUY2,2)],["BUY1",fmt(G.levels.BUY1,2)],
-      ["SELL1",fmt(G.levels.SELL1,2)],["SELL2",fmt(G.levels.SELL2,2)],["ExpH / ExpL",fmt(G.expected.high,2)+" / "+fmt(G.expected.low,2)]];
+    const b=G.bands||{}, lv=G.levels||{};
+    const cells=[["COLOR",G.color||"—"],
+      ["0%",fmt(b.l0!=null?b.l0:lv.BUY2,2)],
+      ["33%",fmt(b.l33!=null?b.l33:lv.BUY1,2)],
+      ["66%",fmt(b.l66!=null?b.l66:lv.SELL1,2)],
+      ["100%",fmt(b.l100!=null?b.l100:lv.SELL2,2)],
+      ["STEP",fmt(G.step,2)]];
     $("glvRow").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval">'+c[1]+"</div></div>").join("");
-    $("gridMeta").textContent="anchor "+(G.anchor&&G.anchor.isRed?"RED (pred skew down)":"GREEN (pred skew up)")+" · pred C "+fmt(G.pred?G.pred.close:null,2)+" · step "+fmt(G.step,2);
-  }else{$("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';$("gridMeta").textContent="";}
-  /* actual first-zone live (engine local, sticky per hour) */
-  let zactTxt="—",zactCls="zb-mid";
-  if(ENGINE_OBJ){
-    const fzLive=ENGINE_OBJ.firstZone(getCandles(),G,CUR_TF);
-    if(fzLive){zactTxt="ACTUAL: "+fzLive.zone+(fzLive.hour_key?(" · "+fzLive.hour_key):"");
-      zactCls=fzLive.zone==="SELL_ZONE"?"zb-sell":fzLive.zone==="BUY_ZONE"?"zb-buy":"zb-mid";}
-  }else if(fz){zactTxt="ACTUAL (brain): "+fz.zone;zactCls=fz.zone==="SELL_ZONE"?"zb-sell":fz.zone==="BUY_ZONE"?"zb-buy":"zb-mid";}
-  const zb=$("zAct");zb.textContent=zactTxt;zb.className="zonebadge "+zactCls;
-  const gp=gPrev?(gPrev.grid&&gPrev.grid.first_zone_guess):(fin?fin.first_zone:null);
-  const zp=$("zPrev");
-  zp.textContent="MODEL guess: "+(gp||"—");
-  zp.className="zonebadge "+(gp==="SELL_ZONE"?"zb-sell":gp==="BUY_ZONE"?"zb-buy":"zb-mid");
-  /* plan boxes — point 2/3 */
-  const P=eff&&eff.plans?eff.plans:null;
+  }else{
+    $("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';
+  }
+  if(l2){
+    const cells=[["BEST BID",fmt(l2.bid,2),"g"],["BEST ASK",fmt(l2.ask,2),"r"],
+      ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(SN.price,2),""],
+      ["IMBALANCE",(l2.imb>=0?"+":"")+l2.imb+"%",l2.imb>=0?"g":"r"],
+      ["WALLS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
+    $("l2Row").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval '+(c[2]||"")+'">'+c[1]+"</div></div>").join("");
+  }else{
+    $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">brain publish ke baad (live: live.html)</div></div>';
+  }
+  const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
+  const zp=$("zPos");
+  zp.textContent="PRICE POSITION: "+(pos||"—");
+  zp.className="zonebadge "+(pos==="SELL_ZONE"?"zb-sell":pos==="BUY_ZONE"?"zb-buy":"zb-mid");
+  const act=(SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)||pos;
+  const za=$("zAct");za.textContent="ZONE MAP: "+(act||"—");
+  za.className="zonebadge "+(act==="SELL_ZONE"?"zb-sell":act==="BUY_ZONE"?"zb-buy":"zb-mid");
+  const P=eff&&eff.plans?eff.plans:(G&&G.plans?G.plans:null);
   if(P&&P.B1){
-    const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br>"+extra:"")+"</div></div>";
-    const rb1=P.B1.risk?("risk "+fmt(P.B1.risk,2)+" · R:R 1:2 ✓"):"";
+    const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br><span style='color:var(--muted)'>"+extra+"</span>":"")+"</div></div>";
     $("planBoxes").innerHTML=
-      box("B1 · primary BUY","buys",P.B1,rb1)+box("B2 · deeper BUY","buys",P.B2,"TP=B1 · SL 1 step below B2")+
-      box("S1 · primary SELL","sells",P.S1,rb1&&P.S1.risk?("risk "+fmt(P.S1.risk,2)+" · R:R 1:2 ✓"):"")+box("S2 · higher SELL","sells",P.S2,"TP=S1 · SL 1 step above S2");
-  }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid + signal chahiye</div></div>';
-  /* 7-part final — point 5 output format */
-  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL signal pending — brain publish ya candles+engine chahiye";
+      box("B1 · primary BUY","buys",P.B1,"RR 1:2 min · shared SL")+
+      box("B2 · deeper BUY","buys",P.B2,"TP=B1 · SL 1 step below")+
+      box("S1 · primary SELL","sells",P.S1,"RR 1:2 min · shared SL")+
+      box("S2 · higher SELL","sells",P.S2,"TP=S1 · SL 1 step above");
+  }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid chahiye</div></div>';
+  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL pending — brain publish ya candles+engine chahiye";
 }
 
 function renderPillars(){
@@ -630,29 +648,29 @@ function renderModels(){
   setTxt("modLabel",CUR_SYM,false);setTxt("modTF",CUR_TF,false);
   const eff=ENGINE.eff;
   const M=eff&&eff.models?eff.models:null;
-  const fin=eff&&eff.final?eff.final:null;
-  const defs=[["GRID","w 0.40 · structural base",M&&M.grid],
-    ["KRONOS","w 0.35 · stretch-fade",M&&M.kronos],
-    ["QUANT","w 0.25 · RSI+MACD",M&&M.quant],
-    ["TAURUS","modifier · regime/vol",M&&M.taurus]];
+  const defs=[["GRID","33% zone position",M&&M.grid]];
+  if(M&&M.l2)defs.push(["L2 BOOK","imbalance ±"+C.l2.imbThreshold+"% · walls",M.l2]);
+  else if(M&&M.kronos)defs.push(["KRONOS","stretch fade (candle-only)",M.kronos]);
+  defs.push(["QUANT","RSI + MACD hist",M&&M.quant]);
+  defs.push(["TAURUS","regime/vol modifier",M&&M.taurus]);
   $("modelGrid").innerHTML=defs.map(function(d){
     const m=d[2];
-    const bias=m?m.bias||m.next_hour_bias||"HOLD":"—";
+    const bias=m?(m.bias||m.next_hour_bias||"HOLD"):"—";
     const conf=m&&m.confidence!=null?m.confidence:null;
-    const fzg=m?(m.first_zone_guess||"—"):"—";
+    const fzg=m?(m.first_zone_guess||((m.regime?m.regime+" · "+m.vol:"")||"—")):"—";
     const col=bias==="BUY"?"var(--green)":bias==="SELL"?"var(--red)":bias==="HOLD"?"var(--amber)":"var(--muted)";
     const wl=conf==null?"l":conf>=65?"":conf>=45?"m":"l";
     const detail=m?JSON.stringify(m,null,2):"model data pending";
-    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+d[0]+'</div><div class="mtype">'+d[1]+'</div><div class="mpred" style="color:'+col+'">'+esc(bias)+'</div><div class="msig'+(conf==null?" na":"")+'">conf '+(conf==null?"—":conf+"%")+'</div><div class="mmeta">zone-guess: '+esc(fzg)+"</div>"+'<div class="wbar"><div class="wfill '+wl+'" style="width:'+(conf==null?8:Math.min(100,conf))+'%"></div></div></div>';
+    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+d[0]+'</div><div class="mtype">'+d[1]+'</div><div class="mpred" style="color:'+col+'">'+esc(bias)+'</div><div class="msig'+(conf==null?" na":"")+'">conf '+(conf==null?"—":conf+"%")+'</div><div class="mmeta">'+esc(fzg)+'</div><div class="wbar"><div class="wfill '+wl+'" style="width:'+(conf==null?8:Math.min(100,conf))+'%"></div></div></div>';
   }).join("");
   document.querySelectorAll("#modelGrid .mcard").forEach(function(el){
     el.addEventListener("click",function(){$("modTitle").textContent="MODEL DETAIL · "+CUR_SYM+" "+CUR_TF;$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
   });
 }
 function renderIndicators(){
-  const eff=ENGINE.eff;
-  let ind=eff&&eff.indicators?eff.indicators:null;
-  if(!ind&&ENGINE_OBJ)ind=ENGINE_OBJ.indicators(getCandles());
+  const SN=curSN();
+  let ind=(SN&&SN.indicators)||null;
+  if(!ind&&ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(getCandles(),CUR_TF);ind=f?f.indicators:null;}
   setTxt("indTF",ind?"last closed candle":"pending",false);
   const g=$("indGrid");
   if(!ind){g.innerHTML=["RSI","MACD-HIST","EMA20","EMA50"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳</div><div class="istat">candles chahiye</div></div>').join("");return;}
@@ -705,7 +723,7 @@ function renderImp(){
   else $("selfBox").textContent="Brain perf pending.";
 }
 
-/* ============ LEDGER / STRATEGY / REPORTS (unchanged core) ============ */
+/* ============ LEDGER / STRATEGY / REPORTS ============ */
 async function loadLedger(){
   let lines=null;
   for(const p of (FOUND_LEDGER_PATH?[FOUND_LEDGER_PATH]:C.ledgerPaths)){
@@ -754,11 +772,13 @@ async function loadReports(){
 }
 function renderReportsSummary(){
   const el=$("repSummary");const L=getLiveState();
-  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi — brain run karein (MATRIX layer phir bhi live hai).</span>';return;}
+  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi — brain run karein (MATRIX phir bhi live hai).</span>';return;}
   const ps=STATE.pillar_score||{};
-  let h="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(ENGINE.layer||"—")+"\n"
+  let h="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(ENGINE.layer||"—")+"  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
     +"<b>📡 Data:</b> "+L.status+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
+  if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
+    h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"%)"):"")+"\n";
   h+="\n";
   Object.keys(C.symbols).forEach(function(k){
     const sn=STATE.symbols?STATE.symbols[k]:null;
@@ -788,7 +808,7 @@ async function previewFile(p){
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ============ CANVAS — grid lines draw (point 0 visual) ============ */
+/* ============ CANVAS — 33% bands draw ============ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function drawGrid(){
@@ -800,6 +820,11 @@ function drawGrid(){
   ctx.strokeStyle="rgba(0,243,255,.06)";
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const t=Date.now();
+  const sx=((t%3000)/3000)*W;
+  const grad=ctx.createLinearGradient(sx-30,0,sx+30,0);
+  grad.addColorStop(0,"rgba(0,243,255,0)");grad.addColorStop(.5,"rgba(0,243,255,.14)");grad.addColorStop(1,"rgba(0,243,255,0)");
+  ctx.fillStyle=grad;ctx.fillRect(sx-30,0,60,H);
   const cs=getCandles();
   if(cs&&validCandles(cs)){
     const view=cs.slice(-60);
@@ -817,21 +842,21 @@ function drawGrid(){
       ctx.fillRect(x-bw/2,yo,bw,Math.max(1.5,Math.abs(y(c.o)-y(c.c))));
     });
     if(G){
-      const lines=[[G.levels.SELL2,"S2","#ff0055"],[G.levels.SELL1,"S1","rgba(255,0,85,.6)"],
-        [G.levels.BUY1,"B1","rgba(0,255,102,.6)"],[G.levels.BUY2,"B2","#00ff66"],
-        [G.expected.high,"ExpH","rgba(255,170,0,.55)"],[G.expected.low,"ExpL","rgba(255,170,0,.55)"]];
+      ctx.fillStyle="rgba(0,255,102,.05)";
+      ctx.fillRect(0,y(G.levels.BUY1),W,y(G.levels.BUY2)-y(G.levels.BUY1));
+      ctx.fillStyle="rgba(255,0,85,.05)";
+      ctx.fillRect(0,y(G.levels.SELL2),W,y(G.levels.SELL1)-y(G.levels.SELL2));
+      const lines=[[G.levels.SELL2,"S2·100%","#ff0055"],[G.levels.SELL1,"S1·66%","rgba(255,0,85,.6)"],
+        [G.levels.BUY1,"B1·33%","rgba(0,255,102,.6)"],[G.levels.BUY2,"B2·0%","#00ff66"]];
       lines.forEach(function(L){
         ctx.strokeStyle=L[2];ctx.setLineDash([6,5]);
         ctx.beginPath();ctx.moveTo(0,y(L[0]));ctx.lineTo(W,y(L[0]));ctx.stroke();ctx.setLineDash([]);
         ctx.fillStyle=L[2];ctx.font="11px JetBrains Mono";
         ctx.fillText(L[1]+" "+L[0].toFixed(2),6,y(L[0])-3);
       });
-      /* zone shading */
-      ctx.fillStyle="rgba(0,255,102,.05)";ctx.fillRect(0,y(G.levels.BUY1),W,y(G.levels.BUY2)-y(G.levels.BUY1));
-      ctx.fillStyle="rgba(255,0,85,.05)";ctx.fillRect(0,y(G.levels.SELL2),W,y(G.levels.SELL1)-y(G.levels.SELL2));
     }
     const last=view[view.length-1];
-    const pl=.45+.4*Math.sin(Date.now()/280);
+    const pl=.45+.4*Math.sin(t/280);
     ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
     ctx.beginPath();ctx.moveTo(0,y(last.c));ctx.lineTo(W,y(last.c));ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle="rgba(0,243,255,"+(pl+.3)+")";ctx.font="bold 13px JetBrains Mono";
@@ -839,7 +864,7 @@ function drawGrid(){
     const SN=curSN();
     setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+(SN&&SN.candles&&SN.candles[CUR_TF]?"brain candles":"direct feed"),false);
   }else{
-    ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(Date.now()/500))+")";
+    ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
     ctx.font="bold 16px Orbitron";ctx.textAlign="center";
     ctx.fillText("⏳ AWAITING CANDLE DATA · P1",W/2,H/2-8);
     ctx.font="12px JetBrains Mono";
@@ -873,16 +898,17 @@ document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",func
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
   this.classList.add("active");CUR_TF=this.dataset.tf;DIRECT=null;DIRECT_KEY="";
-  pulse("TIMEFRAME → "+CUR_TF+" · grid+models+matrix re-eval","pa");
+  pulse("TIMEFRAME → "+CUR_TF+" · grid+models re-eval","pa");
   ensureDirect().then(()=>{renderAll();renderReportsSummary();});
 }));
  $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();});
  $("repRefresh").addEventListener("click",loadReports);
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
-    "FACE  : "+C.faceRepo+" (public)\nHEART : "+C.heartRepo+" (private)\nBRAIN : colab_LLM_brain.py\n"+
+    "FACE  : "+C.faceRepo+" (public)\nHEART : "+C.heartRepo+" (private)\nBRAIN : colab_LLM_brain.py v5.1\n"+
     "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" loaded"):"NOT LOADED")+"\n"+
-    "GRID  : step 33.33% · weights .40/.35/.25 · RR 1:2 · fade-first-touch\n"+
+    "GRID  : H1 33% color-based · SL 0.25R · RR 1:2\n"+
+    "L2    : imbalance ±"+C.l2.imbThreshold+"% · depth "+C.l2.depth+" · walls B5/A60\n"+
     "MODE  : SIGNAL ONLY — no auto execution";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
@@ -892,6 +918,10 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
 function logout(){localStorage.removeItem("hermes_tok");location.reload();}
  $("btnLogout").addEventListener("click",logout);
  $("btnLogout2").addEventListener("click",logout);
+ $("saveLLM").addEventListener("click",function(){
+  localStorage.setItem("fl200_llm",$("cfgLLM").value.trim());
+  $("cfgOut").textContent="Saved (browser-only). Local LLM taiyar hone par plug hoga.";
+});
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
  $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
@@ -900,7 +930,7 @@ function logout(){localStorage.removeItem("hermes_tok");location.reload();}
 /* ============ LOCK / INIT ============ */
 function unlockUI(){
   $("lock").style.display="none";
-  pulse("FACE online · FARRUKH GRID strategy armed (SIGNAL ONLY)","pa");
+  pulse("FACE online · 33% GRID + L2 armed (SIGNAL ONLY)","pa");
   loadEngine(true).then(function(){startHeartbeat();refreshData();loadStrategy();ensureDirect();});
 }
  $("lockBtn").addEventListener("click",async function(){

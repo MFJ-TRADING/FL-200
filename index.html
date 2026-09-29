@@ -158,7 +158,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.1 (KRONOS)</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.1 (KRONOS + AGENTS)</div>
     <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">REAL-TIME engine (token-gated) · formula public mein NAHI hai</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
@@ -322,8 +322,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="panel full"><div class="ph"><span>📖 SECURITY MODEL (P9)</span></div>
 <div class="guide">
 <b>Formula kahan hai?</b> Sirf <code>engine.js</code> (private heart repo) mein. FACE usay <b>aapke FACE_TOKEN</b> se HTTPS par load karta hai aur <b>aapke browser mein</b> compute karta hai. Public repo mein zero formula, zero keys.<br>
-<b>Live data?</b> Binance public API — price/order-book public market data hai, secret nahi.<br>
-<b>KRONOS?</b> Foundation model BRAIN (Colab GPU) par chalta hai; uski prediction state.json se FACE par aati hai aur perf.json mein uski accuracy measure hoti hai.<br>
+<b>KRONOS?</b> Foundation model BRAIN (Colab GPU) par chalta hai; prediction state.json se aati hai, accuracy perf.json mein measured.<br>
+<b>ANALYST DESK?</b> TradingAgents (local-LLM) — P6 lessons desk, advisory only.<br>
 <b>Bina token stranger ko kya dikhega?</b> Sirf lock screen.
 </div></div>
 </div>
@@ -332,10 +332,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
 <div class="inst">P1 DATA — valid candles + L2. Bad data = WAIT.
 P2 ANALYZE — models apna record dekh kar vote.
-P3 SELF-IMPROVE — accuracy from resolved preds (brain · kronos included).
+P3 SELF-IMPROVE — accuracy from resolved preds (kronos included).
 P4 PERSIST — append-only hash-chained ledger.
 P5 COMPARE — accuracy delta per run.
-P6 LESSONS — reserved (LLM era).
+P6 LESSONS — analyst desk proposes (LESSON_PROPOSED).
 P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
 P8 SIMULATE→DECIDE→TAG — reproducibility tag.
 P9 SECURITY — formula sirf heart mein · FACE read-only · zero keys public.
@@ -377,7 +377,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.1 FACE — REALTIME + KRONOS card · formula private heart se");
+console.log("FL-200 v11.1 FACE — REALTIME + KRONOS + AGENTS status · formula private heart se");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -475,7 +475,7 @@ function pulse(msg,cls){
   while(el.children.length>60)el.lastElementChild.remove();
 }
 
-/* ============ CASCADE: REALTIME → BRAIN → FALLBACK ============ */
+/* ============ CASCADE ============ */
 function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
 function botTF(){
   const SN=curSN();
@@ -508,7 +508,7 @@ function renderEngine(){
     ["L1 · BRAIN state (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ "+stateAgeText():"✗ NO/STALE",
      bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · "+bt.final.confidence+"%"):"colab_LLM_brain.py publish karega"],
     ["L2 · FALLBACK (candle-only)",ENGINE_OBJ?"✓ ready":"—",ENGINE_OBJ?"realtime+brain dono band ho to":"engine.js load FAIL — ⚙ reload"],
-    ["L3 · LOCAL LLM","RESERVED","future brain plug"]];
+    ["L3 · LOCAL LLM","RESERVED",(STATE&&STATE.agents_status)?("analyst desk: "+STATE.agents_status.tradingagents+" · LLM "+STATE.agents_status.llm):"future brain plug"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
     const k=["rt","bot","mx","llm"][i];
     return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--muted)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
@@ -611,7 +611,7 @@ function renderAction(){
   rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
 }
 
-/* ═══ SIGNAL DESK (KRONOS row included) ═══ */
+/* ═══ SIGNAL DESK ═══ */
 function renderSignalDesk(){
   resolveLayer();
   const eff=ENGINE.eff, SN=curSN();
@@ -631,16 +631,14 @@ function renderSignalDesk(){
   }else $("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';
   if(l2){
     const cells=[["BEST BID",fmt(l2.bid,2),"g"],["BEST ASK",fmt(l2.ask,2),"r"],
-      ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(l2.mid,2),""],
+      ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(l2.mid!=null?l2.mid:SN.price,2),""],
       ["IMBALANCE",(l2.imb>=0?"+":"")+l2.imb+"%",l2.imb>=0?"g":"r"],
       ["WALLS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
     $("l2Row").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval '+(c[2]||"")+'">'+c[1]+"</div></div>").join("");
   }else $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">realtime feed connecting…</div></div>';
-  /* KRONOS row — brain-published foundation-model prediction */
   const kWrap=$("kRowWrap");
-  const kp=(SN&&SN.kronos)?SN.kronos:null;
-  const kOnTF=(CUR_TF==="H1");
-  if(kp&&kOnTF){
+  const kp=(SN&&SN.kronos&&CUR_TF==="H1")?SN.kronos:null;
+  if(kp){
     const kd=kp.dir>0?"g":"r";
     kWrap.innerHTML='<div class="glv">'
       +'<div class="mbox"><div class="mlabel">KRONOS pred HIGH</div><div class="mval">'+fmt(kp.pred_high,2)+'</div></div>'
@@ -650,9 +648,9 @@ function renderSignalDesk(){
       +'<div class="mbox" style="grid-column:span 2"><div class="mlabel">SOURCE</div><div class="mval na">brain GPU · H1 close se</div></div>'
       +'</div>';
   }else{
-    kWrap.innerHTML=kOnTF
-      ?'<div class="gz" style="margin-top:6px">KRONOS: brain ki pehli H1 prediction ka intezar… (GPU runtime + brain run hona chahiye)</div>'
-      :'<div class="gz" style="margin-top:6px">KRONOS: sirf H1 timeframe par (H1 tab par switch karein)</div>';
+    kWrap.innerHTML=CUR_TF==="H1"
+      ?'<div class="gz" style="margin-top:6px">KRONOS: brain ki H1 prediction ka intezar… (GPU runtime + brain publish chahiye)</div>'
+      :'<div class="gz" style="margin-top:6px">KRONOS: sirf H1 timeframe par</div>';
   }
   const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
   const zp=$("zPos");
@@ -820,7 +818,8 @@ function renderReportsSummary(){
   const ps=STATE.pillar_score||{};
   h+="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
     +"<b>📡 Data:</b> "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n"
-    +"<b>🤖 Kronos status:</b> "+(STATE.kronos_status?(STATE.kronos_status.ready?("READY · "+STATE.kronos_status.device):"NOT READY (L2-only mode)"):"—")+"\n";
+    +"<b>🤖 Kronos:</b> "+(STATE.kronos_status?(STATE.kronos_status.ready?("READY · "+STATE.kronos_status.device):"NOT READY (L2-only mode)"):"—")+"\n";
+  if(STATE.agents_status)h+="<b>🧠 Analyst desk:</b> "+esc(STATE.agents_status.tradingagents)+" · LLM: "+esc(STATE.agents_status.llm)+"\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
   if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
     h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"%)"):"")+"\n";
@@ -853,7 +852,7 @@ async function previewFile(p){
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ============ CANVAS — 33% bands ============ */
+/* ============ CANVAS ============ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function drawGrid(){
@@ -950,10 +949,9 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
     "FACE  : "+C.faceRepo+" (public · yeh UI)\nHEART : "+C.heartRepo+" (private · engine.js + records)\n"+
-    "BRAIN : colab_LLM_brain.py v6.0 (Colab GPU · KRONOS)\n"+
+    "BRAIN : colab_LLM_brain.py v7.1 (Colab GPU · KRONOS + AGENTS)\n"+
     "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · strategy constants ANDAR (private)"):"NOT LOADED")+"\n"+
     "MODES : REALTIME 4s (browser) → BRAIN 3m → FALLBACK\n"+
-    "KRONOS: foundation model brain par · H1 close predictions · perf.json measured\n"+
     "SECURE: formula public repo mein NAHI · token-gated · HTTPS";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });

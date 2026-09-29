@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FACE v11.0</title>
+<title>FL-200 · FACE v11.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -83,7 +83,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .plan h4{font-family:'Orbitron';font-size:.78rem;color:var(--cyan);margin-bottom:4px}
 .plan .pr{font-family:'JetBrains Mono';font-size:.8rem;line-height:1.6}
 .plan.buys{border-color:rgba(0,255,102,.3)}.plan.sells{border-color:rgba(255,0,85,.3)}
-.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:12px;cursor:pointer;transition:.2s}
 .mcard:hover{border-color:rgba(0,243,255,.45);transform:translateY(-2px)}
 .mname{font-family:'Orbitron';font-size:.85rem;font-weight:700}
@@ -158,7 +158,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.0</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.1 (KRONOS)</div>
     <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">REAL-TIME engine (token-gated) · formula public mein NAHI hai</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
@@ -178,10 +178,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">REAL-TIME</span>
+<span class="tier-badge">REALTIME+KRONOS</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v11.0</div>
+<div class="status"><div class="dot"></div> v11.1</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -222,9 +222,10 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🎯 SIGNAL DESK — 33% GRID · L2 BOOK · PLANS · FINAL</span><span id="sdSrc" class="live">—</span></div>
+<div class="ph"><span>🎯 SIGNAL DESK — 33% GRID · L2 BOOK · KRONOS · PLANS · FINAL</span><span id="sdSrc" class="live">—</span></div>
 <div class="glv" id="glvRow"></div>
 <div class="glv" id="l2Row"></div>
+<div id="kRowWrap"></div>
 <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
 <span class="zonebadge zb-mid" id="zPos">PRICE POSITION: —</span>
 <span class="zonebadge zb-mid" id="zAct">ZONE MAP: —</span>
@@ -266,7 +267,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 </div>
 
 <div class="panel span2">
-<div class="ph"><span>📈 MODEL IMPROVEMENT (brain perf)</span><span id="impMeta" style="font-size:.75rem;color:var(--muted)">—</span></div>
+<div class="ph"><span>📈 MODEL IMPROVEMENT (brain perf · KRONOS included)</span><span id="impMeta" style="font-size:.75rem;color:var(--muted)">—</span></div>
 <div class="imp-grid" id="impGrid"></div>
 </div>
 <div class="panel">
@@ -322,8 +323,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="guide">
 <b>Formula kahan hai?</b> Sirf <code>engine.js</code> (private heart repo) mein. FACE usay <b>aapke FACE_TOKEN</b> se HTTPS par load karta hai aur <b>aapke browser mein</b> compute karta hai. Public repo mein zero formula, zero keys.<br>
 <b>Live data?</b> Binance public API — price/order-book public market data hai, secret nahi.<br>
-<b>Bina token stranger ko kya dikhega?</b> Sirf lock screen.<br>
-<b>BRAIN?</b> Colab compute + improvement (P3/P5) + audit (P9/P10) + future LLM plug — heart ko better karta hai.
+<b>KRONOS?</b> Foundation model BRAIN (Colab GPU) par chalta hai; uski prediction state.json se FACE par aati hai aur perf.json mein uski accuracy measure hoti hai.<br>
+<b>Bina token stranger ko kya dikhega?</b> Sirf lock screen.
 </div></div>
 </div>
 
@@ -331,14 +332,14 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
 <div class="inst">P1 DATA — valid candles + L2. Bad data = WAIT.
 P2 ANALYZE — models apna record dekh kar vote.
-P3 SELF-IMPROVE — accuracy from resolved preds (brain).
+P3 SELF-IMPROVE — accuracy from resolved preds (brain · kronos included).
 P4 PERSIST — append-only hash-chained ledger.
 P5 COMPARE — accuracy delta per run.
 P6 LESSONS — reserved (LLM era).
 P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
 P8 SIMULATE→DECIDE→TAG — reproducibility tag.
 P9 SECURITY — formula sirf heart mein · FACE read-only · zero keys public.
-P10 HEALTH — realtime feed fail → brain state → candle fallback.
+P10 HEALTH — realtime fail → brain state → candle fallback.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
@@ -376,7 +377,7 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.0 FACE — REALTIME: live Binance + private engine.js · formula public mein nahi");
+console.log("FL-200 v11.1 FACE — REALTIME + KRONOS card · formula private heart se");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -388,7 +389,7 @@ let HB=0,lastLedgerSeq=null;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
-const RT={data:null,ts:0,key:""};   /* realtime compute cache */
+const RT={data:null,ts:0,key:""};
 const RT_TTL=15000;
 
 /* ============ GITHUB (read-only) ============ */
@@ -407,7 +408,7 @@ const ext=p=>(p.split(".").pop()||"").toLowerCase();
 const isBin=p=>["png","jpg","jpeg","webp"].includes(ext(p));
 const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",js:"text/javascript"};
 
-/* ============ ENGINE LOADER (private heart — token-gated) ============ */
+/* ============ ENGINE LOADER ============ */
 async function loadEngine(force){
   const now=Date.now();
   if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
@@ -421,7 +422,7 @@ async function loadEngine(force){
   return ENGINE_OBJ;
 }
 
-/* ============ LIVE Binance (public data — prices/orderbook) ============ */
+/* ============ LIVE Binance ============ */
 async function liveCandles(sym,tf){
   const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+sym+"&interval="+(C.binTf[tf]||"1h")+"&limit=200");
   if(!r.ok)throw new Error("kl "+r.status);
@@ -433,7 +434,7 @@ async function liveDepth(sym){
   return await r.json();
 }
 
-/* ============ REALTIME TICK (4s) — compute private engine se ============ */
+/* ============ REALTIME TICK (4s) ============ */
 async function rtTick(){
   if(!ENGINE_OBJ||document.hidden)return;
   const key=CUR_SYM+"|"+CUR_TF;
@@ -474,12 +475,18 @@ function pulse(msg,cls){
   while(el.children.length>60)el.lastElementChild.remove();
 }
 
-/* ============ CASCADE: REALTIME → BRAIN → candle-fallback ============ */
+/* ============ CASCADE: REALTIME → BRAIN → FALLBACK ============ */
+function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
 function botTF(){
   const SN=curSN();
   return (SN&&SN.timeframes)?SN.timeframes[CUR_TF]||null:null;
 }
-function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
+function botCandles(){
+  const SN=curSN();
+  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
+  if(cs&&cs.length)return cs;
+  return (RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:null;
+}
 function resolveLayer(){
   const L=getLiveState();
   if(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL){
@@ -490,12 +497,6 @@ function resolveLayer(){
   if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(botCandles(),CUR_TF);
     if(f){ENGINE.layer="FALLBACK";ENGINE.eff=f;ENGINE.eff.src="matrix-candle";return;}}
   ENGINE.layer="NONE";ENGINE.eff=null;
-}
-function botCandles(){
-  const SN=curSN();
-  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
-  if(cs&&cs.length)return cs;
-  return (RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:null;
 }
 function renderEngine(){
   const L=getLiveState(),bt=botTF();
@@ -610,6 +611,7 @@ function renderAction(){
   rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
 }
 
+/* ═══ SIGNAL DESK (KRONOS row included) ═══ */
 function renderSignalDesk(){
   resolveLayer();
   const eff=ENGINE.eff, SN=curSN();
@@ -634,6 +636,24 @@ function renderSignalDesk(){
       ["WALLS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
     $("l2Row").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval '+(c[2]||"")+'">'+c[1]+"</div></div>").join("");
   }else $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">realtime feed connecting…</div></div>';
+  /* KRONOS row — brain-published foundation-model prediction */
+  const kWrap=$("kRowWrap");
+  const kp=(SN&&SN.kronos)?SN.kronos:null;
+  const kOnTF=(CUR_TF==="H1");
+  if(kp&&kOnTF){
+    const kd=kp.dir>0?"g":"r";
+    kWrap.innerHTML='<div class="glv">'
+      +'<div class="mbox"><div class="mlabel">KRONOS pred HIGH</div><div class="mval">'+fmt(kp.pred_high,2)+'</div></div>'
+      +'<div class="mbox"><div class="mlabel">KRONOS pred LOW</div><div class="mval">'+fmt(kp.pred_low,2)+'</div></div>'
+      +'<div class="mbox"><div class="mlabel">KRONOS pred CLOSE</div><div class="mval '+kd+'">'+fmt(kp.pred_close,2)+'</div></div>'
+      +'<div class="mbox"><div class="mlabel">KRONOS DIR</div><div class="mval '+kd+'">'+(kp.dir>0?"BUY":"SELL")+' ('+kp.conf+'%)</div></div>'
+      +'<div class="mbox" style="grid-column:span 2"><div class="mlabel">SOURCE</div><div class="mval na">brain GPU · H1 close se</div></div>'
+      +'</div>';
+  }else{
+    kWrap.innerHTML=kOnTF
+      ?'<div class="gz" style="margin-top:6px">KRONOS: brain ki pehli H1 prediction ka intezar… (GPU runtime + brain run hona chahiye)</div>'
+      :'<div class="gz" style="margin-top:6px">KRONOS: sirf H1 timeframe par (H1 tab par switch karein)</div>';
+  }
   const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
   const zp=$("zPos");
   zp.textContent="PRICE POSITION: "+(pos||"—");
@@ -666,10 +686,13 @@ function renderPillars(){
 }
 function renderModels(){
   setTxt("modLabel",CUR_SYM,false);setTxt("modTF",CUR_TF,false);
-  const eff=ENGINE.eff;
+  const eff=ENGINE.eff, SN=curSN();
   const M=eff&&eff.models?eff.models:null;
+  const kp=(SN&&SN.kronos&&CUR_TF==="H1")?SN.kronos:null;
   const defs=[["GRID","33% zone position",M&&M.grid],
     ["L2 BOOK","imbalance + walls (decisive)",M&&M.l2],
+    ["KRONOS","foundation-model ML (brain GPU)",kp?{bias:kp.dir>0?"BUY":"SELL",confidence:kp.conf,
+      first_zone_guess:"—",reasoning:"predC "+kp.pred_close+" (H "+kp.pred_high+" / L "+kp.pred_low+")"}:(M&&M.kronos)],
     ["QUANT","RSI + MACD",M&&M.quant],
     ["TAURUS","regime/vol modifier",M&&M.taurus]];
   $("modelGrid").innerHTML=defs.map(function(d){
@@ -796,7 +819,8 @@ function renderReportsSummary(){
   if(!STATE){el.innerHTML=h+'<span class="blink">⏳ Brain state load nahi — realtime layer phir bhi chal raha hai.</span>';return;}
   const ps=STATE.pillar_score||{};
   h+="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
-    +"<b>📡 Data:</b> "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n";
+    +"<b>📡 Data:</b> "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n"
+    +"<b>🤖 Kronos status:</b> "+(STATE.kronos_status?(STATE.kronos_status.ready?("READY · "+STATE.kronos_status.device):"NOT READY (L2-only mode)"):"—")+"\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
   if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
     h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"%)"):"")+"\n";
@@ -926,9 +950,10 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
     "FACE  : "+C.faceRepo+" (public · yeh UI)\nHEART : "+C.heartRepo+" (private · engine.js + records)\n"+
-    "BRAIN : colab_LLM_brain.py v5.1 (Colab)\n"+
+    "BRAIN : colab_LLM_brain.py v6.0 (Colab GPU · KRONOS)\n"+
     "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · strategy constants ANDAR (private)"):"NOT LOADED")+"\n"+
     "MODES : REALTIME 4s (browser) → BRAIN 3m → FALLBACK\n"+
+    "KRONOS: foundation model brain par · H1 close predictions · perf.json measured\n"+
     "SECURE: formula public repo mein NAHI · token-gated · HTTPS";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });

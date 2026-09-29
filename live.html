@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FL-200 · LIVE L2 · 33% GRID</title>
+<style>
+body{background:#000;color:#ddd;font-family:'JetBrains Mono',monospace;font-size:14px;padding:10px;line-height:1.55}
+.hd{color:#0ff;font-weight:bold}.g{color:#0f6}.r{color:#f35}.y{color:#fc0}.m{color:#d6f;font-weight:bold}.dim{color:#666}
+.box{border:1px solid #133;margin:10px 0;padding:10px;max-width:560px}
+.sig-buy{color:#0f6;font-weight:bold;font-size:1.2em}.sig-sell{color:#f35;font-weight:bold;font-size:1.2em}.sig-wait{color:#fc0;font-weight:bold}
+button{background:#020617;color:#0ff;border:1px solid #0ff3;padding:6px 14px;font-family:inherit;margin:4px}
+button.on{background:#0ff2}
+</style></head><body>
+<div class="hd">⚡ FL-200 · H1 33% GRID + LEVEL 2 · REAL-TIME (Binance direct · 4s)</div>
+<div>
+<button class="on" data-s="BTCUSDT">BTCUSDT</button>
+<button data-s="ETHUSDT">ETHUSDT</button>
+<span class="dim" id="clock"></span>
+</div>
+<div id="out">Loading…</div>
+<script>
+const WALL={BTCUSDT:5,ETHUSDT:60}, IMB=15;
+let SYM=localStorage.getItem("fl200_live_sym")||"BTCUSDT";
+document.querySelectorAll("button").forEach(b=>{if(b.dataset.s===SYM)b.classList.add("on");
+b.onclick=()=>{SYM=b.dataset.s;localStorage.setItem("fl200_live_sym",SYM);
+document.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");tick();};});
+const f2=v=>(+v).toFixed(2);
+async function tick(){
+ try{
+  const kl=await(await fetch(`https://data-api.binance.vision/api/v3/klines?symbol=${SYM}&interval=1h&limit=2`)).json();
+  const c=kl[kl.length-2], o=+c[1],h=+c[2],l=+c[3],cl=+c[4];
+  const R=h-l, green=cl>=o;
+  const l0=green?l:h, l100=green?h:l, rng=Math.abs(l100-l0);
+  const l33=l0+(rng*.33)*(l100>l0?1:-1), l66=l0+(rng*.66)*(l100>l0?1:-1);
+  const d=await(await fetch(`https://data-api.binance.vision/api/v3/depth?symbol=${SYM}&limit=20`)).json();
+  const bids=d.bids.map(x=>[+x[0],+x[1]]), asks=d.asks.map(x=>[+x[0],+x[1]]);
+  const bb=bids[0][0],ba=asks[0][0],mid=(bb+ba)/2,sp=ba-bb;
+  const bv=bids.slice(0,10).reduce((s,x)=>s+x[1],0), av=asks.slice(0,10).reduce((s,x)=>s+x[1],0);
+  const imb=(bv-av)/(bv+av)*100;
+  const wt=WALL[SYM];
+  const wb=bids.filter(x=>x[1]>=wt).slice(0,3), wa=asks.filter(x=>x[1]>=wt).slice(0,3);
+  let zone,sg="WAIT",reason="Setup clear nahi",cls="sig-wait";
+  if(green){ if(mid<=l33&&imb>=IMB){sg="BUY",reason="Lower Zone + Buyers strong";}
+             else if(mid>=l66&&imb<=-IMB){sg="SELL",reason="Upper Zone + Sellers strong";} }
+  else{ if(mid>=l33&&imb<=-IMB){sg="SELL",reason="Upper Zone + Sellers strong";}
+        else if(mid<=l66&&imb>=IMB){sg="BUY",reason="Lower Zone + Buyers strong";} }
+  if(green){zone=mid<=l33?'<span class="g">LOWER ZONE (0-33%)</span>':mid>=l66?'<span class="r">UPPER ZONE (66-100%)</span>':'<span class="y">MIDDLE</span>';}
+  else{zone=mid>=l33?'<span class="r">UPPER ZONE (0-33%)</span>':mid<=l66?'<span class="g">LOWER ZONE (66-100%)</span>':'<span class="y">MIDDLE</span>';}
+  if(sg==="BUY")cls="sig-buy"; if(sg==="SELL")cls="sig-sell";
+  const ic=imb>=0?"g":"r";
+  let plan="";
+  if(sg==="BUY"){const sl=l-.25*R;plan=`Plan: entry ${f2(mid)} · SL ${f2(sl)} · TP ${f2(mid+2*(mid-sl))} (RR 1:2)`;}
+  if(sg==="SELL"){const sl=h+.25*R;plan=`Plan: entry ${f2(mid)} · SL ${f2(sl)} · TP ${f2(mid-2*(sl-mid))} (RR 1:2)`;}
+  document.getElementById("out").innerHTML=`
+  <div class="box"><pre>
+<span class="hd">Best Bid :</span> <span class="g">${f2(bb)}</span>
+<span class="hd">Best Ask :</span> <span class="r">${f2(ba)}</span>
+<span class="hd">Spread   :</span> <span class="y">${f2(sp)}</span>
+<span class="hd">Mid Price:</span> ${f2(mid)}
+
+<span class="hd">Previous H1 Candle:</span>
+Open: ${f2(o)}  |  Close: ${f2(cl)}
+High: ${f2(h)}  |  Low: ${f2(l)}
+Color: <span class="${green?'g':'r'}">${green?'GREEN':'RED'}</span>
+
+<span class="hd">Grid Levels:</span>
+0%   : ${f2(l0)}
+33%  : ${f2(l33)}
+66%  : ${f2(l66)}
+100% : ${f2(l100)}
+Price Position: ${zone}
+
+Imbalance: <span class="${ic}">${imb>=0?'+':''}${imb.toFixed(1)}%</span>
+ ${wb.length?'<span class="g">Bid Walls:</span> '+wb.map(w=>`${f2(w[0])}→${f2(w[1])}`).join(' · '):''}
+ ${wa.length?'<span class="r">Ask Walls:</span> '+wa.map(w=>`${f2(w[0])}→${f2(w[1])}`).join(' · '):''}
+
+<span class="m">========== SIGNAL ==========</span>
+<span class="${cls}">>>> ${sg==='WAIT'?'WAIT':sg+' SIGNAL'} <<<</span>
+Reason: ${reason}
+ ${plan}
+<span class="dim">SIGNAL ONLY · user decides · no auto execution</span>
+</pre></div>`;
+  document.getElementById("clock").textContent=" · "+new Date().toLocaleTimeString();
+ }catch(e){document.getElementById("out").innerHTML='<span class="r">feed error: '+e.message+'</span>';}
+}
+tick();setInterval(tick,4000);
+</script></body></html>

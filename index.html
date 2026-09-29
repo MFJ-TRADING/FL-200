@@ -3,94 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · AI QUANT COMMAND · v6.2</title>
+<title>FL-200 · FARRUKH GRID FACE · v9.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,243,255,.07),transparent),linear-gradient(rgba(0,243,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.02) 1px,transparent 1px);background-size:100% 100%,28px 28px,28px 28px;min-height:100vh;overflow-x:hidden;overflow-y:auto}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,243,255,.07),transparent),linear-gradient(rgba(0,243,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,243,255,.02) 1px,transparent 1px);background-size:100% 100%,28px 28px,28px 28px;min-height:100vh;overflow-x:hidden}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-@keyframes think{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @keyframes flash{0%{text-shadow:0 0 14px var(--cyan);color:#fff}100%{}}
 @keyframes glow{0%,100%{box-shadow:0 0 4px rgba(0,255,102,.25)}50%{box-shadow:0 0 12px rgba(0,255,102,.55)}}
 @keyframes tickmove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes pollfill{0%{width:0}92%{width:88%}100%{width:100%}}
 @keyframes slidein{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
-.think span{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--cyan);animation:think 1.2s infinite}
-.think span:nth-child(2){animation-delay:.2s}.think span:nth-child(3){animation-delay:.4s}
 .skel{background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.15),rgba(255,255,255,.05));background-size:200% 100%;animation:shim 1.1s infinite;border-radius:4px}
 .flash{animation:flash .7s}.blink{animation:pulse 1.2s infinite}
 #pollbar{position:fixed;top:0;left:0;height:3px;z-index:150;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));animation:pollfill 5s linear infinite;box-shadow:0 0 8px var(--cyan)}
 #pollbar.err{background:var(--red);box-shadow:0 0 8px var(--red)}
-.top-nav{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:rgba(5,8,18,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.brand{font-family:'Orbitron';font-size:1.15rem;font-weight:900;letter-spacing:1.5px}.brand span{color:var(--cyan)}
-.nav-links{display:flex;gap:2px}
-.nav-btn{font-family:'Orbitron';font-size:.72rem;color:var(--muted);padding:4px 9px;border-radius:3px;border:1px solid transparent;background:transparent;cursor:pointer}
+.top-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;background:rgba(5,8,18,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.brand{font-family:'Orbitron';font-size:1.4rem;font-weight:900;letter-spacing:2px}.brand span{color:var(--cyan)}
+.nav-links{display:flex;gap:3px}
+.nav-btn{font-family:'Orbitron';font-size:.8rem;color:var(--muted);padding:6px 12px;border-radius:4px;border:1px solid transparent;background:transparent;cursor:pointer}
 .nav-btn:hover,.nav-btn.active{color:var(--cyan);background:rgba(0,243,255,.1);border-color:rgba(0,243,255,.3)}
 .nav-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .status{background:rgba(0,255,102,.08);border:1px solid rgba(0,255,102,.35);color:var(--green);padding:4px 10px;font-family:'Orbitron';font-size:.72rem;border-radius:4px;display:flex;align-items:center;gap:6px;animation:glow 2s infinite}
 .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.2s infinite}
-.layer-badge{font-family:'Orbitron';font-size:.68rem;padding:3px 8px;border-radius:3px;background:rgba(189,0,255,.08);border:1px solid rgba(189,0,255,.3);color:var(--purple)}
+.tier-badge{font-family:'Orbitron';font-size:.68rem;padding:3px 8px;border-radius:3px;background:rgba(189,0,255,.08);border:1px solid rgba(189,0,255,.3);color:var(--purple)}
 .runtag,.syncin{font-family:'JetBrains Mono';font-size:.72rem;color:var(--muted)}
 .engbadge{font-family:'Orbitron';font-size:.78rem;padding:4px 10px;border-radius:4px;border:1px solid var(--border)}
-.control-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 12px;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border)}
-.sym-btn,.tf-btn{font-family:'Orbitron';font-size:.72rem;padding:3px 10px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
+.control-bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:10px 16px;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border)}
+.sym-btn,.tf-btn{font-family:'Orbitron';font-size:.82rem;padding:5px 13px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
 .sym-btn.active,.tf-btn.active{background:rgba(0,243,255,.15);color:var(--cyan);border-color:var(--cyan)}
 .badge-closed{background:rgba(255,0,85,.15);color:var(--red);border:1px solid rgba(255,0,85,.4);padding:3px 9px;border-radius:3px;font-size:.75rem;font-family:'Orbitron'}
 .badge-open{background:rgba(0,255,102,.12);color:var(--green);border:1px solid rgba(0,255,102,.35);padding:3px 9px;border-radius:3px;font-size:.75rem;font-family:'Orbitron';animation:glow 2s infinite}
 .ticker{overflow:hidden;border-bottom:1px solid var(--border);background:rgba(0,0,0,.4);padding:5px 0}
 .ticker-inner{display:inline-block;white-space:nowrap;animation:tickmove 28s linear infinite;font-family:'JetBrains Mono';font-size:.85rem;color:var(--muted)}
 .ticker-inner b{color:var(--cyan)}.ticker-inner .g{color:var(--green)}.ticker-inner .r{color:var(--red)}
-.main{max-width:1680px;margin:0 auto;padding:8px;display:flex;flex-direction:column;gap:8px}
-.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.main{max-width:1580px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
 .full{grid-column:span 3}.span2{grid-column:span 2}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 10px;position:relative}
-.panel::after{content:'';position:absolute;bottom:0;right:0;width:6px;height:6px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
-.ph{font-family:'Orbitron';font-size:.85rem;color:var(--cyan);letter-spacing:.5px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:4px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:13px;position:relative}
+.panel::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
+.ph{font-family:'Orbitron';font-size:1rem;color:var(--cyan);letter-spacing:1px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:6px}
 .live{font-size:.78rem;color:var(--green)}.live.warn{color:var(--amber)}
-.action{background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);display:grid;grid-template-columns:2fr 1fr 1fr 1.1fr;gap:6px;align-items:center;padding:8px 10px}
-.action-title{font-family:'Orbitron';font-size:.95rem}
-.action-signal{font-size:1.35rem;font-family:'Orbitron';color:var(--green);font-weight:900}
+.action{background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);display:grid;grid-template-columns:2fr 1fr 1fr 1.1fr;gap:9px;align-items:center;padding:13px 15px}
+.action-title{font-family:'Orbitron';font-size:1.15rem}
+.action-signal{font-size:1.7rem;font-family:'Orbitron';color:var(--green);font-weight:900}
 .action.closed .action-signal{color:var(--muted)}
 .byline{font-family:'JetBrains Mono';font-size:.72rem;color:var(--purple);margin-top:4px}
-.simgate{font-family:'JetBrains Mono';font-size:.7rem;color:var(--amber);margin-top:3px}
-.mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:5px 8px;border-radius:3px}
-.mlabel{font-size:.68rem;color:var(--muted)}
-.mval{font-family:'Orbitron';font-size:.95rem}
-.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.price{font-family:'Orbitron';font-size:1.6rem;font-weight:800}
-.pulse-box{font-family:'JetBrains Mono';font-size:.72rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:3px;padding:6px;height:90px;overflow-y:auto;line-height:1.55}
+.mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:8px 11px;border-radius:4px}
+.mlabel{font-size:.78rem;color:var(--muted)}
+.mval{font-family:'Orbitron';font-size:1.1rem}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.price{font-family:'Orbitron';font-size:2.1rem;font-weight:800}
+.pulse-box{font-family:'JetBrains Mono';font-size:.8rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;height:150px;overflow-y:auto;line-height:1.75}
 .pulse-box div{animation:slidein .25s}
 .pulse-box .pg{color:var(--green)}.pulse-box .pr{color:var(--red)}.pulse-box .pa{color:var(--amber)}
 .eng-grid{display:grid;grid-template-columns:1fr;gap:7px}
-.eng{display:grid;grid-template-columns:150px 110px 1fr;gap:6px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:3px;padding:5px 8px;opacity:.6}
+.eng{display:grid;grid-template-columns:170px 130px 1fr;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;opacity:.6}
 .eng.act{opacity:1;border-color:var(--green);box-shadow:0 0 10px rgba(0,255,102,.2)}
 .eng .en{font-family:'Orbitron';font-size:.85rem;color:var(--cyan)}
 .eng .es{font-family:'Orbitron';font-size:.78rem}
 .eng .ed{font-family:'JetBrains Mono';font-size:.78rem;color:var(--muted)}
 .candle-wrap{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;overflow:hidden}
 .candle-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.85rem}
-canvas{display:block;width:100%;height:160px;background:#060913}
-.path-box{margin-top:4px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:3px;padding:6px}
-.path-title{font-family:'Orbitron';font-size:.85rem;color:var(--cyan);margin-bottom:6px}
-.path-steps{display:flex;flex-wrap:wrap;gap:6px;font-size:.9rem;align-items:center}
-.step{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.22);padding:4px 9px;border-radius:3px;animation:slidein .4s}
-.step b{color:var(--cyan)}
-.model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:3px;padding:7px;cursor:pointer;transition:.2s}
+canvas{display:block;width:100%;height:280px;background:#060913}
+.glv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.glv .mbox{text-align:center}
+.glv .mval{font-size:1rem}
+.gz{font-size:.78rem;font-family:'JetBrains Mono';color:var(--muted)}
+.zonebadge{font-family:'Orbitron';font-size:.85rem;padding:5px 12px;border-radius:4px;border:1px solid var(--border)}
+.zb-buy{color:var(--green);border-color:rgba(0,255,102,.4);background:rgba(0,255,102,.08)}
+.zb-sell{color:var(--red);border-color:rgba(255,0,85,.4);background:rgba(255,0,85,.08)}
+.zb-mid{color:var(--amber);border-color:rgba(255,170,0,.35);background:rgba(255,170,0,.07)}
+.final-box{font-family:'JetBrains Mono';font-size:.85rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:12px;line-height:1.8;white-space:pre-wrap}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
+.plan{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px}
+.plan h4{font-family:'Orbitron';font-size:.78rem;color:var(--cyan);margin-bottom:4px}
+.plan .pr{font-family:'JetBrains Mono';font-size:.8rem;line-height:1.6}
+.plan.buys{border-color:rgba(0,255,102,.3)}.plan.sells{border-color:rgba(255,0,85,.3)}
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:12px;cursor:pointer;transition:.2s}
 .mcard:hover{border-color:rgba(0,243,255,.45);transform:translateY(-2px)}
 .mname{font-family:'Orbitron';font-size:.85rem;font-weight:700}
 .mtype{font-size:.7rem;color:var(--muted)}
 .mpred{font-family:'Orbitron';font-size:1.2rem;color:var(--cyan);font-weight:800;margin:5px 0 3px}
 .msig{font-size:.78rem;font-weight:700;color:var(--green)}
 .msig.na{color:var(--muted)}
+.mmeta{font-size:.72rem;color:var(--muted);margin-top:3px}
 .wbar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:5px;overflow:hidden}
 .wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),#00ffaa)}
 .wfill.m{background:linear-gradient(90deg,var(--amber),#ffcc44)}
 .wfill.l{background:var(--muted)}
-.pillar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
-.pcard{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:3px;padding:4px 2px;text-align:center}
+.pillar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.pcard{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:8px 4px;text-align:center}
 .pname{font-family:'Orbitron';font-size:.62rem;color:var(--muted)}
 .pstat{font-family:'Orbitron';font-size:1rem;margin-top:3px}
 .pstat.ok{color:var(--green)}.pstat.warn{color:var(--amber)}
@@ -102,23 +108,13 @@ canvas{display:block;width:100%;height:160px;background:#060913}
 .sysacc{text-align:center;padding:8px 0}
 .sysacc .big{font-family:'Orbitron';font-size:2.4rem;font-weight:900;color:var(--green)}
 .sysacc .sub{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
-.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:9px}
 .iname{font-family:'Orbitron';font-size:.85rem}
-.ival{font-family:'Orbitron';font-size:1.2rem;margin:3px 0}
+.ival{font-family:'Orbitron';font-size:1.15rem;margin:3px 0}
 .ival.na{color:var(--muted);font-size:.85rem}
 .istat{font-size:.75rem;color:var(--muted)}
-.chat{display:flex;flex-direction:column;height:140px}
-.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin-bottom:7px}
-.msg{max-width:88%;padding:7px 11px;border-radius:5px;font-size:.95rem;white-space:pre-wrap;animation:slidein .3s}
-.msg.ai{background:rgba(0,243,255,.07);border:1px solid rgba(0,243,255,.18);align-self:flex-start}
-.msg.user{background:rgba(189,0,255,.09);border:1px solid rgba(189,0,255,.22);align-self:flex-end}
-.msg .t{font-size:.65rem;color:var(--muted);display:block}
-.tagline{font-family:'JetBrains Mono';font-size:.62rem;color:var(--purple);margin-top:2px}
-.input-row{display:flex;gap:6px}
-.cinp{flex:1;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:8px 11px;font-size:.95rem;border-radius:4px;outline:none}
-.sbtn{width:38px;height:38px;border-radius:4px;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan);cursor:pointer;font-size:1rem}
-.ledger-box{font-family:'JetBrains Mono';font-size:.75rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:3px;padding:6px;line-height:1.5;max-height:100px;overflow-y:auto}
+.ledger-box{font-family:'JetBrains Mono';font-size:.85rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;line-height:1.7;max-height:220px;overflow-y:auto}
 .ledger-box div{animation:slidein .3s}
 .rep-sum{font-size:1rem;line-height:1.85;white-space:pre-wrap}
 .rep-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;margin-bottom:7px;animation:slidein .3s}
@@ -127,6 +123,7 @@ canvas{display:block;width:100%;height:160px;background:#060913}
 .rep-file .fd{font-size:.8rem;color:var(--muted)}
 .rbtn{font-family:'Orbitron';font-size:.68rem;padding:5px 11px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan)}
 .rbtn.dl{background:rgba(0,255,102,.1);color:var(--green);border-color:rgba(0,255,102,.35)}
+.rbtn.rd{background:rgba(255,0,85,.1);color:var(--red);border-color:rgba(255,0,85,.35)}
 .rule{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px 12px;font-size:.95rem}
 .rule b{font-family:'Orbitron';color:var(--cyan)}
 .rule i{font-family:'Orbitron';font-style:normal;font-size:.78rem}
@@ -141,18 +138,17 @@ canvas{display:block;width:100%;height:160px;background:#060913}
 .side-t{font-family:'Orbitron';font-size:1rem;color:var(--cyan)}
 .close{background:transparent;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:4px;cursor:pointer;font-size:1rem}
 .side-b{flex:1;overflow-y:auto;padding:12px 14px}
-.inst{background:rgba(0,0,0,.4);border:1px solid rgba(0,243,255,.18);border-radius:4px;padding:12px;font-family:'JetBrains Mono';font-size:.88rem;line-height:1.6;white-space:pre-wrap}
+.inst{background:rgba(0,0,0,.4);border:1px solid rgba(0,243,255,.18);border-radius:4px;padding:12px;font-family:'JetBrains Mono';font-size:.85rem;line-height:1.6;white-space:pre-wrap}
 .fv-pre{font-family:'JetBrains Mono';font-size:.8rem;white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:4px;padding:10px;max-height:calc(100vh - 120px);overflow:auto;line-height:1.5}
-textarea{resize:vertical}
 .section{display:none}.section.active{display:block}
 .lockwrap{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.lockcard{width:360px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:30px;text-align:center}
+.lockcard{width:380px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:30px;text-align:center}
 .locklogo{font-family:'Orbitron';font-size:1.7rem;font-weight:900;margin-bottom:4px}
 .lockcard input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:11px 13px;font-size:.95rem;border-radius:5px;outline:none;margin-bottom:9px;font-family:'JetBrains Mono'}
 .lockbtn{width:100%;font-family:'Orbitron';font-size:.85rem;padding:11px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
 .lerr{font-size:.8rem;color:var(--red);margin-top:9px;min-height:18px}
-@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.imp-grid{grid-template-columns:repeat(2,1fr)}.model-grid{grid-template-columns:repeat(2,1fr)}.pillar-grid{grid-template-columns:repeat(5,1fr)}}
-@media(max-width:580px){body{font-size:15px}.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.imp-grid,.ind-grid{grid-template-columns:1fr}.pillar-grid{grid-template-columns:repeat(5,1fr)}.nav-links{display:none}.side{width:100%}.eng{grid-template-columns:1fr}}
+@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}.action{grid-template-columns:1fr 1fr}.mgrid,.imp-grid,.glv,.plans{grid-template-columns:repeat(2,1fr)}.model-grid{grid-template-columns:repeat(2,1fr)}.pillar-grid{grid-template-columns:repeat(5,1fr)}.ind-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){body{font-size:15px}.grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}.action,.mgrid,.model-grid,.imp-grid,.ind-grid,.glv,.plans{grid-template-columns:1fr}.pillar-grid{grid-template-columns:repeat(5,1fr)}.nav-links{display:none}.side{width:100%}.eng{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -161,17 +157,17 @@ textarea{resize:vertical}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">AI QUANT COMMAND · ENGINE CASCADE v6.2</div>
-    <input id="ltok" type="password" placeholder="GitHub Token">
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FARRUKH GRID · FACE·HEART·BRAIN — v9.0</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">SIGNAL ONLY · fade-first-touch · B1/B2/S1/S2 plans · FACE_TOKEN read-only</div>
+    <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
     <div class="lerr" id="lockErr"></div>
-    <div style="font-size:.72rem;color:var(--muted)">Token = repo (read+write) scope · Colab bot isi repo mein state publish karta hai</div>
   </div>
 </div>
 
 <nav class="top-nav">
-<div class="brand">⚡ FL-200 <span>AI COMMAND</span></div>
+<div class="brand">⚡ FL-200 <span>GRID FACE</span></div>
 <div class="nav-links">
 <button class="nav-btn active" data-s="dash">DASHBOARD</button>
 <button class="nav-btn" data-s="strategy">STRATEGY</button>
@@ -181,19 +177,19 @@ textarea{resize:vertical}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="layer-badge">AI→BOT→MATRIX</span>
+<span class="tier-badge">GRID v9</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v6.2</div>
-<button class="nav-btn" id="openSet" style="border:1px solid var(--border)">⚙</button>
+<div class="status"><div class="dot"></div> v9.0</div>
+<button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
+<button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
 </nav>
 
 <div class="control-bar">
 <span style="font-family:'Orbitron';font-size:.8rem;color:var(--muted)">SYMBOL:</span>
-<button class="sym-btn active" data-sym="XAUUSD">XAUUSD</button>
-<button class="sym-btn" data-sym="EURUSD">EURUSD</button>
-<button class="sym-btn" data-sym="ETHUSD">ETHUSD</button>
+<button class="sym-btn active" data-sym="BTCUSDT">BTCUSDT</button>
+<button class="sym-btn" data-sym="ETHUSDT">ETHUSDT</button>
 <span id="mktBadge" class="badge-closed">CONNECTING…</span>
 <span style="width:1px;height:18px;background:var(--border);margin:0 4px"></span>
 <span style="font-family:'Orbitron';font-size:.8rem;color:var(--muted)">TF:</span>
@@ -215,14 +211,26 @@ textarea{resize:vertical}
 
 <div class="panel full action" id="actionPanel">
 <div>
-<div class="action-title">💡 RECOMMENDATION · <span id="recSym">—</span> · <span id="recTF">H1</span></div>
+<div class="action-title">💡 FINAL SIGNAL · <span id="recSym">—</span> · <span id="recTF">H1</span> · <span id="recZone" class="zonebadge zb-mid">ZONE: —</span></div>
 <div style="color:var(--muted);font-size:.95rem;margin-top:3px" id="recNote">—</div>
 <div class="byline" id="recBy">—</div>
-<div class="simgate" id="recSim">—</div>
 </div>
 <div class="mbox"><div class="mlabel">ACTION</div><div class="action-signal" id="recAction">—</div></div>
-<div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
-<div class="mbox"><div class="mlabel">TARGET / SL</div><div class="mval" id="recTP">—</div></div>
+<div class="mbox"><div class="mlabel">ENTRY (primary)</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
+<div class="mbox"><div class="mlabel">TP / SL</div><div class="mval" id="recTP">—</div></div>
+</div>
+
+<!-- ═══ SIGNAL DESK: point 0 + 1 + 2 + 3 + 5 ka live display ═══ -->
+<div class="panel full">
+<div class="ph"><span>🎯 SIGNAL DESK — GRID LEVELS · FIRST ZONE · PLANS · FINAL (7-part)</span><span id="sdSrc" class="live">—</span></div>
+<div class="glv" id="glvRow"></div>
+<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+<span class="zonebadge zb-mid" id="zPrev">MODEL first-zone guess: —</span>
+<span class="zonebadge zb-mid" id="zAct">ACTUAL first touch (live): —</span>
+<span class="gz" id="fadeRule">RULE: SELL_ZONE first → fade BUY · BUY_ZONE first → fade SELL · MID → HOLD</span>
+</div>
+<div class="plans" id="planBoxes"></div>
+<div class="final-box" id="finalBox" style="margin-top:10px">—</div>
 </div>
 
 <div class="panel span2">
@@ -231,7 +239,7 @@ textarea{resize:vertical}
 <div class="mbox"><div class="mlabel">PRICE</div><div class="price" id="livePrice">—</div></div>
 <div class="mbox"><div class="mlabel">DATA LAYER (P1)</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">STATE AGE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
-<div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:3px" id="sessionVal">—</div></div>
+<div class="mbox"><div class="mlabel">SESSION</div><div class="mval" style="margin-top:3px">24/7</div></div>
 </div>
 </div>
 
@@ -241,23 +249,18 @@ textarea{resize:vertical}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🛡️ DECISION ENGINE — AI → BOT → MATRIX (per timeframe)</span><span class="live" id="engWhy">—</span></div>
+<div class="ph"><span>🛡️ DECISION ENGINE — BRAIN(BOT) → MATRIX(engine.js full strategy)</span><span class="live" id="engWhy">—</span></div>
 <div class="eng-grid" id="engGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🕯️ FARRUKH GRID · <span id="gridTitle">—</span></span><span id="gridStatus" class="live">—</span></div>
+<div class="ph"><span>🕯️ FARRUKH GRID CHART · <span id="gridTitle">—</span> · anchor candle[1] + zone lines</span><span id="gridStatus" class="live">—</span></div>
 <div class="candle-wrap">
 <div class="candle-head">
 <span style="font-family:'Orbitron';font-size:.85rem;color:var(--cyan)" id="gridSrc">—</span>
 <span style="font-size:.82rem;color:var(--muted)" id="gridMeta">—</span>
 </div>
 <canvas id="cvGrid"></canvas>
-</div>
-<div class="path-box">
-<div class="path-title">📍 EXPECTED PATH · <span id="pathTF">H1</span> (model driven)</div>
-<div class="path-steps" id="pathSteps"></div>
-<div style="margin-top:6px;font-size:.85rem;color:var(--muted)" id="pathSource">—</div>
 </div>
 </div>
 
@@ -276,30 +279,13 @@ textarea{resize:vertical}
 </div>
 
 <div class="panel full">
-<div class="ph"><span>🧬 MODEL VOTES · <span id="modLabel">—</span> · <span id="modTF">H1</span></span><span style="font-size:.75rem;color:var(--muted)">click = detail</span></div>
+<div class="ph"><span>🧬 MODEL VOTES · <span id="modLabel">—</span> · <span id="modTF">H1</span> · bias | conf | first_zone_guess</span><span style="font-size:.75rem;color:var(--muted)">click = detail</span></div>
 <div class="model-grid" id="modelGrid"></div>
 </div>
 
 <div class="panel full">
-<div class="ph"><span>📉 INDICATORS (P1 verified)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
+<div class="ph"><span>📉 INDICATORS (P1 verified · RSI + MACD feed QUANT)</span><span style="font-size:.75rem;color:var(--muted)" id="indTF">—</span></div>
 <div class="ind-grid" id="indGrid"></div>
-</div>
-
-<div class="panel span2">
-<div class="ph"><span>💬 ZCODE CHAT</span><span style="display:flex;gap:8px;align-items:center"><span id="aiStat" style="font-size:.75rem;color:var(--amber)">AI: ?</span><span id="chatMode" style="font-size:.75rem;color:var(--muted)">L1→L5</span></span></div>
-<div class="chat">
-<div class="msgs" id="msgs"></div>
-<div class="input-row"><input class="cinp" id="cinp" placeholder="Ask ZCode… (report / signal / path / pillars)"><button class="sbtn" id="sbtn">➤</button></div>
-</div>
-</div>
-<div class="panel">
-<div class="ph"><span>🔄 SELF-LEARNING</span></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-<div class="mbox" style="text-align:center"><div class="mlabel">LEDGER (P4)</div><div class="mval" style="color:var(--cyan)" id="ledgerN">—</div></div>
-<div class="mbox" style="text-align:center"><div class="mlabel">INTEGRITY</div><div class="mval" style="color:var(--amber)" id="ledgerI">—</div></div>
-<div class="mbox" style="text-align:center"><div class="mlabel">OPEN PREDS</div><div class="mval" style="color:var(--purple)" id="openN">—</div></div>
-<div class="mbox" style="text-align:center"><div class="mlabel">COMPARE (P5)</div><div class="mval" style="color:var(--amber)" id="cmpN">—</div></div>
-</div>
 </div>
 
 <div class="panel full">
@@ -310,7 +296,7 @@ textarea{resize:vertical}
 </div>
 
 <div class="section" id="strategy">
-<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB (file-driven)</span></div>
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB (file-driven · heart repo)</span></div>
 <div class="inst" id="stratBox">Loading strategy file…</div>
 </div></div>
 
@@ -323,39 +309,34 @@ textarea{resize:vertical}
 </div></div></div>
 
 <div class="section" id="rules">
-<div class="panel full"><div class="ph"><span>📜 PROPFIRM RULES (P7 HARD GATE)</span></div>
+<div class="panel full"><div class="ph"><span>📜 RISK RULES (P7 · SIGNAL ONLY — user decides)</span></div>
 <div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
 
 <div class="section" id="reports">
-<div class="panel full"><div class="ph"><span>🩺 LIVE RUN — KYA HO RAHA HAI (har heartbeat update)</span><button class="rbtn" id="repRefresh">⟳ RESCAN FILES</button></div>
+<div class="panel full"><div class="ph"><span>🩺 LIVE RUN — KYA HO RAHA HAI</span><button class="rbtn" id="repRefresh">⟳ RESCAN</button></div>
 <div class="rep-sum" id="repSummary">State load ho rahi hai…</div></div>
-<div class="panel full"><div class="ph"><span>📥 REPO FILES — PREVIEW / DOWNLOAD</span><span style="font-size:.75rem;color:var(--muted)" id="repScan">—</span></div>
-<div id="repFiles">Scanning repo…</div></div>
-<div class="panel full"><div class="ph"><span>📖 REPORTS KAISE PARHEIN</span></div>
+<div class="panel full"><div class="ph"><span>📥 HEART REPO FILES — PREVIEW / DOWNLOAD</span><span style="font-size:.75rem;color:var(--muted)" id="repScan">—</span></div>
+<div id="repFiles">Scanning…</div></div>
+<div class="panel full"><div class="ph"><span>📖 GUIDE</span></div>
 <div class="guide">
-<b>Kahan se reports milengi?</b><br>
-1. Upar wale box se har file ka <b>👁 PREVIEW / ⬇ DOWNLOAD</b> button.<br>
-2. Direct: GitHub repo → file → <code>Download raw file</code>. Bot logs: Colab output (ya repo → <code>Actions</code>).<br><br>
-<b>File decoder:</b><br>
-• <code>state.json</code> — bot ka live dimagh: <code>updated</code> = last run, <code>engine</code> = AI ya bot, <code>timeframes</code> = har TF ka signal/score/entry/SL/TP/path, <code>candles</code> = matrix ka fuel.<br>
-• <code>perf.json</code> — <b>model improvement</b>: har model ki resolved accuracy (acc), pichli run se delta (delta_pct), samples (n). <code>system</code> = overall ensemble accuracy.<br>
-• <code>ledger.jsonl</code> — append-only record (P4); har line = ek run ka proof.<br><br>
-<b>Kab fikar karein?</b> state STALE (bot band), perf.json absent, ya system accuracy lagatar girti rahe.
+<b>Flow:</b> BRAIN (Colab) har H1 close par <code>grid_from_candles</code> → 4 models → <code>decision_matrix</code> → 7-part FINAL publish karta hai. FACE usay dikhata hai; aur agar BRAIN band ho, <code>engine.js</code> wahi math candles se khud chalata hai (MATRIX layer).<br>
+<b>Strategy:</b> candle[1] anchor grid · pehli zone touch ka ulta (fade) · BUY→B1/B2 · SELL→S1/S2 · R:R min 1:2 (B1/S1) · TP(B2)=B1 · TP(S2)=S1.<br>
+<b>Sirf signal</b> — koi execution nahi.
 </div></div>
 </div>
 
 <div class="section" id="pillars">
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW — 10 COMMANDMENTS</span></div>
-<div class="inst">P1 DATA INTEGRITY — fresh+valid data, weekend freeze. Bad data = HOLD.
-P2 ANALYZE — read own record + lessons before voting.
-P3 SELF-IMPROVE — conf-bias from own WR.
-P4 PERSIST — append-only hash-chained ledger. NOTHING deletable.
-P5 COMPARE — old vs new WR delta.
-P6 LESSON LIFECYCLE — max 12 active.
-P7 RISK ENFORCE — prop rules hard gate.
-P8 SIMULATE→DECIDE→TAG — form gate + reproducibility tag.
-P9 SECURITY — keys browser-local / Secrets only.
-P10 HEALTH & DRIFT — feed fresh, error streaks.
+<div class="inst">P1 DATA — valid candles, bad data = HOLD.
+P2 ANALYZE — models apna record dekh kar vote.
+P3 SELF-IMPROVE — accuracy from resolved predictions.
+P4 PERSIST — append-only hash-chained ledger.
+P5 COMPARE — accuracy delta per run.
+P6 LESSONS — reserved (local-LLM era).
+P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
+P8 SIMULATE→DECIDE→TAG — reproducibility tag.
+P9 SECURITY — FACE read-only · BRAIN writer · zero AI keys.
+P10 HEALTH — Colab band → MATRIX layer khud chalta rehta hai.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES (P3)</span></div>
@@ -363,36 +344,15 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 </div>
 </div>
 
-<div class="overlay" id="setOverlay"></div>
-<div class="side" id="settings">
-<div class="side-h"><div class="side-t">⚙ API PROVIDERS (multi-AI)</div><button class="close" id="closeSet">✕</button></div>
+<div class="overlay" id="cfgOverlay"></div>
+<div class="side" id="cfgPanel">
+<div class="side-h"><div class="side-t">⚙ SYSTEM CONFIG</div><button class="close" id="closeCfg">✕</button></div>
 <div class="side-b">
-
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin-bottom:6px">ACTIVE PROVIDERS (★ = use ho raha)</div>
-<div id="provList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">—</div>
-
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin-bottom:6px">➕ QUICK ADD</div>
-<select id="aiPreset" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:7px;border-radius:3px;margin-bottom:6px;font-family:JetBrains Mono">
-<option value="groq">Groq · llama-3.3-70b-versatile</option>
-<option value="glm">GLM / Z.ai · glm-4.6</option>
-<option value="openai">OpenAI · gpt-4o-mini</option>
-<option value="openrouter">OpenRouter · llama-3.3-70b</option>
-<option value="together">Together.ai · Llama-3.3-70B-Turbo</option>
-<option value="cerebras">Cerebras · llama-3.3-70b</option>
-<option value="custom">Custom (OpenAI-compatible)</option>
-</select>
-<input id="aiQuickName" placeholder="naam (e.g. groq_llama3)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
-<input id="aiQuickKey" type="password" placeholder="API KEY" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
-<input id="aiQuickUrl" placeholder="base_url (preset se auto)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:5px;font-family:JetBrains Mono">
-<input id="aiQuickModel" placeholder="model_name (preset se auto)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;margin-bottom:6px;font-family:JetBrains Mono">
-<button class="rbtn" style="width:100%;padding:9px" id="btnAddQuick">ADD PROVIDER</button>
-
-<div style="font-family:Orbitron;font-size:.8rem;color:var(--cyan);margin:14px 0 6px">📋 JSON CONFIG (aapka format)</div>
-<textarea id="cfgJson" rows="11" spellcheck="false" style="width:100%;background:rgba(0,0,0,.45);border:1px solid var(--border);color:var(--cyan);padding:8px;border-radius:3px;font-family:JetBrains Mono;font-size:.78rem;white-space:pre"></textarea>
-<div style="font-size:.72rem;color:var(--muted);line-height:1.55;margin:5px 0">Har provider: {"provider":"Groq","api_key":"...","model_name":"...","base_url":"...","extra":{},"enabled":true}. Multiple allowed — failover auto. (JSON mein duplicate keys allowed nahi — dusri naam pehli ko replace karti hai.)</div>
-<button class="rbtn" style="width:100%;padding:9px" id="btnApplyJson">APPLY JSON</button>
-<button class="rbtn" style="width:100%;padding:9px;margin-top:6px" id="btnTestAI">🧪 TEST ALL PROVIDERS</button>
-<div id="aiTestOut" style="font-size:.78rem;margin-top:8px;min-height:20px;line-height:1.6">—</div>
+<div class="inst" id="cfgInfo">—</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE.JS</button>
+<button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
+</div>
 </div>
 </div>
 
@@ -408,68 +368,63 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="side-b" id="fvBody"></div>
 </div>
 
+<script src="config.js"></script>
 <script>
-console.log("FL-200 v6.2 — multi-provider AI + engine cascade + per-TF flow + heartbeat pulse");
+console.log("FL-200 v9.0 — Farrukh Grid Strategy: fade-first-touch · B1/B2/S1/S2 · 4-model matrix");
 const $=id=>document.getElementById(id);
+const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
-const dec=()=>CUR_SYM==="EURUSD"?4:2;
 
-/* ================= CONFIG ================= */
-const CONFIG={
-  symbols:{XAUUSD:{name:"Gold",type:"metal"},EURUSD:{name:"Euro",type:"forex"},ETHUSD:{name:"Ethereum",type:"crypto"}},
-  GH_REPO:"MFJ-TRADING/FL-200-Private",
-  GH_BRANCH:"main"
-};
-const STATE_PATHS=["state.json","state/state.json","dashboard/state.json"];
-const LIST_DIRS=["","reports","backtest_results","logs","state"];
-const LEDGER_PATHS=["ledger.jsonl","state/ledger.jsonl"];
-const STRAT_PATHS=["strategy.md","strategy/strategy.md"];
-const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",jpg:"image/jpeg"};
-const REPORT_DESC={"state.json":"bot ka live dimagh (per-TF signals + candles)","perf.json":"model improvement % + system accuracy","backtest_report.json":"backtest metrics + config","trades.csv":"har trade ka record","equity_curve.csv":"equity data","equity_curve.png":"equity graph","predictions.csv":"per-candle model scores","ledger.jsonl":"append-only pillar ledger","strategy.md":"strategy source"};
-const PILLAR_NAMES={P1:"DATA",P2:"ANALYZE",P3:"SELF-IMP",P4:"PERSIST",P5:"COMPARE",P6:"LESSONS",P7:"RISK",P8:"SIMULATE",P9:"SECURITY",P10:"HEALTH"};
-
-/* ================= STATE ================= */
-let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="XAUUSD",CUR_TF="H1";
+let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null,FILES=new Map();
 let HB=0,DIRECT=null,DIRECT_KEY="",lastLedgerSeq=null;
-const ENGINE={layer:null,ai:{},eff:null};
-const AI_CACHE=new Map();const AI_TTL=5*60*1000;
-let stats=JSON.parse(localStorage.getItem("fl200_stats")||'{"ai_ok":0,"ai_err":0,"ai":0,"bot":0,"mx":0}');
-const saveStats=()=>localStorage.setItem("fl200_stats",JSON.stringify(stats));
-const LIVE={pollMs:5000,staleMs:30000,deadMs:120000,timer:null,busy:false,failures:0,lastFetch:0};
+const ENGINE={layer:null,eff:null};
+let ENGINE_OBJ=null,ENGINE_TS=0;
+const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
 
-/* ================= GITHUB ================= */
-async function ghList(path){
-  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+(path||"")+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
+/* ============ GITHUB (read-only FACE_TOKEN) ============ */
+async function ghFetch(repo,path,accept){
+  const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+path+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:accept||"application/vnd.github.raw+json"},cache:"no-store"});
+  if(!r.ok)throw new Error("gh "+r.status);return r;
+}
+const ghText=(repo,path)=>ghFetch(repo,path).then(r=>r.text());
+async function ghJson(repo,path){const t=await ghText(repo,path);try{return JSON.parse(t);}catch(e){return t;}}
+async function ghList(repo,dir){
+  const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+(dir||"")+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
   if(!r.ok)throw new Error("gh "+r.status);return r.json();
 }
-async function ghRaw(path){
-  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw+json"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);
-  const t=await r.text();try{return JSON.parse(t);}catch(e){return t;}
-}
-async function ghBlob(path){
-  const r=await fetch("https://api.github.com/repos/"+CONFIG.GH_REPO+"/contents/"+path+"?ref="+encodeURIComponent(CONFIG.GH_BRANCH)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github.raw"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);return r.arrayBuffer();
-}
+async function ghBlob(repo,path){return (await ghFetch(repo,path,"application/vnd.github.raw")).arrayBuffer();}
 const ext=p=>(p.split(".").pop()||"").toLowerCase();
-const isBin=p=>["png","jpg","jpeg","gif","webp"].includes(ext(p));
+const isBin=p=>["png","jpg","jpeg","webp"].includes(ext(p));
+const MIME={json:"application/json",csv:"text/csv",txt:"text/plain",md:"text/markdown",png:"image/png",js:"text/javascript"};
 
-/* ================= LIVE AGE ================= */
+/* ============ ENGINE LOADER (heart) ============ */
+async function loadEngine(force){
+  const now=Date.now();
+  if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
+  try{
+    const txt=await ghText(C.heartRepo,C.enginePath);
+    (new Function(txt))();
+    if(!window.FL200_ENGINE)throw new Error("FL200_ENGINE missing");
+    ENGINE_OBJ=window.FL200_ENGINE;ENGINE_TS=now;
+    pulse("engine.js ✓ v"+ENGINE_OBJ.version+" (grid+models+matrix)","pg");
+  }catch(e){pulse("engine load FAIL: "+e.message,"pr");ENGINE_OBJ=null;}
+  return ENGINE_OBJ;
+}
+
+/* ============ LIVE AGE / PULSE ============ */
 function stateUpdatedMs(){if(!STATE||!STATE.updated)return 0;const t=Date.parse(STATE.updated);return isNaN(t)?0:t;}
 function stateAgeMs(){const t=stateUpdatedMs();return t?Math.max(0,Date.now()-t):Infinity;}
 function stateAgeText(){const a=stateAgeMs();if(!isFinite(a))return"NO TIMESTAMP";const s=Math.floor(a/1000);
   if(s<2)return"JUST NOW";if(s<60)return s+"s AGO";if(s<3600)return Math.floor(s/60)+"m AGO";return Math.floor(s/3600)+"h AGO";}
 function getLiveState(){
-  if(!STATE)return{status:"OFFLINE",cls:"warn",text:"NO DATA"};
+  if(!STATE)return{status:"OFFLINE",text:"NO DATA"};
   const a=stateAgeMs();
-  if(a<=LIVE.staleMs)return{status:"LIVE",cls:"live",text:"LIVE · "+stateAgeText()};
-  if(a<=LIVE.deadMs)return{status:"SYNCING",cls:"warn",text:"SYNCING · "+stateAgeText()};
-  return{status:"STALE",cls:"warn",text:"STALE · "+stateAgeText()};
+  if(a<=LIVE.staleMs)return{status:"LIVE",text:"LIVE · "+stateAgeText()};
+  if(a<=LIVE.deadMs)return{status:"SYNCING",text:"SYNCING · "+stateAgeText()};
+  return{status:"STALE",text:"STALE · "+stateAgeText()};
 }
-
-/* ================= PULSE / UI HELPERS ================= */
 const prevVals={};
 function setTxt(id,txt,fl){const el=$(id);if(!el)return;const t=String(txt);
   if(prevVals[id]!==t){prevVals[id]=t;el.textContent=t;
@@ -482,12 +437,9 @@ function pulse(msg,cls){
   el.insertBefore(d,el.firstChild);
   while(el.children.length>60)el.lastElementChild.remove();
 }
-function log(msg){pulse(msg,"");}
 
-/* ================= CANDLES (bot → direct feed) ================= */
+/* ============ CANDLES (bot → direct feed) ============ */
 function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
-function isMarketOpen(sym){const s=CONFIG.symbols[sym];if(!s)return false;
-  if(s.type==="crypto")return true;const d=new Date().getUTCDay();return !(d===6||d===0);}
 function getCandles(){
   const SN=curSN();
   const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
@@ -495,283 +447,80 @@ function getCandles(){
   if(DIRECT_KEY===CUR_SYM+"|"+CUR_TF&&DIRECT)return DIRECT;
   return null;
 }
-async function directFeed(){
-  if(CUR_SYM!=="ETHUSD")return null;
-  const map={M30:"30m",H1:"1h",H4:"4h",D1:"1d",W1:"1w"};
-  const hosts=["https://data-api.binance.vision","https://api.binance.com"];
-  for(const h of hosts){
-    try{
-      const r=await fetch(h+"/api/v3/klines?symbol=ETHUSDT&interval="+(map[CUR_TF]||"1h")+"&limit=120");
-      if(!r.ok)continue;
-      return (await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
-    }catch(e){}
-  }
-  return null;
-}
 async function ensureDirect(){
-  if(CUR_SYM!=="ETHUSD")return;
   const key=CUR_SYM+"|"+CUR_TF;
   if(DIRECT_KEY===key)return;
-  const cs=await directFeed();
-  if(cs){DIRECT=cs;DIRECT_KEY=key;pulse("direct feed ✓ Binance "+CUR_TF+" ("+cs.length+" candles) → matrix live","g");renderAll();}
-  else pulse("direct feed fail (matrix needs bot candles)","r");
-}
-
-/* ================= LOCAL MATRIX (L3) ================= */
-function emaArr(a,n){const k=2/(n+1),o=[];let e=a[0];a.forEach((v,i)=>{e=i?v*k+e*(1-k):v;o.push(e);});return o;}
-function rsiArr(a,n=14){const o=[50];let g=0,l=0;
-  for(let i=1;i<a.length;i++){const d=a[i]-a[i-1],up=Math.max(d,0),dn=Math.max(-d,0);
-    if(i<=n){g+=up;l+=dn;if(i===n){g/=n;l/=n;}}else{g=(g*(n-1)+up)/n;l=(l*(n-1)+dn)/n;}
-    o.push(l===0?100:100-100/(1+g/l));}return o;}
-function atrArr(h,l,c,n=14){const tr=[0];
-  for(let i=1;i<h.length;i++)tr.push(Math.max(h[i]-l[i],Math.abs(h[i]-c[i-1]),Math.abs(l[i]-c[i-1])));
-  const o=[];let s=0;for(let i=0;i<tr.length;i++){if(i<n){s+=tr[i];o.push(s/(i+1));}else o.push((o[i-1]*(n-1)+tr[i])/n);}return o;}
-function matrixLocal(){
-  const cs=getCandles();if(!cs||cs.length<60)return null;
-  const o=cs.map(x=>+x.o),h=cs.map(x=>+x.h),l=cs.map(x=>+x.l),c=cs.map(x=>+x.c);
-  const i=c.length-2;if(i<55)return null;
-  const a=atrArr(h,l,c)[i]||1e-9,e50=emaArr(c,50)[i],r=rsiArr(c)[i];
-  const b0=c[i]-o[i],b1=c[i-1]-o[i-1];
-  const s=0.35*Math.tanh(b0/(0.5*a))+0.20*Math.tanh(b1/(0.5*a))+0.30*Math.tanh((c[i]-e50)/a)+0.15*((r-50)/50);
-  const sig=s>0.12?"BUY":s<-0.12?"SELL":"WAIT",d=dec();
-  return{signal:sig,score:+s.toFixed(3),entry:+c[i].toFixed(d),sl:+(c[i]-1.5*a).toFixed(d),tp:+(c[i]+3*a).toFixed(d),src:"matrix-local"};
-}
-
-/* ================= ENGINE CASCADE helpers ================= */
-function botSignal(SN){
-  if(!SN)return null;
-  const t=SN.timeframes&&SN.timeframes[CUR_TF];
-  if(t&&t.signal)return Object.assign({},t,{src:"bot"});
-  if(SN.signal){const P1=SN.plan&&(SN.plan.B1||SN.plan.S1);
-    return{signal:SN.signal,entry:P1?P1.entry:null,sl:P1?P1.sl:null,tp:P1?P1.tp:null,src:"bot-legacy",why:SN.why};}
-  return null;
-}
-
-/* ================= API PROVIDER MANAGER (multi-AI · JSON · failover) ================= */
-const API_PRESETS={
-  groq:{label:"Groq",base:"https://api.groq.com/openai/v1",model:"llama-3.3-70b-versatile"},
-  glm:{label:"GLM / Z.ai",base:"https://api.z.ai/api/paas/v4",model:"glm-4.6"},
-  openai:{label:"OpenAI",base:"https://api.openai.com/v1",model:"gpt-4o-mini"},
-  openrouter:{label:"OpenRouter",base:"https://openrouter.ai/api/v1",model:"meta-llama/llama-3.3-70b-instruct"},
-  together:{label:"Together.ai",base:"https://api.together.xyz/v1",model:"meta-llama/Llama-3.3-70B-Instruct-Turbo"},
-  cerebras:{label:"Cerebras",base:"https://api.cerebras.ai/v1",model:"llama-3.3-70b"},
-  custom:{label:"Custom",base:"",model:""}
-};
-function APIS(){try{return JSON.parse(localStorage.getItem("fl200_apis")||"{}");}catch(e){return {};}}
-function saveApis(A){localStorage.setItem("fl200_apis",JSON.stringify(A));}
-function normCfg(c){
-  c=Object.assign({provider:"custom",api_key:"",model_name:"",base_url:"",extra:{},enabled:true},c||{});
-  const p=String(c.provider||"").toLowerCase();
-  const b=String(c.base_url||"").trim().replace(/\/+$/,"");
-  if(p.indexOf("groq")>=0&&(!b||/groq\.com$/i.test(b)))c.base_url="https://api.groq.com/openai/v1";
-  else if((p.indexOf("glm")>=0||p.indexOf("z.ai")>=0)&&(!b||/api\.z\.ai\/?$/i.test(b)))c.base_url="https://api.z.ai/api/paas/v4";
-  else if(p.indexOf("openai")>=0&&(!b||/^https:\/\/openai\.com\/?$/i.test(b)))c.base_url="https://api.openai.com/v1";
-  else c.base_url=b;
-  return c;
-}
-function cfgUrl(c){
-  const b=String(c.base_url||"").trim().replace(/\/+$/,"");
-  if(!b)return"";
-  return /\/chat\/completions$/i.test(b)?b:b+"/chat/completions";
-}
-function activeCfg(){
-  const A=APIS();let k=localStorage.getItem("fl200_api_active");
-  if(!k||!A[k]||!A[k].enabled){
-    k=Object.keys(A).find(function(x){return A[x].enabled;})||null;
-    if(k)localStorage.setItem("fl200_api_active",k);
-  }
-  return k?A[k]:null;
-}
-const ZKEY=()=>{const c=activeCfg();return c?String(c.api_key||""):"";};
-const ZURL=()=>{const c=activeCfg();return c?cfgUrl(c):"";};
-const ZMODEL=()=>{const c=activeCfg();return c?String(c.model_name||""):"";};
-
-async function aiFetch(body,timeoutMs){
-  timeoutMs=timeoutMs||45000;
-  const A=APIS();
-  let order=Object.keys(A).filter(function(k){return A[k].enabled&&A[k].api_key;});
-  const act=localStorage.getItem("fl200_api_active");
-  order.sort(function(a,b){if(a===act)return -1;if(b===act)return 1;return 0;});
-  let lastErr=null;
-  for(const k of order){
-    const c=A[k],url=cfgUrl(c);
-    if(!url){lastErr=new Error(k+": base_url missing");continue;}
-    const t0=Date.now();
-    try{
-      const ctl=new AbortController();const to=setTimeout(function(){ctl.abort();},timeoutMs);
-      const r=await fetch(url,{method:"POST",signal:ctl.signal,
-        headers:{Authorization:"Bearer "+c.api_key,"Content-Type":"application/json"},
-        body:JSON.stringify(Object.assign({model:c.model_name},body))});
-      clearTimeout(to);
-      if(!r.ok){
-        let d="";try{const j=await r.json();d=(j.error&&j.error.message)||JSON.stringify(j);}catch(e){d=await r.text().catch(function(){return"";});}
-        lastErr=new Error(k+": HTTP "+r.status+" "+String(d).slice(0,110));
-        pulse("AI ["+k+"] HTTP "+r.status+" → agla provider","pr");continue;
-      }
-      const j=await r.json();
-      const msg=(j.choices&&j.choices[0]&&j.choices[0].message)?j.choices[0].message.content:null;
-      if(msg==null)throw new Error(k+": response shape galat");
-      if(k!==act)localStorage.setItem("fl200_api_active",k);
-      stats.ai_ok++;saveStats();
-      return{content:String(msg),provider:k,ms:Date.now()-t0};
-    }catch(e){lastErr=e;pulse("AI ["+k+"] fail: "+e.message+" → agla provider","pr");}
-  }
-  stats.ai_err++;saveStats();
-  throw lastErr||new Error("koi enabled provider nahi");
-}
-function applyCfgJSON(){
-  const out=$("aiTestOut");
-  let obj=null;
-  try{obj=JSON.parse($("cfgJson").value);}
-  catch(e){out.innerHTML='<span style="color:var(--red)">✗ JSON invalid — comma/bracket check karein.</span>';return;}
-  if(!obj||typeof obj!=="object"||Array.isArray(obj)){out.innerHTML='<span style="color:var(--red)">✗ Format: {"naam":{...provider...}}</span>';return;}
-  const A=APIS();let n=0;
-  Object.keys(obj).forEach(function(k){
-    const c=normCfg(obj[k]);
-    if(!c.api_key||!c.model_name){pulse("provider '"+k+"' skip (api_key/model_name missing)","pa");return;}
-    A[k]=c;n++;});
-  if(!n){out.innerHTML='<span style="color:var(--red)">✗ Koi valid provider nahi mila.</span>';return;}
-  saveApis(A);
-  const first=Object.keys(A).find(function(x){return A[x].enabled;});
-  if(first)localStorage.setItem("fl200_api_active",first);
-  renderProviders();updateAIStat();
-  out.innerHTML='<span style="color:var(--green)">✓ '+n+' provider(s) saved · ACTIVE: '+esc(localStorage.getItem("fl200_api_active")||"—")+'</span>';
-  pulse("[API] "+n+" providers applied from JSON","pg");
-}
-function quickAdd(){
-  const pk=$("aiPreset").value,p=API_PRESETS[pk];
-  const key=$("aiQuickKey").value.trim();
-  if(!key){$("aiTestOut").innerHTML='<span style="color:var(--amber)">Pehle API key dalein.</span>';return;}
-  const name=($("aiQuickName").value.trim()||pk);
-  const A=APIS();
-  A[name]=normCfg({provider:p.label,api_key:key,model_name:$("aiQuickModel").value.trim()||p.model,
-                   base_url:$("aiQuickUrl").value.trim()||p.base,extra:{},enabled:true});
-  saveApis(A);localStorage.setItem("fl200_api_active",name);
-  $("aiQuickKey").value="";
-  renderProviders();updateAIStat();
-  $("aiTestOut").innerHTML='<span style="color:var(--green)">✓ '+esc(name)+' added + ACTIVE — ab TEST ALL dabayen.</span>';
-  pulse("[API] provider added: "+name,"pg");
-}
-function renderProviders(){
-  const el=$("provList");if(!el)return;
-  const A=APIS();const act=localStorage.getItem("fl200_api_active");
-  const keys=Object.keys(A);
-  if(!keys.length){el.innerHTML='<div style="font-size:.8rem;color:var(--muted)">Koi provider nahi — QUICK ADD ya JSON APPLY karein.</div>';return;}
-  el.innerHTML=keys.map(function(k){
-    const c=A[k];
-    const host=(cfgUrl(c)||"—").replace(/^https?:\/\//,"").split("/")[0];
-    const actB='<button class="rbtn pact'+(k===act?" dl":"")+'" data-k="'+esc(k)+'">'+(k===act?"★ ACTIVE":"set active")+"</button>";
-    const togB='<button class="rbtn ptog" data-k="'+esc(k)+'">'+(c.enabled?"ON":"OFF")+"</button>";
-    const delB='<button class="rbtn pdel" data-k="'+esc(k)+'" style="color:var(--red)">✕</button>';
-    return '<div class="rep-file">'+actB+'<span class="fn">'+esc(k)+'<div class="fd">'+esc(String(c.model_name||"—"))+" · "+esc(host)+(c.enabled?"":" · <b style='color:var(--red)'>OFF</b>")+"</div></span>"+togB+delB+"</div>";
-  }).join("");
-}
-/* purani single-key config auto-migrate */
-(function(){
-  if(!localStorage.getItem("fl200_apis")){
-    const old=localStorage.getItem("hermes_zkey")||"";
-    if(old)saveApis({glm:normCfg({provider:"GLM / Z.ai",api_key:old,
-      model_name:localStorage.getItem("hermes_zmodel")||"glm-4.6",
-      base_url:"https://api.z.ai/api/paas/v4",enabled:true})});
-  }
-})();
-
-/* ================= L1 AI DECISION (engine) ================= */
-async function aiDecide(){
-  if(!ZKEY())return null;
-  const key=CUR_SYM+"|"+CUR_TF;
-  const c=AI_CACHE.get(key);
-  if(c&&Date.now()-c.ts<AI_TTL)return c.d;
-  const SN=curSN(),bt=botSignal(SN),mx=matrixLocal();
-  const ctx={symbol:CUR_SYM,tf:CUR_TF,price:SN?SN.price:null,
-    bot:bt?{signal:bt.signal,score:bt.score||null}:null,
-    matrix:mx?{signal:mx.signal,score:mx.score}:null,
-    pillars:(STATE&&STATE.pillar_score)?STATE.pillar_score.score:null};
   try{
-    const res=await aiFetch({temperature:0.2,max_tokens:140,messages:[
-      {role:"system",content:'You are FL-200 signal validator. Reply ONLY minified JSON {"signal":"BUY|SELL|WAIT","confidence":0-1,"reason":"max 2 sentences"}. Never guarantee profit.'},
-      {role:"user",content:JSON.stringify(ctx)}]});
-    const j=extractJSON(res.content);
-    if(!j||!j.signal)throw new Error("bad json");
-    let conf=parseFloat(j.confidence);if(isNaN(conf))conf=.5;if(conf>1&&conf<=100)conf/=100;
-    const d={signal:j.signal,confidence:Math.max(0,Math.min(1,conf)),reason:String(j.reason||"").slice(0,240)};
-    AI_CACHE.set(key,{ts:Date.now(),d:d});
-    pulse("AI ✓ ["+res.provider+"] "+key+" → "+d.signal+" ("+Math.round(d.confidence*100)+"%) "+res.ms+"ms","pg");
-    return d;
-  }catch(e){
-    AI_CACHE.set(key,{ts:Date.now(),d:null});
-    pulse("AI ✗ "+e.message+" → L2/L3 fallback","pr");return null;
-  }
+    const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+CUR_SYM+"&interval="+(C.binTf[CUR_TF]||"1h")+"&limit=200");
+    if(!r.ok)return;
+    const cs=(await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
+    if(cs&&cs.length){DIRECT=cs;DIRECT_KEY=key;pulse("direct feed ✓ Binance "+CUR_SYM+" "+CUR_TF,"pg");renderAll();}
+  }catch(e){}
+}
+
+/* ============ CASCADE + STRATEGY SOURCES ============ */
+function botTF(){
+  const SN=curSN();
+  return (SN&&SN.timeframes)?SN.timeframes[CUR_TF]||null:null;
 }
 function resolveLayer(){
-  const SN=curSN(),L=getLiveState();
-  const ai=ENGINE.ai,bt=botSignal(SN),mx=matrixLocal();
-  if(ai&&ai.ok&&ai.conf>=0.55&&ai.signal){ENGINE.layer="AI";ENGINE.eff={signal:ai.signal,why:ai.reason,src:"ai"};}
-  else if(bt&&L.status!=="OFFLINE"&&L.status!=="STALE"){ENGINE.layer="BOT";
-    ENGINE.eff={signal:bt.signal,score:bt.score,entry:bt.entry,sl:bt.sl,tp:bt.tp,why:bt.why||"bot ensemble",src:bt.src||"bot"};}
-  else if(mx){ENGINE.layer="MATRIX";ENGINE.eff=mx;}
+  const SN=curSN(),L=getLiveState(),bt=botTF();
+  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BOT";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain";}
+  else if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(getCandles(),CUR_TF);
+    if(f){ENGINE.layer="MATRIX";ENGINE.eff=f;ENGINE.eff.src="matrix-engine";}}
   else{ENGINE.layer="NONE";ENGINE.eff=null;}
-  if(ENGINE.layer!=="NONE"){stats[ENGINE.layer==="AI"?"ai":ENGINE.layer==="BOT"?"bot":"mx"]++;saveStats();}
-}
-function engineTick(){
-  if(ZKEY()){aiDecide().then(function(d){
-    ENGINE.ai=d?{ok:true,conf:d.confidence,signal:d.signal,reason:d.reason}:{ok:false,msg:"fail"};
-    resolveLayer();renderEngine();renderAction();});}
-  else ENGINE.ai={ok:false,msg:"no key"};
-  resolveLayer();renderEngine();renderAction();
 }
 function renderEngine(){
-  const L=getLiveState(),ai=ENGINE.ai,bt=botSignal(curSN()),mx=matrixLocal();
-  const actKey={AI:"ai",BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
+  const L=getLiveState(),bt=botTF(),mx=ENGINE_OBJ?ENGINE_OBJ.fullSignal(getCandles(),CUR_TF):null;
+  const actKey={BOT:"bot",MATRIX:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
-    ["L1 · AI (GLM/GROQ)", ai&&ai.ok?"✓ READY":(ZKEY()?(ai&&ai.ok===false?"✗ FAIL":"⏳ CALLING…"):"— NO KEY"),
-     ai&&ai.ok?("conf "+Math.round(ai.conf*100)+"% · "+(ai.signal||"")):(ai&&ai.ok===false?(ai.msg||"fail"):"⚙ mein provider add karein (Groq/GLM/…)")],
-    ["L2 · COLAB BOT",(STATE&&L.status!=="OFFLINE"&&L.status!=="STALE")?"✓ STATE "+stateAgeText():"✗ NO/STALE STATE",
-     bt?("H1 "+bt.signal+(bt.score!=null?" · score "+bt.score:"")):"Colab bot run/publish karein (FILE 2)"],
-    ["L3 · LOCAL MATRIX",mx?"✓ READY":"— NODATA",
-     mx?("score "+mx.score+" → "+mx.signal+" (candles "+(getCandles()?getCandles().length:0)+")"):(CUR_SYM==="ETHUSD"?"feed fail":"bot candles chahiye (XAU/EUR)")]];
+    ["L2 · BRAIN (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ STATE "+stateAgeText():"✗ NO/STALE",
+     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · conf "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein — band ho to MATRIX khud chalta hai"],
+    ["L3 · MATRIX (engine.js)",mx?"✓ READY":"— NODATA",
+     mx?(CUR_TF+" "+mx.final.signal+" · conf "+mx.final.confidence+"% · zone "+(mx.firstZone?mx.firstZone.zone:"—")):(ENGINE_OBJ?"candles chahiye":"engine.js load FAIL — ⚙ reload")],
+    ["L1 · LOCAL LLM","RESERVED","Future plug-in (abhi zero AI keys)"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
-    const k=["ai","bot","mx"][i];
-    return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--amber)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
+    const k=["bot","mx","llm"][i];
+    return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--muted)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
   $("engBadge").textContent="ENGINE: "+(ENGINE.layer||"…");
-  $("engBadge").style.color=ENGINE.layer==="AI"?"var(--green)":ENGINE.layer==="BOT"?"var(--cyan)":ENGINE.layer==="MATRIX"?"var(--amber)":"var(--red)";
-  $("engWhy").textContent=ENGINE.eff?("active: "+ENGINE.eff.src+" · "+(ENGINE.eff.signal||"")):"cascade pending";
+  $("engBadge").style.color=ENGINE.layer==="BOT"?"var(--cyan)":ENGINE.layer==="MATRIX"?"var(--amber)":"var(--red)";
+  $("engWhy").textContent=ENGINE.eff?("active: "+ENGINE.eff.src+" · "+(ENGINE.eff.final?ENGINE.eff.final.signal:"")):"cascade pending";
 }
 
-/* ================= SYNC ================= */
+/* ============ SYNC ============ */
 async function refreshData(){
   if(!TOKEN||LIVE.busy)return;
   LIVE.busy=true;
   try{
     let raw=null,used=null,lastErr=null;
-    for(const p of (FOUND_STATE_PATH?[FOUND_STATE_PATH]:STATE_PATHS)){
-      try{raw=await ghRaw(p);used=p;break;}catch(e){lastErr=e;}
+    for(const p of (FOUND_STATE_PATH?[FOUND_STATE_PATH]:C.statePaths)){
+      try{raw=await ghJson(C.heartRepo,p);used=p;break;}catch(e){lastErr=e;}
     }
     if(raw==null)throw lastErr||new Error("state.json not found");
-    FOUND_STATE_PATH=used;
-    STATE=(typeof raw==="string")?JSON.parse(raw):raw;
+    FOUND_STATE_PATH=used;STATE=raw;
     LIVE.lastFetch=Date.now();LIVE.failures=0;
     $("pollbar").classList.remove("err");
     HB++;$("hbCount").textContent="HB "+HB;
-    pulse("HB"+HB+" · sync ✓ · "+(used||"state.json")+" · age "+stateAgeText(),"pg");
-    renderAll();engineTick();renderReportsSummary();loadLedger();
+    pulse("HB"+HB+" · sync ✓ · "+stateAgeText(),"pg");
+    renderAll();renderReportsSummary();loadLedger();
+    if(ENGINE_OBJ&&Date.now()-ENGINE_TS>C.engineTtlMs)loadEngine(true);
   }catch(e){
     LIVE.failures++;$("pollbar").classList.add("err");
-    pulse("sync ✗ "+e.message+" (retry 5s)","pr");
+    pulse("sync ✗ "+e.message,"pr");
   }finally{LIVE.busy=false;}
 }
 
-/* ================= RENDER ================= */
+/* ============ RENDER ============ */
 function renderAll(){
-  updateLiveUI();renderTicker();renderAction();renderEngine();
-  renderPillars();renderModels();renderIndicators();renderPath();renderSelfLearn();renderAccount();renderRules();renderImp();
+  updateLiveUI();renderTicker();renderAction();renderEngine();renderSignalDesk();
+  renderPillars();renderModels();renderIndicators();renderSelfLearn();renderAccount();renderRules();renderImp();
 }
 function updateLiveUI(){
   const L=getLiveState();
   const badge=$("mktBadge");
   if(badge){badge.className=L.status==="LIVE"?"badge-open":"badge-closed";badge.textContent=L.text;}
   const lv=$("mktLive");if(lv){lv.textContent=L.status;lv.className=L.status==="LIVE"?"live":"live warn";}
-  $("sysStatus").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long"})+" · "+L.text;
+  $("sysStatus").textContent="CRYPTO 24/7 · "+L.text;
   setTxt("ageVal",stateAgeText(),false);
   const dl=$("dataLayer");
   if(dl){
@@ -780,116 +529,134 @@ function updateLiveUI(){
     else{dl.textContent="P1 ⚠ "+L.status;dl.style.color="var(--amber)";}
   }
   const rem=Math.max(0,LIVE.pollMs-(Date.now()-LIVE.lastFetch));
-  $("syncIn").textContent="sync "+(TOKEN?(LIVE.busy?"now…":Math.ceil(rem/1000)+"s"):"—");
+  $("syncIn").textContent="sync "+(LIVE.busy?"now…":Math.ceil(rem/1000)+"s");
 }
 function startHeartbeat(){
   if(LIVE.timer)clearInterval(LIVE.timer);
-  LIVE.timer=setInterval(function(){
-    updateLiveUI();
-    if(document.hidden)return;
-    if(TOKEN)refreshData();
-  },LIVE.pollMs);
-  pulse("heartbeat started · every "+(LIVE.pollMs/1000)+"s · engine AI→BOT→MATRIX","pa");
+  LIVE.timer=setInterval(function(){updateLiveUI();if(document.hidden)return;refreshData();},LIVE.pollMs);
+  pulse("heartbeat started · fade-first-touch loop · every "+(LIVE.pollMs/1000)+"s","pa");
 }
-document.addEventListener("visibilitychange",function(){if(!document.hidden&&TOKEN)refreshData();});
-window.addEventListener("online",function(){pulse("internet restored → sync","pa");if(TOKEN)refreshData();});
+document.addEventListener("visibilitychange",function(){if(!document.hidden)refreshData();});
+window.addEventListener("online",function(){pulse("internet restored → sync","pa");refreshData();});
 window.addEventListener("offline",function(){pulse("browser offline","pr");});
 setInterval(updateLiveUI,1000);
-setInterval(function(){if(TOKEN&&!document.hidden)engineTick();},15000);
+/* live recompute every 15s (user can't sit all day — auto loop, point 7) */
+setInterval(function(){if(!document.hidden&&ENGINE_OBJ)renderSignalDesk();},15000);
 
 function renderTicker(){
   const L=getLiveState();let items=[];
-  Object.keys(CONFIG.symbols).forEach(function(k){
+  Object.keys(C.symbols).forEach(function(k){
     const sn=(STATE&&STATE.symbols)?STATE.symbols[k]:null;
     let sig="—",cls="";
     if(sn){const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
-      sig=(t&&t.signal)||(sn.signal||"HOLD");}
+      sig=(t&&t.final&&t.final.signal)||(t&&t.signal)||(sn.signal||"HOLD");}
     if(sig==="BUY")cls="g";if(sig==="SELL")cls="r";
     items.push("<b>"+k+"</b> "+fmt(sn?sn.price:null,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+")");
   });
   const eq=(STATE&&STATE.stats)?STATE.stats.equity:null;
   const sa=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.overall!=null)?STATE.system_accuracy.overall+"%":"—";
-  const seg="<b>⚡ FL-200</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; SYS-ACC <b>"+sa+"</b> &nbsp;|&nbsp; ";
+  const seg="<b>⚡ FL-200 GRID</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; EQUITY <b>"+fmt(eq,2)+"</b> &nbsp;|&nbsp; SYS-ACC <b>"+sa+"</b> &nbsp;|&nbsp; ";
   $("ticker").innerHTML=seg+seg;
 }
 function renderAction(){
-  const SN=curSN(),open=isMarketOpen(CUR_SYM),rp=$("actionPanel");
+  const SN=curSN(),rp=$("actionPanel");
   $("recSym").textContent=CUR_SYM;$("recTF").textContent=CUR_TF;
   const eff=ENGINE.eff;
-  let sig=eff?eff.signal:null,by=ENGINE.layer,why=eff?(eff.why||eff.src||""):"";
-  let entry=eff?eff.entry:null,sl=eff?eff.sl:null,tp=eff?eff.tp:null;
-  if(!sig&&SN&&SN.signal){sig=SN.signal;by=SN.signal_by||"bot";why=SN.why||"";
-    const P1=SN.plan&&(SN.plan.B1||SN.plan.S1);if(P1){entry=P1.entry;tp=P1.tp;sl=P1.sl;}}
-  rp.classList.toggle("closed",!sig||!open||sig==="WAIT"||sig==="NO_TRADE");
+  const fin=eff&&eff.final?eff.final:null;
+  let sig=fin?fin.signal:null;
+  const plan=eff&&eff.plans?(sig==="BUY"?(eff.plans.B1||eff.plans.B2):(sig==="SELL"?(eff.plans.S1||eff.plans.S2):null)):null;
+  rp.classList.toggle("closed",!sig||sig==="HOLD"||sig==="WAIT"||sig==="NO_TRADE");
   const ra=$("recAction");
-  ra.textContent=sig?(open?(sig==="NO_TRADE"?"WAIT":sig):"WAIT"):"AWAITING DATA";
+  ra.textContent=sig?(sig==="HOLD"?"HOLD":sig):"AWAITING DATA";
   ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
-  $("recNote").textContent=why||"engine cascade pending (AI provider / bot state / candles chahiye)";
-  $("recBy").textContent="engine: "+(by||"—")+" · repro: "+((STATE&&STATE.run_tag&&STATE.run_tag.cfg_sha)||"—");
-  $("recSim").textContent="P7 risk gate ✓ · src "+(ENGINE.eff?ENGINE.eff.src:"—");
-  $("recEntry").textContent=entry!=null?String(entry):"—";
-  $("recTP").textContent=(tp!=null&&sl!=null)?("TP "+tp+" (SL "+sl+")"):"—";
+  $("recNote").textContent=fin?(fin.why||""):"cascade pending (brain state ya candles chahiye)";
+  $("recBy").textContent="engine: "+(ENGINE.layer||"—")+" · conf: "+(fin?fin.confidence+"%":"—")+" · SIGNAL ONLY";
+  $("recEntry").textContent=plan?String(plan.entry):"—";
+  $("recTP").textContent=(plan&&plan.tp!=null&&plan.sl!=null)?("TP "+plan.tp+" (SL "+plan.sl+")"):"—";
 }
+
+/* ═══ SIGNAL DESK — point 0/1/2/3/5 ka poora display ═══ */
+function renderSignalDesk(){
+  resolveLayer();
+  const eff=ENGINE.eff;
+  const G=eff&&eff.grid?eff.grid:(ENGINE_OBJ?((ENGINE_OBJ.fullSignal(getCandles(),CUR_TF)||{}).grid):null);
+  const fin=eff&&eff.final?eff.final:null;
+  const fz=eff&&eff.firstZone?eff.firstZone:null;
+  const gPrev=eff&&eff.models?eff.models:null;
+  $("sdSrc").textContent="src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF;
+  if(G){
+    const cells=[["ANCHOR C[1]",fmt(G.anchor?G.anchor.C:null,2)],["BUY2",fmt(G.levels.BUY2,2)],["BUY1",fmt(G.levels.BUY1,2)],
+      ["SELL1",fmt(G.levels.SELL1,2)],["SELL2",fmt(G.levels.SELL2,2)],["ExpH / ExpL",fmt(G.expected.high,2)+" / "+fmt(G.expected.low,2)]];
+    $("glvRow").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval">'+c[1]+"</div></div>").join("");
+    $("gridMeta").textContent="anchor "+(G.anchor&&G.anchor.isRed?"RED (pred skew down)":"GREEN (pred skew up)")+" · pred C "+fmt(G.pred?G.pred.close:null,2)+" · step "+fmt(G.step,2);
+  }else{$("glvRow").innerHTML='<div class="mbox"><div class="mlabel">GRID</div><div class="mval na">⏳ candles chahiye</div></div>';$("gridMeta").textContent="";}
+  /* actual first-zone live (engine local, sticky per hour) */
+  let zactTxt="—",zactCls="zb-mid";
+  if(ENGINE_OBJ){
+    const fzLive=ENGINE_OBJ.firstZone(getCandles(),G,CUR_TF);
+    if(fzLive){zactTxt="ACTUAL: "+fzLive.zone+(fzLive.hour_key?(" · "+fzLive.hour_key):"");
+      zactCls=fzLive.zone==="SELL_ZONE"?"zb-sell":fzLive.zone==="BUY_ZONE"?"zb-buy":"zb-mid";}
+  }else if(fz){zactTxt="ACTUAL (brain): "+fz.zone;zactCls=fz.zone==="SELL_ZONE"?"zb-sell":fz.zone==="BUY_ZONE"?"zb-buy":"zb-mid";}
+  const zb=$("zAct");zb.textContent=zactTxt;zb.className="zonebadge "+zactCls;
+  const gp=gPrev?(gPrev.grid&&gPrev.grid.first_zone_guess):(fin?fin.first_zone:null);
+  const zp=$("zPrev");
+  zp.textContent="MODEL guess: "+(gp||"—");
+  zp.className="zonebadge "+(gp==="SELL_ZONE"?"zb-sell":gp==="BUY_ZONE"?"zb-buy":"zb-mid");
+  /* plan boxes — point 2/3 */
+  const P=eff&&eff.plans?eff.plans:null;
+  if(P&&P.B1){
+    const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br>"+extra:"")+"</div></div>";
+    const rb1=P.B1.risk?("risk "+fmt(P.B1.risk,2)+" · R:R 1:2 ✓"):"";
+    $("planBoxes").innerHTML=
+      box("B1 · primary BUY","buys",P.B1,rb1)+box("B2 · deeper BUY","buys",P.B2,"TP=B1 · SL 1 step below B2")+
+      box("S1 · primary SELL","sells",P.S1,rb1&&P.S1.risk?("risk "+fmt(P.S1.risk,2)+" · R:R 1:2 ✓"):"")+box("S2 · higher SELL","sells",P.S2,"TP=S1 · SL 1 step above S2");
+  }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid + signal chahiye</div></div>';
+  /* 7-part final — point 5 output format */
+  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL signal pending — brain publish ya candles+engine chahiye";
+}
+
 function renderPillars(){
   const ps=(STATE&&STATE.pillar_score)||null;
-  setTxt("pillarScore",ps?(ps.score+"/10"+(ps.trend?" · "+ps.trend:"")):"awaiting bot",false);
+  setTxt("pillarScore",ps?(ps.score+"/10"+(ps.trend?" · "+ps.trend:"")):"awaiting brain",false);
   const g=$("pillarGrid");let h="";
   for(let i=1;i<=10;i++){
     const k="P"+i,v=ps?(ps[k]!==undefined?ps[k]:null):null;
     const ok=v===true||v==="ok"||v===1;
-    h+='<div class="pcard"><div class="pname">'+k+" "+PILLAR_NAMES[k]+'</div><div class="pstat '+(v==null?"warn":(ok?"ok":"warn"))+'">'+(v==null?"⏳":(ok?"✓":"✗"))+"</div></div>";
+    h+='<div class="pcard"><div class="pname">'+k+" "+C.pillarNames[k]+'</div><div class="pstat '+(v==null?"warn":(ok?"ok":"warn"))+'">'+(v==null?"⏳":(ok?"✓":"✗"))+"</div></div>";
   }
   g.innerHTML=h;
 }
 function renderModels(){
   setTxt("modLabel",CUR_SYM,false);setTxt("modTF",CUR_TF,false);
-  const SN=curSN();const t=SN&&SN.timeframes?SN.timeframes[CUR_TF]:null;
-  const votes=(t&&t.models)||{};
-  const cards=[
-    ["GRID","grid",votes.grid?votes.grid.vote:null,"Farrukh candle[1]+[0]"],
-    ["CHRONOS-LITE","chronos",votes.chronos?votes.chronos.vote:null,"momentum projector"],
-    ["QUANT","quant",votes.quant?votes.quant.vote:null,"logistic ML · p_up "+(votes.quant&&votes.quant.p_up!=null?votes.quant.p_up:"—")],
-    ["AI (L1)",null,ENGINE.ai&&ENGINE.ai.ok?Math.round(ENGINE.ai.conf*100)/100:null,"validator · "+((ENGINE.ai&&ENGINE.ai.signal)||"—")],
-    ["ENSEMBLE",null,t?(t.score!=null?t.score:null):null,(t&&t.signal)||"—"]];
-  $("modelGrid").innerHTML=cards.map(function(c){
-    const v=c[2];
-    const col=v==null?"var(--cyan)":v>0.12?"var(--green)":v<-0.12?"var(--red)":"var(--muted)";
-    const lbl=v==null?"—":(c[1]===null&&c[0]==="AI (L1)"?String(v):(v>0?"+"+v:v));
-    const wl=v==null?"l":Math.abs(v)>0.3?"":Math.abs(v)>0.12?"m":"l";
-    const detail=t?JSON.stringify({signal:t.signal,score:t.score,entry:t.entry,sl:t.sl,tp:t.tp,models:votes},null,2):"bot TF data pending";
-    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+c[0]+'</div><div class="mtype">'+c[3]+'</div><div class="mpred" style="color:'+col+'">'+lbl+'</div><div class="msig'+(v==null?" na":"")+'">'+(v==null?"no vote":(v>0.12?"BULLISH":v<-0.12?"BEARISH":"NEUTRAL"))+'</div><div class="wbar"><div class="wfill '+wl+'" style="width:'+(v==null?8:Math.min(100,Math.abs(v)*100+8))+'%"></div></div></div>';
+  const eff=ENGINE.eff;
+  const M=eff&&eff.models?eff.models:null;
+  const fin=eff&&eff.final?eff.final:null;
+  const defs=[["GRID","w 0.40 · structural base",M&&M.grid],
+    ["KRONOS","w 0.35 · stretch-fade",M&&M.kronos],
+    ["QUANT","w 0.25 · RSI+MACD",M&&M.quant],
+    ["TAURUS","modifier · regime/vol",M&&M.taurus]];
+  $("modelGrid").innerHTML=defs.map(function(d){
+    const m=d[2];
+    const bias=m?m.bias||m.next_hour_bias||"HOLD":"—";
+    const conf=m&&m.confidence!=null?m.confidence:null;
+    const fzg=m?(m.first_zone_guess||"—"):"—";
+    const col=bias==="BUY"?"var(--green)":bias==="SELL"?"var(--red)":bias==="HOLD"?"var(--amber)":"var(--muted)";
+    const wl=conf==null?"l":conf>=65?"":conf>=45?"m":"l";
+    const detail=m?JSON.stringify(m,null,2):"model data pending";
+    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+d[0]+'</div><div class="mtype">'+d[1]+'</div><div class="mpred" style="color:'+col+'">'+esc(bias)+'</div><div class="msig'+(conf==null?" na":"")+'">conf '+(conf==null?"—":conf+"%")+'</div><div class="mmeta">zone-guess: '+esc(fzg)+"</div>"+'<div class="wbar"><div class="wfill '+wl+'" style="width:'+(conf==null?8:Math.min(100,conf))+'%"></div></div></div>';
   }).join("");
   document.querySelectorAll("#modelGrid .mcard").forEach(function(el){
-    el.addEventListener("click",function(){$("modTitle").textContent="TF DETAIL · "+CUR_SYM+" "+CUR_TF;$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
+    el.addEventListener("click",function(){$("modTitle").textContent="MODEL DETAIL · "+CUR_SYM+" "+CUR_TF;$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
   });
 }
 function renderIndicators(){
-  const SN=curSN();const ind=(SN&&SN.indicators)||null;
-  setTxt("indTF",ind?"last closed candle":"bot run pending",false);
+  const eff=ENGINE.eff;
+  let ind=eff&&eff.indicators?eff.indicators:null;
+  if(!ind&&ENGINE_OBJ)ind=ENGINE_OBJ.indicators(getCandles());
+  setTxt("indTF",ind?"last closed candle":"pending",false);
   const g=$("indGrid");
-  if(!ind||!Object.keys(ind).length){
-    g.innerHTML=["RSI","ATR","EMA20/50"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳ pending</div><div class="istat">bot publish ke baad</div></div>').join("");
-    return;
-  }
-  g.innerHTML=Object.keys(ind).slice(0,9).map(k=>'<div class="ind"><div class="iname">'+esc(k.toUpperCase())+'</div><div class="ival">'+esc(String(ind[k]))+'</div><div class="istat">P1 ✓</div></div>').join("");
-}
-function renderPath(){
-  setTxt("pathTF",CUR_TF,false);
-  const SN=curSN();const t=SN&&SN.timeframes?SN.timeframes[CUR_TF]:null;
-  const p=t&&t.path;
-  if(p&&p.length){
-    $("pathSteps").innerHTML=p.map(s=>'<span class="step"><b>'+esc(s.step||"•")+"</b> "+esc(s.what||"")+"</span>").join('<span style="color:var(--muted)">→</span>');
-    $("pathSource").textContent="src: "+((t&&t.src)||"bot")+" · "+CUR_TF+" · signal "+(t?t.signal:"—")+" · score "+(t&&t.score!=null?t.score:"—");
-  }else{
-    const mx=matrixLocal();
-    if(mx){
-      $("pathSteps").innerHTML='<span class="step"><b>S1</b> matrix signal '+mx.signal+" (score "+mx.score+")</span><span class='step'><b>S2</b> TP zone "+mx.tp+"</span><span class='step'><b>S3</b> invalid below "+mx.sl+"</span>";
-      $("pathSource").textContent="src: local matrix (L3) · "+CUR_TF;
-    }else{
-      $("pathSteps").innerHTML='<span class="step blink" style="color:var(--muted)">⏳ path pending — bot candles ya direct feed chahiye</span>';
-      $("pathSource").textContent="no fake path (P1/P8)";
-    }
-  }
+  if(!ind){g.innerHTML=["RSI","MACD-HIST","EMA20","EMA50"].map(n=>'<div class="ind"><div class="iname">'+n+'</div><div class="ival na">⏳</div><div class="istat">candles chahiye</div></div>').join("");return;}
+  g.innerHTML=Object.keys(ind).slice(0,8).map(k=>'<div class="ind"><div class="iname">'+esc(k.toUpperCase())+'</div><div class="ival">'+esc(String(ind[k]))+'</div><div class="istat">P1 ✓</div></div>').join("");
 }
 function renderSelfLearn(){
   const led=(STATE&&STATE.ledger)||{};
@@ -912,88 +679,74 @@ function renderRules(){
   const rows=[["Max trades / day",tt+" / "+mt,tt<=mt],
     ["Risk per trade",(P.risk_per_trade_pct!=null?P.risk_per_trade_pct:"1.0")+"%",true],
     ["Daily loss limit",(P.daily_loss_limit_pct!=null?P.daily_loss_limit_pct:"3.0")+"%",true],
-    ["Max drawdown",(P.max_drawdown_pct!=null?P.max_drawdown_pct:"10.0")+"%",true]];
+    ["Max drawdown",(P.max_drawdown_pct!=null?P.max_drawdown_pct:"10.0")+"%",true],
+    ["Mode","SIGNAL ONLY — user decides",true]];
   $("rulesBox").innerHTML=rows.map(r=>'<div class="rule '+(r[2]?"ok":"")+'"><span>'+r[0]+"</span><b>"+esc(String(r[1]))+"</b><i>"+(r[2]?"✓ PASS":"✗ CHECK")+"</i></div>").join("");
 }
 function renderImp(){
   const g=$("impGrid");const M=(STATE&&STATE.models)||null;
   if(M&&Object.keys(M).length){
-    setTxt("impMeta","bot perf.json ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0"),false);
+    setTxt("impMeta","brain perf ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0"),false);
     g.innerHTML=Object.keys(M).map(function(k){
       const m=M[k],d=m.delta_pct;
       const arrow=d==null||d===0?"":d>0?' <span style="color:var(--green);font-size:.85rem">▲ +'+d+"%</span>":' <span style="color:var(--red);font-size:.85rem">▼ '+d+"%</span>";
       const w=Math.max(4,Math.min(100,m.acc||0));
-      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div><div class="in">'+(m.n||0)+" resolved · "+(m.per_symbol?Object.keys(m.per_symbol).length+" symbols":"")+"</div></div>";
+      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div><div class="in">'+(m.n||0)+" resolved</div></div>";
     }).join("");
   }else{
-    setTxt("impMeta","bot perf pending · live engine stats (local)",false);
-    g.innerHTML='<div class="imp"><div class="ih"><b>AI SUCCESS</b><span class="ia">'+((stats.ai_ok+stats.ai_err)?Math.round(stats.ai_ok/(stats.ai_ok+stats.ai_err)*100)+"%":"—")+'</span></div><div class="in">'+stats.ai_ok+" ok / "+stats.ai_err+" fail</div></div>"
-      +'<div class="imp"><div class="ih"><b>DECISIONS</b><span class="ia">'+(stats.ai+stats.bot+stats.mx)+'</span></div><div class="in">AI '+stats.ai+" · BOT "+stats.bot+" · MATRIX "+stats.mx+"</div></div>"
-      +'<div class="imp"><div class="ih"><b>PERF.JSON</b><span class="ia">—</span></div><div class="in">FILE 2 bot publish karega (accuracy deltas)</div></div>';
+    setTxt("impMeta","brain perf pending",false);
+    g.innerHTML='<div class="imp"><div class="ih"><b>PERF.JSON</b><span class="ia">—</span></div><div class="in">colab_LLM_brain.py publish karega</div></div>';
   }
   const sa=(STATE&&STATE.system_accuracy)||null;
   $("sysAcc").innerHTML=sa&&sa.overall!=null
     ?'<div class="big">'+sa.overall+'%</div><div class="sub">'+(sa.delta_pct!=null?((sa.delta_pct>=0?"▲ +":"▼ ")+sa.delta_pct+"% vs last run"):"baseline")+"<br>ensemble resolved accuracy</div>"
-    :'<div class="big" style="color:var(--muted)">—</div><div class="sub">FILE 2 bot ke perf.json ke baad<br>overall accuracy yahan update hogi</div>';
-  if(STATE&&STATE.models)$("selfBox").textContent=JSON.stringify({models:STATE.models,system_accuracy:STATE.system_accuracy},null,2);
-  else $("selfBox").textContent="Bot perf.json pending.\n\nBot (FILE 2) har run par har model ke predictions resolve karke accuracy + delta publish karta hai.";
+    :'<div class="big" style="color:var(--muted)">—</div><div class="sub">brain ke perf.json ke baad</div>';
+  if(STATE&&STATE.models)$("selfBox").textContent=JSON.stringify({models:STATE.models,system_accuracy:STATE.system_accuracy,audit:STATE.audit||null},null,2);
+  else $("selfBox").textContent="Brain perf pending.";
 }
 
-/* ================= LEDGER ================= */
+/* ============ LEDGER / STRATEGY / REPORTS (unchanged core) ============ */
 async function loadLedger(){
   let lines=null;
-  if(STATE&&STATE.ledger&&STATE.ledger.count!=null&&lastLedgerSeq===STATE.ledger.count&&$("ledgerBox").dataset.filled)return;
-  if(STATE&&STATE.ledger&&(STATE.ledger.items||STATE.ledger.lines)){lines=STATE.ledger.items||STATE.ledger.lines;}
-  else{
-    for(const p of (FOUND_LEDGER_PATH?[FOUND_LEDGER_PATH]:LEDGER_PATHS)){
-      try{const t=await ghRaw(p);FOUND_LEDGER_PATH=p;
-        lines=String(t).trim().split("\n").filter(Boolean).slice(-60).reverse();break;}catch(e){}
-    }
+  for(const p of (FOUND_LEDGER_PATH?[FOUND_LEDGER_PATH]:C.ledgerPaths)){
+    try{const t=await ghText(C.heartRepo,p);FOUND_LEDGER_PATH=p;
+      lines=String(t).trim().split("\n").filter(Boolean).slice(-60).reverse();break;}catch(e){}
   }
   const box=$("ledgerBox");
-  if(!lines||!lines.length){
-    box.innerHTML='<span class="blink" style="color:var(--muted)">⏳ ledger nahi mila — FILE 2 bot run karein (ledger.jsonl auto ban jayegi)</span>';
-    $("ledgerMeta").textContent="";return;
-  }
-  box.dataset.filled="1";
+  if(!lines||!lines.length){box.innerHTML='<span class="blink" style="color:var(--muted)">⏳ ledger nahi mila</span>';$("ledgerMeta").textContent="";return;}
   if(STATE&&STATE.ledger)lastLedgerSeq=STATE.ledger.count;
   box.innerHTML=lines.slice(0,14).map(function(l){
-    try{const o=typeof l==="string"?JSON.parse(l):l;
+    try{const o=JSON.parse(l);
       return "<div>#"+esc(o.seq!=null?o.seq:"?")+" ["+esc(String(o.t||"").slice(0,19))+"] "+esc(o.event||"")+" · "+esc(String(o.note||o.hash||"").slice(0,90))+"</div>";
     }catch(e){return "<div>"+esc(String(l).slice(0,120))+"</div>";}
   }).join("");
-  $("ledgerMeta").textContent=lines.length+" recent · hash-chained · delete-proof";
+  $("ledgerMeta").textContent=lines.length+" recent · hash-chained";
   setTxt("ledgerI","OK ✓",false);$("ledgerI").style.color="var(--green)";
 }
-
-/* ================= STRATEGY ================= */
 async function loadStrategy(){
-  for(const p of STRAT_PATHS){
-    try{const t=await ghRaw(p);$("stratBox").textContent=String(t).slice(0,4000);return;}catch(e){}
+  for(const p of C.strategyPaths){
+    try{$("stratBox").textContent=String(await ghText(C.heartRepo,p)).slice(0,5000);return;}catch(e){}
   }
-  $("stratBox").textContent="strategy.md repo mein nahi (FILE 3 upload karein — optional).\n\nDEFAULT FLOW (v6.2):\nL1 AI (Groq/GLM/…) signal validate karta hai →\nL2 Colab bot (GRID + CHRONOS-LITE + QUANT per TF) →\nL3 dashboard ka local matrix (same GRID formula, candles se).\n\nTF M30/H1/H4/D1/W1 — har TF ka apna score, entry, SL/TP, path.\nRisk: 1%/trade · 3 trades/day · 3% daily stop · 10% max DD (P7 hard gate).";
+  $("stratBox").textContent="strategy.md heart repo mein nahi.";
 }
-
-/* ================= REPORTS ================= */
 async function loadReports(){
   const box=$("repFiles");
-  box.innerHTML='<div class="blink" style="color:var(--muted)">📡 Scanning repo…</div>';
+  box.innerHTML='<div class="blink">📡 Scanning heart repo…</div>';
   FILES=new Map();
-  await Promise.all(LIST_DIRS.map(async function(d){
-    try{const items=await ghList(d);
+  await Promise.all(C.scanDirs.map(async function(d){
+    try{const items=await ghList(C.heartRepo,d);
       if(Array.isArray(items))items.forEach(function(f){if(f.type==="file")FILES.set(f.path,f);});}catch(e){}
   }));
-  setTxt("repScan",FILES.size+" files · "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}),false);
-  if(!FILES.size){box.innerHTML='<span style="color:var(--amber)">Koi file nahi mili — FILE 2 bot run karein (state.json ban jayegi).</span>';return;}
-  const prio=["state.json","perf.json","ledger.jsonl","backtest_report.json","trades.csv","equity_curve.csv","equity_curve.png"];
+  setTxt("repScan",FILES.size+" files",false);
+  if(!FILES.size){box.innerHTML='<span style="color:var(--amber)">Koi file nahi mili.</span>';return;}
+  const prio=["state.json","perf.json","ledger.jsonl","engine.js","strategy.md","backtest_report.json","trades.csv"];
   const paths=[...FILES.keys()].sort(function(a,b){
     const ia=prio.indexOf(a),ib=prio.indexOf(b);
     return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
   box.innerHTML=paths.map(function(p){
     const f=FILES.get(p),kb=f.size?(f.size/1024).toFixed(1)+" KB":"";
-    const dsc=REPORT_DESC[p.split("/").pop()]||"";
-    const bin=isBin(p);
-    return '<div class="rep-file"><span>'+(bin?"🖼️":ext(p)==="csv"?"📊":ext(p)==="json"?"🧾":"📄")+'</span><span class="fn">'+esc(p)+(dsc?'<div class="fd">'+esc(dsc)+"</div>":"")+'</span><span class="fs">'+kb+'</span><button class="rbtn" data-act="prev" data-p="'+esc(p)+'">👁 PREVIEW</button><button class="rbtn dl" data-act="dl" data-p="'+esc(p)+'">⬇ DOWNLOAD</button></div>';
+    const dsc=C.reportDesc[p.split("/").pop()]||"";
+    return '<div class="rep-file"><span>'+(isBin(p)?"🖼️":ext(p)==="csv"?"📊":ext(p)==="json"?"🧾":ext(p)==="js"?"⚙️":"📄")+'</span><span class="fn">'+esc(p)+(dsc?'<div class="fd">'+esc(dsc)+"</div>":"")+'</span><span class="fs">'+kb+'</span><button class="rbtn" data-act="prev" data-p="'+esc(p)+'">👁</button><button class="rbtn dl" data-act="dl" data-p="'+esc(p)+'">⬇</button></div>';
   }).join("");
   box.querySelectorAll(".rbtn").forEach(function(b){
     b.addEventListener("click",function(){const p=this.dataset.p;this.dataset.act==="dl"?dlFile(p):previewFile(p);});
@@ -1001,66 +754,59 @@ async function loadReports(){
 }
 function renderReportsSummary(){
   const el=$("repSummary");const L=getLiveState();
-  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi hui — Colab bot (FILE 2) run karein, phir SYNC.</span>';return;}
-  const S=STATE.stats||{},ps=STATE.pillar_score||{};
-  let h="<b>🕒 Last bot run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(STATE.engine||"—")+"  ·  <b>Run SHA:</b> "+esc((STATE.run_tag&&STATE.run_tag.cfg_sha)||"—")+"\n"
-    +"<b>📡 Data:</b> "+L.status+" — "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"  ·  <b>Equity:</b> $"+fmt(S.equity,2)+"\n";
-  if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
-    h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"% vs last run)"):"")+"\n";
-  if(STATE.models)h+="<b>📈 Models:</b> "+Object.keys(STATE.models).map(function(k){const m=STATE.models[k];return k+" "+(m.acc!=null?m.acc+"%":"—")+(m.delta_pct?((m.delta_pct>=0?" ↑":" ↓")+Math.abs(m.delta_pct)+"%"):"");}).join(" · ")+"\n";
+  if(!STATE){el.innerHTML='<span class="blink">⏳ State load nahi — brain run karein (MATRIX layer phir bhi live hai).</span>';return;}
+  const ps=STATE.pillar_score||{};
+  let h="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Engine:</b> "+esc(ENGINE.layer||"—")+"\n"
+    +"<b>📡 Data:</b> "+L.status+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n";
+  if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
   h+="\n";
-  Object.keys(CONFIG.symbols).forEach(function(k){
+  Object.keys(C.symbols).forEach(function(k){
     const sn=STATE.symbols?STATE.symbols[k]:null;
     if(!sn){h+="▫ "+k+": NODATA\n";return;}
     const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
-    h+="▫ <b>"+k+"</b> ["+CUR_TF+"] "+esc((t&&t.signal)||sn.signal||"HOLD")+(t&&t.score!=null?" (score "+t.score+")":"")+" — "+esc(String((sn.zcode&&sn.zcode.reasoning)||sn.why||"ensemble").slice(0,120))+"\n";
-    if(t&&t.path)h+="   path: "+t.path.map(p=>p.what).slice(0,3).join(" → ")+"\n";
+    h+="▫ <b>"+k+"</b> ["+CUR_TF+"] "+esc((t&&t.final&&t.final.signal)||(t&&t.signal)||"HOLD")+" — "+esc(String(sn.why||"").slice(0,110))+"\n";
   });
-  if(L.status!=="LIVE")h+="\n⚠️ STALE? Bot loop band ho gaya — Colab dobara run karein (FILE 2).";
   el.innerHTML=h;
 }
 async function dlFile(p){
   pulse("[DL] "+p,"pa");
   try{
     let blob;
-    if(isBin(p))blob=new Blob([await ghBlob(p)],{type:MIME[ext(p)]||"application/octet-stream"});
-    else{const d=await ghRaw(p);blob=new Blob([typeof d==="string"?d:JSON.stringify(d,null,2)],{type:MIME[ext(p)]||"text/plain"});}
+    if(isBin(p))blob=new Blob([await ghBlob(C.heartRepo,p)],{type:MIME[ext(p)]||"application/octet-stream"});
+    else blob=new Blob([await ghText(C.heartRepo,p)],{type:MIME[ext(p)]||"text/plain"});
     const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=p.split("/").pop();a.click();
     pulse("[DL] saved "+p.split("/").pop(),"pg");
-  }catch(e){pulse("[DL] FAILED "+p+" — "+e.message,"pr");}
+  }catch(e){pulse("[DL] FAILED "+p,"pr");}
 }
 async function previewFile(p){
   $("fvTitle").textContent=p;$("fvBody").innerHTML='<div class="blink">Loading…</div>';
   $("fileOverlay").classList.add("open");$("fileViewer").classList.add("open");
   try{
-    if(isBin(p)){$("fvBody").innerHTML='<img src="'+URL.createObjectURL(new Blob([await ghBlob(p)],{type:MIME[ext(p)]}))+'" style="max-width:100%">';}
-    else{const d=await ghRaw(p);const t=typeof d==="string"?d:JSON.stringify(d,null,2);
-      $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>60000?t.slice(0,60000)+"\n… (truncated)":t)+"</div>";}
+    if(isBin(p)){$("fvBody").innerHTML='<img src="'+URL.createObjectURL(new Blob([await ghBlob(C.heartRepo,p)],{type:MIME[ext(p)]}))+'" style="max-width:100%">';}
+    else{const t=await ghText(C.heartRepo,p);
+      $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>60000?t.slice(0,60000)+"\n…":t)+"</div>";}
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ================= CANVAS ================= */
+/* ============ CANVAS — grid lines draw (point 0 visual) ============ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function drawGrid(){
   const cv=$("cvGrid");if(!cv)return;
-  const ctx=cv.getContext("2d");const W=cv.clientWidth||900,H=160;
+  const ctx=cv.getContext("2d");const W=cv.clientWidth||900,H=280;
   if(cv.width!==W*2){cv.width=W*2;cv.height=H*2;}
   ctx.setTransform(2,0,0,2,0,0);
   ctx.fillStyle="#060913";ctx.fillRect(0,0,W,H);
   ctx.strokeStyle="rgba(0,243,255,.06)";
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  const t=Date.now();
-  const sx=((t%3000)/3000)*W;
-  const grad=ctx.createLinearGradient(sx-30,0,sx+30,0);
-  grad.addColorStop(0,"rgba(0,243,255,0)");grad.addColorStop(.5,"rgba(0,243,255,.14)");grad.addColorStop(1,"rgba(0,243,255,0)");
-  ctx.fillStyle=grad;ctx.fillRect(sx-30,0,60,H);
-  const cs=getCandles();const SN=curSN();
+  const cs=getCandles();
   if(cs&&validCandles(cs)){
     const view=cs.slice(-60);
+    const G=ENGINE_OBJ?ENGINE_OBJ.gridFromCandles(cs):null;
     let lo=Math.min(...view.map(c=>c.l)),hi=Math.max(...view.map(c=>c.h));
-    const pad=(hi-lo)*0.08||1;lo-=pad;hi+=pad;
+    if(G){lo=Math.min(lo,G.levels.BUY2);hi=Math.max(hi,G.levels.SELL2);}
+    const pad=(hi-lo)*0.06||1;lo-=pad;hi+=pad;
     const y=p=>H-10-((p-lo)/(hi-lo))*(H-20);
     const step=W/Math.max(view.length,10),bw=Math.max(3,step*0.55);
     view.forEach(function(c,i){
@@ -1070,157 +816,45 @@ function drawGrid(){
       const yo=y(Math.max(c.o,c.c));
       ctx.fillRect(x-bw/2,yo,bw,Math.max(1.5,Math.abs(y(c.o)-y(c.c))));
     });
+    if(G){
+      const lines=[[G.levels.SELL2,"S2","#ff0055"],[G.levels.SELL1,"S1","rgba(255,0,85,.6)"],
+        [G.levels.BUY1,"B1","rgba(0,255,102,.6)"],[G.levels.BUY2,"B2","#00ff66"],
+        [G.expected.high,"ExpH","rgba(255,170,0,.55)"],[G.expected.low,"ExpL","rgba(255,170,0,.55)"]];
+      lines.forEach(function(L){
+        ctx.strokeStyle=L[2];ctx.setLineDash([6,5]);
+        ctx.beginPath();ctx.moveTo(0,y(L[0]));ctx.lineTo(W,y(L[0]));ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=L[2];ctx.font="11px JetBrains Mono";
+        ctx.fillText(L[1]+" "+L[0].toFixed(2),6,y(L[0])-3);
+      });
+      /* zone shading */
+      ctx.fillStyle="rgba(0,255,102,.05)";ctx.fillRect(0,y(G.levels.BUY1),W,y(G.levels.BUY2)-y(G.levels.BUY1));
+      ctx.fillStyle="rgba(255,0,85,.05)";ctx.fillRect(0,y(G.levels.SELL2),W,y(G.levels.SELL1)-y(G.levels.SELL2));
+    }
     const last=view[view.length-1];
-    const pl=.45+.4*Math.sin(t/280);
+    const pl=.45+.4*Math.sin(Date.now()/280);
     ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
     ctx.beginPath();ctx.moveTo(0,y(last.c));ctx.lineTo(W,y(last.c));ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle="rgba(0,243,255,"+(pl+.3)+")";ctx.font="bold 13px JetBrains Mono";
-    ctx.fillText(last.c.toFixed(dec()),W-90,y(last.c)-6);
-    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+(SN&&SN.candles&&SN.candles[CUR_TF]?"bot candles":"direct feed"),false);
+    ctx.fillText(last.c.toFixed(2),W-90,y(last.c)-6);
+    const SN=curSN();
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+(SN&&SN.candles&&SN.candles[CUR_TF]?"brain candles":"direct feed"),false);
   }else{
-    ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
+    ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(Date.now()/500))+")";
     ctx.font="bold 16px Orbitron";ctx.textAlign="center";
     ctx.fillText("⏳ AWAITING CANDLE DATA · P1",W/2,H/2-8);
     ctx.font="12px JetBrains Mono";
-    ctx.fillText(CUR_SYM+" — bot publish karein (FILE 2) · ETHUSD ka direct feed auto hai",W/2,H/2+16);
+    ctx.fillText(CUR_SYM+" — Binance direct feed auto-connect",W/2,H/2+16);
     ctx.textAlign="left";
     setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · no data",false);
   }
-  setTxt("gridMeta",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})+" · scanline active",false);
+  setTxt("gridMeta",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),false);
   setTxt("gridStatus",CUR_TF+" · "+getLiveState().status+" · "+stateAgeText(),false);
   $("gridStatus").className=getLiveState().status==="LIVE"?"live":"live warn";
   requestAnimationFrame(drawGrid);
 }
 requestAnimationFrame(drawGrid);
 
-/* ================= CHAT (L3/L4/L5) ================= */
-function extractJSON(txt){try{return JSON.parse(txt);}catch(e){}
-  const a=txt.indexOf("{"),b=txt.lastIndexOf("}");
-  if(a>=0&&b>a){try{return JSON.parse(txt.slice(a,b+1));}catch(e){}}return null;}
-function repairAnswer(d){
-  if(!d||typeof d!=="object")return null;
-  const ans=String(d.answer||"").slice(0,800);if(!ans)return null;
-  let conf=parseFloat(d.confidence!=null?d.confidence:0.5);if(isNaN(conf))conf=0.5;
-  if(conf>1&&conf<=100)conf/=100;
-  return{answer:ans,confidence:Math.max(0,Math.min(1,conf))};}
-async function aiCall(messages,maxTokens){
-  const res=await aiFetch({temperature:0.4,max_tokens:maxTokens||400,messages});
-  let d=extractJSON(res.content),repaired=false;
-  if(d){const fx=repairAnswer(d);if(fx)d=fx;else{d=null;repaired=true;}}
-  if(!d){
-    addMsg("ai","⚠️ Format invalid — L4 repair retry…");
-    try{
-      const r2=await aiFetch({temperature:0.2,max_tokens:maxTokens||400,
-        messages:messages.concat([{role:"user",content:'Previous reply invalid JSON. Reply ONLY minified JSON: {"answer":"...","confidence":0-1}'}])});
-      d=extractJSON(r2.content);if(d)d=repairAnswer(d);repaired=true;
-    }catch(e){}
-  }
-  return{d:d,repaired:repaired,provider:res.provider};
-}
-function addMsg(cls,text,tag){
-  const d=document.createElement("div");d.className="msg "+cls;
-  let html=(cls==="ai")?text.replace(/\n/g,"<br>"):esc(text).replace(/\n/g,"<br>");
-  d.innerHTML=html+(tag?'<span class="tagline">'+esc(tag)+"</span>":"")
-    +'<span class="t">'+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+"</span>";
-  const box=$("msgs");box.appendChild(d);box.scrollTop=9999;
-  while(box.children.length>50)box.firstElementChild.remove();
-}
-function buildContext(){
-  const S=(STATE&&STATE.stats)||{};const syms={};
-  Object.keys((STATE&&STATE.symbols)||{}).forEach(function(k){
-    const sn=STATE.symbols[k];
-    syms[k]={signal:sn.signal,price:sn.price,timeframes:sn.timeframes?Object.fromEntries(Object.entries(sn.timeframes).map(([tf,v])=>[tf,{signal:v.signal,score:v.score}])):null};
-  });
-  return{sym:CUR_SYM,tf:CUR_TF,engine:ENGINE.layer,desk:{equity:S.equity,trades_today:S.trades_today},
-    symbols:syms,pillar_score:STATE?STATE.pillar_score:null,system_accuracy:STATE?STATE.system_accuracy:null};
-}
-function briefingText(){
-  if(!STATE)return"State abhi load nahi hui — Colab bot (FILE 2) run karein.";
-  const S=STATE.stats||{};
-  let t="Engine: "+(ENGINE.layer||"—")+" · State "+stateAgeText()+". Equity $"+fmt(S.equity)+".\n";
-  Object.keys(CONFIG.symbols).forEach(function(k){
-    const sn=STATE.symbols?STATE.symbols[k]:null;
-    const tf=sn&&sn.timeframes?sn.timeframes[CUR_TF]:null;
-    t+=k+" ["+CUR_TF+"]: "+((tf&&tf.signal)||"HOLD")+" (score "+(tf&&tf.score!=null?tf.score:"—")+"). ";});
-  if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)t+="System acc "+STATE.system_accuracy.overall+"%.";
-  return t;
-}
-function fallbackAnswer(q){
-  const low=(q||"").toLowerCase();
-  if(/report|download/.test(low))return"REPORTS tab — wahan har repo file ka PREVIEW/DOWNLOAD button hai. Live run summary bhi wahan har heartbeat update hoti hai.";
-  if(/pillar/.test(low)&&STATE&&STATE.pillar_score)return"Pillar score: "+STATE.pillar_score.score+"/10. "+
-    Object.keys(STATE.pillar_score).filter(k=>k.indexOf("P")===0).map(k=>k+":"+(STATE.pillar_score[k]?"✓":"✗")).join(" ");
-  if(/improve|accuracy|barh/.test(low)){
-    if(STATE&&STATE.models)return"Model improvement:\n"+Object.keys(STATE.models).map(k=>k+": "+(STATE.models[k].acc!=null?STATE.models[k].acc+"%":"—")+(STATE.models[k].delta_pct?" ("+(STATE.models[k].delta_pct>=0?"+":"")+STATE.models[k].delta_pct+"%)":"")).join("\n")+"\nSystem: "+(STATE.system_accuracy?STATE.system_accuracy.overall+"%":"—");
-    return"Model improvement bot ke perf.json se aati hai — FILE 2 bot run karein.";}
-  if(/path/.test(low)){const t=curSN()&&curSN().timeframes?curSN().timeframes[CUR_TF]:null;
-    return t&&t.path?"Path "+CUR_TF+": "+t.path.map(p=>p.step+". "+p.what).join(" → "):"Path pending — bot run chahiye.";}
-  if(/status|brief|kya ho/.test(low))return briefingText();
-  if(!STATE)return"State abhi load nahi hui — Colab bot run karein ya SYNC dabayen.";
-  const bt=botSignal(curSN());
-  if(/signal/.test(low)&&bt)return"Rules-based ["+CUR_TF+"]: "+CUR_SYM+" "+bt.signal+" (score "+(bt.score!=null?bt.score:"–")+") · engine "+ENGINE.layer;
-  if(/plan/.test(low)&&bt&&bt.entry)return"Plan ["+CUR_TF+"]: entry "+bt.entry+", SL "+bt.sl+", TP "+bt.tp;
-  return isMarketOpen(CUR_SYM)?CUR_SYM+" "+CUR_TF+": live session. Full AI ke liye ⚙️ mein provider add karein.":CUR_SYM+" market closed (weekend). ETHUSD 24/7 open.";
-}
-async function chatSend(){
-  const inp=$("cinp"),q=inp.value.trim();if(!q)return;
-  inp.value="";addMsg("user",q);
-  if(!ZKEY()){addMsg("ai","⚙️ Koi AI provider active nahi — rules-based jawab.\n\nAI ON: ⚙ → QUICK ADD ya JSON APPLY → 🧪 TEST ALL → green ✓","completed_by: fallback (L5 · no provider)");return;}
-  $("chatMode").innerHTML='<span class="think"><span></span><span></span><span></span></span>';
-  const sys="You are ZCode, AI analyst of FL-200 quant desk. You get LIVE state incl engine cascade, per-TF signals, model improvements, pillar scores. "+
-    'Reply ONLY minified JSON: {"answer":"max 5 sentences in user language","confidence":0-1}. Respect prop rules, never guarantee profit.';
-  const msgs=[{role:"system",content:sys},{role:"user",content:"LIVE DESK:\n"+JSON.stringify(buildContext())},{role:"user",content:q}];
-  try{
-    const res=await aiCall(msgs,400);
-    if(res.d){addMsg("ai",res.d.answer,"completed_by: "+(res.provider||"ai")+(res.repaired?" (L4-repaired)":" (L3-clean)")+" · conf "+Math.round(res.d.confidence*100)+"%");}
-    else{addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — AI unusable)");}
-  }catch(e){
-    const m=String(e.message||"");
-    if(/fetch/i.test(m))addMsg("ai","⚠️ Request blocked (network/CORS).\nFix: ⚙️ → 🧪 TEST ALL — jo provider fail ho uska base_url check karein ya doosra provider ACTIVE karein.","completed_by: blocked (network)");
-    else addMsg("ai",fallbackAnswer(q),"completed_by: fallback (L5 — "+m+")");
-  }
-  $("chatMode").textContent="L1→L5 active";
-}
-
-/* ================= AI STATUS / TEST ALL ================= */
-function updateAIStat(){
-  const el=$("aiStat");if(!el)return;
-  if(!ZKEY()){el.textContent="AI: OFF (provider nahi)";el.style.color="var(--amber)";}
-  else{el.textContent="AI: ON · "+(localStorage.getItem("fl200_api_active")||"");el.style.color="var(--green)";}
-}
-async function testAI(){
-  const out=$("aiTestOut");
-  const A=APIS();
-  const en=Object.keys(A).filter(function(k){return A[k].enabled;});
-  if(!en.length){out.innerHTML='<span style="color:var(--amber)">Koi enabled provider nahi — QUICK ADD ya JSON APPLY karein.</span>';return;}
-  out.innerHTML="Testing "+en.length+" provider(s)…";
-  let html="",firstOk=null;
-  for(const k of en){
-    const c=A[k],url=cfgUrl(c),t0=Date.now();
-    try{
-      const r=await fetch(url,{method:"POST",
-        headers:{Authorization:"Bearer "+c.api_key,"Content-Type":"application/json"},
-        body:JSON.stringify({model:c.model_name,temperature:0.1,max_tokens:20,
-          messages:[{role:"user",content:'Reply ONLY: {"answer":"OK","confidence":1}'}]})});
-      const ms=Date.now()-t0;
-      if(!r.ok){
-        let d="";try{d=(await r.json()).error.message||"";}catch(e){}
-        html+='<div style="color:var(--red)">✗ <b>'+esc(k)+'</b> HTTP '+r.status+" ("+ms+"ms) "+esc(String(d).slice(0,90))+"</div>";
-      }else{
-        await r.json();
-        html+='<div style="color:var(--green)">✓ <b>'+esc(k)+'</b> LIVE ('+ms+"ms) · "+esc(c.model_name)+"</div>";
-        if(!firstOk)firstOk=k;
-      }
-    }catch(e){
-      html+='<div style="color:var(--red)">✗ <b>'+esc(k)+'</b> '+esc(e.message)+
-        (String(e.message).indexOf("Failed to fetch")>=0?" <span style='color:var(--amber)'>(CORS? — Worker proxy URL base_url mein dalein)</span>":"")+"</div>";
-    }
-  }
-  if(firstOk){localStorage.setItem("fl200_api_active",firstOk);html+='<div style="color:var(--cyan);margin-top:5px">ACTIVE → <b>'+esc(firstOk)+"</b></div>";}
-  out.innerHTML=html||"—";updateAIStat();renderProviders();
-}
-
-/* ================= EVENTS ================= */
+/* ============ EVENTS ============ */
 document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
   b.addEventListener("click",function(){
     document.querySelectorAll(".nav-btn[data-s]").forEach(x=>x.classList.remove("active"));
@@ -1234,63 +868,54 @@ document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
 document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".sym-btn").forEach(x=>x.classList.remove("active"));
   this.classList.add("active");CUR_SYM=this.dataset.sym;DIRECT=null;DIRECT_KEY="";
-  pulse("SYMBOL → "+CUR_SYM+" · engine re-eval","pa");ensureDirect().then(()=>{renderAll();engineTick();});
+  pulse("SYMBOL → "+CUR_SYM,"pa");ensureDirect().then(()=>renderAll());
 }));
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
   this.classList.add("active");CUR_TF=this.dataset.tf;DIRECT=null;DIRECT_KEY="";
-  pulse("TIMEFRAME → "+CUR_TF+" · poora flow re-eval (signal/models/path/engine)","pa");
-  ensureDirect().then(()=>{renderAll();engineTick();renderReportsSummary();});
+  pulse("TIMEFRAME → "+CUR_TF+" · grid+models+matrix re-eval","pa");
+  ensureDirect().then(()=>{renderAll();renderReportsSummary();});
 }));
- $("sbtn").addEventListener("click",chatSend);
- $("cinp").addEventListener("keydown",e=>{if(e.key==="Enter")chatSend();});
  $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();});
  $("repRefresh").addEventListener("click",loadReports);
-
- $("openSet").addEventListener("click",function(){
-  $("cfgJson").value=JSON.stringify(APIS(),null,2);
-  renderProviders();
-  $("setOverlay").classList.add("open");$("settings").classList.add("open");});
- $("closeSet").addEventListener("click",function(){$("setOverlay").classList.remove("open");$("settings").classList.remove("open");});
- $("btnApplyJson").addEventListener("click",applyCfgJSON);
- $("btnAddQuick").addEventListener("click",quickAdd);
- $("btnTestAI").addEventListener("click",testAI);
- $("aiPreset").addEventListener("change",function(){
-  const p=API_PRESETS[this.value];if(!p)return;
-  $("aiQuickUrl").value=p.base;$("aiQuickModel").value=p.model;});
- $("provList").addEventListener("click",function(e){
-  const b=e.target.closest("button");if(!b)return;
-  const k=b.dataset.k;if(!k)return;
-  const A=APIS();if(!A[k])return;
-  if(b.classList.contains("pact")){localStorage.setItem("fl200_api_active",k);renderProviders();updateAIStat();pulse("[API] ACTIVE → "+k,"pg");}
-  else if(b.classList.contains("ptog")){A[k].enabled=!A[k].enabled;saveApis(A);renderProviders();updateAIStat();}
-  else if(b.classList.contains("pdel")){delete A[k];saveApis(A);renderProviders();updateAIStat();}
+ $("openCfg").addEventListener("click",function(){
+  $("cfgInfo").textContent=
+    "FACE  : "+C.faceRepo+" (public)\nHEART : "+C.heartRepo+" (private)\nBRAIN : colab_LLM_brain.py\n"+
+    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" loaded"):"NOT LOADED")+"\n"+
+    "GRID  : step 33.33% · weights .40/.35/.25 · RR 1:2 · fade-first-touch\n"+
+    "MODE  : SIGNAL ONLY — no auto execution";
+  $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
-
+ $("closeCfg").addEventListener("click",function(){$("cfgOverlay").classList.remove("open");$("cfgPanel").classList.remove("open");});
+ $("cfgOverlay").addEventListener("click",function(){this.classList.remove("open");$("cfgPanel").classList.remove("open");});
+ $("btnEngineReload").addEventListener("click",async function(){ENGINE_OBJ=null;await loadEngine(true);renderAll();});
+function logout(){localStorage.removeItem("hermes_tok");location.reload();}
+ $("btnLogout").addEventListener("click",logout);
+ $("btnLogout2").addEventListener("click",logout);
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
  $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
  $("fileOverlay").addEventListener("click",function(){this.classList.remove("open");$("fileViewer").classList.remove("open");});
 
-/* ================= LOCK / INIT ================= */
+/* ============ LOCK / INIT ============ */
 function unlockUI(){
   $("lock").style.display="none";
-  startHeartbeat();refreshData();loadStrategy();ensureDirect();
-  updateAIStat();renderProviders();
+  pulse("FACE online · FARRUKH GRID strategy armed (SIGNAL ONLY)","pa");
+  loadEngine(true).then(function(){startHeartbeat();refreshData();loadStrategy();ensureDirect();});
 }
  $("lockBtn").addEventListener("click",async function(){
   const tok=$("ltok").value.trim(),pass=$("lpass").value.trim(),err=$("lockErr");
   const saved=localStorage.getItem("fl200_pass");
   if(saved&&pass&&saved!==pass){err.textContent="Galat password.";return;}
   if(!saved&&pass)localStorage.setItem("fl200_pass",pass);
-  if(!tok){err.textContent="GitHub token zaroori hai.";return;}
+  if(!tok){err.textContent="FACE_TOKEN zaroori hai.";return;}
   err.textContent="Verifying…";
-  try{TOKEN=tok;localStorage.setItem("hermes_tok",tok);await ghList("");unlockUI();}
-  catch(e){err.textContent="Token invalid ya repo access nahi ("+e.message+")";}
+  try{TOKEN=tok;localStorage.setItem("hermes_tok",tok);await ghList(C.heartRepo,"");unlockUI();}
+  catch(e){err.textContent="Token invalid ya access nahi ("+e.message+")";}
 });
  $("ltok").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
  $("lpass").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
-(async function(){if(TOKEN){try{await ghList("");unlockUI();return;}catch(e){pulse("saved token expired — lock screen","pr");}}})();
+(async function(){if(TOKEN){try{await ghList(C.heartRepo,"");unlockUI();return;}catch(e){pulse("saved token expired","pr");}}})();
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FACE v11.3</title>
+<title>FL-200 · FACE v11.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -37,24 +37,29 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .ticker{overflow:hidden;border-bottom:1px solid var(--border);background:rgba(0,0,0,.4);padding:5px 0}
 .ticker-inner{display:inline-block;white-space:nowrap;animation:tickmove 28s linear infinite;font-family:'JetBrains Mono';font-size:.82rem;color:var(--muted)}
 .ticker-inner b{color:var(--cyan)}.ticker-inner .g{color:var(--green)}.ticker-inner .r{color:var(--red)}
-.main{max-width:1580px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:12px}
+.main{max-width:1680px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:12px}
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .full{grid-column:span 3}.span2{grid-column:span 2}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:12px;position:relative;min-width:0}
 .panel::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
 .ph{font-family:'Orbitron';font-size:.95rem;color:var(--cyan);letter-spacing:1px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:6px;flex-wrap:wrap}
 .live{font-size:.76rem;color:var(--green)}.live.warn{color:var(--amber)}
-.action{background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);display:grid;grid-template-columns:2fr 1fr 1fr 1.1fr;gap:9px;align-items:center;padding:12px 14px}
-.action-title{font-family:'Orbitron';font-size:1.1rem}
-.action-signal{font-size:1.7rem;font-family:'Orbitron';color:var(--green);font-weight:900}
-.action.closed .action-signal{color:var(--muted)}
-.byline{font-family:'JetBrains Mono';font-size:.7rem;color:var(--purple);margin-top:4px}
+/* ═══ FINAL SIGNAL STRIP (desk ke andar) ═══ */
+.fin-strip{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px;align-items:center;background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);border-radius:5px;padding:11px 13px;margin-bottom:10px}
+.fin-strip.wait{border-color:rgba(255,170,0,.3);background:linear-gradient(135deg,rgba(255,170,0,.07),rgba(0,243,255,.02))}
+.action-title{font-family:'Orbitron';font-size:.95rem;line-height:1.4}
+.action-signal{font-size:1.8rem;font-family:'Orbitron';color:var(--green);font-weight:900}
+.action-signal.wait{color:var(--amber)}
+.action-signal.sell{color:var(--red)}
+.byline{font-family:'JetBrains Mono';font-size:.68rem;color:var(--purple);margin-top:3px}
 .mbox{background:rgba(0,0,0,.35);border:1px solid var(--border);padding:8px 10px;border-radius:4px;min-width:0}
 .mlabel{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mval{font-family:'Orbitron';font-size:1.05rem;word-break:break-all}
+.mval{font-family:'Orbitron';font-size:1.02rem;word-break:break-all}
 .mval.g{color:var(--green)}.mval.r{color:var(--red)}.mval.y{color:var(--amber)}.mval.na{color:var(--muted);font-size:.85rem}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .price{font-family:'Orbitron';font-size:1.9rem;font-weight:800}
+.lockline{font-family:'JetBrains Mono';font-size:.74rem;color:var(--amber);background:rgba(255,170,0,.06);border:1px dashed rgba(255,170,0,.35);border-radius:4px;padding:6px 10px;margin-bottom:9px}
 .pulse-box{font-family:'JetBrains Mono';font-size:.78rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;height:150px;overflow-y:auto;line-height:1.75}
 .pulse-box .pg{color:var(--green)}.pulse-box .pr{color:var(--red)}.pulse-box .pa{color:var(--amber)}
 .eng-grid{display:grid;grid-template-columns:1fr;gap:7px}
@@ -65,27 +70,27 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .eng .ed{font-family:'JetBrains Mono';font-size:.76rem;color:var(--muted)}
 .candle-wrap{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;overflow:hidden}
 .candle-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.82rem;flex-wrap:wrap;gap:4px}
-canvas{display:block;width:100%;height:300px;background:#060913}
+canvas{display:block;width:100%;height:340px;background:#060913}
 .glv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
 .glv .mbox{text-align:center}
-.glv .mval{font-size:.98rem}
+.glv .mval{font-size:.96rem}
 .lv4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
-.lvb{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;padding:10px;text-align:center;position:relative}
+.lvb{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;padding:10px;text-align:center}
 .lvb .lt{font-family:'Orbitron';font-size:.72rem;letter-spacing:1px;margin-bottom:4px}
 .lvb .lp{font-family:'Orbitron';font-size:1.25rem;font-weight:800}
 .lvb.buy{border-color:rgba(0,255,102,.45)}.lvb.buy .lt,.lvb.buy .lp{color:var(--green)}
 .lvb.sell{border-color:rgba(255,0,85,.45)}.lvb.sell .lt,.lvb.sell .lp{color:var(--red)}
 .lvb .pct{font-family:'JetBrains Mono';font-size:.68rem;color:var(--muted);margin-top:3px}
-.zonebadge{font-family:'Orbitron';font-size:.82rem;padding:5px 12px;border-radius:4px;border:1px solid var(--border)}
+.zonebadge{font-family:'Orbitron';font-size:.8rem;padding:5px 12px;border-radius:4px;border:1px solid var(--border)}
 .zb-buy{color:var(--green);border-color:rgba(0,255,102,.4);background:rgba(0,255,102,.08)}
 .zb-sell{color:var(--red);border-color:rgba(255,0,85,.4);background:rgba(255,0,85,.08)}
 .zb-mid{color:var(--amber);border-color:rgba(255,170,0,.35);background:rgba(255,170,0,.07)}
-.gz{font-size:.76rem;font-family:'JetBrains Mono';color:var(--muted)}
-.final-box{font-family:'JetBrains Mono';font-size:.83rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:12px;line-height:1.8;white-space:pre-wrap;overflow-x:auto}
+.gz{font-size:.74rem;font-family:'JetBrains Mono';color:var(--muted)}
+.final-box{font-family:'JetBrains Mono';font-size:.8rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:11px;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:260px;overflow-y:auto}
 .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
-.plan{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px}
-.plan h4{font-family:'Orbitron';font-size:.76rem;color:var(--cyan);margin-bottom:4px}
-.plan .pr{font-family:'JetBrains Mono';font-size:.78rem;line-height:1.6}
+.plan{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px}
+.plan h4{font-family:'Orbitron';font-size:.74rem;color:var(--cyan);margin-bottom:4px}
+.plan .pr{font-family:'JetBrains Mono';font-size:.76rem;line-height:1.6}
 .plan.buys{border-color:rgba(0,255,102,.3)}.plan.sells{border-color:rgba(255,0,85,.3)}
 .model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:11px;cursor:pointer;transition:.2s;min-width:0}
@@ -154,29 +159,30 @@ canvas{display:block;width:100%;height:300px;background:#060913}
 .lockbtn{width:100%;font-family:'Orbitron';font-size:.85rem;padding:11px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
 .lerr{font-size:.8rem;color:var(--red);margin-top:9px;min-height:18px}
 /* ═══ RESPONSIVE ═══ */
-@media(max-width:1100px){.model-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1200px){.fin-strip{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:950px){
 .grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}
-.action{grid-template-columns:1fr 1fr}
+.split-grid{grid-template-columns:1fr}
 .mgrid,.imp-grid,.plans{grid-template-columns:repeat(2,1fr)}
 .glv{grid-template-columns:repeat(3,1fr)}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .model-grid{grid-template-columns:repeat(2,1fr)}
 .pillar-grid{grid-template-columns:repeat(5,1fr)}
 .ind-grid{grid-template-columns:repeat(2,1fr)}
-canvas{height:260px}.eng{grid-template-columns:1fr}
+canvas{height:280px}.eng{grid-template-columns:1fr}
+.fin-strip{grid-template-columns:1fr 1fr}
 }
 @media(max-width:580px){
 body{font-size:15px}
 .main{padding:8px}.panel{padding:10px}
 .grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}
-.action,.mgrid,.model-grid,.imp-grid,.ind-grid,.plans{grid-template-columns:1fr}
+.mgrid,.model-grid,.imp-grid,.ind-grid,.plans,.fin-strip{grid-template-columns:1fr}
 .glv{grid-template-columns:repeat(2,1fr)}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .pillar-grid{grid-template-columns:repeat(5,1fr)}
 .nav-links{display:none}.side{width:100%}
-canvas{height:230px}
-.action-signal{font-size:1.4rem}.price{font-size:1.6rem}
+canvas{height:240px}
+.action-signal{font-size:1.5rem}.price{font-size:1.6rem}
 .runtag,.syncin{display:none}
 }
 </style>
@@ -187,8 +193,8 @@ canvas{height:230px}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.3 (TV-STYLE)</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">2-candle grid chart · token-gated private engine</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.4 (NO-REPAINT)</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">Signal TF-period par LOCK hota hai · repainting nahi</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -207,10 +213,10 @@ canvas{height:230px}
 <button class="nav-btn" data-s="pillars">PILLARS</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">TV-GRID</span>
+<span class="tier-badge">NO-REPAINT</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v11.3</div>
+<div class="status"><div class="dot"></div> v11.4</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -237,12 +243,17 @@ canvas{height:230px}
 
 <div class="main">
 <div class="section active" id="dash">
-<div class="grid">
 
-<div class="panel full action" id="actionPanel">
+<!-- ═══ 50/50 SPLIT: SIGNAL DESK | TV CHART ═══ -->
+<div class="split-grid">
+
+<div class="panel" id="sdPanel">
+<div class="ph"><span>🎯 SIGNAL DESK · <span id="recSym">—</span> · <span id="recTF">H1</span></span><span id="sdSrc" class="live">—</span></div>
+
+<div class="fin-strip" id="finStrip">
 <div>
-<div class="action-title">💡 FINAL SIGNAL · <span id="recSym">—</span> · <span id="recTF">H1</span> · <span id="recZone" class="zonebadge zb-mid">ZONE: —</span></div>
-<div style="color:var(--muted);font-size:.92rem;margin-top:3px" id="recNote">—</div>
+<div class="action-title">💡 FINAL · <span id="recZone" class="zonebadge zb-mid">—</span></div>
+<div style="color:var(--muted);font-size:.85rem;margin-top:3px" id="recNote">—</div>
 <div class="byline" id="recBy">—</div>
 </div>
 <div class="mbox"><div class="mlabel">ACTION</div><div class="action-signal" id="recAction">—</div></div>
@@ -250,23 +261,35 @@ canvas{height:230px}
 <div class="mbox"><div class="mlabel">TP / SL</div><div class="mval" id="recTP">—</div></div>
 </div>
 
-<div class="panel full">
-<div class="ph"><span>🎯 SIGNAL DESK — GRID LEVELS · EXPECTED · L2 · PLANS · FINAL</span><span id="sdSrc" class="live">—</span></div>
+<div class="lockline" id="lockLine">🔒 signal lock: connecting…</div>
 
 <div class="lv4" id="tvRow"></div>
-
 <div class="glv" id="glvRow"></div>
 <div class="glv" id="l2Row"></div>
 <div id="kRowWrap"></div>
 <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-<span class="zonebadge zb-mid" id="zPos">PRICE POSITION: —</span>
-<span class="zonebadge zb-mid" id="zAct">ZONE MAP: —</span>
-<span class="gz">formula private heart se · token-gated · browser compute</span>
+<span class="zonebadge zb-mid" id="zPos">POSITION: —</span>
+<span class="zonebadge zb-mid" id="zAct">MAP: —</span>
 </div>
 <div class="plans" id="planBoxes"></div>
-<div class="final-box" id="finalBox" style="margin-top:10px">—</div>
+<div class="final-box" id="finalBox" style="margin-top:9px">—</div>
 </div>
 
+<div class="panel">
+<div class="ph"><span>🕯️ FARRUKH GRID · <span id="gridTitle">—</span></span><span id="gridStatus" class="live">—</span></div>
+<div class="candle-wrap">
+<div class="candle-head">
+<span style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan)" id="gridSrc">—</span>
+<span style="font-size:.78rem;color:var(--muted)" id="gridMeta">—</span>
+</div>
+<canvas id="cvGrid"></canvas>
+</div>
+<div class="gz" style="margin-top:7px" id="chartNote">levels us waqt ke hain jab signal lock hua — period ke andar frozen (no-repaint) · forming candle live</div>
+</div>
+
+</div>
+
+<div class="grid">
 <div class="panel span2">
 <div class="ph"><span>📊 MARKET · <span id="mktSym">—</span></span><span id="mktLive" class="live">—</span></div>
 <div class="mgrid">
@@ -285,17 +308,6 @@ canvas{height:230px}
 <div class="panel full">
 <div class="ph"><span>🛡️ DECISION ENGINE — REALTIME → BRAIN → FALLBACK</span><span class="live" id="engWhy">—</span></div>
 <div class="eng-grid" id="engGrid"></div>
-</div>
-
-<div class="panel full">
-<div class="ph"><span>🕯️ FARRUKH GRID · <span id="gridTitle">—</span> · anchor candle[1] + forming (TV-style)</span><span id="gridStatus" class="live">—</span></div>
-<div class="candle-wrap">
-<div class="candle-head">
-<span style="font-family:'Orbitron';font-size:.82rem;color:var(--cyan)" id="gridSrc">—</span>
-<span style="font-size:.8rem;color:var(--muted)" id="gridMeta">—</span>
-</div>
-<canvas id="cvGrid"></canvas>
-</div>
 </div>
 
 <div class="panel span2">
@@ -351,9 +363,9 @@ canvas{height:230px}
 <div class="rep-sum" id="repSummary">…</div></div>
 <div class="panel full"><div class="ph"><span>📥 HEART FILES — PREVIEW / DOWNLOAD</span><span style="font-size:.72rem;color:var(--muted)" id="repScan">—</span></div>
 <div id="repFiles">Scanning…</div></div>
-<div class="panel full"><div class="ph"><span>📖 SECURITY (P9)</span></div>
+<div class="panel full"><div class="ph"><span>📖 NO-REPAINT LAW</span></div>
 <div class="guide">
-<b>Formula</b> sirf <code>engine.js</code> (private heart) mein — FACE_TOKEN se HTTPS load, aapke browser mein compute. Public repo: zero formula, zero keys. <b>KRONOS</b> brain GPU par; prediction state.json se. Bina token: sirf lock screen.
+<b>Kaise kaam karta hai:</b> har TF candle ke <b>open</b> par signal ek dafa compute hota hai (anchor = abhi-close hui candle + usi waqt ka L2 snapshot) aur <b>lock</b> ho jata hai. Poore period tak wohi signal, wohi entry/SL/TP — chart ki forming candle live chalti hai lekin levels frozen. Naya period shuru → naya lock. Refresh par bhi lock zinda (localStorage). <b>Iska matlab:</b> jo signal aap parhte ho wohi hota jo bot ne actually "dekha" — backtest aur live same.
 </div></div>
 </div>
 
@@ -366,8 +378,8 @@ P4 PERSIST — append-only hash-chained ledger.
 P5 COMPARE — accuracy delta per run.
 P6 LESSONS — analyst desk (reserved).
 P7 RISK — 1%/trade · 3/day · 3% daily · 10% DD · SIGNAL ONLY.
-P8 SIMULATE→DECIDE→TAG — reproducibility tag.
-P9 SECURITY — formula sirf heart · FACE read-only · zero keys public.
+P8 SIMULATE→DECIDE→TAG — per-period lock = reproducibility.
+P9 SECURITY — formula sirf heart · FACE read-only.
 P10 HEALTH — realtime fail → brain → candle fallback.
 
 Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
@@ -385,10 +397,6 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE.JS</button>
 <button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
 </div>
-<div style="font-family:Orbitron;font-size:.78rem;color:var(--cyan);margin:14px 0 6px">LOCAL LLM (RESERVED)</div>
-<input id="cfgLLM" placeholder="http://localhost:11434/v1/chat/completions (future)" style="width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--cyan);padding:7px;border-radius:3px;font-family:JetBrains Mono">
-<button class="rbtn" style="width:100%;padding:9px;margin-top:8px" id="saveLLM">SAVE (browser-only · P9)</button>
-<div id="cfgOut" style="font-size:.76rem;margin-top:8px;color:var(--muted)">—</div>
 </div>
 </div>
 
@@ -406,12 +414,13 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.3 — TV-style 2-candle grid + level boxes + responsive");
+console.log("FL-200 v11.4 — 50/50 layout + FINAL in desk + NO-REPAINT per-TF locks");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
 const F1=v=>(v==null||isNaN(v))?"—":(+v).toFixed(1);
+const TF_MIN={M30:30,H1:60,H4:240,D1:1440,W1:10080};
 
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null,FILES=new Map();
@@ -419,8 +428,29 @@ let HB=0,lastLedgerSeq=null,brainWarned=false;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
-const RT={data:null,ts:0,key:""};
+const RT={data:null,ts:0,key:"",liveCS:null};
 const RT_TTL=15000;
+
+/* ══════════ NO-REPAINT LOCK STORE (localStorage-persisted) ══════════ */
+let LOCKS={};
+try{LOCKS=JSON.parse(localStorage.getItem("fl200_locks")||"{}");}catch(e){LOCKS={};}
+function saveLocks(){try{localStorage.setItem("fl200_locks",JSON.stringify(LOCKS));}catch(e){}}
+function periodKey(cs){return cs[cs.length-1].t.slice(0,16);}   /* forming candle open = TF bucket */
+function periodEndTxt(pk,tf){
+  try{
+    const t=new Date(pk+":00Z").getTime()+ (TF_MIN[tf]||60)*60000;
+    const d=new Date(t);
+    return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")+" UTC";
+  }catch(e){return "next close";}
+}
+function getLock(sym,tf,pk){
+  const l=LOCKS[sym+"|"+tf];
+  return (l&&l.period===pk)?l:null;
+}
+function setLock(sym,tf,pk,sig){
+  LOCKS[sym+"|"+tf]={period:pk,ts:Date.now(),sig:sig};
+  saveLocks();
+}
 
 /* ============ GITHUB ============ */
 async function ghFetch(repo,path,accept){
@@ -462,13 +492,30 @@ async function liveDepth(sym){
   if(!r.ok)throw new Error("dp "+r.status);
   return await r.json();
 }
+
+/* ══════════ REALTIME TICK — anti-repaint core ══════════ */
 async function rtTick(){
   if(!ENGINE_OBJ||document.hidden)return;
   const key=CUR_SYM+"|"+CUR_TF;
   try{
     const [cs,d]=await Promise.all([liveCandles(CUR_SYM,CUR_TF),liveDepth(CUR_SYM)]);
-    RT.data=ENGINE_OBJ.fullSignalL2(cs,d,CUR_SYM,CUR_TF);
-    RT.ts=Date.now();RT.key=key;
+    if(!cs||cs.length<3)return;
+    RT.liveCS=cs;                              /* chart ke liye live candles */
+    const pk=periodKey(cs);
+    const lk=getLock(CUR_SYM,CUR_TF,pk);
+    if(lk&&lk.sig){
+      /* period wahi hai → FROZEN signal use karo (repaint nahi) */
+      RT.data=lk.sig;RT.ts=Date.now();RT.key=key;
+      if(lk.sig._cs)RT.liveCS=lk.sig._cs;      /* lock-time candles grid ke liye */
+    }else{
+      /* naya period → pehli dafa compute + LOCK */
+      const sig=ENGINE_OBJ.fullSignalL2(cs,d,CUR_SYM,CUR_TF);
+      if(sig){
+        setLock(CUR_SYM,CUR_TF,pk,sig);
+        RT.data=sig;RT.ts=Date.now();RT.key=key;
+        pulse("🔒 SIGNAL LOCKED "+CUR_SYM+" "+CUR_TF+" ["+pk+"] → "+sig.final.signal+" ("+sig.final.confidence+"%) — next re-eval "+periodEndTxt(pk,CUR_TF),"pa");
+      }
+    }
     renderSignalDesk();renderAction();renderEngine();
   }catch(e){
     if(RT.data&&Date.now()-RT.ts>RT_TTL*4)pulse("realtime feed fail: "+e.message,"pr");
@@ -509,12 +556,12 @@ function botCandles(){
   const SN=curSN();
   const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
   if(cs&&cs.length)return cs;
-  return (RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:null;
+  return (RT.data&&RT.data._cs)?RT.data._cs:(RT.liveCS||null);
 }
 function resolveLayer(){
   const L=getLiveState();
   if(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL){
-    ENGINE.layer="REALTIME";ENGINE.eff=RT.data;ENGINE.eff.src="realtime-engine";return;}
+    ENGINE.layer="REALTIME";ENGINE.eff=RT.data;ENGINE.eff.src="realtime-engine (locked)";return;}
   const bt=botTF();
   if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BRAIN";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain-l2";return;}
   if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(botCandles(),CUR_TF);
@@ -526,8 +573,8 @@ function renderEngine(){
   const rtOk=RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL;
   const actKey={REALTIME:"rt",BRAIN:"bot",FALLBACK:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
-    ["L0 · REALTIME (engine.js+live)",rtOk?"✓ LIVE · "+rtAgeText():(ENGINE_OBJ?"⏳ connecting…":"— engine not loaded"),
-     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"% · imb "+F1(RT.data.l2?RT.data.l2.imb:null)+"%"):"4s compute"],
+    ["L0 · REALTIME (locked)",rtOk?"✓ LIVE · "+rtAgeText():(ENGINE_OBJ?"⏳ connecting…":"— engine not loaded"),
+     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"% · imb "+F1(RT.data.l2?RT.data.l2.imb:null)+"% · 🔒"):"4s compute + period lock"],
     ["L1 · BRAIN (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ "+stateAgeText():"✗ NO/STALE",
      bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein"],
     ["L2 · FALLBACK (candle-only)",ENGINE_OBJ?"✓ ready":"—",ENGINE_OBJ?"dono band ho to":"⚙ reload"],
@@ -591,7 +638,7 @@ function updateLiveUI(){
 function startHeartbeat(){
   if(LIVE.timer)clearInterval(LIVE.timer);
   LIVE.timer=setInterval(function(){updateLiveUI();if(document.hidden)return;refreshData();},LIVE.pollMs);
-  pulse("heartbeat started · realtime 4s + brain "+(LIVE.pollMs/1000)+"s","pa");
+  pulse("heartbeat started · realtime 4s · signals NO-REPAINT (period-locked)","pa");
 }
 document.addEventListener("visibilitychange",function(){if(!document.hidden){refreshData();rtTick();}});
 window.addEventListener("online",function(){pulse("internet restored","pa");refreshData();rtTick();});
@@ -608,7 +655,7 @@ function renderTicker(){
       sig=(t&&t.final&&t.final.signal)||(t&&t.signal)||(sn.signal||"HOLD");}
     if(sig==="BUY")cls="g";if(sig==="SELL")cls="r";
     const px=RT.data&&RT.key===k+"|"+CUR_TF?RT.data.l2.mid:(sn?sn.price:null);
-    items.push("<b>"+k+"</b> "+fmt(px,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+")");
+    items.push("<b>"+k+"</b> "+fmt(px,2)+" · "+'<span class="'+cls+'">'+sig+"</span> ("+CUR_TF+"🔒)");
   });
   const eq=(STATE&&STATE.stats)?STATE.stats.equity:null;
   const sa=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.overall!=null)?STATE.system_accuracy.overall+"%":"—";
@@ -616,18 +663,17 @@ function renderTicker(){
   $("ticker").innerHTML=seg+seg;
 }
 function renderAction(){
-  const SN=curSN(),rp=$("actionPanel");
-  $("recSym").textContent=CUR_SYM;$("recTF").textContent=CUR_TF;
   resolveLayer();
   const eff=ENGINE.eff;
   const fin=eff&&eff.final?eff.final:null;
   let sig=fin?fin.signal:null;
   const plan=eff&&eff.plans?(sig==="BUY"?(eff.plans.B1||eff.plans.B2):(sig==="SELL"?(eff.plans.S1||eff.plans.S2):null)):null;
   const ep=eff&&eff.entryPlan?eff.entryPlan:null;
-  rp.classList.toggle("closed",!sig||sig==="WAIT"||sig==="HOLD"||sig==="NO_TRADE");
+  const fs=$("finStrip");
+  fs.classList.toggle("wait",!sig||sig==="WAIT"||sig==="HOLD");
   const ra=$("recAction");
   ra.textContent=sig?(sig==="HOLD"?"HOLD":sig):"AWAITING DATA";
-  ra.style.color=sig==="BUY"?"var(--green)":sig==="SELL"?"var(--red)":"var(--muted)";
+  ra.className="action-signal"+(sig==="WAIT"||sig==="HOLD"||!sig?" wait":sig==="SELL"?" sell":"");
   $("recNote").textContent=fin?(fin.why||""):"cascade pending";
   $("recBy").textContent="engine: "+(ENGINE.layer||"—")+" · conf: "+(fin?fin.confidence+"%":"—")+" · SIGNAL ONLY";
   const show=ep||plan;
@@ -639,7 +685,7 @@ function renderAction(){
   rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
 }
 
-/* ═══ SIGNAL DESK — TV-style level boxes ═══ */
+/* ═══ SIGNAL DESK ═══ */
 function mbox(l,v,cls,span){
   return '<div class="mbox"'+(span?' style="'+span+'"':'')+'><div class="mlabel">'+l+'</div><div class="mval '+(cls||"")+'">'+v+"</div></div>";
 }
@@ -649,10 +695,20 @@ function renderSignalDesk(){
   const G=eff&&eff.grid?eff.grid:null;
   const fin=eff&&eff.final?eff.final:null;
   const l2=eff&&eff.l2?eff.l2:(SN&&SN.l2?SN.l2:null);
-  setTxt("sdSrc","src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+CUR_TF+" · "+(ENGINE.layer==="REALTIME"?rtAgeText():stateAgeText()),false);
+  setTxt("sdSrc","src: "+(ENGINE.eff?ENGINE.eff.src:"—")+" · "+(ENGINE.layer==="REALTIME"?rtAgeText():stateAgeText()),false);
+  /* lock line */
+  const ll=$("lockLine");
+  if(ENGINE.layer==="REALTIME"){
+    const lk=LOCKS[CUR_SYM+"|"+CUR_TF];
+    if(lk){
+      const frozen=new Date(lk.ts).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+      ll.textContent="🔒 Signal LOCKED · frozen "+frozen+" · period "+lk.period.slice(0,16)+" UTC · next re-eval "+periodEndTxt(lk.period,CUR_TF);
+    }else ll.textContent="🔒 signal lock: naya period — pehla compute ho raha…";
+  }else{
+    ll.textContent="🔓 lock sirf REALTIME layer par — abhi src: "+(ENGINE.eff?ENGINE.eff.src:"none");
+  }
   const tvEl=$("tvRow");
   if(G&&G.ext&&G.expected){
-    /* ═══ TV-STYLE: expected + 4 trade levels (owner indicator 1:1) ═══ */
     tvEl.innerHTML=
       '<div class="lvb buy"><div class="lt">BUY 2</div><div class="lp">'+fmt(G.ext.p33,2)+'</div><div class="pct">33% line</div></div>'
      +'<div class="lvb buy"><div class="lt">BUY 1</div><div class="lp">'+fmt(G.ext.p67,2)+'</div><div class="pct">67% line</div></div>'
@@ -694,24 +750,24 @@ function renderSignalDesk(){
       +'</div>';
   }else{
     kWrap.innerHTML=CUR_TF==="H1"
-      ?'<div class="gz" style="margin-top:6px">KRONOS: brain ki H1 prediction ka intezar… (GPU + brain publish)</div>'
+      ?'<div class="gz" style="margin-top:6px">KRONOS: brain ki H1 prediction ka intezar…</div>'
       :'<div class="gz" style="margin-top:6px">KRONOS: sirf H1 par</div>';
   }
   const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
   const zp=$("zPos");
-  zp.textContent="PRICE POSITION: "+(pos||"—");
+  zp.textContent="POSITION: "+(pos||"—");
   zp.className="zonebadge "+(pos==="SELL_ZONE"?"zb-sell":pos==="BUY_ZONE"?"zb-buy":"zb-mid");
   const act=(SN&&SN.grid&&SN.grid.H1&&SN.grid.H1.zone)||pos;
-  const za=$("zAct");za.textContent="ZONE MAP: "+(act||"—");
+  const za=$("zAct");za.textContent="MAP: "+(act||"—");
   za.className="zonebadge "+(act==="SELL_ZONE"?"zb-sell":act==="BUY_ZONE"?"zb-buy":"zb-mid");
   const P=eff&&eff.plans?eff.plans:null;
   if(P&&P.B1){
     const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br><span style='color:var(--muted)'>"+extra+"</span>":"")+"</div></div>";
     $("planBoxes").innerHTML=
-      box("B1 · primary BUY","buys",P.B1,"RR 1:2 min · shared SL")+
-      box("B2 · deeper BUY","buys",P.B2,"TP=B1 · SL 1 step below")+
-      box("S1 · primary SELL","sells",P.S1,"RR 1:2 min · shared SL")+
-      box("S2 · higher SELL","sells",P.S2,"TP=S1 · SL 1 step above");
+      box("B1 · primary BUY","buys",P.B1,"RR 1:2 min")+
+      box("B2 · deeper BUY","buys",P.B2,"TP=B1")+
+      box("S1 · primary SELL","sells",P.S1,"RR 1:2 min")+
+      box("S2 · higher SELL","sells",P.S2,"TP=S1");
   }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid chahiye</div></div>';
   $("finalBox").textContent=fin&&fin.block?fin.block:"⏳ FINAL pending";
 }
@@ -784,6 +840,7 @@ function renderRules(){
     ["Risk per trade",(P.risk_per_trade_pct!=null?P.risk_per_trade_pct:"1.0")+"%",true],
     ["Daily loss limit",(P.daily_loss_limit_pct!=null?P.daily_loss_limit_pct:"3.0")+"%",true],
     ["Max drawdown",(P.max_drawdown_pct!=null?P.max_drawdown_pct:"10.0")+"%",true],
+    ["Signal mode","NO-REPAINT · period-locked",true],
     ["Mode","SIGNAL ONLY — user decides",true]];
   $("rulesBox").innerHTML=rows.map(r=>'<div class="rule '+(r[2]?"ok":"")+'"><span>'+r[0]+"</span><b>"+esc(String(r[1]))+"</b><i>"+(r[2]?"✓ PASS":"✗ CHECK")+"</i></div>").join("");
 }
@@ -793,7 +850,7 @@ function renderImp(){
     let totalN=0;Object.keys(M).forEach(function(k){if(M[k].n)totalN+=M[k].n;});
     const ensembleN=(M.ensemble&&M.ensemble.n)?M.ensemble.n:totalN;
     setTxt("impMeta","brain perf ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0")
-      +(ensembleN<50?" · ⚠ SMALL SAMPLE (<50) — 100% jaisi values noise hain":""),false);
+      +(ensembleN<50?" · ⚠ SMALL SAMPLE (<50)":""),false);
     g.innerHTML=Object.keys(M).map(function(k){
       const m=M[k],d=m.delta_pct;
       const arrow=d==null||d===0?"":d>0?' <span style="color:var(--green);font-size:.8rem">▲ +'+d+"%</span>":' <span style="color:var(--red);font-size:.8rem">▼ '+d+"%</span>";
@@ -871,7 +928,6 @@ function renderReportsSummary(){
   h+="<b>🕒 Last brain run:</b> "+esc(String(STATE.updated||"—").replace("T"," ").slice(0,19))+" UTC ("+stateAgeText()+")  ·  <b>Strategy:</b> "+esc(STATE.strategy||"—")+"\n"
     +"<b>📡 Data:</b> "+L.text+"  ·  <b>Pillars:</b> "+(ps.score!=null?ps.score+"/10":"—")+"\n"
     +"<b>🤖 Kronos:</b> "+(STATE.kronos_status?(STATE.kronos_status.ready?("READY · "+STATE.kronos_status.device):"NOT READY"):"—")+"\n";
-  if(STATE.agents_status)h+="<b>🧠 Analyst desk:</b> "+esc(STATE.agents_status.tradingagents)+" · LLM: "+esc(STATE.agents_status.llm)+"\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+(STATE.audit.issues&&STATE.audit.issues.length?(" · ISSUES: "+esc(STATE.audit.issues.join("; "))):" · clean")+"\n";
   if(STATE.system_accuracy&&STATE.system_accuracy.overall!=null)
     h+="<b>🎯 System accuracy:</b> "+STATE.system_accuracy.overall+"%"+(STATE.system_accuracy.delta_pct!=null?(" ("+(STATE.system_accuracy.delta_pct>=0?"▲ +":"▼ ")+STATE.system_accuracy.delta_pct+"%)"):"")+"\n";
@@ -904,7 +960,7 @@ async function previewFile(p){
   }catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">Load failed: '+esc(e.message)+"</div>";}
 }
 
-/* ══════════ CANVAS — TV-STYLE: 2 candles + 8 grid lines + badges ══════════ */
+/* ══════════ CANVAS — TV 2-candle + frozen grid levels ══════════ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function tagBox(ctx,x,y,w,h,txt,color){
@@ -927,7 +983,7 @@ function drawCandleTV(ctx,x,c,w,y){
 function drawGrid(){
   const cv=$("cvGrid");if(!cv)return;
   const ctx=cv.getContext("2d");
-  const W=cv.clientWidth||900,H=cv.clientHeight||300;
+  const W=cv.clientWidth||900,H=cv.clientHeight||340;
   if(cv.width!==W*2){cv.width=W*2;cv.height=H*2;}
   ctx.setTransform(2,0,0,2,0,0);
   ctx.fillStyle="#060913";ctx.fillRect(0,0,W,H);
@@ -935,10 +991,9 @@ function drawGrid(){
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   const t=Date.now();
-  const cs=(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&RT.data._cs)?RT.data._cs:botCandles();
+  const cs=(RT.data&&RT.data._cs)?RT.data._cs:RT.liveCS;
   const G=ENGINE_OBJ?ENGINE_OBJ.gridFromCandles(cs):null;
   if(cs&&validCandles(cs)&&G&&G.ext){
-    /* ═══ TV MODE: sirf 2 candles (anchor + forming) + 8 levels ═══ */
     const anchor=cs[cs.length-2],forming=cs[cs.length-1];
     const lines=[
       {p:G.ext.m33,tag:"-33%",col:"rgba(125,140,163,.5)"},
@@ -954,41 +1009,36 @@ function drawGrid(){
     let hi=Math.max(...lines.map(l=>l.p),+anchor.h,+forming.h);
     const pad=(hi-lo)*0.05||1;lo-=pad;hi+=pad;
     const y=p=>H-14-((p-lo)/(hi-lo))*(H-28);
-    /* grid lines (labels ke liye right side chhodo) */
     lines.forEach(function(L){
       ctx.strokeStyle=L.col;ctx.setLineDash([6,5]);
       ctx.beginPath();ctx.moveTo(0,y(L.p));ctx.lineTo(W-128,y(L.p));ctx.stroke();
       ctx.setLineDash([]);
     });
-    /* 2 candles */
-    const cw=Math.min(58,W*0.08);
-    drawCandleTV(ctx,W*0.20,anchor,cw,y);
-    drawCandleTV(ctx,W*0.44,forming,cw,y);
+    const cw=Math.min(56,W*0.07);
+    drawCandleTV(ctx,W*0.18,anchor,cw,y);
+    drawCandleTV(ctx,W*0.42,forming,cw,y);
     ctx.fillStyle="rgba(125,140,163,.7)";ctx.font="10px JetBrains Mono";ctx.textAlign="center";
-    ctx.fillText("candle[1] anchor",W*0.20,H-3);
-    ctx.fillText("forming [0]",W*0.44,H-3);
+    ctx.fillText("anchor [1]",W*0.18,H-3);
+    ctx.fillText("forming [0] LIVE",W*0.42,H-3);
     ctx.textAlign="left";
-    /* right-side TV labels */
     lines.forEach(function(L){
       tagBox(ctx,W-124,y(L.p)-9,120,18,L.tag+" "+L.p.toFixed(2),L.col);
     });
-    /* Expected High/Low badges (amber, TV-style) */
     const eH=G.expected.high,eL=G.expected.low;
     tagBox(ctx,W-190,y(eH)-12,186,24,"★ EXPECTED HIGH · "+eH.toFixed(2),"#ffaa00");
     tagBox(ctx,W-190,y(eL)-12,186,24,"★ EXPECTED LOW · "+eL.toFixed(2),"#ffaa00");
-    /* current price */
     const last=+forming.c;
     const pl=.45+.4*Math.sin(t/280);
     ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
     ctx.beginPath();ctx.moveTo(0,y(last));ctx.lineTo(W-128,y(last));ctx.stroke();ctx.setLineDash([]);
     tagBox(ctx,W-124,y(last)-10,120,20,CUR_SYM+" "+last.toFixed(2),"#00f3ff");
-    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+G.color+" anchor · 2-candle TV view",false);
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+G.color+" anchor · levels 🔒 locked",false);
   }else{
     ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
     ctx.font="bold 15px Orbitron";ctx.textAlign="center";
     ctx.fillText("⏳ AWAITING CANDLE DATA · P1",W/2,H/2-8);
     ctx.font="11px JetBrains Mono";
-    ctx.fillText(CUR_SYM+" — Binance direct feed auto-connect (engine + feed chahiye)",W/2,H/2+14);
+    ctx.fillText(CUR_SYM+" — Binance direct feed auto-connect",W/2,H/2+14);
     ctx.textAlign="left";
     setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · no data",false);
   }
@@ -1012,13 +1062,13 @@ document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
 });
 document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".sym-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_SYM=this.dataset.sym;RT.data=null;RT.key="";
+  this.classList.add("active");CUR_SYM=this.dataset.sym;RT.data=null;RT.key="";RT.liveCS=null;
   pulse("SYMBOL → "+CUR_SYM,"pa");rtTick().then(()=>renderAll());
 }));
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_TF=this.dataset.tf;RT.data=null;RT.key="";
-  pulse("TIMEFRAME → "+CUR_TF,"pa");
+  this.classList.add("active");CUR_TF=this.dataset.tf;RT.data=null;RT.key="";RT.liveCS=null;
+  pulse("TIMEFRAME → "+CUR_TF+" · apna period-lock check hoga","pa");
   rtTick().then(()=>{renderAll();renderReportsSummary();});
 }));
  $("btnSync").addEventListener("click",function(){pulse("[SYNC] manual","pa");refreshData();rtTick();});
@@ -1027,9 +1077,9 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
   $("cfgInfo").textContent=
     "FACE  : "+C.faceRepo+" (public)\nHEART : "+C.heartRepo+" (private · engine.js v11.2)\n"+
     "BRAIN : colab_LLM_brain.py v7.1 (KRONOS)\n"+
-    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · TV extensions loaded"):"NOT LOADED")+"\n"+
-    "CHART : 2-candle TV-style · -33%..200% · ExpH/ExpL\n"+
-    "SECURE: formula public mein NAHI · token-gated";
+    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version):"NOT LOADED")+"\n"+
+    "LOCK  : signal TF-open par freeze · localStorage-backed\n"+
+    "LAYOUT: SIGNAL DESK 50% | CHART 50% · responsive";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
  $("closeCfg").addEventListener("click",function(){$("cfgOverlay").classList.remove("open");$("cfgPanel").classList.remove("open");});
@@ -1038,10 +1088,6 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
 function logout(){localStorage.removeItem("hermes_tok");location.reload();}
  $("btnLogout").addEventListener("click",logout);
  $("btnLogout2").addEventListener("click",logout);
- $("saveLLM").addEventListener("click",function(){
-  localStorage.setItem("fl200_llm",$("cfgLLM").value.trim());
-  $("cfgOut").textContent="Saved (browser-only).";
-});
  $("closeMod").addEventListener("click",function(){$("modOverlay").classList.remove("open");$("modDetail").classList.remove("open");});
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
  $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
@@ -1050,7 +1096,7 @@ function logout(){localStorage.removeItem("hermes_tok");location.reload();}
 /* ============ LOCK / INIT ============ */
 function unlockUI(){
   $("lock").style.display="none";
-  pulse("FACE online · TV-grid engine load ho raha…","pa");
+  pulse("FACE online · NO-REPAINT locks active ("+Object.keys(LOCKS).length+" stored)","pa");
   loadEngine(true).then(function(){
     startHeartbeat();refreshData();loadStrategy();rtTick();
     setInterval(function(){if(!document.hidden)rtTick();},4000);

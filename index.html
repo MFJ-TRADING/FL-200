@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FACE v11.7</title>
+<title>FL-200 · FACE v11.8</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -14,6 +14,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 @keyframes glow{0%,100%{box-shadow:0 0 4px rgba(0,255,102,.25)}50%{box-shadow:0 0 12px rgba(0,255,102,.55)}}
 @keyframes pollfill{0%{width:0}92%{width:88%}100%{width:100%}}
 @keyframes slidein{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes tickmove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .flash{animation:flash .7s}.blink{animation:pulse 1.2s infinite}
 #pollbar{position:fixed;top:0;left:0;height:3px;z-index:150;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));animation:pollfill 5s linear infinite;box-shadow:0 0 8px var(--cyan)}
 #pollbar.err{background:var(--red);box-shadow:0 0 8px var(--red)}
@@ -36,7 +37,6 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .ticker{overflow:hidden;border-bottom:1px solid var(--border);background:rgba(0,0,0,.4);padding:5px 0}
 .ticker-inner{display:inline-block;white-space:nowrap;animation:tickmove 28s linear infinite;font-family:'JetBrains Mono';font-size:.82rem;color:var(--muted)}
 .ticker-inner b{color:var(--cyan)}.ticker-inner .g{color:var(--green)}.ticker-inner .r{color:var(--red)}
-@keyframes tickmove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .main{max-width:1680px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:12px}
 .split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -159,12 +159,13 @@ canvas{display:block;width:100%;height:380px;background:#060913}
 .locklogo{font-family:'Orbitron';font-size:1.7rem;font-weight:900;margin-bottom:4px}
 .lockcard input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);padding:11px 13px;font-size:.95rem;border-radius:5px;outline:none;margin-bottom:9px;font-family:'JetBrains Mono'}
 .lockbtn{width:100%;font-family:'Orbitron';font-size:.85rem;padding:11px;border-radius:5px;border:1px solid rgba(0,243,255,.4);background:rgba(0,243,255,.12);color:var(--cyan);cursor:pointer}
-.lerr{font-size:.8rem;color:var(--red);margin-top:9px;min-height:18px}
+.lockbtn2{width:100%;font-family:'JetBrains Mono';font-size:.72rem;padding:8px;border-radius:5px;border:1px solid rgba(255,170,0,.3);background:rgba(255,170,0,.06);color:var(--amber);cursor:pointer;margin-top:6px}
+.lerr{font-size:.78rem;color:var(--red);margin-top:9px;min-height:30px;line-height:1.5}
 @media(max-width:1200px){.fin-strip{grid-template-columns:1fr 1fr 1fr}.score-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:950px){
 .grid{grid-template-columns:1fr 1fr}.full,.span2{grid-column:span 2}
 .split-grid{grid-template-columns:1fr}
-.mgrid,.imp-grid,.plans{grid-template-columns:repeat(2,1fr)}
+.mgrid,.imp-grid{grid-template-columns:repeat(2,1fr)}
 .glv{grid-template-columns:repeat(3,1fr)}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .model-grid{grid-template-columns:repeat(2,1fr)}
@@ -175,7 +176,7 @@ canvas{height:300px}.eng{grid-template-columns:1fr}
 @media(max-width:580px){
 body{font-size:15px}.main{padding:8px}.panel{padding:10px}
 .grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}
-.mgrid,.model-grid,.imp-grid,.plans,.fin-strip{grid-template-columns:1fr}
+.mgrid,.model-grid,.imp-grid,.fin-strip{grid-template-columns:1fr}
 .glv{grid-template-columns:repeat(2,1fr)}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .pillar-grid{grid-template-columns:repeat(5,1fr)}
@@ -192,12 +193,14 @@ canvas{height:260px}.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">v11.7 · RUNNING CANDLES (TV-style)</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">Full candle history + live tick · 2-stream events</div>
-    <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">v11.8 · RUNNING CANDLES · 2-STREAMS</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">Classic token (repo scope) dalein</div>
+    <input id="ltok" type="password" placeholder="FACE_TOKEN (ghp_...)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
+    <button class="lockbtn2" id="btnWipe">🧹 PURANA DATA CLEAR (agar phir fail ho)</button>
     <div class="lerr" id="lockErr"></div>
+    <div style="font-size:.66rem;color:var(--muted);line-height:1.5">Token: GitHub → Settings → Developer settings → Tokens (classic) → repo scope</div>
   </div>
 </div>
 
@@ -213,9 +216,9 @@ canvas{height:260px}.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
 <button class="nav-btn" data-s="account">ACCOUNT</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">RUNNING v11.7</span>
+<span class="tier-badge">RUNNING v11.8</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v11.7</div>
+<div class="status"><div class="dot"></div> v11.8</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -256,7 +259,7 @@ canvas{height:260px}.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
 </div>
 <div class="explain">
 <div class="xt">📖 YE CHART KYA HAI</div>
-<b>Candles har 4 sec update</b> — TradingView jaisa chalta hua chart (aakhri candle live ban rahi hoti hai). <b>Green/red lines</b> = is ghante ke grid levels (har nayi candle close par naye). <b>★ Andaza boxes</b> = is ghante ka expected range. Candle history scroll jaisi purani hoti jati hai, naye candles right se aate rehte hain.
+<b>Candles har 4 sec update</b> — TradingView jaisa chalta hua chart (aakhri candle live). <b>Green/red lines</b> = is ghante ke grid levels (har nayi candle close par naye). <b>★ Andaza boxes</b> = is ghante ka expected range. 60 candles ki history chalti rehti hai.
 </div>
 </div>
 
@@ -352,7 +355,7 @@ canvas{height:260px}.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
 <div class="wr-bar"><div class="wr-fill" id="scWRBar" style="width:0%"></div></div>
 <div style="text-align:center;font-size:.8rem;color:var(--muted)" id="scWRNote"></div>
 <div class="explain" style="margin-top:12px"><div class="xt">📖 KAISE GINA JATA HAI</div>
-Har signal <b>event</b> hai: TP pehle mila = WIN, SL pehle = LOSS. Virtual — paisa nahi lagta.</div>
+Har signal <b>event</b> hai: TP pehle mila = WIN, SL pehle = LOSS. Virtual — paisa nahi lagta. Ek waqt mein ek signal per symbol.</div>
 </div>
 <div>
 <div style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan);margin-bottom:5px">📜 HISTORY</div>
@@ -417,7 +420,7 @@ Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.7 — running TV-style candles + 2-stream events");
+console.log("FL-200 v11.8 — running candles · 2-stream events · smart lock diagnostics");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -425,7 +428,7 @@ const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleSt
 const F1=v=>(v==null||isNaN(v))?"—":(+v).toFixed(1);
 const TF_MIN={M30:30,H1:60,H4:240,D1:1440,W1:10080};
 const COOLDOWN_MIN=15;
-const CHART_N=60;   /* kitni candles chart par */
+const CHART_N=60;
 
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null;
@@ -433,7 +436,7 @@ let HB=0,brainWarned=false;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
-const RT={liveCS:null,ctx:null};
+const RT={liveCS:null};
 
 /* ═══ STREAM 1: hourly context ═══ */
 let CTX={};
@@ -660,7 +663,6 @@ function mbox(l,v,cls,span){
 }
 function renderSignalDesk(){
   resolveLayer();
-  const SN=curSN();
   const G=LIVE_CTX?LIVE_CTX.grid:null;
   setTxt("sdSrc","context "+(LIVE_CTX?LIVE_CTX.period.slice(0,16):"—"),false);
   $("ctxLine").textContent="⏰ context: "+(LIVE_CTX?("candle "+LIVE_CTX.period.slice(0,16)+" UTC — agla grid agli candle close par"):"—");
@@ -695,10 +697,9 @@ function renderSignalDesk(){
     $("actTp").textContent=fmt(act.tp,2);
     $("actSl").textContent=fmt(act.sl,2);
     const px=LIVE_MID;
-    const tot=Math.abs(act.tp-act.sl);
     $("actStat").textContent=px?(act.dir>0?
-      (px>=act.tp?"TP HIT 🏁":px<=act.sl?"SL HIT 🔻":(act.tp-px)/(act.tp-act.sl)>0.5?"munafa ki taraf ↗":"SL ki taraf ↘")
-      :(px<=act.tp?"TP HIT 🏁":px>=act.sl?"SL HIT 🔻":(px-act.tp)/(act.sl-act.tp)>0.5?"munafa ki taraf ↗":"SL ki taraf ↘")):"OPEN";
+      (px>=act.tp?"TP HIT 🏁":px<=act.sl?"SL HIT 🔻":"chal raha ↗")
+      :(px<=act.tp?"TP HIT 🏁":px>=act.sl?"SL HIT 🔻":"chal raha ↘")):"OPEN";
   }else{
     ab.className="actbox";
     $("actSig").textContent="— KOI ACTIVE TRADE NAHI";
@@ -893,7 +894,6 @@ function drawGrid(){
   if(cv.width!==W*2){cv.width=W*2;cv.height=H*2;}
   ctx.setTransform(2,0,0,2,0,0);
   ctx.fillStyle="#060913";ctx.fillRect(0,0,W,H);
-  /* grid dots */
   ctx.strokeStyle="rgba(0,243,255,.05)";
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
@@ -901,7 +901,7 @@ function drawGrid(){
   const cs=RT.liveCS;
   const G=ENGINE_OBJ&&cs?ENGINE_OBJ.gridFromCandles(cs):null;
   if(cs&&validCandles(cs)){
-    const view=cs.slice(-CHART_N);   /* full running history */
+    const view=cs.slice(-CHART_N);
     const lines=G&&G.ext?[
       {p:G.ext.p33,tag:"BUY2",col:"rgba(0,255,102,.55)"},
       {p:G.ext.p67,tag:"BUY1",col:"rgba(0,255,102,.7)"},
@@ -913,24 +913,18 @@ function drawGrid(){
     if(G&&G.expected){lo=Math.min(lo,G.expected.low);hi=Math.max(hi,G.expected.high);}
     const pad=(hi-lo)*0.06||1;lo-=pad;hi+=pad;
     const y=p=>H-16-((p-lo)/(hi-lo))*(H-30);
-    /* candles — running */
     const step=W/Math.max(view.length,10),bw=Math.max(2,step*0.6);
     view.forEach(function(c,i){
-      const x=i*step+step/2;
-      drawCandle(ctx,x,c,bw,y);
+      drawCandle(ctx,i*step+step/2,c,bw,y);
     });
-    /* grid level lines (context) */
     lines.forEach(function(L){
       ctx.strokeStyle=L.col;ctx.setLineDash([6,5]);
-      ctx.beginPath();ctx.moveTo(0,y(L.p));ctx.lineTo(W-118,y(L.p));ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.beginPath();ctx.moveTo(0,y(L.p));ctx.lineTo(W-118,y(L.p));ctx.stroke();ctx.setLineDash([]);
     });
-    /* expected range shading */
     if(G&&G.expected){
       ctx.fillStyle="rgba(255,170,0,.06)";
       ctx.fillRect(0,y(G.expected.high),W-118,y(G.expected.low)-y(G.expected.high));
     }
-    /* labels */
     lines.forEach(function(L){
       tagBox(ctx,W-114,y(L.p)-9,110,18,L.tag+" "+L.p.toFixed(2),L.col);
     });
@@ -938,13 +932,11 @@ function drawGrid(){
       tagBox(ctx,W-114,y(G.expected.high)-9,110,18,"ExpH "+G.expected.high.toFixed(2),"#ffaa00");
       tagBox(ctx,W-114,y(G.expected.low)-9,110,18,"ExpL "+G.expected.low.toFixed(2),"#ffaa00");
     }
-    /* live price */
     const last=+view[view.length-1].c;
     const pl=.45+.4*Math.sin(t/280);
     ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
     ctx.beginPath();ctx.moveTo(0,y(last));ctx.lineTo(W-118,y(last));ctx.stroke();ctx.setLineDash([]);
     tagBox(ctx,W-114,y(last)-10,110,20,last.toFixed(2),"#00f3ff");
-    /* anchor candle marker */
     const ax=(view.length-2)*step+step/2;
     ctx.fillStyle="rgba(189,0,255,.6)";ctx.font="9px JetBrains Mono";ctx.textAlign="center";
     ctx.fillText("[1]",ax,H-4);
@@ -1010,6 +1002,7 @@ function logout(){localStorage.removeItem("hermes_tok");location.reload();}
  $("fileOverlay").addEventListener("click",function(){this.classList.remove("open");$("fileViewer").classList.remove("open");});
  $("repRefresh").addEventListener("click",loadReports);
 
+/* ══════════ LOCK — SMART DIAGNOSTICS ══════════ */
 function unlockUI(){
   $("lock").style.display="none";
   pulse("FACE online · running candles · "+EVENTS.length+" events loaded","pa");
@@ -1024,13 +1017,58 @@ function unlockUI(){
   if(saved&&pass&&saved!==pass){err.textContent="Galat password.";return;}
   if(!saved&&pass)localStorage.setItem("fl200_pass",pass);
   if(!tok){err.textContent="FACE_TOKEN zaroori hai.";return;}
-  err.textContent="Verifying…";
-  try{TOKEN=tok;localStorage.setItem("hermes_tok",tok);await ghList(C.heartRepo,"");unlockUI();}
-  catch(e){err.textContent="Token invalid ("+e.message+")";}
+  err.textContent="Verifying token…";
+  try{
+    TOKEN=tok;
+    /* repo-level check pehle — exact error code nikaalo */
+    const r=await fetch("https://api.github.com/repos/"+C.heartRepo+"?_="+Date.now(),
+      {headers:{Authorization:"Bearer "+TOKEN},cache:"no-store"});
+    if(r.status===401){
+      err.textContent="✗ 401: Token galat/expired. Poora token copy karein (ghp_ se shuru, koi space nahi). Nayi classic token banayen (repo scope).";
+      return;
+    }
+    if(r.status===403){
+      err.textContent="✗ 403: Token mein permission nahi. Classic token banate waqt 'repo' scope TICK karna zaroori hai.";
+      return;
+    }
+    if(r.status===404){
+      err.textContent="✗ 404: Repo '"+C.heartRepo+"' nahi mila — naam check karein, ya token us repo tak pahunch nahi raha.";
+      return;
+    }
+    if(!r.ok){
+      err.textContent="✗ GitHub "+r.status+" — thodi der baad try karein.";
+      return;
+    }
+    /* repo OK — ab contents listing (pukhta read access) */
+    const r2=await fetch("https://api.github.com/repos/"+C.heartRepo+"/contents/?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),
+      {headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r2.ok){
+      err.textContent="✗ Contents read fail ("+r2.status+") — classic token mein 'repo' scope poora tick hona chahiye.";
+      return;
+    }
+    localStorage.setItem("hermes_tok",tok);
+    unlockUI();
+  }catch(e){err.textContent="Network fail: "+e.message;}
+});
+ $("btnWipe").addEventListener("click",function(){
+  localStorage.removeItem("hermes_tok");
+  localStorage.removeItem("fl200_pass");
+  localStorage.removeItem("fl200_ctx");
+  localStorage.removeItem("fl200_events");
+  location.reload();
 });
  $("ltok").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
  $("lpass").addEventListener("keydown",e=>{if(e.key==="Enter")$("lockBtn").click();});
-(async function(){if(TOKEN){try{await ghList(C.heartRepo,"");unlockUI();return;}catch(e){}}})();
+(async function(){
+  if(TOKEN){
+    try{
+      const r=await fetch("https://api.github.com/repos/"+C.heartRepo+"?_="+Date.now(),
+        {headers:{Authorization:"Bearer "+TOKEN},cache:"no-store"});
+      if(r.ok){unlockUI();return;}
+      pulse("saved token expired ("+r.status+") — lock screen","pr");
+    }catch(e){}
+  }
+})();
 </script>
 </body>
 </html>

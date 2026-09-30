@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FACE v11.5</title>
+<title>FL-200 · FACE v11.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -12,7 +12,6 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes flash{0%{text-shadow:0 0 14px var(--cyan);color:#fff}100%{}}
 @keyframes glow{0%,100%{box-shadow:0 0 4px rgba(0,255,102,.25)}50%{box-shadow:0 0 12px rgba(0,255,102,.55)}}
-@keyframes tickmove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes pollfill{0%{width:0}92%{width:88%}100%{width:100%}}
 @keyframes slidein{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
 .flash{animation:flash .7s}.blink{animation:pulse 1.2s infinite}
@@ -37,21 +36,20 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .ticker{overflow:hidden;border-bottom:1px solid var(--border);background:rgba(0,0,0,.4);padding:5px 0}
 .ticker-inner{display:inline-block;white-space:nowrap;animation:tickmove 28s linear infinite;font-family:'JetBrains Mono';font-size:.82rem;color:var(--muted)}
 .ticker-inner b{color:var(--cyan)}.ticker-inner .g{color:var(--green)}.ticker-inner .r{color:var(--red)}
+@keyframes tickmove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .main{max-width:1680px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:12px}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .full{grid-column:span 3}.span2{grid-column:span 2}
-.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:12px;position:relative;min-width:0}
 .panel::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);opacity:.55}
 .ph{font-family:'Orbitron';font-size:.95rem;color:var(--cyan);letter-spacing:1px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(0,243,255,.1);padding-bottom:6px;flex-wrap:wrap}
-.ph small{font-family:'Rajdhani';font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
 .live{font-size:.76rem;color:var(--green)}.live.warn{color:var(--amber)}
-/* ═══ FINAL STRIP (simple) ═══ */
 .fin-strip{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:8px;align-items:center;background:linear-gradient(135deg,rgba(0,255,102,.09),rgba(0,243,255,.03));border:1px solid rgba(0,255,102,.3);border-radius:5px;padding:11px 13px;margin-bottom:10px}
 .fin-strip.wait{border-color:rgba(255,170,0,.3);background:linear-gradient(135deg,rgba(255,170,0,.07),rgba(0,243,255,.02))}
 .fin-strip.sell{border-color:rgba(255,0,85,.35);background:linear-gradient(135deg,rgba(255,0,85,.08),rgba(0,243,255,.02))}
 .action-title{font-family:'Orbitron';font-size:.92rem;line-height:1.4}
-.action-signal{font-size:1.9rem;font-family:'Orbitron';color:var(--green);font-weight:900}
+.action-signal{font-size:1.8rem;font-family:'Orbitron';color:var(--green);font-weight:900}
 .action-signal.wait{color:var(--amber)}
 .action-signal.sell{color:var(--red)}
 .plain{font-size:.85rem;color:var(--muted);line-height:1.5}
@@ -67,13 +65,13 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 .pulse-box .pg{color:var(--green)}.pulse-box .pr{color:var(--red)}.pulse-box .pa{color:var(--amber)}
 .eng-grid{display:grid;grid-template-columns:1fr;gap:7px}
 .eng{display:grid;grid-template-columns:170px 135px 1fr;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px 12px;opacity:.6}
-.eng.act{opacity:1;border-color:var(--green);box-shadow:0 0 10px rgba(0,255,102,.2)}
+.eng.act{opacity:1;border-color:var(--green)}
 .eng .en{font-family:'Orbitron';font-size:.8rem;color:var(--cyan)}
 .eng .es{font-family:'Orbitron';font-size:.74rem}
 .eng .ed{font-family:'JetBrains Mono';font-size:.74rem;color:var(--muted)}
 .candle-wrap{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:5px;overflow:hidden}
 .candle-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.8rem;flex-wrap:wrap;gap:4px}
-canvas{display:block;width:100%;height:360px;background:#060913}
+canvas{display:block;width:100%;height:380px;background:#060913}
 .glv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
 .glv .mbox{text-align:center}
 .glv .mval{font-size:.94rem}
@@ -84,44 +82,41 @@ canvas{display:block;width:100%;height:360px;background:#060913}
 .lvb.buy{border-color:rgba(0,255,102,.45)}.lvb.buy .lt,.lvb.buy .lp{color:var(--green)}
 .lvb.sell{border-color:rgba(255,0,85,.45)}.lvb.sell .lt,.lvb.sell .lp{color:var(--red)}
 .lvb .pct{font-family:'JetBrains Mono';font-size:.66rem;color:var(--muted);margin-top:3px}
-/* ═══ SIMPLE EXPLAIN BOX ═══ */
 .explain{background:rgba(0,243,255,.04);border:1px dashed rgba(0,243,255,.3);border-radius:5px;padding:10px 12px;margin-top:9px;font-size:.9rem;line-height:1.7}
 .explain .xt{font-family:'Orbitron';font-size:.72rem;color:var(--cyan);letter-spacing:1px;margin-bottom:5px}
 .explain b{color:var(--text)}
+.actbox{border:1px solid var(--border);border-radius:5px;padding:11px;margin-top:9px;background:rgba(0,0,0,.4)}
+.actbox.buy{border-color:rgba(0,255,102,.5);box-shadow:0 0 12px rgba(0,255,102,.15)}
+.actbox.sell{border-color:rgba(255,0,85,.5);box-shadow:0 0 12px rgba(255,0,85,.15)}
+.actbox .ah{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.actbox .as{font-family:'Orbitron';font-size:1.3rem;font-weight:900}
+.actbox.buy .as{color:var(--green)}.actbox.sell .as{color:var(--red)}
+.actbox .row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
 .zonebadge{font-family:'Orbitron';font-size:.8rem;padding:5px 12px;border-radius:4px;border:1px solid var(--border)}
 .zb-buy{color:var(--green);border-color:rgba(0,255,102,.4);background:rgba(0,255,102,.08)}
 .zb-sell{color:var(--red);border-color:rgba(255,0,85,.4);background:rgba(255,0,85,.08)}
 .zb-mid{color:var(--amber);border-color:rgba(255,170,0,.35);background:rgba(255,170,0,.07)}
 .gz{font-size:.74rem;font-family:'JetBrains Mono';color:var(--muted)}
-.final-box{font-family:'JetBrains Mono';font-size:.78rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:11px;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:200px;overflow-y:auto}
-.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:9px}
-.plan{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px}
-.plan h4{font-family:'Orbitron';font-size:.74rem;color:var(--cyan);margin-bottom:4px}
-.plan .pr{font-family:'JetBrains Mono';font-size:.76rem;line-height:1.6}
-.plan.buys{border-color:rgba(0,255,102,.3)}.plan.sells{border-color:rgba(255,0,85,.3)}
-/* ═══ SCOREBOARD ═══ */
+.final-box{font-family:'JetBrains Mono';font-size:.78rem;background:rgba(0,0,0,.45);border:1px solid rgba(0,243,255,.25);border-radius:4px;padding:11px;line-height:1.8;white-space:pre-wrap;overflow-x:auto;max-height:160px;overflow-y:auto}
 .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
 .sc{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:5px;padding:12px;text-align:center}
 .sc .n{font-family:'Orbitron';font-size:1.9rem;font-weight:900}
 .sc .n.g{color:var(--green)}.sc .n.r{color:var(--red)}.sc .n.y{color:var(--amber)}.sc .n.c{color:var(--cyan)}
 .sc .l{font-size:.8rem;color:var(--muted);margin-top:3px}
-.sc .sub{font-size:.72rem;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono'}
 .wr-bar{height:14px;background:rgba(255,255,255,.06);border-radius:7px;overflow:hidden;margin:10px 0 4px}
 .wr-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--green),#00ffaa);transition:width .5s}
 .wr-fill.mid{background:linear-gradient(90deg,var(--amber),#ffcc44)}
 .wr-fill.low{background:linear-gradient(90deg,var(--red),#ff5588)}
-.hist{font-family:'JetBrains Mono';font-size:.78rem;max-height:190px;overflow-y:auto;line-height:1.8}
+.hist{font-family:'JetBrains Mono';font-size:.78rem;max-height:230px;overflow-y:auto;line-height:1.8}
 .hist div{border-bottom:1px solid rgba(0,243,255,.06);padding:3px 2px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .hist .win{color:var(--green)}.hist .loss{color:var(--red)}.hist .wait{color:var(--amber)}
 .model-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:11px;cursor:pointer;transition:.2s;min-width:0}
-.mcard:hover{border-color:rgba(0,243,255,.45);transform:translateY(-2px)}
+.mcard{background:rgba(10,16,32,.8);border:1px solid var(--border);border-radius:4px;padding:11px;cursor:pointer;min-width:0}
 .mname{font-family:'Orbitron';font-size:.82rem;font-weight:700}
 .mtype{font-size:.68rem;color:var(--muted)}
 .mpred{font-family:'Orbitron';font-size:1.15rem;color:var(--cyan);font-weight:800;margin:5px 0 3px}
 .msig{font-size:.76rem;font-weight:700;color:var(--green)}
 .msig.na{color:var(--muted)}
-.mmeta{font-size:.7rem;color:var(--muted);margin-top:3px}
 .wbar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:5px;overflow:hidden}
 .wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),#00ffaa)}
 .pillar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
@@ -138,25 +133,17 @@ canvas{display:block;width:100%;height:360px;background:#060913}
 .sysacc .big{font-family:'Orbitron';font-size:2rem;font-weight:900;color:var(--green)}
 .sysacc .big.low{color:var(--amber)}
 .sysacc .sub{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.5}
-.ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:9px}
-.iname{font-family:'Orbitron';font-size:.82rem}
-.ival{font-family:'Orbitron';font-size:1.1rem;margin:3px 0}
-.ival.na{color:var(--muted);font-size:.85rem}
 .ledger-box{font-family:'JetBrains Mono';font-size:.8rem;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:4px;padding:10px;line-height:1.7;max-height:200px;overflow-y:auto}
-.ledger-box div{animation:slidein .3s}
 .rep-sum{font-size:.98rem;line-height:1.85;white-space:pre-wrap}
-.rep-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;margin-bottom:7px;animation:slidein .3s;flex-wrap:wrap}
+.rep-file{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:9px 12px;margin-bottom:7px;flex-wrap:wrap}
 .rep-file .fn{font-family:'JetBrains Mono';font-size:.85rem;flex:1;min-width:140px}
 .rep-file .fs{font-family:'JetBrains Mono';font-size:.73rem;color:var(--muted)}
 .rbtn{font-family:'Orbitron';font-size:.66rem;padding:5px 11px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:rgba(0,243,255,.08);color:var(--cyan)}
-.rbtn.rd{background:rgba(255,0,85,.1);color:var(--red);border-color:rgba(255,0,85,.35)}
 .rule{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:4px;padding:8px 12px;font-size:.92rem;gap:6px;flex-wrap:wrap}
 .rule b{font-family:'Orbitron';color:var(--cyan)}
-.rule i{font-family:'Orbitron';font-style:normal;font-size:.76rem}
-.rule.ok i{color:var(--green)}
+.rule i{font-family:'Orbitron';font-style:normal;font-size:.76rem;color:var(--green)}
 .guide{font-size:.93rem;line-height:1.85}
-.guide b{color:var(--cyan)}.guide code{font-family:'JetBrains Mono';color:var(--amber);background:rgba(0,0,0,.4);padding:1px 5px;border-radius:3px}
+.guide b{color:var(--cyan)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;visibility:hidden;transition:.3s}
 .overlay.open{opacity:1;visibility:visible}
 .side{position:fixed;top:0;right:0;width:430px;max-width:100%;height:100vh;background:rgba(6,10,22,.98);border-left:1px solid var(--border);z-index:210;transform:translateX(100%);transition:transform .32s;display:flex;flex-direction:column}
@@ -166,7 +153,6 @@ canvas{display:block;width:100%;height:360px;background:#060913}
 .close{background:transparent;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:4px;cursor:pointer;font-size:1rem}
 .side-b{flex:1;overflow-y:auto;padding:12px 14px}
 .inst{background:rgba(0,0,0,.4);border:1px solid rgba(0,243,255,.18);border-radius:4px;padding:12px;font-family:'JetBrains Mono';font-size:.83rem;line-height:1.6;white-space:pre-wrap}
-.fv-pre{font-family:'JetBrains Mono';font-size:.78rem;white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:4px;padding:10px;max-height:calc(100vh - 120px);overflow:auto;line-height:1.5}
 .section{display:none}.section.active{display:block}
 .lockwrap{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:16px}
 .lockcard{width:380px;max-width:100%;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:28px;text-align:center}
@@ -183,22 +169,19 @@ canvas{display:block;width:100%;height:360px;background:#060913}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .model-grid{grid-template-columns:repeat(2,1fr)}
 .pillar-grid{grid-template-columns:repeat(5,1fr)}
-.ind-grid{grid-template-columns:repeat(2,1fr)}
 canvas{height:300px}.eng{grid-template-columns:1fr}
-.fin-strip{grid-template-columns:1fr 1fr}
+.fin-strip{grid-template-columns:1fr 1fr}.actbox .row{grid-template-columns:1fr 1fr}
 }
 @media(max-width:580px){
-body{font-size:15px}
-.main{padding:8px}.panel{padding:10px}
+body{font-size:15px}.main{padding:8px}.panel{padding:10px}
 .grid{grid-template-columns:1fr}.full,.span2{grid-column:span 1}
-.mgrid,.model-grid,.imp-grid,.ind-grid,.plans,.fin-strip{grid-template-columns:1fr}
+.mgrid,.model-grid,.imp-grid,.plans,.fin-strip{grid-template-columns:1fr}
 .glv{grid-template-columns:repeat(2,1fr)}
 .lv4{grid-template-columns:repeat(2,1fr)}
 .pillar-grid{grid-template-columns:repeat(5,1fr)}
 .score-grid{grid-template-columns:repeat(2,1fr)}
 .nav-links{display:none}.side{width:100%}
-canvas{height:250px}
-.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
+canvas{height:260px}.action-signal{font-size:1.5rem}.price{font-size:1.5rem}
 .syncin{display:none}
 }
 </style>
@@ -209,8 +192,8 @@ canvas{height:250px}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">v11.5 · SIMPLE VIEW · SCOREBOARD</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">Chart LEFT · Signal RIGHT · Aam-insaan mode</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">v11.7 · RUNNING CANDLES (TV-style)</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">Full candle history + live tick · 2-stream events</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -230,9 +213,9 @@ canvas{height:250px}
 <button class="nav-btn" data-s="account">ACCOUNT</button>
 </div>
 <div class="nav-right">
-<span class="tier-badge">SIMPLE v11.5</span>
+<span class="tier-badge">RUNNING v11.7</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v11.5</div>
+<div class="status"><div class="dot"></div> v11.7</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -260,12 +243,10 @@ canvas{height:250px}
 <div class="main">
 <div class="section active" id="dash">
 
-<!-- ═══ TOP ROW: CHART LEFT | SIGNAL RIGHT (50/50) ═══ -->
 <div class="split-grid">
 
-<!-- LEFT: CHART -->
 <div class="panel">
-<div class="ph"><span>🕯️ FARRUKH GRID CHART</span><span id="gridStatus" class="live">—</span></div>
+<div class="ph"><span>🌊 CONTINUOUS — LIVE CHART (TV-style running)</span><span id="gridStatus" class="live">—</span></div>
 <div class="candle-wrap">
 <div class="candle-head">
 <span style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan)" id="gridSrc">—</span>
@@ -274,45 +255,51 @@ canvas{height:250px}
 <canvas id="cvGrid"></canvas>
 </div>
 <div class="explain">
-<div class="xt">📖 YE CHART KYA KEH RAHA HAI</div>
-<b>Laal/Candle (left)</b> = pichla poora ghanta (yehi aadha ghanta aage ka base banta hai). <b>Doosri candle</b> = abhi chal raha ghanta (live).<br>
-<b>Green lines (BUY 2 / BUY 1)</b> = neeche wale areas — yahan se qeemat uth sakti hai.<br>
-<b>Red lines (SELL 1 / SELL 2)</b> = upar wale areas — yahan se qeemat gir sakti hai.<br>
-<b>★ Neela box (EXPECTED HIGH/LOW)</b> = system ka andaza ke agla ghanta kahan tak jayega.<br>
-<b>Level boxes</b> ghante bhar nahi badalte (🔒 lock) — isliye jo signal aap dekh rahe ho wohi hai.
+<div class="xt">📖 YE CHART KYA HAI</div>
+<b>Candles har 4 sec update</b> — TradingView jaisa chalta hua chart (aakhri candle live ban rahi hoti hai). <b>Green/red lines</b> = is ghante ke grid levels (har nayi candle close par naye). <b>★ Andaza boxes</b> = is ghante ka expected range. Candle history scroll jaisi purani hoti jati hai, naye candles right se aate rehte hain.
 </div>
 </div>
 
-<!-- RIGHT: SIGNAL DESK (sab kuch simple) -->
 <div class="panel" id="sdPanel">
-<div class="ph"><span>🎯 SIGNAL · <span id="recSym">—</span> · <span id="recTF">H1</span></span><span id="sdSrc" class="live">—</span></div>
+<div class="ph"><span>🎯 SIGNAL DATA · <span id="recSym">—</span> · <span id="recTF">H1</span></span><span id="sdSrc" class="live">—</span></div>
 
 <div class="fin-strip" id="finStrip">
 <div>
-<div class="action-title">🧭 SYSTEM KA FAISLA</div>
+<div class="action-title">🧭 LIVE EVALUATION (4s)</div>
 <div class="plain" id="recNote">—</div>
 <div class="byline" id="recBy">—</div>
 </div>
-<div class="mbox"><div class="mlabel">FAISLA</div><div class="action-signal" id="recAction">—</div></div>
-<div class="mbox"><div class="mlabel">KHARIDNE KI PRICE</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
-<div class="mbox"><div class="mlabel">MUNAFA / NUQSAN</div><div class="mval" id="recTP">—</div></div>
+<div class="mbox"><div class="mlabel">NATEEJA</div><div class="action-signal" id="recAction">—</div></div>
+<div class="mbox"><div class="mlabel">QEEMAT</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
+<div class="mbox"><div class="mlabel">ZOR</div><div class="mval" id="l2ImbMini">—</div></div>
+</div>
+
+<div class="actbox" id="actBox">
+<div class="ah">
+<span class="as" id="actSig">— KOI ACTIVE TRADE NAHI</span>
+<span class="zonebadge zb-mid" id="actTime">—</span>
+</div>
+<div class="plain" id="actNote">System har 4 sec check karta hai — jaise hi shartein match, event ban jayega.</div>
+<div class="row" id="actRow" style="display:none">
+<div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" id="actEntry">—</div></div>
+<div class="mbox"><div class="mlabel">MUNAFA (TP)</div><div class="mval g" id="actTp">—</div></div>
+<div class="mbox"><div class="mlabel">NUQSAN (SL)</div><div class="mval r" id="actSl">—</div></div>
+<div class="mbox"><div class="mlabel">HALAT</div><div class="mval y" id="actStat">OPEN</div></div>
+</div>
 </div>
 
 <div class="lv4" id="tvRow"></div>
+<div class="glv" id="glvRow"></div>
+<div class="glv" id="l2Row"></div>
 <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
-<span class="zonebadge zb-mid" id="zPos">QEEMAT KAHAN HAI: —</span>
-<span class="zonebadge zb-mid" id="zAct">ZONA: —</span>
+<span class="zonebadge zb-mid" id="zPos">QEEMAT KAHAN: —</span>
+<span class="gz" id="ctxLine">⏰ context: —</span>
 </div>
-
 <div class="explain">
-<div class="xt">📖 YE SIGNAL KAISE PARHEIN (aasan zubaan)</div>
+<div class="xt">📖 SIMPLE ZUBAAN</div>
 <div id="explainBody">…</div>
 </div>
-
-<div class="plans" id="planBoxes"></div>
-<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
-<span class="gz" id="lockLine">🔒 connecting…</span>
-</div>
+<div class="final-box" id="finalBox">—</div>
 </div>
 
 </div>
@@ -321,106 +308,82 @@ canvas{height:250px}
 <div class="panel span2">
 <div class="ph"><span>📊 MARKET</span><span id="mktLive" class="live">—</span></div>
 <div class="mgrid">
-<div class="mbox"><div class="mlabel">ABHI KI QEEMAT</div><div class="price" id="livePrice">—</div></div>
+<div class="mbox"><div class="mlabel">QEEMAT</div><div class="price" id="livePrice">—</div></div>
 <div class="mbox"><div class="mlabel">DATA</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
 <div class="mbox"><div class="mlabel">UPDATE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
-<div class="mbox"><div class="mlabel">BAZAAR</div><div class="mval" style="margin-top:3px">24/7 khula</div></div>
+<div class="mbox"><div class="mlabel">BAZAAR</div><div class="mval" style="margin-top:3px">24/7</div></div>
 </div>
 </div>
-
 <div class="panel">
-<div class="ph"><span>❤️ SYSTEM PULSE</span><span id="hbCount" style="font-size:.72rem;color:var(--cyan)">HB 0</span></div>
+<div class="ph"><span>❤️ PULSE</span><span id="hbCount" style="font-size:.72rem;color:var(--cyan)">HB 0</span></div>
 <div class="pulse-box" id="pulseBox"></div>
 </div>
-
 <div class="panel full">
-<div class="ph"><span>🛡️ ENGINES — kaun chal raha hai</span><span class="live" id="engWhy">—</span></div>
+<div class="ph"><span>🛡️ ENGINES</span><span class="live" id="engWhy">—</span></div>
 <div class="eng-grid" id="engGrid"></div>
 </div>
-
 <div class="panel full">
-<div class="ph"><span>🧬 MODELS — kaun kya keh raha hai</span><span style="font-size:.72rem;color:var(--muted)">click = tafseel</span></div>
+<div class="ph"><span>🧬 MODELS</span><span style="font-size:.72rem;color:var(--muted)">click = tafseel</span></div>
 <div class="model-grid" id="modelGrid"></div>
-<div class="explain"><div class="xt">📖 YE 5 CHEEZEIN KYA HAIN</div>
-<b>GRID</b> = candle ka shape dekh kar area batata hai · <b>L2 BOOK</b> = khareeddaar/baikne walon ka zor (sab se powerful) · <b>KRONOS</b> = AI jo agla ghanta predict karta hai · <b>QUANT</b> = RSI jaisay meters · <b>TAURUS</b> = bazaar ka mood (tezi/mandi/saakin)</div>
 </div>
-
 <div class="panel full">
-<div class="ph"><span>🏛️ 10 PILLARS — system ke 10 usool</span><span class="live" id="pillarScore">—</span></div>
+<div class="ph"><span>🏛️ 10 PILLARS</span><span class="live" id="pillarScore">—</span></div>
 <div class="pillar-grid" id="pillarGrid"></div>
 </div>
-
 <div class="panel full">
-<div class="ph"><span>📒 LEDGER — har faisla likha ja raha hai (badla nahi ja sakta)</span><span id="ledgerMeta" style="font-size:.72rem;color:var(--muted)"></span></div>
+<div class="ph"><span>📒 LEDGER</span><span id="ledgerMeta" style="font-size:.72rem;color:var(--muted)"></span></div>
 <div class="ledger-box" id="ledgerBox">—</div>
 </div>
 </div>
 </div>
 
-<!-- ═══ SCOREBOARD TAB (naya) ═══ -->
 <div class="section" id="scores">
 <div class="panel full">
-<div class="ph"><span>📊 SCOREBOARD — ab tak ka hisaab</span><button class="rbtn" id="btnClearHist" style="color:var(--red)">🗑 HISTORY CLEAR</button></div>
+<div class="ph"><span>📊 SCOREBOARD</span><button class="rbtn" id="btnClearHist" style="color:var(--red)">🗑 CLEAR</button></div>
 <div class="score-grid">
-<div class="sc"><div class="n c" id="scTotal">0</div><div class="l">KUL TRADES (virtual)</div><div class="sub">signals jo plan ke saath aaye</div></div>
-<div class="sc"><div class="n g" id="scWin">0</div><div class="l">JEET (WIN)</div><div class="sub">munafa target pehle mila ✓</div></div>
-<div class="sc"><div class="n r" id="scLoss">0</div><div class="l">HAAR (LOSS)</div><div class="sub">nuqsan line pehle mila ✗</div></div>
-<div class="sc"><div class="n y" id="scOpen">0</div><div class="l">CHAL RAHE (OPEN)</div><div class="sub">isi waqt intezar mein</div></div>
+<div class="sc"><div class="n c" id="scTotal">0</div><div class="l">KUL SIGNALS</div></div>
+<div class="sc"><div class="n g" id="scWin">0</div><div class="l">WIN ✓</div></div>
+<div class="sc"><div class="n r" id="scLoss">0</div><div class="l">LOSS ✗</div></div>
+<div class="sc"><div class="n y" id="scOpen">0</div><div class="l">OPEN ⏳</div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
 <div>
-<div style="text-align:center;font-family:'Orbitron';font-size:1.1rem;margin-bottom:2px">WIN RATE: <span id="scWR" style="color:var(--green)">—</span></div>
+<div style="text-align:center;font-family:'Orbitron';font-size:1.1rem">WIN RATE: <span id="scWR" style="color:var(--green)">—</span></div>
 <div class="wr-bar"><div class="wr-fill" id="scWRBar" style="width:0%"></div></div>
-<div style="text-align:center;font-size:.8rem;color:var(--muted)" id="scWRNote">50% se upar + 1:2 munafa = munafa-joo system</div>
-<div style="margin-top:12px" class="explain"><div class="xt">📖 PARHNE KA TAREEQA</div>
-<b>WIN</b> = signal ke munafa level tak qeemat pehle pohnchi ✗→✓<br>
-<b>LOSS</b> = nuqsan line pehle touch hui<br>
-<b>OPEN</b> = abhi chal raha, faisla nahi hua<br>
-<b>Virtual</b> = asal paisa nahi lagta (SIGNAL ONLY system hai) — yeh system ki sachai ka imtihan hai</div>
+<div style="text-align:center;font-size:.8rem;color:var(--muted)" id="scWRNote"></div>
+<div class="explain" style="margin-top:12px"><div class="xt">📖 KAISE GINA JATA HAI</div>
+Har signal <b>event</b> hai: TP pehle mila = WIN, SL pehle = LOSS. Virtual — paisa nahi lagta.</div>
 </div>
 <div>
-<div style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan);margin-bottom:5px">📜 HAR TRADE KI KAHANI (naya pehle)</div>
-<div class="hist" id="histBox">Abhi tak koi trade nahi — pehla BUY/SELL signal ka intezar…</div>
+<div style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan);margin-bottom:5px">📜 HISTORY</div>
+<div class="hist" id="histBox">Abhi koi event nahi…</div>
 </div>
 </div>
 </div>
 <div class="panel full">
-<div class="ph"><span>📈 MODEL IMPROVEMENT — kaun behtar ho raha hai</span><span id="impMeta" style="font-size:.72rem;color:var(--muted)">—</span></div>
+<div class="ph"><span>📈 MODEL IMPROVEMENT</span><span id="impMeta" style="font-size:.72rem;color:var(--muted)">—</span></div>
 <div class="imp-grid" id="impGrid"></div>
 </div>
 <div class="panel full">
-<div class="ph"><span>🎯 SYSTEM ACCURACY (models ki andaz-naweesi)</span></div>
+<div class="ph"><span>🎯 SYSTEM ACCURACY</span></div>
 <div class="sysacc" id="sysAcc">—</div>
 </div>
 </div>
 
 <div class="section" id="strategy">
-<div class="panel full"><div class="ph"><span>⚔️ STRATEGY HUB</span></div>
-<div class="inst" id="stratBox">Loading…</div>
-</div></div>
-
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY</span></div><div class="inst" id="stratBox">…</div></div></div>
 <div class="section" id="rules">
-<div class="panel full"><div class="ph"><span>📜 RISK RULES</span></div>
-<div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
-
+<div class="panel full"><div class="ph"><span>📜 RULES</span></div><div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
 <div class="section" id="reports">
-<div class="panel full"><div class="ph"><span>🩺 LIVE RUN</span><button class="rbtn" id="repRefresh">⟳ RESCAN</button></div>
-<div class="rep-sum" id="repSummary">…</div></div>
-<div class="panel full"><div class="ph"><span>📥 HEART FILES</span><span style="font-size:.72rem;color:var(--muted)" id="repScan">—</span></div>
-<div id="repFiles">Scanning…</div></div>
-<div class="panel full"><div class="ph"><span>📖 SECURITY (P9)</span></div>
-<div class="guide"><b>Formula</b> sirf private heart repo mein. FACE_TOKEN se HTTPS load, aapke browser mein compute. Public repo: zero formula, zero keys. Bina token: sirf lock screen.</div></div>
+<div class="panel full"><div class="ph"><span>🩺 LIVE RUN</span><button class="rbtn" id="repRefresh">⟳</button></div><div class="rep-sum" id="repSummary">…</div></div>
+<div class="panel full"><div class="ph"><span>📥 HEART FILES</span><span style="font-size:.72rem;color:var(--muted)" id="repScan">—</span></div><div id="repFiles">…</div></div>
 </div>
-
 <div class="section" id="pillars">
 <div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW</span></div>
-<div class="inst">P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST (ledger) · P5 COMPARE ·
-P6 LESSONS · P7 RISK · P8 SIMULATE→TAG (period-lock) · P9 SECURITY · P10 HEALTH
+<div class="inst">P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST · P5 COMPARE ·
+P6 LESSONS · P7 RISK · P8 EVENT-TAG · P9 SECURITY · P10 HEALTH
 Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
-<div class="panel full"><div class="ph"><span>🧠 MODEL SELF-STATES</span></div>
-<div class="inst" id="selfBox">—</div></div>
-</div>
-
+<div class="panel full"><div class="ph"><span>🧠 SELF-STATES</span></div><div class="inst" id="selfBox">—</div></div></div>
 <div class="section" id="account">
 <div class="panel full"><div class="ph"><span>💼 ACCOUNT</span></div>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
@@ -433,13 +396,11 @@ Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 <div class="overlay" id="cfgOverlay"></div>
 <div class="side" id="cfgPanel">
 <div class="side-h"><div class="side-t">⚙ CONFIG</div><button class="close" id="closeCfg">✕</button></div>
-<div class="side-b">
-<div class="inst" id="cfgInfo">—</div>
+<div class="side-b"><div class="inst" id="cfgInfo">—</div>
 <div style="display:flex;gap:8px;margin-top:10px">
 <button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE</button>
 <button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
-</div>
-</div>
+</div></div>
 </div>
 
 <div class="overlay" id="modOverlay"></div>
@@ -456,13 +417,15 @@ Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.5 — chart LEFT/signal RIGHT · scoreboard · simple mode · no-repaint");
+console.log("FL-200 v11.7 — running TV-style candles + 2-stream events");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
 const F1=v=>(v==null||isNaN(v))?"—":(+v).toFixed(1);
 const TF_MIN={M30:30,H1:60,H4:240,D1:1440,W1:10080};
+const COOLDOWN_MIN=15;
+const CHART_N=60;   /* kitni candles chart par */
 
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null;
@@ -470,156 +433,87 @@ let HB=0,brainWarned=false;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
-const RT={data:null,ts:0,key:"",liveCS:null};
-const RT_TTL=15000;
+const RT={liveCS:null,ctx:null};
 
-/* ═══ NO-REPAINT LOCKS ═══ */
-let LOCKS={};
-try{LOCKS=JSON.parse(localStorage.getItem("fl200_locks")||"{}");}catch(e){LOCKS={};}
-function saveLocks(){try{localStorage.setItem("fl200_locks",JSON.stringify(LOCKS));}catch(e){}}
-function periodKey(cs){return cs[cs.length-1].t.slice(0,16);}
-function periodEndTxt(pk,tf){
-  try{
-    const t=new Date(pk+":00Z").getTime()+(TF_MIN[tf]||60)*60000;
-    const d=new Date(t);
-    return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")+" UTC";
-  }catch(e){return "next close";}
-}
-function getLock(sym,tf,pk){const l=LOCKS[sym+"|"+tf];return (l&&l.period===pk)?l:null;}
-function setLock(sym,tf,pk,sig){
-  LOCKS[sym+"|"+tf]={period:pk,ts:Date.now(),sig:sig};
-  /* signal history bhi rakho (scoreboard ke liye) */
-  if(sig.final&&sig.final.signal!=="WAIT"&&sig.entryPlan){
-    LOCKS["_hist_"+sym+"|"+tf+"|"+pk]={period:pk,ts:Date.now(),
-      sym:sym,tf:tf,sig:sig.final.signal,dir:sig.final.signal==="BUY"?1:-1,
-      entry:sig.entryPlan.entry,sl:sig.entryPlan.sl,tp:sig.entryPlan.tp,
-      atr:sig.grid?sig.grid.step:1,resolved:false,result:null};
+/* ═══ STREAM 1: hourly context ═══ */
+let CTX={};
+try{CTX=JSON.parse(localStorage.getItem("fl200_ctx")||"{}");}catch(e){CTX={};}
+function saveCtx(){try{localStorage.setItem("fl200_ctx",JSON.stringify(CTX));}catch(e){}}
+function ctxKey(){return CUR_SYM+"|"+CUR_TF;}
+function getContext(cs){
+  const pk=cs[cs.length-1].t.slice(0,16);
+  let c=CTX[ctxKey()];
+  if(!c||c.period!==pk){
+    const grid=ENGINE_OBJ.gridFromCandles(cs);
+    if(!grid)return null;
+    c={period:pk,grid:grid,ts:Date.now()};
+    CTX[ctxKey()]=c;saveCtx();
+    pulse("⏰ NAYA CONTEXT "+CUR_SYM+" "+CUR_TF+" ["+pk+"] — "+grid.color+" anchor","pa");
   }
-  saveLocks();
+  return c;
 }
 
-/* ══════════ SCOREBOARD RESOLVER ══════════ */
-function resolveScores(){
-  if(!RT.liveCS)return;
-  const price=RT.liveCS[RT.liveCS.length-1].c;
-  let total=0,win=0,loss=0,open=0;const rows=[];
-  Object.keys(LOCKS).forEach(function(k){
-    if(!k.startsWith("_hist_"))return;
-    const h=LOCKS[k];total++;
-    if(!h.resolved&&h.tf===CUR_TF&&h.sym===CUR_SYM){
-      /* live price se resolve karne ki koshish (sirf current sym+tf) */
-      if(h.dir>0){
-        if(price>=h.tp){h.resolved=true;h.result="WIN";}
-        else if(price<=h.sl){h.resolved=true;h.result="LOSS";}
-      }else{
-        if(price<=h.tp){h.resolved=true;h.result="WIN";}
-        else if(price>=h.sl){h.resolved=true;h.result="LOSS";}
-      }
-      if(h.resolved){saveLocks();pulse("📊 RESOLVED "+h.sym+" "+h.tf+" "+h.sig+" → "+h.result,h.result==="WIN"?"pg":"pr");}
-    }
-    if(h.resolved){h.result==="WIN"?win++:loss++;}
-    else open++;
-    rows.unshift(h);
-  });
-  return {total:total,win:win,loss:loss,open:open,rows:rows};
-}
-function renderScores(){
-  const s=resolveScores();if(!s)return;
-  $("scTotal").textContent=s.total;
-  $("scWin").textContent=s.win;
-  $("scLoss").textContent=s.loss;
-  $("scOpen").textContent=s.open;
-  const done=s.win+s.loss;
-  const wr=done?(s.win/done*100):null;
-  $("scWR").textContent=wr==null?"—":wr.toFixed(0)+"%"+(done?" ("+done+" done)":"");
-  const bar=$("scWRBar");
-  bar.style.width=(wr==null?0:Math.max(4,wr))+"%";
-  bar.className="wr-fill"+(wr==null?"":wr>=50?"":wr>=40?" mid":" low");
-  $("scWRNote").textContent=done<20?"⚠ "+done+" trades — sample chhota hai, pattern abhi mat banao (20+ chahiye)"
-    :(wr>=50?"✓ 50%+ — 1:2 RR ke saath yeh munafa-joo zone hai":wr>=40?"△ thora neeche — dekhte raho":"✗ 40% se neeche — abhi paper hi rahne do");
-  if(s.rows.length){
-    $("histBox").innerHTML=s.rows.slice(0,40).map(function(h){
-      const cls=!h.resolved?"wait":h.result==="WIN"?"win":"loss";
-      const badge=!h.resolved?"⏳ OPEN":h.result==="WIN"?"✓ WIN":"✗ LOSS";
-      return "<div><span>"+esc(h.sym)+" "+esc(h.tf)+" <b style='color:var(--text)'>"+esc(h.sig)+"</b></span>"
-        +"<span>e"+fmt(h.entry,2)+" → TP "+fmt(h.tp,2)+" / SL "+fmt(h.sl,2)+"</span>"
-        +"<span class='"+cls+"'>"+badge+"</span></div>";
-    }).join("");
-  }
-}
+/* ═══ STREAM 2: signal events ═══ */
+let EVENTS=[];
+try{EVENTS=JSON.parse(localStorage.getItem("fl200_events")||"[]");}catch(e){EVENTS=[];}
+function saveEvents(){try{localStorage.setItem("fl200_events",JSON.stringify(EVENTS.slice(-500)));}catch(e){}}
+function activeEvent(sym,tf){for(let i=EVENTS.length-1;i>=0;i--){const e=EVENTS[i];if(e.sym===sym&&e.tf===tf&&!e.resolved)return e;}return null;}
+function lastEventT(sym,tf){for(let i=EVENTS.length-1;i>=0;i--){const e=EVENTS[i];if(e.sym===sym&&e.tf===tf)return e.time;}return 0;}
+let LIVE_L2=null,LIVE_SIG=null,LIVE_MID=null,LIVE_CTX=null;
 
-/* ============ GITHUB ============ */
-async function ghFetch(repo,path,accept){
-  const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+path+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:accept||"application/vnd.github.raw+json"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);return r;
-}
-const ghText=(repo,path)=>ghFetch(repo,path).then(r=>r.text());
-async function ghJson(repo,path){const t=await ghText(repo,path);try{return JSON.parse(t);}catch(e){return t;}}
-async function ghList(repo,dir){
-  const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+(dir||"")+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
-  if(!r.ok)throw new Error("gh "+r.status);return r.json();
-}
-async function loadEngine(force){
-  const now=Date.now();
-  if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
-  try{
-    const txt=await ghText(C.heartRepo,C.enginePath);
-    (new Function(txt))();
-    if(!window.FL200_ENGINE)throw new Error("FL200_ENGINE missing");
-    ENGINE_OBJ=window.FL200_ENGINE;ENGINE_TS=now;
-    pulse("engine.js ✓ v"+ENGINE_OBJ.version,"pg");
-  }catch(e){pulse("engine load FAIL: "+e.message,"pr");ENGINE_OBJ=null;}
-  return ENGINE_OBJ;
-}
-async function liveCandles(sym,tf){
-  const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+sym+"&interval="+(C.binTf[tf]||"1h")+"&limit=200");
-  if(!r.ok)throw new Error("kl "+r.status);
-  return (await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
-}
-async function liveDepth(sym){
-  const r=await fetch("https://data-api.binance.vision/api/v3/depth?symbol="+sym+"&limit="+(C.l2?C.l2.depth:20));
-  if(!r.ok)throw new Error("dp "+r.status);
-  return await r.json();
-}
-
-/* ═══ REALTIME TICK — locks ═══ */
 async function rtTick(){
   if(!ENGINE_OBJ||document.hidden)return;
-  const key=CUR_SYM+"|"+CUR_TF;
   try{
     const [cs,d]=await Promise.all([liveCandles(CUR_SYM,CUR_TF),liveDepth(CUR_SYM)]);
     if(!cs||cs.length<3)return;
     RT.liveCS=cs;
-    const pk=periodKey(cs);
-    const lk=getLock(CUR_SYM,CUR_TF,pk);
-    if(lk&&lk.sig){
-      RT.data=lk.sig;RT.ts=Date.now();RT.key=key;
-    }else{
-      const sig=ENGINE_OBJ.fullSignalL2(cs,d,CUR_SYM,CUR_TF);
-      if(sig){
-        setLock(CUR_SYM,CUR_TF,pk,sig);
-        RT.data=sig;RT.ts=Date.now();RT.key=key;
-        pulse("🔒 LOCKED "+CUR_SYM+" "+CUR_TF+" → "+sig.final.signal+" ("+sig.final.confidence+"%) · re-eval "+periodEndTxt(pk,CUR_TF),"pa");
+    LIVE_CTX=getContext(cs);
+    const grid=LIVE_CTX?LIVE_CTX.grid:ENGINE_OBJ.gridFromCandles(cs);
+    const l2=ENGINE_OBJ.parseDepth(d,CUR_SYM);
+    LIVE_L2=l2;LIVE_MID=l2?l2.mid:null;
+    LIVE_SIG=grid?ENGINE_OBJ.l2Signal(grid,l2):null;
+    if(!LIVE_SIG){renderSignalDesk();return;}
+    const sig=LIVE_SIG.signal;
+    const act=activeEvent(CUR_SYM,CUR_TF);
+    const now=Date.now();
+    if(act){
+      const px=d.mid;
+      if(!act.resolved){
+        if(act.dir>0){
+          if(px>=act.tp){act.resolved=true;act.result="WIN";act.exit=px;act.exitTime=now;pulse("🏁 WIN! "+act.sym+" "+act.tf+" BUY — TP "+fmt(act.tp,2)+" hit","pg");}
+          else if(px<=act.sl){act.resolved=true;act.result="LOSS";act.exit=px;act.exitTime=now;pulse("🔻 LOSS. "+act.sym+" "+act.tf+" BUY — SL "+fmt(act.sl,2)+" hit","pr");}
+        }else{
+          if(px<=act.tp){act.resolved=true;act.result="WIN";act.exit=px;act.exitTime=now;pulse("🏁 WIN! "+act.sym+" "+act.tf+" SELL — TP "+fmt(act.tp,2)+" hit","pg");}
+          else if(px>=act.sl){act.resolved=true;act.result="LOSS";act.exit=px;act.exitTime=now;pulse("🔻 LOSS. "+act.sym+" "+act.tf+" SELL — SL "+fmt(act.sl,2)+" hit","pr");}
+        }
+        if(act.resolved)saveEvents();
+      }
+    }else if(sig!=="WAIT"&&sig.entryPlan){
+      if(now-lastEventT(CUR_SYM,CUR_TF)>=COOLDOWN_MIN*60000){
+        EVENTS.push({sym:CUR_SYM,tf:CUR_TF,time:now,period:LIVE_CTX?LIVE_CTX.period:"",
+          sig:sig,dir:sig==="BUY"?1:-1,
+          entry:sig.entryPlan.entry,sl:sig.entryPlan.sl,tp:sig.entryPlan.tp,
+          resolved:false,result:null});
+        saveEvents();
+        pulse("🚨 SIGNAL EVENT: "+CUR_SYM+" "+CUR_TF+" "+sig+" @ "+fmt(sig.entryPlan.entry,2)+" (TP "+fmt(sig.entryPlan.tp,2)+" / SL "+fmt(sig.entryPlan.sl,2)+")",sig==="BUY"?"pg":"pr");
       }
     }
     renderSignalDesk();renderAction();renderEngine();renderScores();
   }catch(e){
-    if(RT.data&&Date.now()-RT.ts>RT_TTL*4)pulse("feed fail: "+e.message,"pr");
+    if(RT.liveCS&&Math.random()<0.05)pulse("feed retry: "+e.message,"pr");
   }
 }
 
 /* ============ helpers ============ */
 function stateUpdatedMs(){if(!STATE||!STATE.updated)return 0;const t=Date.parse(STATE.updated);return isNaN(t)?0:t;}
 function stateAgeMs(){const t=stateUpdatedMs();return t?Math.max(0,Date.now()-t):Infinity;}
-function stateAgeText(){const a=stateAgeMs();if(!isFinite(a))return"NO TIMESTAMP";const s=Math.floor(a/1000);
-  if(s<2)return"JUST NOW";if(s<60)return s+"s AGO";if(s<3600)return Math.floor(s/60)+"m AGO";return Math.floor(s/3600)+"h AGO";}
-function rtAgeText(){if(!RT.data)return"—";const s=Math.floor((Date.now()-RT.ts)/1000);return s<2?"JUST NOW":s+"s AGO";}
+function stateAgeText(){const a=stateAgeMs();if(!isFinite(a))return"—";const s=Math.floor(a/1000);
+  if(s<60)return s+"s";if(s<3600)return Math.floor(s/60)+"m";return Math.floor(s/3600)+"h";}
 function getLiveState(){
-  if(RT.data&&Date.now()-RT.ts<RT_TTL)return{status:"LIVE",text:"REALTIME · "+rtAgeText()};
+  if(LIVE_L2)return{status:"LIVE",text:"CONTINUOUS · live"};
   if(!STATE)return{status:"OFFLINE",text:"NO DATA"};
   const a=stateAgeMs();
   if(a<=LIVE.staleMs)return{status:"LIVE",text:"LIVE · "+stateAgeText()};
-  if(a<=LIVE.deadMs)return{status:"SYNCING",text:"SYNCING · "+stateAgeText()};
   return{status:"STALE",text:"STALE · "+stateAgeText()};
 }
 const prevVals={};
@@ -637,101 +531,109 @@ function pulse(msg,cls){
 
 function curSN(){return (STATE&&STATE.symbols)?STATE.symbols[CUR_SYM]||null:null;}
 function botTF(){const SN=curSN();return (SN&&SN.timeframes)?SN.timeframes[CUR_TF]||null:null;}
-function botCandles(){
-  const SN=curSN();
-  const cs=SN&&SN.candles?SN.candles[CUR_TF]:null;
-  if(cs&&cs.length)return cs;
-  return (RT.data&&RT.data._cs)?RT.data._cs:(RT.liveCS||null);
-}
 function resolveLayer(){
-  const L=getLiveState();
-  if(RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL){
-    ENGINE.layer="REALTIME";ENGINE.eff=RT.data;ENGINE.eff.src="realtime-engine 🔒";return;}
-  const bt=botTF();
-  if(bt&&bt.final&&(L.status==="LIVE"||L.status==="SYNCING")){ENGINE.layer="BRAIN";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain-l2";return;}
-  if(ENGINE_OBJ){const f=ENGINE_OBJ.fullSignal(botCandles(),CUR_TF);
-    if(f){ENGINE.layer="FALLBACK";ENGINE.eff=f;ENGINE.eff.src="matrix-candle";return;}}
+  if(LIVE_L2){ENGINE.layer="REALTIME";ENGINE.eff={final:{signal:LIVE_SIG?LIVE_SIG.signal:"—"},src:"continuous"};return;}
+  const bt=botTF(),L=getLiveState();
+  if(bt&&bt.final&&L.status==="LIVE"){ENGINE.layer="BRAIN";ENGINE.eff=bt;ENGINE.eff.src=bt.src||"brain";return;}
   ENGINE.layer="NONE";ENGINE.eff=null;
 }
 function renderEngine(){
-  const L=getLiveState(),bt=botTF();
-  const rtOk=RT.data&&RT.key===CUR_SYM+"|"+CUR_TF&&Date.now()-RT.ts<RT_TTL;
-  const actKey={REALTIME:"rt",BRAIN:"bot",FALLBACK:"mx",NONE:""}[ENGINE.layer]||"";
+  const bt=botTF();
+  const actKey=ENGINE.layer==="REALTIME"?"rt":ENGINE.layer==="BRAIN"?"bot":"";
   const rows=[
-    ["L0 · REALTIME (locked)",rtOk?"✓ LIVE":"⏳ / —",
-     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"%"):"feed + engine"],
-    ["L1 · BRAIN (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ "+stateAgeText():"✗ STALE",
+    ["L0 · CONTINUOUS (4s)",LIVE_L2?"✓ LIVE — candles running":"⏳ feed…",
+     LIVE_SIG?("rules: "+LIVE_SIG.signal+" · imb "+F1(LIVE_L2.imb)+"%"):"connecting"],
+    ["L1 · BRAIN (Colab)",(STATE&&stateAgeMs()<30*60*1000)?"✓ "+stateAgeText():"✗ STALE",
      bt&&bt.final?(CUR_TF+" "+bt.final.signal):"run karein"],
-    ["L2 · FALLBACK",ENGINE_OBJ?"✓ ready":"—","dono band ho to"],
     ["L3 · LOCAL LLM","RESERVED","future"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
-    const k=["rt","bot","mx","llm"][i];
+    const k=["rt","bot","llm"][i];
     return '<div class="eng'+(k===actKey?" act":"")+'"><span class="en">'+r[0]+'</span><span class="es" style="color:'+(r[1].indexOf("✓")===0?"var(--green)":r[1].indexOf("✗")===0?"var(--red)":"var(--muted)")+'">'+r[1]+'</span><span class="ed">'+esc(r[2])+"</span></div>";}).join("");
   $("engBadge").textContent="ENGINE: "+(ENGINE.layer||"…");
-  $("engBadge").style.color=ENGINE.layer==="REALTIME"?"var(--green)":ENGINE.layer==="BRAIN"?"var(--cyan)":ENGINE.layer==="FALLBACK"?"var(--amber)":"var(--red)";
-  $("engWhy").textContent=ENGINE.eff?("active · "+(ENGINE.eff.final?ENGINE.eff.final.signal:"")):"pending";
+  $("engBadge").style.color=ENGINE.layer==="REALTIME"?"var(--green)":ENGINE.layer==="BRAIN"?"var(--cyan)":"var(--red)";
+  $("engWhy").textContent=ENGINE.layer==="REALTIME"?"candles running + events armed":"pending";
   if(STATE&&stateAgeMs()>30*60*1000&&!brainWarned){brainWarned=true;pulse("⚠ BRAIN stale — Colab run karein","pa");}
   if(STATE&&stateAgeMs()<=30*60*1000)brainWarned=false;
 }
 
+async function ghFetch(repo,path,accept){
+  const r=await fetch("https://api.github.com/repos/"+repo+"/contents/"+path+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:accept||"application/vnd.github.raw+json"},cache:"no-store"});
+  if(!r.ok)throw new Error("gh "+r.status);return r;
+}
+const ghText=(repo,path)=>ghFetch(repo,path).then(r=>r.text());
+async function ghJson(repo,path){const t=await ghText(repo,path);try{return JSON.parse(t);}catch(e){return t;}}
+async function loadEngine(force){
+  const now=Date.now();
+  if(ENGINE_OBJ&&!force&&now-ENGINE_TS<C.engineTtlMs)return ENGINE_OBJ;
+  try{
+    const txt=await ghText(C.heartRepo,C.enginePath);
+    (new Function(txt))();
+    if(!window.FL200_ENGINE)throw new Error("missing");
+    ENGINE_OBJ=window.FL200_ENGINE;ENGINE_TS=now;
+    pulse("engine ✓ v"+ENGINE_OBJ.version,"pg");
+  }catch(e){pulse("engine FAIL: "+e.message,"pr");ENGINE_OBJ=null;}
+  return ENGINE_OBJ;
+}
+async function liveCandles(sym,tf){
+  const r=await fetch("https://data-api.binance.vision/api/v3/klines?symbol="+sym+"&interval="+(C.binTf[tf]||"1h")+"&limit=200");
+  if(!r.ok)throw new Error("kl "+r.status);
+  return (await r.json()).map(k=>({t:new Date(k[0]).toISOString().slice(0,16)+"Z",o:+k[1],h:+k[2],l:+k[3],c:+k[4]}));
+}
+async function liveDepth(sym){
+  const r=await fetch("https://data-api.binance.vision/api/v3/depth?symbol="+sym+"&limit="+(C.l2?C.l2.depth:20));
+  if(!r.ok)throw new Error("dp "+r.status);
+  return await r.json();
+}
 async function refreshData(){
   if(!TOKEN||LIVE.busy)return;
   LIVE.busy=true;
   try{
-    let raw=null,used=null,lastErr=null;
+    let raw=null,used=null;
     for(const p of (FOUND_STATE_PATH?[FOUND_STATE_PATH]:C.statePaths)){
-      try{raw=await ghJson(C.heartRepo,p);used=p;break;}catch(e){lastErr=e;}
+      try{raw=await ghJson(C.heartRepo,p);used=p;break;}catch(e){}
     }
-    if(raw==null)throw lastErr||new Error("state.json not found");
-    FOUND_STATE_PATH=used;STATE=raw;
-    LIVE.lastFetch=Date.now();LIVE.failures=0;
-    $("pollbar").classList.remove("err");
-    HB++;$("hbCount").textContent="HB "+HB;
-    pulse("HB"+HB+" sync ✓","pg");
-    renderAll();renderReportsSummary();loadLedger();
-    if(ENGINE_OBJ&&Date.now()-ENGINE_TS>C.engineTtlMs)loadEngine(true);
-  }catch(e){LIVE.failures++;$("pollbar").classList.add("err");}
+    if(raw!=null){FOUND_STATE_PATH=used;STATE=raw;LIVE.failures=0;
+      $("pollbar").classList.remove("err");
+      HB++;$("hbCount").textContent="HB "+HB;
+      renderAll();loadLedger();}
+  }catch(e){$("pollbar").classList.add("err");}
   finally{LIVE.busy=false;}
 }
 
+/* ============ RENDER ============ */
 function renderAll(){
-  updateLiveUI();renderTicker();renderAction();renderEngine();renderSignalDesk();
-  renderPillars();renderModels();renderSelfLearn();renderAccount();renderRules();renderImp();renderScores();
+  updateLiveUI();renderTicker();renderEngine();renderSignalDesk();
+  renderPillars();renderModels();renderAccount();renderRules();renderImp();renderScores();
 }
 function updateLiveUI(){
   const L=getLiveState();
   const badge=$("mktBadge");
   if(badge){badge.className=L.status==="LIVE"?"badge-open":"badge-closed";badge.textContent=L.text;}
-  const lv=$("mktLive");if(lv){lv.textContent=L.status;lv.className=L.status==="LIVE"?"live":"live warn";}
-  $("sysStatus").textContent="CRYPTO 24/7 · "+L.text;
-  setTxt("ageVal",rtAgeText(),false);
+  $("sysStatus").textContent="24/7 · "+L.text;
   const dl=$("dataLayer");
   if(dl){
     if(!ENGINE_OBJ){dl.textContent="engine…";dl.style.color="var(--amber)";}
-    else if(L.status==="LIVE"){dl.textContent="✓ LIVE";dl.style.color="var(--green)";}
-    else{dl.textContent="⚠ "+L.status;dl.style.color="var(--amber)";}
+    else if(LIVE_L2){dl.textContent="✓ LIVE";dl.style.color="var(--green)";}
+    else{dl.textContent="connecting…";dl.style.color="var(--amber)";}
   }
-  $("syncIn").textContent="sync "+(LIVE.busy?"now…":Math.ceil(Math.max(0,LIVE.pollMs-(Date.now()-LIVE.lastFetch))/1000)+"s");
+  $("syncIn").textContent=LIVE_L2?"continuous":"sync…";
 }
 function startHeartbeat(){
   if(LIVE.timer)clearInterval(LIVE.timer);
-  LIVE.timer=setInterval(function(){updateLiveUI();if(document.hidden)return;refreshData();},LIVE.pollMs);
-  pulse("heartbeat · no-repaint locks · scoreboard active","pa");
+  LIVE.timer=setInterval(function(){if(document.hidden)return;refreshData();},LIVE.pollMs);
+  pulse("system started · running candles · events armed","pa");
 }
-document.addEventListener("visibilitychange",function(){if(!document.hidden){refreshData();rtTick();}});
-window.addEventListener("online",function(){refreshData();rtTick();});
-setInterval(updateLiveUI,1000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)rtTick();});
+window.addEventListener("online",function(){rtTick();});
+setInterval(function(){if(!document.hidden){if(LIVE_L2)refreshData();}},1000);
 
 function renderTicker(){
   const L=getLiveState();let items=[];
   Object.keys(C.symbols).forEach(function(k){
-    const sn=(STATE&&STATE.symbols)?STATE.symbols[k]:null;
-    let sig="—",cls="";
-    if(RT.data&&RT.key===k+"|"+CUR_TF)sig=RT.data.final.signal;
-    else if(sn){const t=sn.timeframes?sn.timeframes[CUR_TF]:null;
-      sig=(t&&t.final&&t.final.signal)||(t&&t.signal)||(sn.signal||"HOLD");}
+    let sig="—",cls="",px=null;
+    if(k===CUR_SYM&&LIVE_SIG){sig=LIVE_SIG.signal;px=LIVE_MID;}
+    else{const sn=(STATE&&STATE.symbols)?STATE.symbols[k]:null;px=sn?sn.price:null;}
     if(sig==="BUY")cls="g";if(sig==="SELL")cls="r";
-    const px=RT.data&&RT.key===k+"|"+CUR_TF?RT.data.l2.mid:(sn?sn.price:null);
     items.push("<b>"+k+"</b> "+fmt(px,2)+" · "+'<span class="'+cls+'">'+sig+"</span>");
   });
   const seg="<b>⚡ FL-200</b> "+L.text+" &nbsp;|&nbsp; "+items.join(" &nbsp;|&nbsp; ")+" &nbsp;|&nbsp; ";
@@ -739,25 +641,18 @@ function renderTicker(){
 }
 function renderAction(){
   resolveLayer();
-  const eff=ENGINE.eff;
-  const fin=eff&&eff.final?eff.final:null;
-  let sig=fin?fin.signal:null;
-  const ep=eff&&eff.entryPlan?eff.entryPlan:null;
   const fs=$("finStrip");
-  fs.classList.toggle("wait",!sig||sig==="WAIT"||sig==="HOLD");
+  const sig=LIVE_SIG?LIVE_SIG.signal:null;
+  fs.classList.toggle("wait",!sig||sig==="WAIT");
   fs.classList.toggle("sell",sig==="SELL");
   const ra=$("recAction");
-  ra.textContent=sig?(sig==="HOLD"?"HOLD":sig):"…";
-  ra.className="action-signal"+((!sig||sig==="WAIT"||sig==="HOLD")?" wait":sig==="SELL"?" sell":"");
-  $("recNote").textContent=fin?(fin.why||""):"cascade pending";
-  $("recBy").textContent="engine: "+(ENGINE.layer||"—")+" · conf "+(fin?fin.confidence+"%":"—")+" · SIGNAL ONLY (paisa nahi lagta)";
-  const show=ep;
-  $("recEntry").textContent=show?String(show.entry):"—";
-  $("recTP").textContent=(show&&show.tp!=null&&show.sl!=null)?("TP "+show.tp+" / SL "+show.sl):"—";
-  const fz=fin&&fin.first_zone?fin.first_zone:null;
-  const rz=$("recZone");
-  rz.textContent="ZONA: "+(fz||"—");
-  rz.className="zonebadge "+(fz==="SELL_ZONE"?"zb-sell":fz==="BUY_ZONE"?"zb-buy":"zb-mid");
+  ra.textContent=sig?sig:"…";
+  ra.className="action-signal"+((!sig||sig==="WAIT")?" wait":sig==="SELL"?" sell":"");
+  $("recNote").textContent=LIVE_SIG?(LIVE_SIG.reason+" · "+LIVE_SIG.zone):"feed aane dein";
+  $("recBy").textContent="continuous · cooldown "+COOLDOWN_MIN+"m · ek waqt ek signal";
+  $("recEntry").textContent=LIVE_MID?fmt(LIVE_MID,2):"—";
+  $("l2ImbMini").textContent=LIVE_L2?F1(LIVE_L2.imb)+"%":"—";
+  $("l2ImbMini").className="mval "+(LIVE_L2&&LIVE_L2.imb>=0?"g":"r");
 }
 
 function mbox(l,v,cls,span){
@@ -765,76 +660,65 @@ function mbox(l,v,cls,span){
 }
 function renderSignalDesk(){
   resolveLayer();
-  const eff=ENGINE.eff, SN=curSN();
-  const G=eff&&eff.grid?eff.grid:null;
-  const fin=eff&&eff.final?eff.final:null;
-  const l2=eff&&eff.l2?eff.l2:(SN&&SN.l2?SN.l2:null);
-  setTxt("sdSrc",(ENGINE.eff?ENGINE.eff.src:"—")+" · "+rtAgeText(),false);
-  const ll=$("lockLine");
-  if(ENGINE.layer==="REALTIME"){
-    const lk=LOCKS[CUR_SYM+"|"+CUR_TF];
-    if(lk){
-      const frozen=new Date(lk.ts).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
-      ll.textContent="🔒 Signal ghanta-bhar ke liye LOCK hai (frozen "+frozen+") · naya faisla "+periodEndTxt(lk.period,CUR_TF)+" par";
-    }else ll.textContent="🔒 naya period — pehla faisla ho raha…";
-  }else ll.textContent="🔓 abhi source: "+(ENGINE.eff?ENGINE.eff.src:"none");
+  const SN=curSN();
+  const G=LIVE_CTX?LIVE_CTX.grid:null;
+  setTxt("sdSrc","context "+(LIVE_CTX?LIVE_CTX.period.slice(0,16):"—"),false);
+  $("ctxLine").textContent="⏰ context: "+(LIVE_CTX?("candle "+LIVE_CTX.period.slice(0,16)+" UTC — agla grid agli candle close par"):"—");
   const tvEl=$("tvRow");
   if(G&&G.ext&&G.expected){
     tvEl.innerHTML=
-      '<div class="lvb buy"><div class="lt">🟢 BUY 2 (sab se neeche)</div><div class="lp">'+fmt(G.ext.p33,2)+'</div><div class="pct">33% line</div></div>'
-     +'<div class="lvb buy"><div class="lt">🟢 BUY 1</div><div class="lp">'+fmt(G.ext.p67,2)+'</div><div class="pct">67% line</div></div>';
-  }else{
-    tvEl.innerHTML="";
-  }
-  /* simple explain */
-  const mid=l2?l2.mid:null;
-  const pos=fin&&fin.first_zone?fin.first_zone:(eff&&eff.firstZone?eff.firstZone.zone:null);
-  const xz=pos==="SELL_ZONE"?"qeemat upar wale ilaqay (bechne walon ke zone) mein hai"
-    :pos==="BUY_ZONE"?"qeemat neeche wale ilaqay (khareeddaaron ke zone) mein hai"
-    :"qeemat beech mein (neutral) hai";
-  const xl2=l2?(l2.imb>=15?"khareeddaaron ka zor TEZ hai (+"+F1(l2.imb)+"%) — qeemat uthne ka rujhan"
-    :l2.imb<=-15?"baikne walon ka zor TEZ hai ("+F1(l2.imb)+"%) — qeemat ghirne ka rujhan"
-    :"khareed/baik barabar ("+F1(l2.imb)+"%) — koi zor nahi"):"L2 feed aane dein";
-  const xsig=sig==="BUY"?"SYSTEM KEHTA HAI: KHAREEDO — qeemat neeche wale ilaqay mein hai aur khareeddaaron ka zor tez hai. Target upar hai, nuqsan line neeche."
-    :sig==="SELL"?"SYSTEM KEHTA HAI: BECHO — qeemat upar wale ilaqay mein hai aur baikne walon ka zor tez hai. Target neeche hai, nuqsan line upar."
-    :"SYSTEM KEHTA HAI: KUCH MAT KARO (WAIT) — abhi dono shartein (zone + zor) ek saath poori nahi hui. Sabr karo, clear setup ka intezar.";
-  $("explainBody").innerHTML="<b>"+xsig+"</b><br>📍 Abhi "+xz+"<br>⚖️ Abhi "+xl2+""
-    +(G&&G.expected?"<br>🎯 System ka andaza: agla ghanta <b>"+fmt(G.expected.low,2)+"</b> se <b>"+fmt(G.expected.high,2)+"</b> ke darmiyan guzar sakta hai":"");
+      '<div class="lvb buy"><div class="lt">🟢 BUY 2 (neeche)</div><div class="lp">'+fmt(G.ext.p33,2)+'</div><div class="pct">33%</div></div>'
+     +'<div class="lvb buy"><div class="lt">🟢 BUY 1</div><div class="lp">'+fmt(G.ext.p67,2)+'</div><div class="pct">67%</div></div>';
+  }else tvEl.innerHTML="";
   if(G&&G.ext&&G.expected){
     $("glvRow").innerHTML=
-      mbox("★ ANDAZA: UPAR TAK",fmt(G.expected.high,2),"y","grid-column:span 2")+
-      mbox("★ ANDAZA: NEECHE TAK",fmt(G.expected.low,2),"y","grid-column:span 2")+
-      mbox("BASE CANDLE",G.color,"")+
-      mbox("QADAM",fmt(G.step,2),"");
-  }else if(G){
-    const b=G.bands||{},lv=G.levels||{};
-    $("glvRow").innerHTML=mbox("BASE",G.color||"—","")+mbox("0%",fmt(b.l0!=null?b.l0:lv.BUY2,2),"")+
-      mbox("33%",fmt(b.l33!=null?b.l33:lv.BUY1,2),"")+mbox("66%",fmt(b.l66!=null?b.l66:lv.SELL1,2),"")+
-      mbox("100%",fmt(b.l100!=null?b.l100:lv.SELL2,2),"")+mbox("QADAM",fmt(G.step,2),"");
+      mbox("★ ANDAZA UPAR",fmt(G.expected.high,2),"y","grid-column:span 2")+
+      mbox("★ ANDAZA NEECHE",fmt(G.expected.low,2),"y","grid-column:span 2")+
+      mbox("BASE",G.color,"")+mbox("QADAM",fmt(G.step,2),"");
   }else $("glvRow").innerHTML='<div class="mbox" style="grid-column:span 6"><div class="mval na">⏳ candles chahiye</div></div>';
-  if(l2){
-    const cells=[["SAB SE UPAR BECHNE WALA",fmt(l2.ask,2),"r"],["SAB SE UPAR KHAREEDNE WALA",fmt(l2.bid,2),"g"],
-      ["FARQ (SPREAD)",fmt(l2.spread,2),"y"],["ABHI KI QEEMAT",fmt(l2.mid,2),""],
-      ["KHAREEDDAARON KA ZOR",F1(l2.imb)+"%",l2.imb>=0?"g":"r"],
-      ["BARAY ORDERS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
-    $("l2Row")?null:0;
-    const lr=document.getElementById("l2Row")||document.createElement("div");
-    /* l2Row ko signal desk ke andar reuse karte hain — glv ke baad */
-    let lrEl=document.getElementById("l2RowDesk");
-    if(!lrEl){lrEl=document.createElement("div");lrEl.className="glv";lrEl.id="l2RowDesk";
-      const refEl=$("glvRow");refEl.parentNode.insertBefore(lrEl,refEl.nextSibling);}
-    lrEl.innerHTML=cells.map(c=>mbox(c[0],c[1],c[2])).join("");
+  if(LIVE_L2){
+    const cells=[["BECHNE WALA (ASK)",fmt(LIVE_L2.ask,2),"r"],["KHAREEDNE WALA (BID)",fmt(LIVE_L2.bid,2),"g"],
+      ["FARQ",fmt(LIVE_L2.spread,2),"y"],["QEEMAT",fmt(LIVE_MID,2),""],
+      ["KHAREED ZOR",F1(LIVE_L2.imb)+"%",LIVE_L2.imb>=0?"g":"r"],
+      ["BARAY ORDERS","B"+LIVE_L2.walls_b.length+" / A"+LIVE_L2.walls_a.length,""]];
+    $("l2Row").innerHTML=cells.map(c=>mbox(c[0],c[1],c[2])).join("");
+  }else $("l2Row").innerHTML='<div class="mbox" style="grid-column:span 6"><div class="mval na">feed connecting…</div></div>';
+  const ab=$("actBox");
+  const act=activeEvent(CUR_SYM,CUR_TF);
+  if(act){
+    ab.className="actbox "+(act.dir>0?"buy":"sell");
+    $("actSig").textContent=(act.dir>0?"🟢 BUY":"🔴 SELL")+" — ACTIVE";
+    $("actTime").textContent="📅 "+new Date(act.time).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    $("actNote").textContent="Signal event log ho chuka (nahi badlega). Live track: TP pehle = WIN, SL pehle = LOSS.";
+    $("actRow").style.display="grid";
+    $("actEntry").textContent=fmt(act.entry,2);
+    $("actTp").textContent=fmt(act.tp,2);
+    $("actSl").textContent=fmt(act.sl,2);
+    const px=LIVE_MID;
+    const tot=Math.abs(act.tp-act.sl);
+    $("actStat").textContent=px?(act.dir>0?
+      (px>=act.tp?"TP HIT 🏁":px<=act.sl?"SL HIT 🔻":(act.tp-px)/(act.tp-act.sl)>0.5?"munafa ki taraf ↗":"SL ki taraf ↘")
+      :(px<=act.tp?"TP HIT 🏁":px>=act.sl?"SL HIT 🔻":(px-act.tp)/(act.sl-act.tp)>0.5?"munafa ki taraf ↗":"SL ki taraf ↘")):"OPEN";
+  }else{
+    ab.className="actbox";
+    $("actSig").textContent="— KOI ACTIVE TRADE NAHI";
+    $("actTime").textContent="FLAT";
+    $("actNote").textContent=LIVE_SIG?("Abhi nateeja: "+LIVE_SIG.signal+". Shartein match hongi to event banega ("+COOLDOWN_MIN+"m cooldown)."):"Flat — feed aane dein.";
+    $("actRow").style.display="none";
   }
-  const P=eff&&eff.plans?eff.plans:null;
-  if(P&&P.B1){
-    const box=(t,cls,p,extra)=>'<div class="plan '+cls+'"><h4>'+t+'</h4><div class="pr">Entry '+fmt(p.entry,2)+"<br>SL "+fmt(p.sl,2)+"<br>TP "+fmt(p.tp,2)+(extra?"<br><span style='color:var(--muted)'>"+extra+"</span>":"")+"</div></div>";
-    $("planBoxes").innerHTML=
-      box("🟢 B1 · pehla plan (agar BUY)","buys",P.B1,"Munafa 2x risk")+
-      box("🟢 B2 · gehra plan","buys",P.B2,"Target=B1")+
-      box("🔴 S1 · pehla plan (agar SELL)","sells",P.S1,"Munafa 2x risk")+
-      box("🔴 S2 · ooncha plan","sells",P.S2,"Target=S1");
-  }else $("planBoxes").innerHTML='<div class="plan"><h4>PLANS</h4><div class="pr">grid chahiye</div></div>';
-  $("finalBox").textContent=fin&&fin.block?fin.block:"⏳";
+  const pos=LIVE_SIG?LIVE_SIG.zone:null;
+  const xz=pos==="SELL_ZONE"?"qeemat UPAR wale ilaqay mein (bechne walon ka ghar)"
+    :pos==="BUY_ZONE"?"qeemat NEECHE wale ilaqay mein (khareeddaaron ka ghar)"
+    :"qeemat beech mein (neutral)";
+  const xl2=LIVE_L2?(LIVE_L2.imb>=15?"KHAREEDDAARON ka zor TEZ (+"+F1(LIVE_L2.imb)+"%)"
+    :LIVE_L2.imb<=-15?"BEIKNE walon ka zor TEZ ("+F1(LIVE_L2.imb)+"%)"
+    :"zor barabar ("+F1(LIVE_L2.imb)+"%)"):"feed…";
+  const xsig=act?("✅ Trade chal rahi hai ("+act.sig+"). Anjaam intezar mein — naya signal tab jab yeh khatam ho.")
+    :(LIVE_SIG&&LIVE_SIG.signal!=="WAIT"&&LIVE_MID)?("🔔 RULES MATCH — agle update par naya event ban sakta hai.")
+    :"Abhi shartein poori nahi. System har 4 sec check kar raha hai.";
+  $("explainBody").innerHTML="<b>"+xsig+"</b><br>📍 Abhi "+xz+"<br>⚖️ "+xl2
+    +(G&&G.expected?"<br>🎯 Is ghante ka andaza: <b>"+fmt(G.expected.low,2)+"</b> → <b>"+fmt(G.expected.high,2)+"</b>":"");
+  $("finalBox").textContent=G?"CONTEXT (is ghanta):\n0% "+G.bands.l0+" · 33% "+G.bands.l33+" · 66% "+G.bands.l66+" · 100% "+G.bands.l100+"\nAnchor "+G.color+" · Step "+G.step:"—";
 }
 function renderPillars(){
   const ps=(STATE&&STATE.pillar_score)||null;
@@ -848,33 +732,22 @@ function renderPillars(){
   g.innerHTML=h;
 }
 function renderModels(){
-  const eff=ENGINE.eff, SN=curSN();
-  const M=eff&&eff.models?eff.models:null;
-  const kp=(SN&&SN.kronos&&CUR_TF==="H1")?SN.kronos:null;
-  const defs=[["GRID","candle ka shape",M&&M.grid],
-    ["L2 BOOK","khareed/baik ka zor",M&&M.l2],
-    ["KRONOS","AI prediction (GPU)",kp?{bias:kp.dir>0?"BUY":"SELL",confidence:kp.conf,
-      first_zone_guess:"—",reasoning:"predC "+kp.pred_close}:(M&&M.kronos)],
-    ["QUANT","RSI + MACD",M&&M.quant],
-    ["TAURUS","bazaar ka mood",M&&M.taurus]];
+  const kp=(curSN()&&curSN().kronos&&CUR_TF==="H1")?curSN().kronos:null;
+  const defs=[["GRID","candle shape",LIVE_SIG?{bias:LIVE_SIG.zone.indexOf("LOWER")>=0?"BUY":LIVE_SIG.zone.indexOf("UPPER")>=0?"SELL":"HOLD",confidence:55,first_zone_guess:"—",reasoning:LIVE_SIG.zone}:null],
+    ["L2 BOOK","khareed/baik zor",LIVE_L2?{bias:LIVE_L2.imb>=15?"BUY":LIVE_L2.imb<=-15?"SELL":"HOLD",confidence:Math.min(90,Math.round(50+Math.abs(LIVE_L2.imb))),first_zone_guess:"—",reasoning:"imb "+F1(LIVE_L2.imb)+"%"}:null],
+    ["KRONOS","AI (GPU)",kp?{bias:kp.dir>0?"BUY":"SELL",confidence:kp.conf,first_zone_guess:"—",reasoning:"predC "+kp.pred_close}:null],
+    ["QUANT","RSI+MACD",null],["TAURUS","mood",null]];
   $("modelGrid").innerHTML=defs.map(function(d){
     const m=d[2];
-    const bias=m?(m.bias||m.next_hour_bias||"HOLD"):"—";
+    const bias=m?(m.bias||"HOLD"):"—";
     const conf=m&&m.confidence!=null?m.confidence:null;
-    const fzg=m?(m.first_zone_guess||((m.regime?m.regime+" · "+m.vol:"")||"—")):"—";
     const col=bias==="BUY"?"var(--green)":bias==="SELL"?"var(--red)":bias==="HOLD"?"var(--amber)":"var(--muted)";
-    const wl=conf==null?"l":conf>=65?"":conf>=45?"m":"l";
     const detail=m?JSON.stringify(m,null,2):"pending";
-    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+d[0]+'</div><div class="mtype">'+d[1]+'</div><div class="mpred" style="color:'+col+'">'+esc(bias)+'</div><div class="msig'+(conf==null?" na":"")+'">yaqeen: '+(conf==null?"—":conf+"%")+'</div><div class="mmeta">'+esc(fzg)+'</div><div class="wbar"><div class="wfill '+wl+'" style="width:'+(conf==null?8:Math.min(100,conf))+'%"></div></div></div>';
+    return '<div class="mcard" data-d=\''+esc(detail)+'\'><div class="mname">'+d[0]+'</div><div class="mtype">'+d[1]+'</div><div class="mpred" style="color:'+col+'">'+esc(bias)+'</div><div class="msig'+(conf==null?" na":"")+'">yaqeen '+(conf==null?"—":conf+"%")+'</div><div class="wbar"><div class="wfill" style="width:'+(conf==null?8:Math.min(100,conf))+'%"></div></div></div>';
   }).join("");
   document.querySelectorAll("#modelGrid .mcard").forEach(function(el){
-    el.addEventListener("click",function(){$("modTitle").textContent="MODEL · "+CUR_SYM;$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
+    el.addEventListener("click",function(){$("modTitle").textContent="MODEL";$("modInst").textContent=this.dataset.d;$("modOverlay").classList.add("open");$("modDetail").classList.add("open");});
   });
-}
-function renderSelfLearn(){
-  const led=(STATE&&STATE.ledger)||{};
-  const el=$("ledgerN")||{};
-  const d=(STATE&&STATE.system_accuracy&&STATE.system_accuracy.delta_pct);
 }
 function renderAccount(){
   const S=(STATE&&STATE.stats)||{};
@@ -883,42 +756,61 @@ function renderAccount(){
   setTxt("accPnl",(S.day_pnl!=null?fmt(S.day_pnl,2):"—"),false);
 }
 function renderRules(){
-  const P=(STATE&&STATE.prop)||{},S=(STATE&&STATE.stats)||{};
-  const tt=S.trades_today!=null?S.trades_today:0,mt=P.max_trades_per_day!=null?P.max_trades_per_day:3;
-  const rows=[["Roz ke trades",tt+" se "+mt+" tak",tt<=mt],
-    ["Har trade ka risk","1%"," "===0],
-    ["Roz ka nuqsan limit","3%"," "===0],
-    ["Max ghrata (drawdown)","10%"," "===0],
-    ["Signal mode","NO-REPAINT (lock)",true],
+  const rows=[["Roz ke trades","max 3",true],["Har trade risk","1%",true],
+    ["Roz ka nuqsan","3% stop",true],["Max ghrata","10%",true],
+    ["Signals","EVENTS — log, badlte nahi",true],
+    ["Candles","running har 4s (TV-style)",true],
     ["Paisa","SIGNAL ONLY — khud faisla",true]];
-  $("rulesBox").innerHTML=rows.map(r=>'<div class="rule '+(r[2]?"ok":"")+'"><span>'+r[0]+"</span><b>"+esc(String(r[1]))+"</b><i>"+(r[2]?"✓":"✗")+"</i></div>").join("");
+  $("rulesBox").innerHTML=rows.map(r=>'<div class="rule ok"><span>'+r[0]+"</span><b>"+esc(r[1])+"</b><i>✓</i></div>").join("");
 }
 function renderImp(){
   const g=$("impGrid");const M=(STATE&&STATE.models)||null;
   if(M&&Object.keys(M).length){
-    let totalN=0;Object.keys(M).forEach(function(k){if(M[k].n)totalN+=M[k].n;});
-    const ensembleN=(M.ensemble&&M.ensemble.n)?M.ensemble.n:totalN;
-    setTxt("impMeta","open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0")+(ensembleN<50?" · ⚠ chhota sample":""),false);
+    let ensembleN=(M.ensemble&&M.ensemble.n)?M.ensemble.n:0;
+    setTxt("impMeta","open "+((STATE.perf_open!=null)?STATE.perf_open:"0")+(ensembleN<50?" · ⚠ chhota sample":""),false);
     g.innerHTML=Object.keys(M).map(function(k){
       const m=M[k],d=m.delta_pct;
       const arrow=d==null||d===0?"":d>0?' <span style="color:var(--green);font-size:.8rem">▲ +'+d+"%</span>":' <span style="color:var(--red);font-size:.8rem">▼ '+d+"%</span>";
-      const w=Math.max(4,Math.min(100,m.acc||0));
       const warn=(m.acc!=null&&m.acc>=95&&m.n<50)?' <span style="color:var(--amber);font-size:.7rem">⚠ n='+m.n+'</span>':"";
-      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+warn+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%"></div></div><div class="in">'+(m.n||0)+" resolved</div></div>";
+      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+warn+'</span></div><div class="wbar"><div class="wfill" style="width:'+Math.max(4,Math.min(100,m.acc||0))+'%"></div></div><div class="in">'+(m.n||0)+" resolved</div></div>";
     }).join("");
   }else{
-    setTxt("impMeta","pending",false);
-    g.innerHTML='<div class="imp"><div class="ih"><b>PERF.JSON</b><span class="ia">—</span></div><div class="in">brain publish karega</div></div>';
+    g.innerHTML='<div class="imp"><div class="ih"><b>PERF</b><span class="ia">—</span></div><div class="in">brain publish karega</div></div>';
   }
   const sa=(STATE&&STATE.system_accuracy)||null;
   const saN=(STATE&&STATE.models&&STATE.models.ensemble)?STATE.models.ensemble.n:null;
-  const smallSample=(saN!=null&&saN<50);
+  const small=(saN!=null&&saN<50);
   $("sysAcc").innerHTML=sa&&sa.overall!=null
-    ?'<div class="big'+(smallSample?" low":"")+'">'+sa.overall+'%</div><div class="sub">'+(sa.delta_pct!=null?((sa.delta_pct>=0?"▲ +":"▼ ")+sa.delta_pct+"% vs pichla run"):"baseline")
-      +(smallSample?"<br><span style='color:var(--amber)'>⚠ n="+saN+" — chhota sample, abhi trust na karo</span>":"<br>n="+saN+" resolved")+"</div>"
-    :'<div class="big" style="color:var(--muted)">—</div><div class="sub">brain ke baad</div>';
-  if(STATE&&STATE.models)$("selfBox").textContent=JSON.stringify({models:STATE.models,audit:STATE.audit||null},null,2);
-  else $("selfBox").textContent="Brain perf pending.";
+    ?'<div class="big'+(small?" low":"")+'">'+sa.overall+'%</div><div class="sub">'+(small?"<span style='color:var(--amber)'>⚠ n="+saN+" — chhota sample</span>":"n="+saN+" resolved")+"</div>"
+    :'<div class="big" style="color:var(--muted)">—</div>';
+  $("selfBox").textContent=STATE&&STATE.models?JSON.stringify({models:STATE.models,audit:STATE.audit||null},null,2):"pending";
+}
+
+/* ============ SCOREBOARD ============ */
+function renderScores(){
+  let total=0,win=0,loss=0,open=0;
+  EVENTS.forEach(function(e){total++;if(e.resolved){e.result==="WIN"?win++:loss++;}else open++;});
+  $("scTotal").textContent=total;
+  $("scWin").textContent=win;
+  $("scLoss").textContent=loss;
+  $("scOpen").textContent=open;
+  const done=win+loss;
+  const wr=done?(win/done*100):null;
+  $("scWR").textContent=wr==null?"—":wr.toFixed(0)+"% ("+done+" done)";
+  const bar=$("scWRBar");
+  bar.style.width=(wr==null?0:Math.max(4,wr))+"%";
+  bar.className="wr-fill"+(wr==null?"":wr>=50?"":wr>=40?" mid":" low");
+  $("scWRNote").textContent=done<20?"⚠ "+done+" mukammal — 20+ hone dein tab pattern banao"
+    :(wr>=50?"✓ 50%+ — 1:2 RR ke saath munafa-joo":wr>=40?"△ thora kam":"✗ 40% neeche — paper par hi raho");
+  const rows=[];
+  for(let i=EVENTS.length-1;i>=0;i--)rows.push(EVENTS[i]);
+  $("histBox").innerHTML=rows.length?rows.slice(0,40).map(function(e){
+    const cls=!e.resolved?"wait":e.result==="WIN"?"win":"loss";
+    const badge=!e.resolved?"⏳ OPEN":e.result==="WIN"?"✓ WIN":"✗ LOSS";
+    return "<div><span>"+esc(e.sym)+" "+esc(e.tf)+" <b style='color:var(--text)'>"+esc(e.sig)+"</b><br><span style='color:var(--muted)'>"+new Date(e.time).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})+"</span></span>"
+      +"<span>e "+fmt(e.entry,2)+"<br>TP "+fmt(e.tp,2)+" / SL "+fmt(e.sl,2)+"</span>"
+      +"<span class='"+cls+"'>"+badge+"</span></div>";
+  }).join(""):"Abhi koi event nahi…";
 }
 
 /* ============ LEDGER / REPORTS ============ */
@@ -929,148 +821,136 @@ async function loadLedger(){
       lines=String(t).trim().split("\n").filter(Boolean).slice(-60).reverse();break;}catch(e){}
   }
   const box=$("ledgerBox");
-  if(!lines||!lines.length){box.innerHTML='<span class="blink">⏳ ledger nahi mila</span>';$("ledgerMeta").textContent="";return;}
-  if(STATE&&STATE.ledger)lastLedgerSeq=STATE.ledger.count;
-  box.innerHTML=lines.slice(0,14).map(function(l){
+  if(!lines||!lines.length){box.innerHTML='⏳ ledger nahi mila';return;}
+  box.innerHTML=lines.slice(0,12).map(function(l){
     try{const o=JSON.parse(l);
-      const ev=o.event||"";
-      const simple=ev==="H1_SIGNAL"?"📝 ghanta-faisla likha":ev==="RUN"?"🔄 cycle chala":ev==="LESSON_PROPOSED"?"💡 sabaq propose hua":ev==="AUDIT_FAIL"?"🚨 audit masla":ev;
-      return "<div>#"+esc(o.seq)+" ["+esc(String(o.t||"").slice(0,16))+"] "+esc(simple)+" · "+esc(String(o.note||"").slice(0,70))+"</div>";
-    }catch(e){return "<div>"+esc(String(l).slice(0,100))+"</div>";}
+      const simple=o.event==="H1_SIGNAL"?"📝 ghanta-faisla":o.event==="RUN"?"🔄 cycle":o.event;
+      return "<div>#"+esc(o.seq)+" "+esc(simple)+" · "+esc(String(o.note||"").slice(0,60))+"</div>";
+    }catch(e){return "<div>"+esc(String(l).slice(0,90))+"</div>";}
   }).join("");
-  $("ledgerMeta").textContent=lines.length+" entries · koi badla nahi ja sakta";
+  $("ledgerMeta").textContent=lines.length+" entries · immutable";
 }
 async function loadStrategy(){
   for(const p of C.strategyPaths){
-    try{$("stratBox").textContent=String(await ghText(C.heartRepo,p)).slice(0,5000);return;}catch(e){}
+    try{$("stratBox").textContent=String(await ghText(C.heartRepo,p)).slice(0,4000);return;}catch(e){}
   }
   $("stratBox").textContent="strategy.md nahi mili.";
 }
 async function loadReports(){
-  const box=$("repFiles");
-  box.innerHTML='<div class="blink">📡 …</div>';
+  const box=$("repFiles");box.innerHTML='📡 …';
   const FILES=new Map();
   await Promise.all(C.scanDirs.map(async function(d){
-    try{
-      const r=await fetch("https://api.github.com/repos/"+C.heartRepo+"/contents/"+(d||"")+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
-      if(r.ok){const items=await r.json();
-        if(Array.isArray(items))items.forEach(function(f){if(f.type==="file")FILES.set(f.path,f);});}
-    }catch(e){}
+    try{const r=await fetch("https://api.github.com/repos/"+C.heartRepo+"/contents/"+(d||"")+"?ref="+encodeURIComponent(C.branch)+"&_="+Date.now(),{headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json"},cache:"no-store"});
+      if(r.ok){const items=await r.json();if(Array.isArray(items))items.forEach(f=>{if(f.type==="file")FILES.set(f.path,f);});}}catch(e){}
   }));
   setTxt("repScan",FILES.size+" files",false);
-  if(!FILES.size){box.innerHTML='<span style="color:var(--amber)">Kuch nahi mila.</span>';return;}
   const prio=["state.json","perf.json","ledger.jsonl","engine.js","strategy.md"];
-  const paths=[...FILES.keys()].sort(function(a,b){
-    const ia=prio.indexOf(a),ib=prio.indexOf(b);
+  const paths=[...FILES.keys()].sort(function(a,b){const ia=prio.indexOf(a),ib=prio.indexOf(b);
     return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
   box.innerHTML=paths.map(function(p){
     const f=FILES.get(p),kb=f.size?(f.size/1024).toFixed(1)+" KB":"";
     const dsc=C.reportDesc[p.split("/").pop()]||"";
-    const bin=["png","jpg","jpeg","webp"].includes(ext(p));
-    return '<div class="rep-file"><span>'+(bin?"🖼️":ext(p)==="csv"?"📊":ext(p)==="json"?"🧾":ext(p)==="js"?"⚙️":"📄")+'</span><span class="fn">'+esc(p)+(dsc?'<div class="fd">'+esc(dsc)+"</div>":"")+'</span><span class="fs">'+kb+'</span><button class="rbtn" data-act="prev" data-p="'+esc(p)+'">👁</button><button class="rbtn" data-act="dl" data-p="'+esc(p)+'" style="background:rgba(0,255,102,.1);color:var(--green)">⬇</button></div>';
+    return '<div class="rep-file"><span>'+(ext(p)==="json"?"🧾":ext(p)==="js"?"⚙️":"📄")+'</span><span class="fn">'+esc(p)+(dsc?'<div class="fd">'+esc(dsc)+"</div>":"")+'</span><span class="fs">'+kb+'</span><button class="rbtn" data-p="'+esc(p)+'">👁</button></div>';
   }).join("");
   box.querySelectorAll(".rbtn").forEach(function(b){
     b.addEventListener("click",async function(){
-      const p=this.dataset.p;
-      if(this.dataset.act==="dl"){
-        try{
-          const r=await ghFetch(C.heartRepo,p,"application/vnd.github.raw");
-          const blob=new Blob([await r.arrayBuffer()]);
-          const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=p.split("/").pop();a.click();
-        }catch(e){pulse("[DL] fail","pr");}
-      }else{
-        $("fvTitle").textContent=p;$("fvBody").innerHTML='<div class="blink">…</div>';
-        $("fileOverlay").classList.add("open");$("fileViewer").classList.add("open");
-        try{const t=await ghText(C.heartRepo,p);
-          $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>50000?t.slice(0,50000)+"\n…":t)+"</div>";}
-        catch(e){$("fvBody").innerHTML='<div style="color:var(--red)">fail</div>';}
-      }
+      $("fvTitle").textContent=this.dataset.p;$("fvBody").innerHTML='…';
+      $("fileOverlay").classList.add("open");$("fileViewer").classList.add("open");
+      try{const t=await ghText(C.heartRepo,this.dataset.p);
+        $("fvBody").innerHTML='<div class="fv-pre">'+esc(t.length>50000?t.slice(0,50000)+"…":t)+"</div>";}
+      catch(e){$("fvBody").innerHTML="fail";}
     });
   });
 }
 function renderReportsSummary(){
   const el=$("repSummary");
-  if(!STATE){el.innerHTML='⏳ Brain state load nahi.';return;}
-  const ps=STATE.pillar_score||{};
-  let h="<b>🕒 Aakhri brain run:</b> "+esc(String(STATE.updated||"—").slice(0,19))+" UTC ("+stateAgeText()+")\n"
-    +"<b>🤖 Kronos:</b> "+(STATE.kronos_status?(STATE.kronos_status.ready?"READY":"OFF"):"—")+"\n";
+  if(!STATE){el.innerHTML="⏳ brain nahi.";return;}
+  let h="<b>🕒 Brain:</b> "+esc(String(STATE.updated||"—").slice(0,19))+" UTC ("+stateAgeText()+")\n";
   if(STATE.audit)h+="<b>🛡️ Audit:</b> ledger "+(STATE.audit.ledger_ok?"OK ✓":"BROKEN ✗")+"\n";
   el.innerHTML=h;
 }
 
-/* ══════════ CANVAS ══════════ */
+/* ══════════ CANVAS — RUNNING TV-STYLE CANDLES ══════════ */
 function validCandles(cs){if(!Array.isArray(cs)||cs.length<2)return false;
   return cs.every(c=>c&&typeof c.h==="number"&&c.h>=c.l&&c.h>=c.o&&c.h>=c.c&&c.l<=c.o&&c.l<=c.c&&c.h>0);}
 function tagBox(ctx,x,y,w,h,txt,color){
-  ctx.fillStyle="rgba(2,6,23,.94)";
-  ctx.fillRect(x,y,w,h);
-  ctx.strokeStyle=color;ctx.lineWidth=1;
-  ctx.strokeRect(x,y,w,h);
-  ctx.fillStyle=color;ctx.font="10px JetBrains Mono";
-  ctx.fillText(txt,x+5,y+h/2+3);
+  ctx.fillStyle="rgba(2,6,23,.94)";ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle=color;ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);
+  ctx.fillStyle=color;ctx.font="10px JetBrains Mono";ctx.fillText(txt,x+5,y+h/2+3);
 }
-function drawCandleTV(ctx,x,c,w,y){
+function drawCandle(ctx,x,c,w,y){
   const o=+c.o,h=+c.h,l=+c.l,cl=+c.c,up=cl>=o;
   const col=up?"#00ff66":"#ff0055";
-  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=2;
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(x,y(h));ctx.lineTo(x,y(l));ctx.stroke();
-  const yo=y(Math.max(o,cl)),hh=Math.max(2,Math.abs(y(o)-y(cl)));
-  ctx.fillRect(x-w/2,yo,w,hh);
+  ctx.fillRect(x-w/2,y(Math.max(o,cl)),w,Math.max(1.5,Math.abs(y(o)-y(cl))));
   ctx.lineWidth=1;
 }
 function drawGrid(){
   const cv=$("cvGrid");if(!cv)return;
   const ctx=cv.getContext("2d");
-  const W=cv.clientWidth||900,H=cv.clientHeight||360;
+  const W=cv.clientWidth||900,H=cv.clientHeight||380;
   if(cv.width!==W*2){cv.width=W*2;cv.height=H*2;}
   ctx.setTransform(2,0,0,2,0,0);
   ctx.fillStyle="#060913";ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle="rgba(0,243,255,.06)";
+  /* grid dots */
+  ctx.strokeStyle="rgba(0,243,255,.05)";
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   const t=Date.now();
-  const cs=(RT.data&&RT.data._cs)?RT.data._cs:RT.liveCS;
-  const G=ENGINE_OBJ?ENGINE_OBJ.gridFromCandles(cs):null;
-  if(cs&&validCandles(cs)&&G&&G.ext){
-    const anchor=cs[cs.length-2],forming=cs[cs.length-1];
-    const lines=[
-      {p:G.ext.m33,tag:"-33%",col:"rgba(125,140,163,.5)"},
-      {p:G.ext.zero,tag:"0%",col:"rgba(125,140,163,.5)"},
-      {p:G.ext.p33,tag:"BUY2 · 33%",col:"rgba(0,255,102,.6)"},
-      {p:G.ext.p67,tag:"BUY1 · 67%",col:"rgba(0,255,102,.75)"},
-      {p:G.ext.p100,tag:"100%",col:"rgba(125,140,163,.5)"},
-      {p:G.ext.p133,tag:"SELL1 · 133%",col:"rgba(255,0,85,.6)"},
-      {p:G.ext.p167,tag:"SELL2 · 167%",col:"rgba(255,0,85,.75)"},
-      {p:G.ext.p200,tag:"200%",col:"rgba(125,140,163,.5)"}
-    ];
-    let lo=Math.min(...lines.map(l=>l.p),+anchor.l,+forming.l);
-    let hi=Math.max(...lines.map(l=>l.p),+anchor.h,+forming.h);
-    const pad=(hi-lo)*0.05||1;lo-=pad;hi+=pad;
-    const y=p=>H-14-((p-lo)/(hi-lo))*(H-28);
+  const cs=RT.liveCS;
+  const G=ENGINE_OBJ&&cs?ENGINE_OBJ.gridFromCandles(cs):null;
+  if(cs&&validCandles(cs)){
+    const view=cs.slice(-CHART_N);   /* full running history */
+    const lines=G&&G.ext?[
+      {p:G.ext.p33,tag:"BUY2",col:"rgba(0,255,102,.55)"},
+      {p:G.ext.p67,tag:"BUY1",col:"rgba(0,255,102,.7)"},
+      {p:G.ext.p133,tag:"SELL1",col:"rgba(255,0,85,.55)"},
+      {p:G.ext.p167,tag:"SELL2",col:"rgba(255,0,85,.7)"}
+    ]:[];
+    let lo=Math.min(...view.map(c=>c.l)),hi=Math.max(...view.map(c=>c.h));
+    lines.forEach(l=>{lo=Math.min(lo,l.p);hi=Math.max(hi,l.p);});
+    if(G&&G.expected){lo=Math.min(lo,G.expected.low);hi=Math.max(hi,G.expected.high);}
+    const pad=(hi-lo)*0.06||1;lo-=pad;hi+=pad;
+    const y=p=>H-16-((p-lo)/(hi-lo))*(H-30);
+    /* candles — running */
+    const step=W/Math.max(view.length,10),bw=Math.max(2,step*0.6);
+    view.forEach(function(c,i){
+      const x=i*step+step/2;
+      drawCandle(ctx,x,c,bw,y);
+    });
+    /* grid level lines (context) */
     lines.forEach(function(L){
       ctx.strokeStyle=L.col;ctx.setLineDash([6,5]);
-      ctx.beginPath();ctx.moveTo(0,y(L.p));ctx.lineTo(W-128,y(L.p));ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,y(L.p));ctx.lineTo(W-118,y(L.p));ctx.stroke();
       ctx.setLineDash([]);
     });
-    const cw=Math.min(56,W*0.07);
-    drawCandleTV(ctx,W*0.18,anchor,cw,y);
-    drawCandleTV(ctx,W*0.42,forming,cw,y);
-    ctx.fillStyle="rgba(125,140,163,.7)";ctx.font="10px JetBrains Mono";ctx.textAlign="center";
-    ctx.fillText("pichla ghanta [1]",W*0.18,H-3);
-    ctx.fillText("abhi ka ghanta [0] LIVE",W*0.42,H-3);
-    ctx.textAlign="left";
+    /* expected range shading */
+    if(G&&G.expected){
+      ctx.fillStyle="rgba(255,170,0,.06)";
+      ctx.fillRect(0,y(G.expected.high),W-118,y(G.expected.low)-y(G.expected.high));
+    }
+    /* labels */
     lines.forEach(function(L){
-      tagBox(ctx,W-124,y(L.p)-9,120,18,L.tag+" "+L.p.toFixed(2),L.col);
+      tagBox(ctx,W-114,y(L.p)-9,110,18,L.tag+" "+L.p.toFixed(2),L.col);
     });
-    const eH=G.expected.high,eL=G.expected.low;
-    tagBox(ctx,W-190,y(eH)-12,186,24,"★ ANDAZA UPAR · "+eH.toFixed(2),"#ffaa00");
-    tagBox(ctx,W-190,y(eL)-12,186,24,"★ ANDAZA NEECHE · "+eL.toFixed(2),"#ffaa00");
-    const last=+forming.c;
+    if(G&&G.expected){
+      tagBox(ctx,W-114,y(G.expected.high)-9,110,18,"ExpH "+G.expected.high.toFixed(2),"#ffaa00");
+      tagBox(ctx,W-114,y(G.expected.low)-9,110,18,"ExpL "+G.expected.low.toFixed(2),"#ffaa00");
+    }
+    /* live price */
+    const last=+view[view.length-1].c;
     const pl=.45+.4*Math.sin(t/280);
     ctx.strokeStyle="rgba(0,243,255,"+pl+")";ctx.setLineDash([3,4]);
-    ctx.beginPath();ctx.moveTo(0,y(last));ctx.lineTo(W-128,y(last));ctx.stroke();ctx.setLineDash([]);
-    tagBox(ctx,W-124,y(last)-10,120,20,last.toFixed(2),"#00f3ff");
-    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+G.color+" base · levels 🔒",false);
+    ctx.beginPath();ctx.moveTo(0,y(last));ctx.lineTo(W-118,y(last));ctx.stroke();ctx.setLineDash([]);
+    tagBox(ctx,W-114,y(last)-10,110,20,last.toFixed(2),"#00f3ff");
+    /* anchor candle marker */
+    const ax=(view.length-2)*step+step/2;
+    ctx.fillStyle="rgba(189,0,255,.6)";ctx.font="9px JetBrains Mono";ctx.textAlign="center";
+    ctx.fillText("[1]",ax,H-4);
+    ctx.fillText("[0]",(view.length-1)*step+step/2,H-4);
+    ctx.textAlign="left";
+    setTxt("gridSrc",CUR_SYM+" · "+CUR_TF+" · "+view.length+" candles · RUNNING 4s",false);
   }else{
     ctx.fillStyle="rgba(125,140,163,"+(.55+.3*Math.sin(t/500))+")";
     ctx.font="bold 15px Orbitron";ctx.textAlign="center";
@@ -1081,8 +961,8 @@ function drawGrid(){
     setTxt("gridSrc",CUR_SYM+" · "+CUR_TF,false);
   }
   setTxt("gridMeta",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"}),false);
-  setTxt("gridStatus",CUR_TF+" · "+getLiveState().status,false);
   $("gridStatus").className=getLiveState().status==="LIVE"?"live":"live warn";
+  setTxt("gridStatus",getLiveState().status,false);
   requestAnimationFrame(drawGrid);
 }
 requestAnimationFrame(drawGrid);
@@ -1100,25 +980,22 @@ document.querySelectorAll(".nav-btn[data-s]").forEach(function(b){
 });
 document.querySelectorAll(".sym-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".sym-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_SYM=this.dataset.sym;RT.data=null;RT.key="";RT.liveCS=null;
+  this.classList.add("active");CUR_SYM=this.dataset.sym;RT.liveCS=null;LIVE_L2=null;LIVE_SIG=null;
   rtTick().then(()=>renderAll());
 }));
 document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",function(){
   document.querySelectorAll(".tf-btn").forEach(x=>x.classList.remove("active"));
-  this.classList.add("active");CUR_TF=this.dataset.tf;RT.data=null;RT.key="";RT.liveCS=null;
+  this.classList.add("active");CUR_TF=this.dataset.tf;RT.liveCS=null;LIVE_L2=null;LIVE_SIG=null;
   rtTick().then(()=>renderAll());
 }));
  $("btnSync").addEventListener("click",function(){refreshData();rtTick();});
- $("btnClearHist").addEventListener("click",function(){
-  Object.keys(LOCKS).forEach(function(k){if(k.startsWith("_hist_"))delete LOCKS[k];});
-  saveLocks();renderScores();pulse("history clear (faisla aapka — naye data se seekhna behtar)","pa");
-});
+ $("btnClearHist").addEventListener("click",function(){EVENTS=[];saveEvents();renderScores();});
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
-    "FACE: "+C.faceRepo+" · HEART: "+C.heartRepo+"\nBRAIN: colab_LLM_brain.py v7.1\n"+
-    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version):"—")+"\n"+
-    "NO-REPAINT: signal period-lock · SCOREBOARD: virtual trades\n"+
-    "LAYOUT: chart LEFT · signal RIGHT · simple mode";
+    "CHART: "+CHART_N+" candles running · har 4s update (TV-style)\n"+
+    "STREAM 1: har nayi candle se naya grid (context)\n"+
+    "STREAM 2: continuous 4s — events (cooldown "+COOLDOWN_MIN+"m)\n"+
+    "EVENTS: "+EVENTS.length+" logged · ENGINE: "+(ENGINE_OBJ?"v"+ENGINE_OBJ.version:"—");
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
  $("closeCfg").addEventListener("click",function(){$("cfgOverlay").classList.remove("open");$("cfgPanel").classList.remove("open");});
@@ -1131,10 +1008,11 @@ function logout(){localStorage.removeItem("hermes_tok");location.reload();}
  $("modOverlay").addEventListener("click",function(){this.classList.remove("open");$("modDetail").classList.remove("open");});
  $("closeFv").addEventListener("click",function(){$("fileOverlay").classList.remove("open");$("fileViewer").classList.remove("open");});
  $("fileOverlay").addEventListener("click",function(){this.classList.remove("open");$("fileViewer").classList.remove("open");});
+ $("repRefresh").addEventListener("click",loadReports);
 
 function unlockUI(){
   $("lock").style.display="none";
-  pulse("FACE online · simple mode · scoreboard active","pa");
+  pulse("FACE online · running candles · "+EVENTS.length+" events loaded","pa");
   loadEngine(true).then(function(){
     startHeartbeat();refreshData();loadStrategy();rtTick();
     setInterval(function(){if(!document.hidden)rtTick();},4000);

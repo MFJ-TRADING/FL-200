@@ -1,0 +1,216 @@
+<div id="appShell">
+<nav class="top-nav">
+<div class="brand">⚡ FL-200 <span>FACE</span></div>
+<div class="nav-links">
+<button class="nav-btn active" data-s="dash">DASHBOARD</button>
+<button class="nav-btn" data-s="scores">📊 SCOREBOARD</button>
+<button class="nav-btn" data-s="strategy">STRATEGY</button>
+<button class="nav-btn" data-s="rules">RULES</button>
+<button class="nav-btn" data-s="reports">REPORTS</button>
+<button class="nav-btn" data-s="pillars">PILLARS</button>
+<button class="nav-btn" data-s="account">ACCOUNT</button>
+</div>
+<div class="nav-right">
+<span class="tier-badge">LIVE 4s</span>
+<span class="syncin" id="syncIn">sync —</span>
+<div class="status"><div class="dot"></div> v12.1</div>
+<button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
+<button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
+</div>
+</nav>
+
+<div class="control-bar">
+<span style="font-family:'Orbitron';font-size:.78rem;color:var(--muted)">SYMBOL:</span>
+<button class="sym-btn active" data-sym="BTCUSDT">BTCUSDT</button>
+<button class="sym-btn" data-sym="ETHUSDT">ETHUSDT</button>
+<span id="mktBadge" class="badge-closed">CONNECTING…</span>
+<span style="width:1px;height:18px;background:var(--border);margin:0 4px"></span>
+<span style="font-family:'Orbitron';font-size:.78rem;color:var(--muted)">TF:</span>
+<button class="tf-btn" data-tf="M30">M30</button>
+<button class="tf-btn active" data-tf="H1">H1</button>
+<button class="tf-btn" data-tf="H4">H4</button>
+<button class="tf-btn" data-tf="D1">D1</button>
+<button class="tf-btn" data-tf="W1">W1</button>
+<span id="engBadge" class="engbadge" style="margin-left:auto;color:var(--muted)">ENGINE: …</span>
+<button class="rbtn" id="btnSync">⟳ SYNC</button>
+<span style="font-size:.82rem;color:var(--muted)" id="sysStatus">—</span>
+</div>
+
+<div class="ticker"><div class="ticker-inner" id="ticker">FL-200 INITIALIZING…</div></div>
+
+<div class="main">
+<div class="section active" id="dash">
+
+<div class="split-grid">
+
+<div class="panel">
+<div class="ph"><span>🌊 CONTINUOUS — LIVE CHART (TV-style running)</span><span id="gridStatus" class="live">—</span></div>
+<div class="candle-wrap">
+<div class="candle-head">
+<span style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan)" id="gridSrc">—</span>
+<span style="font-size:.78rem;color:var(--muted)" id="gridMeta">—</span>
+</div>
+<canvas id="cvGrid"></canvas>
+</div>
+<div class="explain">
+<div class="xt">📖 YE CHART KYA HAI</div>
+<b>Candles har 4 sec update</b> — TradingView jaisa chalta hua chart (aakhri candle live). <b>Green/red lines</b> = is ghante ke grid levels (har nayi candle close par naye). <b>★ Andaza boxes</b> = is ghante ka expected range. 60 candles ki history chalti rehti hai.
+</div>
+</div>
+
+<div class="panel" id="sdPanel">
+<div class="ph"><span>🎯 SIGNAL DATA · <span id="recSym">—</span> · <span id="recTF">H1</span></span><span id="sdSrc" class="live">—</span></div>
+
+<div class="fin-strip" id="finStrip">
+<div>
+<div class="action-title">🧭 LIVE EVALUATION (4s)</div>
+<div class="plain" id="recNote">—</div>
+<div class="byline" id="recBy">—</div>
+</div>
+<div class="mbox"><div class="mlabel">NATEEJA</div><div class="action-signal" id="recAction">—</div></div>
+<div class="mbox"><div class="mlabel">QEEMAT</div><div class="mval" style="color:var(--cyan)" id="recEntry">—</div></div>
+<div class="mbox"><div class="mlabel">ZOR</div><div class="mval" id="l2ImbMini">—</div></div>
+</div>
+
+<div class="actbox" id="actBox">
+<div class="ah">
+<span class="as" id="actSig">— KOI ACTIVE TRADE NAHI</span>
+<span class="zonebadge zb-mid" id="actTime">—</span>
+</div>
+<div class="plain" id="actNote">System har 4 sec check karta hai — jaise hi shartein match, event ban jayega.</div>
+<div class="row" id="actRow" style="display:none">
+<div class="mbox"><div class="mlabel">ENTRY</div><div class="mval" id="actEntry">—</div></div>
+<div class="mbox"><div class="mlabel">MUNAFA (TP)</div><div class="mval g" id="actTp">—</div></div>
+<div class="mbox"><div class="mlabel">NUQSAN (SL)</div><div class="mval r" id="actSl">—</div></div>
+<div class="mbox"><div class="mlabel">HALAT</div><div class="mval y" id="actStat">OPEN</div></div>
+</div>
+</div>
+
+<div class="lv4" id="tvRow"></div>
+<div class="glv" id="glvRow"></div>
+<div class="glv" id="l2Row"></div>
+<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
+<span class="zonebadge zb-mid" id="zPos">QEEMAT KAHAN: —</span>
+<span class="gz" id="ctxLine">⏰ context: —</span>
+</div>
+<div class="explain">
+<div class="xt">📖 SIMPLE ZUBAAN</div>
+<div id="explainBody">…</div>
+</div>
+<div class="final-box" id="finalBox">—</div>
+</div>
+
+</div>
+
+<div class="grid">
+<div class="panel span2">
+<div class="ph"><span>📊 MARKET</span><span id="mktLive" class="live">—</span></div>
+<div class="mgrid">
+<div class="mbox"><div class="mlabel">QEEMAT</div><div class="price" id="livePrice">—</div></div>
+<div class="mbox"><div class="mlabel">DATA</div><div class="mval" id="dataLayer" style="margin-top:3px">—</div></div>
+<div class="mbox"><div class="mlabel">UPDATE</div><div class="mval" id="ageVal" style="margin-top:3px">—</div></div>
+<div class="mbox"><div class="mlabel">BAZAAR</div><div class="mval" style="margin-top:3px">24/7</div></div>
+</div>
+</div>
+<div class="panel">
+<div class="ph"><span>❤️ PULSE</span><span id="hbCount" style="font-size:.72rem;color:var(--cyan)">HB 0</span></div>
+<div class="pulse-box" id="pulseBox"></div>
+</div>
+<div class="panel full">
+<div class="ph"><span>🛡️ ENGINES</span><span class="live" id="engWhy">—</span></div>
+<div class="eng-grid" id="engGrid"></div>
+</div>
+<div class="panel full">
+<div class="ph"><span>🧬 MODELS</span><span style="font-size:.72rem;color:var(--muted)">click = tafseel</span></div>
+<div class="model-grid" id="modelGrid"></div>
+</div>
+<div class="panel full">
+<div class="ph"><span>🏛️ 10 PILLARS</span><span class="live" id="pillarScore">—</span></div>
+<div class="pillar-grid" id="pillarGrid"></div>
+</div>
+<div class="panel full">
+<div class="ph"><span>📒 LEDGER</span><span id="ledgerMeta" style="font-size:.72rem;color:var(--muted)"></span></div>
+<div class="ledger-box" id="ledgerBox">—</div>
+</div>
+</div>
+</div>
+
+<div class="section" id="scores">
+<div class="panel full">
+<div class="ph"><span>📊 SCOREBOARD</span><button class="rbtn" id="btnClearHist" style="color:var(--red)">🗑 CLEAR</button></div>
+<div class="score-grid">
+<div class="sc"><div class="n c" id="scTotal">0</div><div class="l">KUL SIGNALS</div></div>
+<div class="sc"><div class="n g" id="scWin">0</div><div class="l">WIN ✓</div></div>
+<div class="sc"><div class="n r" id="scLoss">0</div><div class="l">LOSS ✗</div></div>
+<div class="sc"><div class="n y" id="scOpen">0</div><div class="l">OPEN ⏳</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div>
+<div style="text-align:center;font-family:'Orbitron';font-size:1.1rem">WIN RATE: <span id="scWR" style="color:var(--green)">—</span></div>
+<div class="wr-bar"><div class="wr-fill" id="scWRBar" style="width:0%"></div></div>
+<div style="text-align:center;font-size:.8rem;color:var(--muted)" id="scWRNote"></div>
+<div class="explain" style="margin-top:12px"><div class="xt">📖 KAISE GINA JATA HAI</div>
+Har signal <b>event</b> hai: TP pehle mila = WIN, SL pehle = LOSS. Virtual — paisa nahi lagta. Ek waqt mein ek signal per symbol.</div>
+</div>
+<div>
+<div style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan);margin-bottom:5px">📜 HISTORY</div>
+<div class="hist" id="histBox">Abhi koi event nahi…</div>
+</div>
+</div>
+</div>
+<div class="panel full">
+<div class="ph"><span>📈 MODEL IMPROVEMENT</span><span id="impMeta" style="font-size:.72rem;color:var(--muted)">—</span></div>
+<div class="imp-grid" id="impGrid"></div>
+</div>
+<div class="panel full">
+<div class="ph"><span>🎯 SYSTEM ACCURACY</span></div>
+<div class="sysacc" id="sysAcc">—</div>
+</div>
+</div>
+
+<div class="section" id="strategy">
+<div class="panel full"><div class="ph"><span>⚔️ STRATEGY</span></div><div class="inst" id="stratBox">…</div></div></div>
+<div class="section" id="rules">
+<div class="panel full"><div class="ph"><span>📜 RULES</span></div><div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div></div></div>
+<div class="section" id="reports">
+<div class="panel full"><div class="ph"><span>🩺 LIVE RUN</span><button class="rbtn" id="repRefresh">⟳</button></div><div class="rep-sum" id="repSummary">…</div></div>
+<div class="panel full"><div class="ph"><span>📥 HEART FILES</span><span style="font-size:.72rem;color:var(--muted)" id="repScan">—</span></div><div id="repFiles">…</div></div>
+</div>
+<div class="section" id="pillars">
+<div class="panel full"><div class="ph"><span>🏛️ PILLAR LAW</span></div>
+<div class="inst">P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST · P5 COMPARE ·
+P6 LESSONS · P7 RISK · P8 EVENT-TAG · P9 SECURITY · P10 HEALTH
+Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
+<div class="panel full"><div class="ph"><span>🧠 SELF-STATES</span></div><div class="inst" id="selfBox">—</div></div></div>
+<div class="section" id="account">
+<div class="panel full"><div class="ph"><span>💼 ACCOUNT</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+<div class="mbox" style="text-align:center"><div class="mlabel">EQUITY</div><div class="mval" id="accEq">—</div></div>
+<div class="mbox" style="text-align:center"><div class="mlabel">TRADES TODAY</div><div class="mval" id="accTr">—</div></div>
+<div class="mbox" style="text-align:center"><div class="mlabel">DAY PNL</div><div class="mval" id="accPnl">—</div></div>
+</div></div></div>
+</div>
+
+<div class="overlay" id="cfgOverlay"></div>
+<div class="side" id="cfgPanel">
+<div class="side-h"><div class="side-t">⚙ CONFIG</div><button class="close" id="closeCfg">✕</button></div>
+<div class="side-b"><div class="inst" id="cfgInfo">—</div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE</button>
+<button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
+</div></div>
+</div>
+
+<div class="overlay" id="modOverlay"></div>
+<div class="side" id="modDetail">
+<div class="side-h"><div class="side-t" id="modTitle">MODEL</div><button class="close" id="closeMod">✕</button></div>
+<div class="side-b"><div class="inst" id="modInst"></div></div>
+</div>
+
+<div class="overlay" id="fileOverlay"></div>
+<div class="side" id="fileViewer" style="width:560px">
+<div class="side-h"><div class="side-t" id="fvTitle">FILE</div><button class="close" id="closeFv">✕</button></div>
+<div class="side-b" id="fvBody"></div>
+</div>
+
+</div>

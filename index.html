@@ -1424,7 +1424,7 @@
     <div class="lockcard">
       <div class="locklogo">⚡ FL-200</div>
       <input id="ltok" type="password" placeholder="FACE_TOKEN — ghp_ or github_pat_ (READ only)">
-      <input id="lpass" type="password" placeholder="Password">
+      
       <button class="lockbtn" id="lockBtn">UNLOCK</button>
       <button class="lockbtn2" id="btnWipe">WIPE</button>
       <div class="lerr" id="lockErr"></div>
@@ -1759,750 +1759,209 @@
   </div><!-- /appShell -->
   <script src="config.js"></script>
   <script>
-    console.log("FL-200 v12.1 — running candles · 2-stream events · smart lock diagnostics");
-    const $ = id => document.getElementById(id);
-    const C = window.FL200_CONFIG;
-    const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    const fmt = (v, d) => { d = d == null ? 2 : d; return (v == null || isNaN(v)) ? "—" : (+v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); };
-    const F1 = v => (v == null || isNaN(v)) ? "—" : (+v).toFixed(1);
-    const TF_MIN = { M30: 30, H1: 60, H4: 240, D1: 1440, W1: 10080 };
-    const COOLDOWN_MIN = 15;
-    const CHART_N = 60;
-
-    let STATE = null, TOKEN = "", CUR_SYM = "BTCUSDT", CUR_TF = "H1";
-    let FOUND_STATE_PATH = null, FOUND_LEDGER_PATH = null;
-    let HB = 0, brainWarned = false;
-    const ENGINE = { layer: null, eff: null };
-    let ENGINE_OBJ = null, ENGINE_TS = 0;
-    const LIVE = { pollMs: 4000, staleMs: C.staleMs || 30000, deadMs: C.deadMs || 120000, timer: null, rtTimer: null, busy: false, failures: 0, lastFetch: 0, active: false };
-    const RT = { liveCS: null };
-
-    /* ═══ STREAM 1: hourly context ═══ */
-    let CTX = {};
-    try { CTX = JSON.parse(localStorage.getItem("fl200_ctx") || "{}"); } catch (e) { CTX = {}; }
-    function saveCtx() { try { localStorage.setItem("fl200_ctx", JSON.stringify(CTX)); } catch (e) { } }
-    function ctxKey() { return CUR_SYM + "|" + CUR_TF; }
-    function getContext(cs) {
-      const pk = cs[cs.length - 1].t.slice(0, 16);
-      let c = CTX[ctxKey()];
-      if (!c || c.period !== pk) {
-        const grid = ENGINE_OBJ.gridFromCandles(cs);
-        if (!grid) return null;
-        c = { period: pk, grid: grid, ts: Date.now() };
-        CTX[ctxKey()] = c; saveCtx();
-        pulse("⏰ NAYA CONTEXT " + CUR_SYM + " " + CUR_TF + " [" + pk + "] — " + grid.color + " anchor", "pa");
-      }
-      return c;
-    }
-
-    /* ═══ STREAM 2: signal events ═══ */
-    let EVENTS = [];
-    try { EVENTS = JSON.parse(localStorage.getItem("fl200_events") || "[]"); } catch (e) { EVENTS = []; }
-    function saveEvents() { try { localStorage.setItem("fl200_events", JSON.stringify(EVENTS.slice(-500))); } catch (e) { } }
-    function activeEvent(sym, tf) { for (let i = EVENTS.length - 1; i >= 0; i--) { const e = EVENTS[i]; if (e.sym === sym && e.tf === tf && !e.resolved) return e; } return null; }
-    function lastEventT(sym, tf) { for (let i = EVENTS.length - 1; i >= 0; i--) { const e = EVENTS[i]; if (e.sym === sym && e.tf === tf) return e.time; } return 0; }
-    let LIVE_L2 = null, LIVE_SIG = null, LIVE_MID = null, LIVE_CTX = null;
-
-    async function rtTick() {
-      if (!LIVE.active || !TOKEN || !ENGINE_OBJ || document.hidden) return;
-      try {
-        const [cs, d] = await Promise.all([liveCandles(CUR_SYM, CUR_TF), liveDepth(CUR_SYM)]);
-        if (!cs || cs.length < 3) return;
-        RT.liveCS = cs;
-        LIVE_CTX = getContext(cs);
-        const grid = LIVE_CTX ? LIVE_CTX.grid : ENGINE_OBJ.gridFromCandles(cs);
-        const l2 = ENGINE_OBJ.parseDepth(d, CUR_SYM);
-        LIVE_L2 = l2; LIVE_MID = l2 ? l2.mid : null;
-        LIVE_SIG = grid ? ENGINE_OBJ.l2Signal(grid, l2) : null;
-        if (!LIVE_SIG) { renderSignalDesk(); return; }
-        const sig = LIVE_SIG.signal;
-        const act = activeEvent(CUR_SYM, CUR_TF);
-        const now = Date.now();
-        if (act) {
-          const px = d.mid;
-          if (!act.resolved) {
-            if (act.dir > 0) {
-              if (px >= act.tp) { act.resolved = true; act.result = "WIN"; act.exit = px; act.exitTime = now; pulse("🏁 WIN! " + act.sym + " " + act.tf + " BUY — TP " + fmt(act.tp, 2) + " hit", "pg"); }
-              else if (px <= act.sl) { act.resolved = true; act.result = "LOSS"; act.exit = px; act.exitTime = now; pulse("🔻 LOSS. " + act.sym + " " + act.tf + " BUY — SL " + fmt(act.sl, 2) + " hit", "pr"); }
-            } else {
-              if (px <= act.tp) { act.resolved = true; act.result = "WIN"; act.exit = px; act.exitTime = now; pulse("🏁 WIN! " + act.sym + " " + act.tf + " SELL — TP " + fmt(act.tp, 2) + " hit", "pg"); }
-              else if (px >= act.sl) { act.resolved = true; act.result = "LOSS"; act.exit = px; act.exitTime = now; pulse("🔻 LOSS. " + act.sym + " " + act.tf + " SELL — SL " + fmt(act.sl, 2) + " hit", "pr"); }
-            }
-            if (act.resolved) saveEvents();
-          }
-        } else if (sig !== "WAIT" && sig.entryPlan) {
-          if (now - lastEventT(CUR_SYM, CUR_TF) >= COOLDOWN_MIN * 60000) {
-            EVENTS.push({
-              sym: CUR_SYM, tf: CUR_TF, time: now, period: LIVE_CTX ? LIVE_CTX.period : "",
-              sig: sig, dir: sig === "BUY" ? 1 : -1,
-              entry: sig.entryPlan.entry, sl: sig.entryPlan.sl, tp: sig.entryPlan.tp,
-              resolved: false, result: null
-            });
-            saveEvents();
-            pulse("🚨 SIGNAL EVENT: " + CUR_SYM + " " + CUR_TF + " " + sig + " @ " + fmt(sig.entryPlan.entry, 2) + " (TP " + fmt(sig.entryPlan.tp, 2) + " / SL " + fmt(sig.entryPlan.sl, 2) + ")", sig === "BUY" ? "pg" : "pr");
-          }
-        }
-        renderSignalDesk(); renderAction(); renderEngine(); renderScores();
-      } catch (e) {
-        if (RT.liveCS && Math.random() < 0.05) pulse("feed retry: " + e.message, "pr");
-      }
-    }
-
-    /* ============ helpers ============ */
-    function stateUpdatedMs() { if (!STATE || !STATE.updated) return 0; const t = Date.parse(STATE.updated); return isNaN(t) ? 0 : t; }
-    function stateAgeMs() { const t = stateUpdatedMs(); return t ? Math.max(0, Date.now() - t) : Infinity; }
-    function stateAgeText() {
-      const a = stateAgeMs(); if (!isFinite(a)) return "—"; const s = Math.floor(a / 1000);
-      if (s < 60) return s + "s"; if (s < 3600) return Math.floor(s / 60) + "m"; return Math.floor(s / 3600) + "h";
-    }
-    function getLiveState() {
-      if (LIVE_L2) return { status: "LIVE", text: "CONTINUOUS · live" };
-      if (!STATE) return { status: "OFFLINE", text: "NO DATA" };
-      const a = stateAgeMs();
-      if (a <= LIVE.staleMs) return { status: "LIVE", text: "LIVE · " + stateAgeText() };
-      return { status: "STALE", text: "STALE · " + stateAgeText() };
-    }
-    const prevVals = {};
-    function setTxt(id, txt, fl) {
-      const el = $(id); if (!el) return; const t = String(txt);
-      if (prevVals[id] !== t) {
-        prevVals[id] = t; el.textContent = t;
-        if (fl !== false) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
-      }
-    }
-    function pulse(msg, cls) {
-      const el = $("pulseBox"); if (!el) return;
-      const d = document.createElement("div");
-      const t = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      d.innerHTML = '<span style="color:var(--muted)">[' + t + ']</span> <span class="' + (cls || "") + '">' + esc(msg) + "</span>";
-      el.insertBefore(d, el.firstChild);
-      while (el.children.length > 60) el.lastElementChild.remove();
-    }
-
-    function curSN() { return (STATE && STATE.symbols) ? STATE.symbols[CUR_SYM] || null : null; }
-    function botTF() { const SN = curSN(); return (SN && SN.timeframes) ? SN.timeframes[CUR_TF] || null : null; }
-    function resolveLayer() {
-      if (LIVE_L2) { ENGINE.layer = "REALTIME"; ENGINE.eff = { final: { signal: LIVE_SIG ? LIVE_SIG.signal : "—" }, src: "continuous" }; return; }
-      const bt = botTF(), L = getLiveState();
-      if (bt && bt.final && L.status === "LIVE") { ENGINE.layer = "BRAIN"; ENGINE.eff = bt; ENGINE.eff.src = bt.src || "brain"; return; }
-      ENGINE.layer = "NONE"; ENGINE.eff = null;
-    }
-    function renderEngine() {
-      const bt = botTF();
-      const actKey = ENGINE.layer === "REALTIME" ? "rt" : ENGINE.layer === "BRAIN" ? "bot" : "";
-      const rows = [
-        ["L0 · CONTINUOUS (4s)", LIVE_L2 ? "✓ LIVE — candles running" : "⏳ feed…",
-          LIVE_SIG ? ("rules: " + LIVE_SIG.signal + " · imb " + F1(LIVE_L2.imb) + "%") : "connecting"],
-        ["L1 · BRAIN (Colab)", (STATE && stateAgeMs() < 30 * 60 * 1000) ? "✓ " + stateAgeText() : "✗ STALE",
-          bt && bt.final ? (CUR_TF + " " + bt.final.signal) : "run karein"],
-        ["L3 · LOCAL LLM", "RESERVED", "future"]];
-      $("engGrid").innerHTML = rows.map(function (r, i) {
-        const k = ["rt", "bot", "llm"][i];
-        return '<div class="eng' + (k === actKey ? " act" : "") + '"><span class="en">' + r[0] + '</span><span class="es" style="color:' + (r[1].indexOf("✓") === 0 ? "var(--green)" : r[1].indexOf("✗") === 0 ? "var(--red)" : "var(--muted)") + '">' + r[1] + '</span><span class="ed">' + esc(r[2]) + "</span></div>";
-      }).join("");
-      $("engBadge").textContent = "ENGINE: " + (ENGINE.layer || "…");
-      $("engBadge").style.color = ENGINE.layer === "REALTIME" ? "var(--green)" : ENGINE.layer === "BRAIN" ? "var(--cyan)" : "var(--red)";
-      $("engWhy").textContent = ENGINE.layer === "REALTIME" ? "candles running + events armed" : "pending";
-      if (STATE && stateAgeMs() > 30 * 60 * 1000 && !brainWarned) { brainWarned = true; pulse("⚠ BRAIN stale — Colab run karein", "pa"); }
-      if (STATE && stateAgeMs() <= 30 * 60 * 1000) brainWarned = false;
-    }
-
-    async function ghFetch(repo, path, accept) {
-      if (!TOKEN || !LIVE.active) throw new Error("no session");
-      const url = "https://api.github.com/repos/" + repo + "/contents/" + path
-        + "?ref=" + encodeURIComponent(C.branch) + "&_=" + Date.now() + "&nocache=" + Math.random();
-      const r = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + TOKEN,
-          Accept: accept || "application/vnd.github.raw+json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          Pragma: "no-cache"
-        },
-        cache: "no-store"
-      });
-      if (!r.ok) throw new Error("gh " + r.status);
-      return r;
-    }
-    const ghText = (repo, path) => ghFetch(repo, path).then(r => r.text());
-    async function ghJson(repo, path) { const t = await ghText(repo, path); try { return JSON.parse(t); } catch (e) { return t; } }
-    async function loadEngine(force) {
-      const now = Date.now();
-      if (ENGINE_OBJ && !force && now - ENGINE_TS < C.engineTtlMs) return ENGINE_OBJ;
-      try {
-        const txt = await ghText(C.heartRepo, C.enginePath);
-        (new Function(txt))();
-        if (!window.FL200_ENGINE) throw new Error("missing");
-        ENGINE_OBJ = window.FL200_ENGINE; ENGINE_TS = now;
-        pulse("engine ✓ v" + ENGINE_OBJ.version, "pg");
-      } catch (e) { pulse("engine FAIL: " + e.message, "pr"); ENGINE_OBJ = null; }
-      return ENGINE_OBJ;
-    }
-    async function liveCandles(sym, tf) {
-      const r = await fetch("https://data-api.binance.vision/api/v3/klines?symbol=" + sym + "&interval=" + (C.binTf[tf] || "1h") + "&limit=200&_=" + Date.now(), { cache: "no-store" });
-      if (!r.ok) throw new Error("kl " + r.status);
-      return (await r.json()).map(k => ({ t: new Date(k[0]).toISOString().slice(0, 16) + "Z", o: +k[1], h: +k[2], l: +k[3], c: +k[4] }));
-    }
-    async function liveDepth(sym) {
-      const r = await fetch("https://data-api.binance.vision/api/v3/depth?symbol=" + sym + "&limit=" + (C.l2 ? C.l2.depth : 20) + "&_=" + Date.now(), { cache: "no-store" });
-      if (!r.ok) throw new Error("dp " + r.status);
-      return await r.json();
-    }
-    async function refreshData() {
-      if (!LIVE.active || !TOKEN || LIVE.busy) return;
-      LIVE.busy = true;
-      try {
-        let raw = null, used = null;
-        for (const p of (FOUND_STATE_PATH ? [FOUND_STATE_PATH] : C.statePaths)) {
-          try { raw = await ghJson(C.heartRepo, p); used = p; break; } catch (e) { }
-        }
-        if (raw != null) {
-          FOUND_STATE_PATH = used; STATE = raw; LIVE.failures = 0;
-          $("pollbar").classList.remove("err");
-          HB++; $("hbCount").textContent = "HB " + HB;
-          renderAll(); loadLedger();
-        }
-      } catch (e) { $("pollbar").classList.add("err"); }
-      finally { LIVE.busy = false; }
-    }
-
-    /* ============ RENDER ============ */
-    function renderAll() {
-      updateLiveUI(); renderTicker(); renderEngine(); renderSignalDesk();
-      renderPillars(); renderModels(); renderAccount(); renderRules(); renderImp(); renderScores();
-    }
-    function updateLiveUI() {
-      const L = getLiveState();
-      const badge = $("mktBadge");
-      if (badge) { badge.className = L.status === "LIVE" ? "badge-open" : "badge-closed"; badge.textContent = L.text; }
-      $("sysStatus").textContent = "24/7 · " + L.text;
-      const dl = $("dataLayer");
-      if (dl) {
-        if (!ENGINE_OBJ) { dl.textContent = "engine…"; dl.style.color = "var(--amber)"; }
-        else if (LIVE_L2) { dl.textContent = "✓ LIVE"; dl.style.color = "var(--green)"; }
-        else { dl.textContent = "connecting…"; dl.style.color = "var(--amber)"; }
-      }
-      $("syncIn").textContent = LIVE_L2 ? "continuous" : "sync…";
-    }
-    function stopHeartbeat() {
-      LIVE.active = false;
-      if (LIVE.timer) { clearInterval(LIVE.timer); LIVE.timer = null; }
-      if (LIVE.rtTimer) { clearInterval(LIVE.rtTimer); LIVE.rtTimer = null; }
-    }
-    function startHeartbeat() {
-      stopHeartbeat();
-      LIVE.active = true;
-      LIVE.pollMs = 4000;
-      LIVE.timer = setInterval(function () {
-        if (!LIVE.active || document.hidden || !TOKEN) return;
-        refreshData();
-      }, 4000);
-      LIVE.rtTimer = setInterval(function () {
-        if (!LIVE.active || document.hidden || !TOKEN) return;
-        rtTick();
-      }, 4000);
-      refreshData();
-      rtTick();
-      pulse("LIVE 4s · Face↔Heart · no cache", "pa");
-    }
-    document.addEventListener("visibilitychange", function () {
-      if (!LIVE.active || !TOKEN) return;
-      if (!document.hidden) { refreshData(); rtTick(); }
-    });
-    window.addEventListener("online", function () {
-      if (!LIVE.active || !TOKEN) return;
-      refreshData(); rtTick();
-    });
-
-    function renderTicker() {
-      const L = getLiveState(); let items = [];
-      Object.keys(C.symbols).forEach(function (k) {
-        let sig = "—", cls = "", px = null;
-        if (k === CUR_SYM && LIVE_SIG) { sig = LIVE_SIG.signal; px = LIVE_MID; }
-        else { const sn = (STATE && STATE.symbols) ? STATE.symbols[k] : null; px = sn ? sn.price : null; }
-        if (sig === "BUY") cls = "g"; if (sig === "SELL") cls = "r";
-        items.push("<b>" + k + "</b> " + fmt(px, 2) + " · " + '<span class="' + cls + '">' + sig + "</span>");
-      });
-      const seg = "<b>⚡ FL-200</b> " + L.text + " &nbsp;|&nbsp; " + items.join(" &nbsp;|&nbsp; ") + " &nbsp;|&nbsp; ";
-      $("ticker").innerHTML = seg + seg;
-    }
-    function renderAction() {
-      resolveLayer();
-      const fs = $("finStrip");
-      const sig = LIVE_SIG ? LIVE_SIG.signal : null;
-      fs.classList.toggle("wait", !sig || sig === "WAIT");
-      fs.classList.toggle("sell", sig === "SELL");
-      const ra = $("recAction");
-      ra.textContent = sig ? sig : "…";
-      ra.className = "action-signal" + ((!sig || sig === "WAIT") ? " wait" : sig === "SELL" ? " sell" : "");
-      $("recNote").textContent = LIVE_SIG ? (LIVE_SIG.reason + " · " + LIVE_SIG.zone) : "feed aane dein";
-      $("recBy").textContent = "continuous · cooldown " + COOLDOWN_MIN + "m · ek waqt ek signal";
-      $("recEntry").textContent = LIVE_MID ? fmt(LIVE_MID, 2) : "—";
-      $("l2ImbMini").textContent = LIVE_L2 ? F1(LIVE_L2.imb) + "%" : "—";
-      $("l2ImbMini").className = "mval " + (LIVE_L2 && LIVE_L2.imb >= 0 ? "g" : "r");
-    }
-
-    function mbox(l, v, cls, span) {
-      return '<div class="mbox"' + (span ? ' style="' + span + '"' : '') + '><div class="mlabel">' + l + '</div><div class="mval ' + (cls || "") + '">' + v + "</div></div>";
-    }
-    function renderSignalDesk() {
-      resolveLayer();
-      const G = LIVE_CTX ? LIVE_CTX.grid : null;
-      setTxt("sdSrc", "context " + (LIVE_CTX ? LIVE_CTX.period.slice(0, 16) : "—"), false);
-      $("ctxLine").textContent = "⏰ context: " + (LIVE_CTX ? ("candle " + LIVE_CTX.period.slice(0, 16) + " UTC — agla grid agli candle close par") : "—");
-      const tvEl = $("tvRow");
-      if (G && G.ext && G.expected) {
-        tvEl.innerHTML =
-          '<div class="lvb buy"><div class="lt">🟢 BUY 2 (neeche)</div><div class="lp">' + fmt(G.ext.p33, 2) + '</div><div class="pct">33%</div></div>'
-          + '<div class="lvb buy"><div class="lt">🟢 BUY 1</div><div class="lp">' + fmt(G.ext.p67, 2) + '</div><div class="pct">67%</div></div>';
-      } else tvEl.innerHTML = "";
-      if (G && G.ext && G.expected) {
-        $("glvRow").innerHTML =
-          mbox("★ ANDAZA UPAR", fmt(G.expected.high, 2), "y", "grid-column:span 2") +
-          mbox("★ ANDAZA NEECHE", fmt(G.expected.low, 2), "y", "grid-column:span 2") +
-          mbox("BASE", G.color, "") + mbox("QADAM", fmt(G.step, 2), "");
-      } else $("glvRow").innerHTML = '<div class="mbox" style="grid-column:span 6"><div class="mval na">⏳ candles chahiye</div></div>';
-      if (LIVE_L2) {
-        const cells = [["BECHNE WALA (ASK)", fmt(LIVE_L2.ask, 2), "r"], ["KHAREEDNE WALA (BID)", fmt(LIVE_L2.bid, 2), "g"],
-        ["FARQ", fmt(LIVE_L2.spread, 2), "y"], ["QEEMAT", fmt(LIVE_MID, 2), ""],
-        ["KHAREED ZOR", F1(LIVE_L2.imb) + "%", LIVE_L2.imb >= 0 ? "g" : "r"],
-        ["BARAY ORDERS", "B" + LIVE_L2.walls_b.length + " / A" + LIVE_L2.walls_a.length, ""]];
-        $("l2Row").innerHTML = cells.map(c => mbox(c[0], c[1], c[2])).join("");
-      } else $("l2Row").innerHTML = '<div class="mbox" style="grid-column:span 6"><div class="mval na">feed connecting…</div></div>';
-      const ab = $("actBox");
-      const act = activeEvent(CUR_SYM, CUR_TF);
-      if (act) {
-        ab.className = "actbox " + (act.dir > 0 ? "buy" : "sell");
-        $("actSig").textContent = (act.dir > 0 ? "🟢 BUY" : "🔴 SELL") + " — ACTIVE";
-        $("actTime").textContent = "📅 " + new Date(act.time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-        $("actNote").textContent = "Signal event log ho chuka (nahi badlega). Live track: TP pehle = WIN, SL pehle = LOSS.";
-        $("actRow").style.display = "grid";
-        $("actEntry").textContent = fmt(act.entry, 2);
-        $("actTp").textContent = fmt(act.tp, 2);
-        $("actSl").textContent = fmt(act.sl, 2);
-        const px = LIVE_MID;
-        $("actStat").textContent = px ? (act.dir > 0 ?
-          (px >= act.tp ? "TP HIT 🏁" : px <= act.sl ? "SL HIT 🔻" : "chal raha ↗")
-          : (px <= act.tp ? "TP HIT 🏁" : px >= act.sl ? "SL HIT 🔻" : "chal raha ↘")) : "OPEN";
-      } else {
-        ab.className = "actbox";
-        $("actSig").textContent = "— KOI ACTIVE TRADE NAHI";
-        $("actTime").textContent = "FLAT";
-        $("actNote").textContent = LIVE_SIG ? ("Abhi nateeja: " + LIVE_SIG.signal + ". Shartein match hongi to event banega (" + COOLDOWN_MIN + "m cooldown).") : "Flat — feed aane dein.";
-        $("actRow").style.display = "none";
-      }
-      const pos = LIVE_SIG ? LIVE_SIG.zone : null;
-      const xz = pos === "SELL_ZONE" ? "qeemat UPAR wale ilaqay mein (bechne walon ka ghar)"
-        : pos === "BUY_ZONE" ? "qeemat NEECHE wale ilaqay mein (khareeddaaron ka ghar)"
-          : "qeemat beech mein (neutral)";
-      const xl2 = LIVE_L2 ? (LIVE_L2.imb >= 15 ? "KHAREEDDAARON ka zor TEZ (+" + F1(LIVE_L2.imb) + "%)"
-        : LIVE_L2.imb <= -15 ? "BEIKNE walon ka zor TEZ (" + F1(LIVE_L2.imb) + "%)"
-          : "zor barabar (" + F1(LIVE_L2.imb) + "%)") : "feed…";
-      const xsig = act ? ("✅ Trade chal rahi hai (" + act.sig + "). Anjaam intezar mein — naya signal tab jab yeh khatam ho.")
-        : (LIVE_SIG && LIVE_SIG.signal !== "WAIT" && LIVE_MID) ? ("🔔 RULES MATCH — agle update par naya event ban sakta hai.")
-          : "Abhi shartein poori nahi. System har 4 sec check kar raha hai.";
-      $("explainBody").innerHTML = "<b>" + xsig + "</b><br>📍 Abhi " + xz + "<br>⚖️ " + xl2
-        + (G && G.expected ? "<br>🎯 Is ghante ka andaza: <b>" + fmt(G.expected.low, 2) + "</b> → <b>" + fmt(G.expected.high, 2) + "</b>" : "");
-      $("finalBox").textContent = G ? "CONTEXT (is ghanta):\n0% " + G.bands.l0 + " · 33% " + G.bands.l33 + " · 66% " + G.bands.l66 + " · 100% " + G.bands.l100 + "\nAnchor " + G.color + " · Step " + G.step : "—";
-    }
-    function renderPillars() {
-      const ps = (STATE && STATE.pillar_score) || null;
-      setTxt("pillarScore", ps ? (ps.score + "/10") : "—", false);
-      const g = $("pillarGrid"); let h = "";
-      for (let i = 1; i <= 10; i++) {
-        const k = "P" + i, v = ps ? (ps[k] !== undefined ? ps[k] : null) : null;
-        const ok = v === true || v === "ok" || v === 1;
-        h += '<div class="pcard"><div class="pname">' + k + " " + C.pillarNames[k] + '</div><div class="pstat ' + (v == null ? "warn" : (ok ? "ok" : "warn")) + '">' + (v == null ? "⏳" : (ok ? "✓" : "✗")) + "</div></div>";
-      }
-      g.innerHTML = h;
-    }
-    function renderModels() {
-      const kp = (curSN() && curSN().kronos && CUR_TF === "H1") ? curSN().kronos : null;
-      const defs = [["GRID", "candle shape", LIVE_SIG ? { bias: LIVE_SIG.zone.indexOf("LOWER") >= 0 ? "BUY" : LIVE_SIG.zone.indexOf("UPPER") >= 0 ? "SELL" : "HOLD", confidence: 55, first_zone_guess: "—", reasoning: LIVE_SIG.zone } : null],
-      ["L2 BOOK", "khareed/baik zor", LIVE_L2 ? { bias: LIVE_L2.imb >= 15 ? "BUY" : LIVE_L2.imb <= -15 ? "SELL" : "HOLD", confidence: Math.min(90, Math.round(50 + Math.abs(LIVE_L2.imb))), first_zone_guess: "—", reasoning: "imb " + F1(LIVE_L2.imb) + "%" } : null],
-      ["KRONOS", "AI (GPU)", kp ? { bias: kp.dir > 0 ? "BUY" : "SELL", confidence: kp.conf, first_zone_guess: "—", reasoning: "predC " + kp.pred_close } : null],
-      ["QUANT", "RSI+MACD", null], ["TAURUS", "mood", null]];
-      $("modelGrid").innerHTML = defs.map(function (d) {
-        const m = d[2];
-        const bias = m ? (m.bias || "HOLD") : "—";
-        const conf = m && m.confidence != null ? m.confidence : null;
-        const col = bias === "BUY" ? "var(--green)" : bias === "SELL" ? "var(--red)" : bias === "HOLD" ? "var(--amber)" : "var(--muted)";
-        const detail = m ? JSON.stringify(m, null, 2) : "pending";
-        return '<div class="mcard" data-d=\'' + esc(detail) + '\'><div class="mname">' + d[0] + '</div><div class="mtype">' + d[1] + '</div><div class="mpred" style="color:' + col + '">' + esc(bias) + '</div><div class="msig' + (conf == null ? " na" : "") + '">yaqeen ' + (conf == null ? "—" : conf + "%") + '</div><div class="wbar"><div class="wfill" style="width:' + (conf == null ? 8 : Math.min(100, conf)) + '%"></div></div></div>';
-      }).join("");
-      document.querySelectorAll("#modelGrid .mcard").forEach(function (el) {
-        el.addEventListener("click", function () { $("modTitle").textContent = "MODEL"; $("modInst").textContent = this.dataset.d; $("modOverlay").classList.add("open"); $("modDetail").classList.add("open"); });
-      });
-    }
-    function renderAccount() {
-      const S = (STATE && STATE.stats) || {};
-      setTxt("accEq", fmt(S.equity, 2), true);
-      setTxt("accTr", String(S.trades_today != null ? S.trades_today : "—"), false);
-      setTxt("accPnl", (S.day_pnl != null ? fmt(S.day_pnl, 2) : "—"), false);
-    }
-    function renderRules() {
-      const rows = [["Roz ke trades", "max 3", true], ["Har trade risk", "1%", true],
-      ["Roz ka nuqsan", "3% stop", true], ["Max ghrata", "10%", true],
-      ["Signals", "EVENTS — log, badlte nahi", true],
-      ["Candles", "running har 4s (TV-style)", true],
-      ["Paisa", "SIGNAL ONLY — khud faisla", true]];
-      $("rulesBox").innerHTML = rows.map(r => '<div class="rule ok"><span>' + r[0] + "</span><b>" + esc(r[1]) + "</b><i>✓</i></div>").join("");
-    }
-    function renderImp() {
-      const g = $("impGrid"); const M = (STATE && STATE.models) || null;
-      if (M && Object.keys(M).length) {
-        let ensembleN = (M.ensemble && M.ensemble.n) ? M.ensemble.n : 0;
-        setTxt("impMeta", "open " + ((STATE.perf_open != null) ? STATE.perf_open : "0") + (ensembleN < 50 ? " · ⚠ chhota sample" : ""), false);
-        g.innerHTML = Object.keys(M).map(function (k) {
-          const m = M[k], d = m.delta_pct;
-          const arrow = d == null || d === 0 ? "" : d > 0 ? ' <span style="color:var(--green);font-size:.8rem">▲ +' + d + "%</span>" : ' <span style="color:var(--red);font-size:.8rem">▼ ' + d + "%</span>";
-          const warn = (m.acc != null && m.acc >= 95 && m.n < 50) ? ' <span style="color:var(--amber);font-size:.7rem">⚠ n=' + m.n + '</span>' : "";
-          return '<div class="imp"><div class="ih"><b>' + k.toUpperCase() + '</b><span><span class="ia">' + (m.acc != null ? m.acc + "%" : "—") + "</span>" + arrow + warn + '</span></div><div class="wbar"><div class="wfill" style="width:' + Math.max(4, Math.min(100, m.acc || 0)) + '%"></div></div><div class="in">' + (m.n || 0) + " resolved</div></div>";
-        }).join("");
-      } else {
-        g.innerHTML = '<div class="imp"><div class="ih"><b>PERF</b><span class="ia">—</span></div><div class="in">brain publish karega</div></div>';
-      }
-      const sa = (STATE && STATE.system_accuracy) || null;
-      const saN = (STATE && STATE.models && STATE.models.ensemble) ? STATE.models.ensemble.n : null;
-      const small = (saN != null && saN < 50);
-      $("sysAcc").innerHTML = sa && sa.overall != null
-        ? '<div class="big' + (small ? " low" : "") + '">' + sa.overall + '%</div><div class="sub">' + (small ? "<span style='color:var(--amber)'>⚠ n=" + saN + " — chhota sample</span>" : "n=" + saN + " resolved") + "</div>"
-        : '<div class="big" style="color:var(--muted)">—</div>';
-      $("selfBox").textContent = STATE && STATE.models ? JSON.stringify({ models: STATE.models, audit: STATE.audit || null }, null, 2) : "pending";
-    }
-
-    /* ============ SCOREBOARD ============ */
-    function renderScores() {
-      let total = 0, win = 0, loss = 0, open = 0;
-      EVENTS.forEach(function (e) { total++; if (e.resolved) { e.result === "WIN" ? win++ : loss++; } else open++; });
-      $("scTotal").textContent = total;
-      $("scWin").textContent = win;
-      $("scLoss").textContent = loss;
-      $("scOpen").textContent = open;
-      const done = win + loss;
-      const wr = done ? (win / done * 100) : null;
-      $("scWR").textContent = wr == null ? "—" : wr.toFixed(0) + "% (" + done + " done)";
-      const bar = $("scWRBar");
-      bar.style.width = (wr == null ? 0 : Math.max(4, wr)) + "%";
-      bar.className = "wr-fill" + (wr == null ? "" : wr >= 50 ? "" : wr >= 40 ? " mid" : " low");
-      $("scWRNote").textContent = done < 20 ? "⚠ " + done + " mukammal — 20+ hone dein tab pattern banao"
-        : (wr >= 50 ? "✓ 50%+ — 1:2 RR ke saath munafa-joo" : wr >= 40 ? "△ thora kam" : "✗ 40% neeche — paper par hi raho");
-      const rows = [];
-      for (let i = EVENTS.length - 1; i >= 0; i--)rows.push(EVENTS[i]);
-      $("histBox").innerHTML = rows.length ? rows.slice(0, 40).map(function (e) {
-        const cls = !e.resolved ? "wait" : e.result === "WIN" ? "win" : "loss";
-        const badge = !e.resolved ? "⏳ OPEN" : e.result === "WIN" ? "✓ WIN" : "✗ LOSS";
-        return "<div><span>" + esc(e.sym) + " " + esc(e.tf) + " <b style='color:var(--text)'>" + esc(e.sig) + "</b><br><span style='color:var(--muted)'>" + new Date(e.time).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + "</span></span>"
-          + "<span>e " + fmt(e.entry, 2) + "<br>TP " + fmt(e.tp, 2) + " / SL " + fmt(e.sl, 2) + "</span>"
-          + "<span class='" + cls + "'>" + badge + "</span></div>";
-      }).join("") : "Abhi koi event nahi…";
-    }
-
-    /* ============ LEDGER / REPORTS ============ */
-    async function loadLedger() {
-      let lines = null;
-      for (const p of (FOUND_LEDGER_PATH ? [FOUND_LEDGER_PATH] : C.ledgerPaths)) {
-        try {
-          const t = await ghText(C.heartRepo, p); FOUND_LEDGER_PATH = p;
-          lines = String(t).trim().split("\n").filter(Boolean).slice(-60).reverse(); break;
-        } catch (e) { }
-      }
-      const box = $("ledgerBox");
-      if (!lines || !lines.length) { box.innerHTML = '⏳ ledger nahi mila'; return; }
-      box.innerHTML = lines.slice(0, 12).map(function (l) {
-        try {
-          const o = JSON.parse(l);
-          const simple = o.event === "H1_SIGNAL" ? "📝 ghanta-faisla" : o.event === "RUN" ? "🔄 cycle" : o.event;
-          return "<div>#" + esc(o.seq) + " " + esc(simple) + " · " + esc(String(o.note || "").slice(0, 60)) + "</div>";
-        } catch (e) { return "<div>" + esc(String(l).slice(0, 90)) + "</div>"; }
-      }).join("");
-      $("ledgerMeta").textContent = lines.length + " entries · immutable";
-    }
-    async function loadStrategy() {
-      for (const p of C.strategyPaths) {
-        try { $("stratBox").textContent = String(await ghText(C.heartRepo, p)).slice(0, 4000); return; } catch (e) { }
-      }
-      $("stratBox").textContent = "strategy.md nahi mili.";
-    }
-    async function loadReports() {
-      const box = $("repFiles"); box.innerHTML = '📡 …';
-      const FILES = new Map();
-      await Promise.all(C.scanDirs.map(async function (d) {
-        try {
-          const r = await fetch("https://api.github.com/repos/" + C.heartRepo + "/contents/" + (d || "") + "?ref=" + encodeURIComponent(C.branch) + "&_=" + Date.now(), { headers: { Authorization: "Bearer " + TOKEN, Accept: "application/vnd.github+json" }, cache: "no-store" });
-          if (r.ok) { const items = await r.json(); if (Array.isArray(items)) items.forEach(f => { if (f.type === "file") FILES.set(f.path, f); }); }
-        } catch (e) { }
-      }));
-      setTxt("repScan", FILES.size + " files", false);
-      const prio = ["state.json", "perf.json", "ledger.jsonl", "engine.js", "strategy.md"];
-      const paths = [...FILES.keys()].sort(function (a, b) {
-        const ia = prio.indexOf(a), ib = prio.indexOf(b);
-        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
-      });
-      box.innerHTML = paths.map(function (p) {
-        const f = FILES.get(p), kb = f.size ? (f.size / 1024).toFixed(1) + " KB" : "";
-        const dsc = C.reportDesc[p.split("/").pop()] || "";
-        return '<div class="rep-file"><span>' + (ext(p) === "json" ? "🧾" : ext(p) === "js" ? "⚙️" : "📄") + '</span><span class="fn">' + esc(p) + (dsc ? '<div class="fd">' + esc(dsc) + "</div>" : "") + '</span><span class="fs">' + kb + '</span><button class="rbtn" data-p="' + esc(p) + '">👁</button></div>';
-      }).join("");
-      box.querySelectorAll(".rbtn").forEach(function (b) {
-        b.addEventListener("click", async function () {
-          $("fvTitle").textContent = this.dataset.p; $("fvBody").innerHTML = '…';
-          $("fileOverlay").classList.add("open"); $("fileViewer").classList.add("open");
-          try {
-            const t = await ghText(C.heartRepo, this.dataset.p);
-            $("fvBody").innerHTML = '<div class="fv-pre">' + esc(t.length > 50000 ? t.slice(0, 50000) + "…" : t) + "</div>";
-          }
-          catch (e) { $("fvBody").innerHTML = "fail"; }
-        });
-      });
-    }
-    function renderReportsSummary() {
-      const el = $("repSummary");
-      if (!STATE) { el.innerHTML = "⏳ brain nahi."; return; }
-      let h = "<b>🕒 Brain:</b> " + esc(String(STATE.updated || "—").slice(0, 19)) + " UTC (" + stateAgeText() + ")\n";
-      if (STATE.audit) h += "<b>🛡️ Audit:</b> ledger " + (STATE.audit.ledger_ok ? "OK ✓" : "BROKEN ✗") + "\n";
-      el.innerHTML = h;
-    }
-
-    /* ══════════ CANVAS — RUNNING TV-STYLE CANDLES ══════════ */
-    function validCandles(cs) {
-      if (!Array.isArray(cs) || cs.length < 2) return false;
-      return cs.every(c => c && typeof c.h === "number" && c.h >= c.l && c.h >= c.o && c.h >= c.c && c.l <= c.o && c.l <= c.c && c.h > 0);
-    }
-    function tagBox(ctx, x, y, w, h, txt, color) {
-      ctx.fillStyle = "rgba(2,6,23,.94)"; ctx.fillRect(x, y, w, h);
-      ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.strokeRect(x, y, w, h);
-      ctx.fillStyle = color; ctx.font = "10px JetBrains Mono"; ctx.fillText(txt, x + 5, y + h / 2 + 3);
-    }
-    function drawCandle(ctx, x, c, w, y) {
-      const o = +c.o, h = +c.h, l = +c.l, cl = +c.c, up = cl >= o;
-      const col = up ? "#00ff66" : "#ff0055";
-      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
-      ctx.fillRect(x - w / 2, y(Math.max(o, cl)), w, Math.max(1.5, Math.abs(y(o) - y(cl))));
-      ctx.lineWidth = 1;
-    }
-    function drawGrid() {
-      const cv = $("cvGrid"); if (!cv) return;
-      const ctx = cv.getContext("2d");
-      const W = cv.clientWidth || 900, H = cv.clientHeight || 380;
-      if (cv.width !== W * 2) { cv.width = W * 2; cv.height = H * 2; }
-      ctx.setTransform(2, 0, 0, 2, 0, 0);
-      ctx.fillStyle = "#060913"; ctx.fillRect(0, 0, W, H);
-      ctx.strokeStyle = "rgba(0,243,255,.05)";
-      for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-      for (let y = 0; y < H; y += 35) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-      const t = Date.now();
-      const cs = RT.liveCS;
-      const G = ENGINE_OBJ && cs ? ENGINE_OBJ.gridFromCandles(cs) : null;
-      if (cs && validCandles(cs)) {
-        const view = cs.slice(-CHART_N);
-        const lines = G && G.ext ? [
-          { p: G.ext.p33, tag: "BUY2", col: "rgba(0,255,102,.55)" },
-          { p: G.ext.p67, tag: "BUY1", col: "rgba(0,255,102,.7)" },
-          { p: G.ext.p133, tag: "SELL1", col: "rgba(255,0,85,.55)" },
-          { p: G.ext.p167, tag: "SELL2", col: "rgba(255,0,85,.7)" }
-        ] : [];
-        let lo = Math.min(...view.map(c => c.l)), hi = Math.max(...view.map(c => c.h));
-        lines.forEach(l => { lo = Math.min(lo, l.p); hi = Math.max(hi, l.p); });
-        if (G && G.expected) { lo = Math.min(lo, G.expected.low); hi = Math.max(hi, G.expected.high); }
-        const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
-        const y = p => H - 16 - ((p - lo) / (hi - lo)) * (H - 30);
-        const step = W / Math.max(view.length, 10), bw = Math.max(2, step * 0.6);
-        view.forEach(function (c, i) {
-          drawCandle(ctx, i * step + step / 2, c, bw, y);
-        });
-        lines.forEach(function (L) {
-          ctx.strokeStyle = L.col; ctx.setLineDash([6, 5]);
-          ctx.beginPath(); ctx.moveTo(0, y(L.p)); ctx.lineTo(W - 118, y(L.p)); ctx.stroke(); ctx.setLineDash([]);
-        });
-        if (G && G.expected) {
-          ctx.fillStyle = "rgba(255,170,0,.06)";
-          ctx.fillRect(0, y(G.expected.high), W - 118, y(G.expected.low) - y(G.expected.high));
-        }
-        lines.forEach(function (L) {
-          tagBox(ctx, W - 114, y(L.p) - 9, 110, 18, L.tag + " " + L.p.toFixed(2), L.col);
-        });
-        if (G && G.expected) {
-          tagBox(ctx, W - 114, y(G.expected.high) - 9, 110, 18, "ExpH " + G.expected.high.toFixed(2), "#ffaa00");
-          tagBox(ctx, W - 114, y(G.expected.low) - 9, 110, 18, "ExpL " + G.expected.low.toFixed(2), "#ffaa00");
-        }
-        const last = +view[view.length - 1].c;
-        const pl = .45 + .4 * Math.sin(t / 280);
-        ctx.strokeStyle = "rgba(0,243,255," + pl + ")"; ctx.setLineDash([3, 4]);
-        ctx.beginPath(); ctx.moveTo(0, y(last)); ctx.lineTo(W - 118, y(last)); ctx.stroke(); ctx.setLineDash([]);
-        tagBox(ctx, W - 114, y(last) - 10, 110, 20, last.toFixed(2), "#00f3ff");
-        const ax = (view.length - 2) * step + step / 2;
-        ctx.fillStyle = "rgba(189,0,255,.6)"; ctx.font = "9px JetBrains Mono"; ctx.textAlign = "center";
-        ctx.fillText("[1]", ax, H - 4);
-        ctx.fillText("[0]", (view.length - 1) * step + step / 2, H - 4);
-        ctx.textAlign = "left";
-        setTxt("gridSrc", CUR_SYM + " · " + CUR_TF + " · " + view.length + " candles · RUNNING 4s", false);
-      } else {
-        ctx.fillStyle = "rgba(125,140,163," + (.55 + .3 * Math.sin(t / 500)) + ")";
-        ctx.font = "bold 15px Orbitron"; ctx.textAlign = "center";
-        ctx.fillText("⏳ DATA KA INTAZAR", W / 2, H / 2 - 8);
-        ctx.font = "11px JetBrains Mono";
-        ctx.fillText(CUR_SYM + " — feed khud connect hoga", W / 2, H / 2 + 14);
-        ctx.textAlign = "left";
-        setTxt("gridSrc", CUR_SYM + " · " + CUR_TF, false);
-      }
-      setTxt("gridMeta", new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }), false);
-      $("gridStatus").className = getLiveState().status === "LIVE" ? "live" : "live warn";
-      setTxt("gridStatus", getLiveState().status, false);
-      requestAnimationFrame(drawGrid);
-    }
-    requestAnimationFrame(drawGrid);
-
-    /* ============ EVENTS ============ */
-    document.querySelectorAll(".nav-btn[data-s]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        document.querySelectorAll(".nav-btn[data-s]").forEach(x => x.classList.remove("active"));
-        this.classList.add("active");
-        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-        $(this.dataset.s).classList.add("active");
-        if (this.dataset.s === "reports") { renderReportsSummary(); loadReports(); }
-        if (this.dataset.s === "strategy") loadStrategy();
-      });
-    });
-    document.querySelectorAll(".sym-btn").forEach(b => b.addEventListener("click", function () {
-      document.querySelectorAll(".sym-btn").forEach(x => x.classList.remove("active"));
-      this.classList.add("active"); CUR_SYM = this.dataset.sym; RT.liveCS = null; LIVE_L2 = null; LIVE_SIG = null;
-      rtTick().then(() => renderAll());
-    }));
-    document.querySelectorAll(".tf-btn").forEach(b => b.addEventListener("click", function () {
-      document.querySelectorAll(".tf-btn").forEach(x => x.classList.remove("active"));
-      this.classList.add("active"); CUR_TF = this.dataset.tf; RT.liveCS = null; LIVE_L2 = null; LIVE_SIG = null;
-      rtTick().then(() => renderAll());
-    }));
-    $("btnSync").addEventListener("click", function () { refreshData(); rtTick(); });
-    $("btnClearHist").addEventListener("click", function () { EVENTS = []; saveEvents(); renderScores(); });
-    $("openCfg").addEventListener("click", function () {
-      $("cfgInfo").textContent =
-        "CHART: " + CHART_N + " candles running · har 4s update (TV-style)\n" +
-        "STREAM 1: har nayi candle se naya grid (context)\n" +
-        "STREAM 2: continuous 4s — events (cooldown " + COOLDOWN_MIN + "m)\n" +
-        "EVENTS: " + EVENTS.length + " logged · ENGINE: " + (ENGINE_OBJ ? "v" + ENGINE_OBJ.version : "—");
-      $("cfgOverlay").classList.add("open"); $("cfgPanel").classList.add("open");
-    });
-    $("closeCfg").addEventListener("click", function () { $("cfgOverlay").classList.remove("open"); $("cfgPanel").classList.remove("open"); });
-    $("cfgOverlay").addEventListener("click", function () { this.classList.remove("open"); $("cfgPanel").classList.remove("open"); });
-    $("btnEngineReload").addEventListener("click", async function () { ENGINE_OBJ = null; await loadEngine(true); rtTick(); renderAll(); });
-    function hardWipeMemory() {
-      if (typeof stopHeartbeat === "function") stopHeartbeat();
-      else { LIVE.active = false; if (LIVE.timer) clearInterval(LIVE.timer); if (LIVE.rtTimer) clearInterval(LIVE.rtTimer); }
-      TOKEN = "";
-      STATE = null;
-      ENGINE_OBJ = null;
-      ENGINE_TS = 0;
-      FOUND_STATE_PATH = null;
-      FOUND_LEDGER_PATH = null;
-      try { EVENTS = []; } catch (e) { }
-      try { CTX = {}; } catch (e) { }
-      try { LIVE_L2 = null; LIVE_MID = null; LIVE_SIG = null; LIVE_CTX = null; } catch (e) { }
-      try { if (typeof RT === "object" && RT) RT.liveCS = null; } catch (e) { }
-      try { window.FL200_ENGINE = undefined; } catch (e) { }
-      sessionStorage.clear();
-      localStorage.removeItem("hermes_tok");
-      localStorage.removeItem("fl200_pass");
-      localStorage.removeItem("fl200_ctx");
-      localStorage.removeItem("fl200_events");
-      localStorage.removeItem("fl200_face_tok");
-      try {
-        var shell = document.getElementById("appShell");
-        if (shell) {
-          shell.querySelectorAll("canvas").forEach(function (c) {
-            try { var x = c.getContext("2d"); if (x) x.clearRect(0, 0, c.width, c.height); } catch (e) { }
-          });
-        }
-      } catch (e) { }
-    }
-    function logout() {
-      hardWipeMemory();
-      document.body.classList.add("locked");
-      location.replace(location.pathname.split("#")[0] + "?t=" + Date.now() + "#locked");
-    }
-
-    $("btnLogout").addEventListener("click", logout);
-    $("btnLogout2").addEventListener("click", logout);
-    $("closeMod").addEventListener("click", function () { $("modOverlay").classList.remove("open"); $("modDetail").classList.remove("open"); });
-    $("modOverlay").addEventListener("click", function () { this.classList.remove("open"); $("modDetail").classList.remove("open"); });
-    $("closeFv").addEventListener("click", function () { $("fileOverlay").classList.remove("open"); $("fileViewer").classList.remove("open"); });
-    $("fileOverlay").addEventListener("click", function () { this.classList.remove("open"); $("fileViewer").classList.remove("open"); });
-    $("repRefresh").addEventListener("click", loadReports);
-
-    /* ══════════ LOCK — SMART DIAGNOSTICS ══════════ */
     function unlockUI() {
       document.body.classList.remove("locked");
+
       var lock = $("lock");
       if (lock) lock.style.display = "none";
+
       var shell = document.getElementById("appShell");
-      if (shell) { shell.style.display = "block"; shell.removeAttribute("aria-hidden"); }
+      if (shell) {
+        shell.style.display = "block";
+        shell.removeAttribute("aria-hidden");
+      }
+
       LIVE.active = true;
-      pulse("FACE online · LIVE 4s Heart · " + EVENTS.length + " events", "pa");
+
+      pulse(
+        "FACE online · LIVE 4s Heart · " + EVENTS.length + " events",
+        "pa"
+      );
+
       loadEngine(true).then(function () {
         startHeartbeat();
         loadStrategy();
       });
     }
+
+
+    /* ══════════ TOKEN-ONLY LOGIN ══════════ */
+
     $("lockBtn").addEventListener("click", async function () {
-      const tok = $("ltok").value.trim(), pass = $("lpass").value.trim(), err = $("lockErr");
-      const saved = localStorage.getItem("fl200_pass");
-      if (saved && pass && saved !== pass) { err.textContent = "Galat password."; return; }
-      if (!saved && pass) localStorage.setItem("fl200_pass", pass);
-      if (!tok) { err.textContent = "FACE_TOKEN zaroori hai."; return; }
-      err.textContent = "Verifying token…";
+
+      const tok = $("ltok").value.trim();
+      const err = $("lockErr");
+
+      if (!tok) {
+        err.textContent = "FACE_TOKEN zaroori hai.";
+        return;
+      }
+
+      err.textContent = "Verifying FACE_TOKEN…";
+
       try {
+
         TOKEN = tok;
-        /* repo-level check pehle — exact error code nikaalo */
-        const r = await fetch("https://api.github.com/repos/" + C.heartRepo + "?_=" + Date.now(),
-          { headers: { Authorization: "Bearer " + TOKEN }, cache: "no-store" });
+
+        /* ─────────────────────────────────────────
+           1. REPO ACCESS CHECK
+           ───────────────────────────────────────── */
+
+        const r = await fetch(
+          "https://api.github.com/repos/" +
+          C.heartRepo +
+          "?_=" +
+          Date.now(),
+          {
+            headers: {
+              Authorization: "Bearer " + TOKEN,
+              Accept: "application/vnd.github+json"
+            },
+            cache: "no-store"
+          }
+        );
+
         if (r.status === 401) {
-          err.textContent = "✗ 401: Token galat/expired. Poora FACE_TOKEN copy karein (ghp_ / github_pat_). Spaces nahi.";
+          err.textContent =
+            "✗ 401: FACE_TOKEN galat ya expired hai.";
+          TOKEN = "";
           return;
         }
+
         if (r.status === 403) {
-          err.textContent = "✗ 403: Read permission nahi. Fine-grained PAT: FL-200-Private → Contents: Read. Classic: 'repo' scope.";
+          err.textContent =
+            "✗ 403: Token ke paas repo read permission nahi.";
+          TOKEN = "";
           return;
         }
+
         if (r.status === 404) {
-          err.textContent = "✗ 404: Repo '" + C.heartRepo + "' nahi mila — naam check karein, ya token us repo tak pahunch nahi raha.";
+          err.textContent =
+            "✗ 404: Private repo access nahi mil raha. " +
+            "Fine-grained token mein is repository ke " +
+            "Contents: Read permission check karein.";
+          TOKEN = "";
           return;
         }
+
         if (!r.ok) {
-          err.textContent = "✗ GitHub " + r.status + " — thodi der baad try karein.";
+          err.textContent =
+            "✗ GitHub " + r.status + " — dobara try karein.";
+          TOKEN = "";
           return;
         }
-        /* repo OK — ab contents listing (pukhta read access) */
-        const r2 = await fetch("https://api.github.com/repos/" + C.heartRepo + "/contents/?ref=" + encodeURIComponent(C.branch) + "&_=" + Date.now(),
-          { headers: { Authorization: "Bearer " + TOKEN, Accept: "application/vnd.github+json" }, cache: "no-store" });
+
+
+        /* ─────────────────────────────────────────
+           2. CONTENTS READ CHECK
+           ───────────────────────────────────────── */
+
+        const r2 = await fetch(
+          "https://api.github.com/repos/" +
+          C.heartRepo +
+          "/contents/?ref=" +
+          encodeURIComponent(C.branch) +
+          "&_=" +
+          Date.now(),
+          {
+            headers: {
+              Authorization: "Bearer " + TOKEN,
+              Accept: "application/vnd.github+json"
+            },
+            cache: "no-store"
+          }
+        );
+
         if (!r2.ok) {
-          err.textContent = "✗ Contents read fail (" + r2.status + ") — FACE_TOKEN ko private repo Contents: Read chahiye (Write ki zaroorat nahi).";
+          err.textContent =
+            "✗ Contents read fail (" +
+            r2.status +
+            "). FACE_TOKEN ko Contents: Read permission chahiye.";
+          TOKEN = "";
           return;
         }
-        sessionStorage.setItem("fl200_face_tok", tok); if (document.getElementById("rememberTok") && document.getElementById("rememberTok").checked) localStorage.setItem("hermes_tok", tok); else localStorage.removeItem("hermes_tok");
+
+
+        /* ─────────────────────────────────────────
+           3. TOKEN SESSION
+           ───────────────────────────────────────── */
+
+        sessionStorage.setItem("fl200_face_tok", tok);
+
+        if (
+          document.getElementById("rememberTok") &&
+          document.getElementById("rememberTok").checked
+        ) {
+          localStorage.setItem("hermes_tok", tok);
+        } else {
+          localStorage.removeItem("hermes_tok");
+        }
+
+
+        /* ─────────────────────────────────────────
+           4. UNLOCK
+           ───────────────────────────────────────── */
+
+        err.textContent = "";
+
         unlockUI();
-      } catch (e) { err.textContent = "Network fail: " + e.message; }
+
+      } catch (e) {
+
+        TOKEN = "";
+
+        err.textContent =
+          "Network fail: " + e.message;
+      }
     });
+
+
+    /* ══════════ WIPE SESSION ══════════ */
+
     $("btnWipe").addEventListener("click", function () {
+
       sessionStorage.removeItem("fl200_face_tok");
+
       localStorage.removeItem("hermes_tok");
-      localStorage.removeItem("fl200_pass");
       localStorage.removeItem("fl200_ctx");
       localStorage.removeItem("fl200_events");
+
       location.reload();
     });
-    $("ltok").addEventListener("keydown", e => { if (e.key === "Enter") $("lockBtn").click(); });
-    $("lpass").addEventListener("keydown", e => { if (e.key === "Enter") $("lockBtn").click(); });
+
+
+    /* ══════════ ENTER = LOGIN ══════════ */
+
+    $("ltok").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        $("lockBtn").click();
+      }
+    });
+
+
+    /* ══════════ INITIAL LOCK ══════════ */
+
     (function () {
+
       document.body.classList.add("locked");
+
       TOKEN = "";
       LIVE.active = false;
+
       var shell = document.getElementById("appShell");
-      if (shell) shell.style.display = "none";
+
+      if (shell) {
+        shell.style.display = "none";
+      }
+
       var lock = document.getElementById("lock");
-      if (lock) lock.style.display = "flex";
+
+      if (lock) {
+        lock.style.display = "flex";
+      }
+
     })();
+
   </script>
 </body>
 

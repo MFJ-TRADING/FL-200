@@ -1,53 +1,55 @@
 /* ============================================================
-   FL-200 FACE CONFIG v12.1
-   PUBLIC-SAFE / READ-ONLY / TOKEN-GATED
+   FL-200 FACE CONFIG v12.2
+   PUBLIC-SAFE
    ------------------------------------------------------------
-   ZERO:
-   - strategy constants
-   - trading secrets
-   - API keys
-   - GitHub tokens
-   - private engine logic
-   - writable permissions
+   FACE = public dashboard
+   HEART = private FL-200-Private repository
+
+   No strategy constants.
+   No GitHub token.
+   No passwords.
+   No trading secrets.
+
+   HEART ROOT:
+     engine.js
+     state.json
+     perf.json
+     ledger.jsonl
+     strategy.md
+     FL-200_MASTER.md
+     README.md
+     SECURITY.md
+     skills/
+     .github/workflows/
    ============================================================ */
 
 window.FL200_CONFIG = {
 
   /* ──────────────────────────────────────────────────────────
-     CORE
-  ────────────────────────────────────────────────────────── */
+     VERSION / REPOSITORIES
+     ────────────────────────────────────────────────────────── */
 
-  version: "12.1",
+  version: "12.2",
 
-  /* Public FACE repository */
   faceRepo: "MFJ-TRADING/FL-200",
 
-  /* Private HEART repository */
   heartRepo: "MFJ-TRADING/FL-200-Private",
 
   branch: "main",
 
 
   /* ──────────────────────────────────────────────────────────
-     PRIVATE HEART ENGINE
-  ────────────────────────────────────────────────────────── */
+     HEART FILES — EXACT PRIVATE REPO STRUCTURE
+     ────────────────────────────────────────────────────────── */
 
   enginePath: "engine.js",
 
-  /*
-   * 0 = always fetch fresh engine from GitHub.
-   * This is intentional because the private Heart engine
-   * can be updated without rebuilding the FACE dashboard.
-   */
-  engineTtlMs: 0,
-
-
-  /* ──────────────────────────────────────────────────────────
-     HEART STATE FILES
-  ────────────────────────────────────────────────────────── */
-
   statePaths: [
     "state.json"
+  ],
+
+  perfPaths: [
+    "perf.json"
   ],
 
   ledgerPaths: [
@@ -56,43 +58,43 @@ window.FL200_CONFIG = {
 
   strategyPaths: [
     "strategy.md",
-    "FL-200_MASTER.md",
-    "FL200_MASTER.md"
+    "FL-200_MASTER.md"
   ],
+
+  documentationPaths: [
+    "README.md",
+    "SECURITY.md"
+  ],
+
+  skillsDir: "skills/",
+
+  workflowDir: ".github/workflows/",
 
 
   /* ──────────────────────────────────────────────────────────
-     HEART REPORT / FILE SCANNER
-  ────────────────────────────────────────────────────────── */
-
-  scanDirs: [
-    "",
-    "reports",
-    "backtest_results",
-    "state"
-  ],
-
-
-  /* ──────────────────────────────────────────────────────────
-     SUPPORTED MARKET SYMBOLS
-  ────────────────────────────────────────────────────────── */
+     SYMBOLS
+     ────────────────────────────────────────────────────────── */
 
   symbols: {
 
     BTCUSDT: {
-      name: "Bitcoin"
+      name: "Bitcoin",
+      exchange: "Binance",
+      binance: "BTCUSDT"
     },
 
     ETHUSDT: {
-      name: "Ethereum"
+      name: "Ethereum",
+      exchange: "Binance",
+      binance: "ETHUSDT"
     }
 
   },
 
 
   /* ──────────────────────────────────────────────────────────
-     SUPPORTED TIMEFRAMES
-  ────────────────────────────────────────────────────────── */
+     TIMEFRAMES
+     ────────────────────────────────────────────────────────── */
 
   tfs: [
     "M30",
@@ -102,59 +104,49 @@ window.FL200_CONFIG = {
     "W1"
   ],
 
-
-  /* ──────────────────────────────────────────────────────────
-     BINANCE TIMEFRAME MAPPING
-  ────────────────────────────────────────────────────────── */
-
   binTf: {
 
     M30: "30m",
-    H1:  "1h",
-    H4:  "4h",
-    D1:  "1d",
-    W1:  "1w"
+
+    H1: "1h",
+
+    H4: "4h",
+
+    D1: "1d",
+
+    W1: "1w"
 
   },
 
 
   /* ──────────────────────────────────────────────────────────
-     LIVE HEART POLLING
-  ────────────────────────────────────────────────────────── */
+     LIVE POLLING
+     ────────────────────────────────────────────────────────── */
 
   pollMs: 4000,
 
-  /*
-   * State older than 30 seconds:
-   * dashboard should consider it stale.
-   */
   staleMs: 30000,
 
-  /*
-   * State older than 120 seconds:
-   * dashboard should consider Heart disconnected/dead.
-   */
   deadMs: 120000,
 
 
   /* ──────────────────────────────────────────────────────────
-     L2 ORDER BOOK
-  ────────────────────────────────────────────────────────── */
+     L2 DISPLAY CONFIG
+     NOTE:
+     Actual strategy logic remains PRIVATE in engine.js.
+     These values are only dashboard/feed requirements.
+     ────────────────────────────────────────────────────────── */
 
   l2: {
 
-    /*
-     * Binance depth request.
-     * Heart Engine itself uses top-N internally.
-     */
     depth: 20
 
   },
 
 
   /* ──────────────────────────────────────────────────────────
-     FACE TOKEN POLICY
-  ────────────────────────────────────────────────────────── */
+     TOKEN POLICY
+     ────────────────────────────────────────────────────────── */
 
   tokenPolicy: {
 
@@ -165,62 +157,177 @@ window.FL200_CONFIG = {
     scope: "read-only",
 
     github:
-      "Fine-grained PAT → FL-200-Private only → Contents: Read",
+      "Fine-grained PAT → only FL-200-Private → Contents: Read",
 
-    /*
-     * Token exists only during the current session unless
-     * user explicitly enables the dashboard remember option.
-     */
-    storage: "sessionStorage only on unlock; wiped on logout",
+    storage:
+      "sessionStorage only",
 
-    /*
-     * FACE must NEVER write to GitHub.
-     */
+    sessionKey:
+      "fl200_face_tok",
+
     neverWrite: true
 
   },
 
 
   /* ──────────────────────────────────────────────────────────
-     FL-200 TEN PILLARS
-  ────────────────────────────────────────────────────────── */
+     HERMES PILLARS
+     ────────────────────────────────────────────────────────── */
 
   pillarNames: {
 
     P1: "DATA",
+
     P2: "ANALYZE",
+
     P3: "SELF-IMP",
+
     P4: "PERSIST",
+
     P5: "COMPARE",
+
     P6: "LESSONS",
+
     P7: "RISK",
+
     P8: "SIMULATE",
+
     P9: "SECURITY",
+
     P10: "HEALTH"
 
   },
 
 
   /* ──────────────────────────────────────────────────────────
-     HEART FILE DESCRIPTIONS
-  ────────────────────────────────────────────────────────── */
+     HEART FILE DESCRIPTION
+     ────────────────────────────────────────────────────────── */
 
   reportDesc: {
 
     "state.json":
-      "Brain live state — grid + L2 + final decision per timeframe",
+      "Live Heart state — grid, L2, final signal and timeframe data",
 
     "perf.json":
-      "Model accuracy + system score",
+      "Model accuracy, performance and system metrics",
 
     "ledger.jsonl":
-      "Append-only hash-chained event ledger",
+      "Append-only hash-chained decision ledger",
 
     "engine.js":
-      "PRIVATE Heart strategy engine — token-gated read only",
+      "PRIVATE FL-200 strategy engine — token-gated read",
 
     "strategy.md":
-      "Strategy law — read-only"
+      "Strategy law and operating rules",
+
+    "FL-200_MASTER.md":
+      "Master FL-200 specification",
+
+    "README.md":
+      "Private Heart repository documentation",
+
+    "SECURITY.md":
+      "Security and repository policy",
+
+    "skills/":
+      "HERMES skills/modules",
+
+    ".github/workflows/":
+      "Private automation workflows"
+
+  },
+
+
+  /* ──────────────────────────────────────────────────────────
+     GITHUB API
+     ────────────────────────────────────────────────────────── */
+
+  github: {
+
+    api:
+      "https://api.github.com",
+
+    apiVersion:
+      "2022-11-28",
+
+    accept:
+      "application/vnd.github+json"
+
+  },
+
+
+  /* ──────────────────────────────────────────────────────────
+     BINANCE PUBLIC MARKET DATA
+     NO API KEY REQUIRED
+     ────────────────────────────────────────────────────────── */
+
+  market: {
+
+    base:
+      "https://data-api.binance.vision",
+
+    klines:
+      "/api/v3/klines",
+
+    depth:
+      "/api/v3/depth",
+
+    limit:
+      200
+
+  },
+
+
+  /* ──────────────────────────────────────────────────────────
+     UI / DASHBOARD
+     ────────────────────────────────────────────────────────── */
+
+  ui: {
+
+    defaultSymbol:
+      "BTCUSDT",
+
+    defaultTf:
+      "H1",
+
+    chartBars:
+      120,
+
+    maxLedgerRows:
+      100,
+
+    maxHistoryEvents:
+      500
+
+  },
+
+
+  /* ──────────────────────────────────────────────────────────
+     SYSTEM BEHAVIOUR
+     ────────────────────────────────────────────────────────── */
+
+  system: {
+
+    livePolling:
+      true,
+
+    noAutoExecution:
+      true,
+
+    signalOnly:
+      true,
+
+    noHeartWrite:
+      true,
+
+    noTokenWrite:
+      true,
+
+    noStrategyMutation:
+      true,
+
+    noDurableHeartCache:
+      true
 
   }
 

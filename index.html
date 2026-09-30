@@ -1422,7 +1422,7 @@
 
   <div class="lockwrap" id="lock">
     <div class="lockcard">
-      <div class="locklogo">FL-200</div>
+      <div class="locklogo">⚡ FL-200</div>
       <input id="ltok" type="password" placeholder="FACE_TOKEN — ghp_ or github_pat_ (READ only)">
       <button class="lockbtn" id="lockBtn">UNLOCK</button>
       <button class="lockbtn2" id="btnWipe">WIPE</button>
@@ -2442,7 +2442,6 @@
       });
     }
     $("lockBtn").addEventListener("click", async function () {
-      const tok = $("ltok").value.trim(), pass = $("lpass").value.trim(), err = $("lockErr");
       if (!tok) { err.textContent = "FACE_TOKEN zaroori hai."; return; }
       err.textContent = "Verifying token…";
       try {

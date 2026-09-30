@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FL-200 · FACE v11.1</title>
+<title>FL-200 · FACE v11.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#020617;--panel:rgba(8,12,24,.93);--border:rgba(0,243,255,.2);--cyan:#00f3ff;--green:#00ff66;--red:#ff0055;--amber:#ffaa00;--purple:#bd00ff;--text:#e2e8f0;--muted:#7d8ca3}
@@ -108,6 +108,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 .in{font-size:.75rem;color:var(--muted);margin-top:4px}
 .sysacc{text-align:center;padding:8px 0}
 .sysacc .big{font-family:'Orbitron';font-size:2.4rem;font-weight:900;color:var(--green)}
+.sysacc .big.low{color:var(--amber)}
 .sysacc .sub{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
 .ind-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .ind{background:rgba(10,16,32,.7);border:1px solid var(--border);border-radius:4px;padding:9px}
@@ -158,8 +159,8 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="lockwrap" id="lock">
   <div class="lockcard">
     <div class="locklogo">⚡ FL-200</div>
-    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.1 (KRONOS + AGENTS)</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">REAL-TIME engine (token-gated) · formula public mein NAHI hai</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:6px">FACE · HEART · BRAIN — v11.2</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:16px">REAL-TIME engine (token-gated) · honesty labels included</div>
     <input id="ltok" type="password" placeholder="FACE_TOKEN (read-only PAT)">
     <input id="lpass" type="password" placeholder="Password">
     <button class="lockbtn" id="lockBtn">UNLOCK</button>
@@ -181,7 +182,7 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <span class="tier-badge">REALTIME+KRONOS</span>
 <span class="runtag" id="runTag">run: —</span>
 <span class="syncin" id="syncIn">sync —</span>
-<div class="status"><div class="dot"></div> v11.1</div>
+<div class="status"><div class="dot"></div> v11.2</div>
 <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
 <button class="nav-btn rd" id="btnLogout" style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
 </div>
@@ -323,7 +324,6 @@ canvas{display:block;width:100%;height:280px;background:#060913}
 <div class="guide">
 <b>Formula kahan hai?</b> Sirf <code>engine.js</code> (private heart repo) mein. FACE usay <b>aapke FACE_TOKEN</b> se HTTPS par load karta hai aur <b>aapke browser mein</b> compute karta hai. Public repo mein zero formula, zero keys.<br>
 <b>KRONOS?</b> Foundation model BRAIN (Colab GPU) par chalta hai; prediction state.json se aati hai, accuracy perf.json mein measured.<br>
-<b>ANALYST DESK?</b> TradingAgents (local-LLM) — P6 lessons desk, advisory only.<br>
 <b>Bina token stranger ko kya dikhega?</b> Sirf lock screen.
 </div></div>
 </div>
@@ -377,15 +377,16 @@ Conflict order: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div></div>
 
 <script src="config.js"></script>
 <script>
-console.log("FL-200 v11.1 FACE — REALTIME + KRONOS + AGENTS status · formula private heart se");
+console.log("FL-200 v11.2 FACE — honesty labels · imb rounding · brain-stale warning");
 const $=id=>document.getElementById(id);
 const C=window.FL200_CONFIG;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d)=>{d=d==null?2:d;return (v==null||isNaN(v))?"—":(+v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});};
+const F1=v=>(v==null||isNaN(v))?"—":(+v).toFixed(1);
 
 let STATE=null,TOKEN=localStorage.getItem("hermes_tok")||"",CUR_SYM="BTCUSDT",CUR_TF="H1";
 let FOUND_STATE_PATH=null,FOUND_LEDGER_PATH=null,FILES=new Map();
-let HB=0,lastLedgerSeq=null;
+let HB=0,lastLedgerSeq=null,brainWarned=false;
 const ENGINE={layer:null,eff:null};
 let ENGINE_OBJ=null,ENGINE_TS=0;
 const LIVE={pollMs:C.pollMs,staleMs:C.staleMs,deadMs:C.deadMs,timer:null,busy:false,failures:0,lastFetch:0};
@@ -504,9 +505,9 @@ function renderEngine(){
   const actKey={REALTIME:"rt",BRAIN:"bot",FALLBACK:"mx",NONE:""}[ENGINE.layer]||"";
   const rows=[
     ["L0 · REALTIME (browser+engine.js)",rtOk?"✓ LIVE · "+rtAgeText():(ENGINE_OBJ?"⏳ connecting feed…":"— engine not loaded"),
-     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"% · imb "+(RT.data.l2?RT.data.l2.imb:"—")+"%"):"live candles + private engine se 4s compute"],
+     rtOk?(CUR_TF+" "+RT.data.final.signal+" · conf "+RT.data.final.confidence+"% · imb "+F1(RT.data.l2?RT.data.l2.imb:null)+"%"):"live candles + private engine se 4s compute"],
     ["L1 · BRAIN state (Colab)",(STATE&&(L.status==="LIVE"||L.status==="SYNCING"))?"✓ "+stateAgeText():"✗ NO/STALE",
-     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · "+bt.final.confidence+"%"):"colab_LLM_brain.py publish karega"],
+     bt&&bt.final?(CUR_TF+" "+bt.final.signal+" · "+bt.final.confidence+"%"):"colab_LLM_brain.py run karein"],
     ["L2 · FALLBACK (candle-only)",ENGINE_OBJ?"✓ ready":"—",ENGINE_OBJ?"realtime+brain dono band ho to":"engine.js load FAIL — ⚙ reload"],
     ["L3 · LOCAL LLM","RESERVED",(STATE&&STATE.agents_status)?("analyst desk: "+STATE.agents_status.tradingagents+" · LLM "+STATE.agents_status.llm):"future brain plug"]];
   $("engGrid").innerHTML=rows.map(function(r,i){
@@ -515,6 +516,12 @@ function renderEngine(){
   $("engBadge").textContent="ENGINE: "+(ENGINE.layer||"…");
   $("engBadge").style.color=ENGINE.layer==="REALTIME"?"var(--green)":ENGINE.layer==="BRAIN"?"var(--cyan)":ENGINE.layer==="FALLBACK"?"var(--amber)":"var(--red)";
   $("engWhy").textContent=ENGINE.eff?("active: "+ENGINE.eff.src+" · "+(ENGINE.eff.final?ENGINE.eff.final.signal:"")):"cascade pending";
+  /* brain-stale auto warning (30 min se purana) */
+  if(STATE&&stateAgeMs()>30*60*1000&&!brainWarned){
+    brainWarned=true;
+    pulse("⚠ BRAIN "+stateAgeText()+" stale — Colab (brain v7.1) dobara run karein, warna Kronos/perf purana rahega","pa");
+  }
+  if(STATE&&stateAgeMs()<=30*60*1000)brainWarned=false;
 }
 
 /* ============ BRAIN SYNC (5s) ============ */
@@ -632,7 +639,7 @@ function renderSignalDesk(){
   if(l2){
     const cells=[["BEST BID",fmt(l2.bid,2),"g"],["BEST ASK",fmt(l2.ask,2),"r"],
       ["SPREAD",fmt(l2.spread,2),"y"],["MID",fmt(l2.mid!=null?l2.mid:SN.price,2),""],
-      ["IMBALANCE",(l2.imb>=0?"+":"")+l2.imb+"%",l2.imb>=0?"g":"r"],
+      ["IMBALANCE",F1(l2.imb)+"%",l2.imb>=0?"g":"r"],
       ["WALLS","B"+(l2.walls_b?l2.walls_b.length:0)+" / A"+(l2.walls_a?l2.walls_a.length:0),""]];
     $("l2Row").innerHTML=cells.map(c=>'<div class="mbox"><div class="mlabel">'+c[0]+'</div><div class="mval '+(c[2]||"")+'">'+c[1]+"</div></div>").join("");
   }else $("l2Row").innerHTML='<div class="mbox"><div class="mlabel">L2 BOOK</div><div class="mval na">realtime feed connecting…</div></div>';
@@ -745,20 +752,28 @@ function renderRules(){
 function renderImp(){
   const g=$("impGrid");const M=(STATE&&STATE.models)||null;
   if(M&&Object.keys(M).length){
-    setTxt("impMeta","brain perf ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0"),false);
+    /* honesty: total resolved samples gin kar warning nishan karein */
+    let totalN=0;Object.keys(M).forEach(function(k){if(M[k].n)totalN+=M[k].n;});
+    const ensembleN=(M.ensemble&&M.ensemble.n)?M.ensemble.n:totalN;
+    setTxt("impMeta","brain perf ✓ · open preds "+((STATE.perf_open!=null)?STATE.perf_open:"0")
+      +(ensembleN<50?" · ⚠ SMALL SAMPLE (<50) — 100% jaisi values noise hain":""),false);
     g.innerHTML=Object.keys(M).map(function(k){
       const m=M[k],d=m.delta_pct;
       const arrow=d==null||d===0?"":d>0?' <span style="color:var(--green);font-size:.85rem">▲ +'+d+"%</span>":' <span style="color:var(--red);font-size:.85rem">▼ '+d+"%</span>";
       const w=Math.max(4,Math.min(100,m.acc||0));
-      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div><div class="in">'+(m.n||0)+" resolved</div></div>";
+      const warn=(m.acc!=null&&m.acc>=95&&m.n<50)?' <span style="color:var(--amber);font-size:.72rem">⚠ n='+m.n+'</span>':"";
+      return '<div class="imp"><div class="ih"><b>'+k.toUpperCase()+'</b><span><span class="ia">'+(m.acc!=null?m.acc+"%":"—")+"</span>"+arrow+warn+'</span></div><div class="wbar"><div class="wfill" style="width:'+w+'%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div><div class="in">'+(m.n||0)+" resolved"+(m.acc!=null&&m.acc>=95&&m.n<50?" · noise-risk":"")+"</div></div>";
     }).join("");
   }else{
     setTxt("impMeta","brain perf pending",false);
     g.innerHTML='<div class="imp"><div class="ih"><b>PERF.JSON</b><span class="ia">—</span></div><div class="in">colab_LLM_brain.py publish karega</div></div>';
   }
   const sa=(STATE&&STATE.system_accuracy)||null;
+  const saN=(STATE&&STATE.models&&STATE.models.ensemble)?STATE.models.ensemble.n:null;
+  const smallSample=(saN!=null&&saN<50);
   $("sysAcc").innerHTML=sa&&sa.overall!=null
-    ?'<div class="big">'+sa.overall+'%</div><div class="sub">'+(sa.delta_pct!=null?((sa.delta_pct>=0?"▲ +":"▼ ")+sa.delta_pct+"% vs last run"):"baseline")+"<br>ensemble resolved accuracy</div>"
+    ?'<div class="big'+(smallSample?" low":"")+'">'+sa.overall+'%</div><div class="sub">'+(sa.delta_pct!=null?((sa.delta_pct>=0?"▲ +":"▼ ")+sa.delta_pct+"% vs last run"):"baseline")+"<br>ensemble resolved accuracy"
+      +(smallSample?"<br><span style='color:var(--amber)'>⚠ n="+saN+" — small sample, abhi trust na karein</span>":"<br>n="+saN+" resolved")+"</div>"
     :'<div class="big" style="color:var(--muted)">—</div><div class="sub">brain ke perf.json ke baad</div>';
   if(STATE&&STATE.models)$("selfBox").textContent=JSON.stringify({models:STATE.models,system_accuracy:STATE.system_accuracy,audit:STATE.audit||null},null,2);
   else $("selfBox").textContent="Brain perf pending.";
@@ -948,11 +963,11 @@ document.querySelectorAll(".tf-btn").forEach(b=>b.addEventListener("click",funct
  $("repRefresh").addEventListener("click",loadReports);
  $("openCfg").addEventListener("click",function(){
   $("cfgInfo").textContent=
-    "FACE  : "+C.faceRepo+" (public · yeh UI)\nHEART : "+C.heartRepo+" (private · engine.js + records)\n"+
-    "BRAIN : colab_LLM_brain.py v7.1 (Colab GPU · KRONOS + AGENTS)\n"+
-    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · strategy constants ANDAR (private)"):"NOT LOADED")+"\n"+
-    "MODES : REALTIME 4s (browser) → BRAIN 3m → FALLBACK\n"+
-    "SECURE: formula public repo mein NAHI · token-gated · HTTPS";
+    "FACE  : "+C.faceRepo+" (public · yeh UI)\nHEART : "+C.heartRepo+" (private · engine.js v11.1 + records)\n"+
+    "BRAIN : colab_LLM_brain.py v7.1 (Colab GPU · KRONOS)\n"+
+    "ENGINE: "+(ENGINE_OBJ?("v"+ENGINE_OBJ.version+" · constants private"):"NOT LOADED")+"\n"+
+    "MODES : REALTIME 4s → BRAIN 3m → FALLBACK\n"+
+    "SECURE: formula public repo mein NAHI";
   $("cfgOverlay").classList.add("open");$("cfgPanel").classList.add("open");
 });
  $("closeCfg").addEventListener("click",function(){$("cfgOverlay").classList.remove("open");$("cfgPanel").classList.remove("open");});

@@ -1,1343 +1,6623 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>FL-200 · FACE v12.1</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-    rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>FL-200 HERMES — Institutional Trading Terminal</title>
+
+  <!-- =========================================================
+       TAILWIND
+       ========================================================= -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-        display: ["Orbitron", "sans-serif"]
-      },
-      colors: {
-        terminal: {
-          950: "#02040a",
-          900: "#070b14",
-          800: "#0c1220",
-          700: "#121a2b"
-        },
-        neon: {
-          cyan: "#22d3ee",
-          green: "#34d399",
-          red: "#fb7185",
-          amber: "#fbbf24",
-          purple: "#a78bfa"
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+            display: ["Orbitron", "sans-serif"]
+          },
+
+          colors: {
+            terminal: {
+              950: "#02040a",
+              900: "#070b14",
+              800: "#0c1220",
+              700: "#121a2b"
+            },
+
+            neon: {
+              cyan: "#22d3ee",
+              green: "#34d399",
+              red: "#fb7185",
+              amber: "#fbbf24",
+              purple: "#a78bfa"
+            }
+          },
+
+          boxShadow: {
+            terminal:
+              "0 18px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03)"
+          }
         }
       }
+    };
+  </script>
+
+  <!-- =========================================================
+       FONTS
+       ========================================================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- =========================================================
+       MINIMAL GLOBAL HELPERS
+       Tailwind remains the main styling system.
+       ========================================================= -->
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #02040a;
     }
-  }
-};
-</script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+    body {
+      font-family: Inter, sans-serif;
+      color: #e5e7eb;
+    }
 
-<style>
-/* Tailwind-only UI helpers — old dashboard CSS is NOT used */
-html, body {
-  margin: 0;
-  min-height: 100%;
-  background: #02040a;
-}
-body {
-  font-family: Inter, sans-serif;
-  color: #e5e7eb;
-}
-button {
-  font-family: inherit;
-}
-canvas {
-  display: block;
-  width: 100%;
-}
-.section {
-  display: none;
-}
-.section.active {
-  display: block;
-}
-#appShell {
-  min-height: 100vh;
-}
-</style>
+    canvas {
+      display: block;
+      width: 100%;
+    }
+
+    ::selection {
+      background: rgba(34, 211, 238, .22);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #02040a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .glass {
+      background: rgba(10, 16, 29, .78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .scanline {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scanline::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.017) 0px,
+          rgba(255,255,255,.017) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      opacity: .28;
+    }
+
+    .pulse-dot {
+      animation: pulseDot 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: .45; transform: scale(.92); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+
+    .glow-cyan {
+      box-shadow:
+        0 0 0 1px rgba(34,211,238,.08),
+        0 0 28px rgba(34,211,238,.06);
+    }
+
+    .glow-green {
+      box-shadow:
+        0 0 0 1px rgba(52,211,153,.08),
+        0 0 28px rgba(52,211,153,.06);
+    }
+
+    .glow-red {
+      box-shadow:
+        0 0 0 1px rgba(251,113,133,.08),
+        0 0 28px rgba(251,113,133,.06);
+    }
+  </style>
 </head>
 
-<body class="locked">
- 
-
-  <div id="appShell"
-  class="min-h-screen bg-[#02040a] text-slate-200 font-sans selection:bg-cyan-400/20 selection:text-cyan-200">
+<body class="bg-terminal-950 text-slate-200 antialiased">
 
   <!-- =========================================================
-       TOP NAVIGATION
-  ========================================================== -->
-  <nav class="sticky top-0 z-50 border-b border-white/[0.06]
-              bg-[#02040a]/90 backdrop-blur-2xl">
+       LOCK SCREEN — TOKEN ONLY
+       ========================================================= -->
+  <div
+    id="lock"
+    class="fixed inset-0 z-[100] flex min-h-screen items-center justify-center bg-[#02040a] px-5"
+  >
 
-    <div class="mx-auto flex min-h-[68px] max-w-[1800px] items-center gap-4 px-4 lg:px-6">
+    <div class="absolute inset-0 grid-bg opacity-70"></div>
 
-      <!-- BRAND -->
-      <div class="flex min-w-fit items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl
-                    border border-cyan-400/20 bg-cyan-400/[0.07]
-                    shadow-[0_0_30px_rgba(34,211,238,.08)]">
-          <span class="text-xl">⚡</span>
-        </div>
+    <div
+      class="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/[0.04] blur-3xl"
+    ></div>
 
-        <div>
-          <div class="font-display text-sm font-bold tracking-[0.18em] text-white">
+    <div class="relative w-full max-w-md">
+
+      <div
+        class="glass rounded-3xl border border-white/10 p-7 shadow-terminal"
+      >
+
+        <!-- Brand -->
+        <div class="mb-8 text-center">
+
+          <div
+            class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/[0.06] shadow-lg shadow-cyan-400/10"
+          >
+            <span class="font-display text-xl font-bold tracking-widest text-cyan-300">
+              FL
+            </span>
+          </div>
+
+          <div class="font-display text-3xl font-bold tracking-[0.18em] text-white">
             FL-200
           </div>
-          <div class="font-mono text-[9px] tracking-[0.28em] text-cyan-400/70">
-            HERMES COMMAND
+
+          <div class="mt-2 text-sm font-medium tracking-[0.35em] text-cyan-300/80">
+            HERMES TERMINAL
           </div>
-        </div>
-      </div>
 
-      <!-- NAV -->
-      <div class="hidden flex-1 items-center justify-center gap-1 xl:flex">
+          <p class="mt-4 text-sm leading-6 text-slate-400">
+            Private Heart access. Read-only GitHub authentication.
+          </p>
 
-        <button data-s="dash"
-          class="nav-btn active rounded-lg border border-cyan-400/10
-                 bg-cyan-400/[0.08] px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-cyan-300 transition hover:bg-cyan-400/[0.13]">
-          DASHBOARD
-        </button>
-
-        <button data-s="scores"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          📊 SCOREBOARD
-        </button>
-
-        <button data-s="strategy"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          STRATEGY
-        </button>
-
-        <button data-s="rules"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          RULES
-        </button>
-
-        <button data-s="reports"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          REPORTS
-        </button>
-
-        <button data-s="pillars"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          PILLARS
-        </button>
-
-        <button data-s="account"
-          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
-                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
-                 hover:text-slate-200">
-          ACCOUNT
-        </button>
-      </div>
-
-      <!-- STATUS -->
-      <div class="ml-auto flex items-center gap-2">
-
-        <span class="hidden rounded-full border border-emerald-400/20
-                     bg-emerald-400/[0.07] px-2.5 py-1 font-mono text-[9px]
-                     font-semibold tracking-wider text-emerald-300 sm:inline-flex">
-          LIVE 4s
-        </span>
-
-        <span id="syncIn"
-          class="hidden font-mono text-[10px] text-slate-600 md:inline">
-          sync —
-        </span>
-
-        <div class="hidden items-center gap-2 rounded-lg border
-                    border-white/[0.06] bg-white/[0.025] px-2.5 py-1.5 md:flex">
-          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400
-                       shadow-[0_0_10px_rgba(52,211,153,.8)]"></span>
-          <span class="font-mono text-[9px] text-slate-500">v12.1</span>
         </div>
 
-        <button id="openCfg"
-          class="rounded-lg border border-white/[0.08] bg-white/[0.025]
-                 px-3 py-2 text-sm text-slate-400 transition
-                 hover:border-cyan-400/20 hover:bg-cyan-400/[0.06]
-                 hover:text-cyan-300">
-          ⚙
+        <!-- Token -->
+        <div>
+
+          <label
+            for="ltok"
+            class="mb-2 block text-[11px] font-bold uppercase tracking-[0.22em] text-slate-400"
+          >
+            FACE_TOKEN
+          </label>
+
+          <div class="relative">
+
+            <input
+              id="ltok"
+              type="password"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="github_pat_..."
+              class="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 pr-12 font-mono text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/10"
+            />
+
+            <button
+              id="toggleToken"
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-xs text-slate-500 transition hover:text-white"
+              title="Show / hide token"
+            >
+              SHOW
+            </button>
+
+          </div>
+
+          <div class="mt-3 flex items-start gap-2 text-xs leading-5 text-slate-500">
+            <span class="mt-0.5 text-cyan-300">●</span>
+            <span>
+              Fine-grained PAT required:
+              <span class="font-medium text-slate-400">FL-200-Private</span>
+              → Contents: Read
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Login -->
+        <button
+          id="lockBtn"
+          type="button"
+          class="mt-6 w-full rounded-2xl border border-cyan-300/20 bg-cyan-400/[0.08] px-4 py-4 text-sm font-bold tracking-[0.12em] text-cyan-200 transition hover:bg-cyan-400/[0.14] hover:text-white active:scale-[.99]"
+        >
+          UNLOCK HERMES
         </button>
 
-        <button id="btnLogout"
-          class="rounded-lg border border-rose-400/20 bg-rose-400/[0.04]
-                 px-3 py-2 text-[9px] font-bold tracking-wider text-rose-400
-                 transition hover:bg-rose-400/[0.1]">
-          EXIT
-        </button>
+        <div
+          id="lockErr"
+          class="mt-4 min-h-[22px] text-center text-xs font-medium text-rose-300"
+        ></div>
+
+        <div class="mt-7 border-t border-white/5 pt-5 text-center text-[11px] uppercase tracking-[0.18em] text-slate-600">
+          FACE → PRIVATE HEART → READ ONLY
+        </div>
+
       </div>
-    </div>
 
-    <!-- MOBILE NAV -->
-    <div class="flex gap-1 overflow-x-auto border-t border-white/[0.04]
-                px-3 py-2 xl:hidden">
-      <button data-s="dash" class="nav-btn active whitespace-nowrap rounded-lg
-        bg-cyan-400/[0.08] px-3 py-1.5 text-[9px] text-cyan-300">
-        DASH
-      </button>
-      <button data-s="scores" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">SCORE</button>
-      <button data-s="strategy" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">STRATEGY</button>
-      <button data-s="rules" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">RULES</button>
-      <button data-s="reports" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">REPORTS</button>
-      <button data-s="pillars" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">PILLARS</button>
-      <button data-s="account" class="nav-btn whitespace-nowrap rounded-lg
-        px-3 py-1.5 text-[9px] text-slate-500">ACCOUNT</button>
-    </div>
-  </nav>
-
-
-  <!-- =========================================================
-       MARKET CONTROL BAR
-  ========================================================== -->
-  <div class="border-b border-white/[0.05] bg-[#070b14]/80">
-
-    <div class="mx-auto flex max-w-[1800px] flex-wrap items-center gap-2 px-4 py-2.5 lg:px-6">
-
-      <span class="font-display text-[9px] tracking-[0.15em] text-slate-600">
-        SYMBOL
-      </span>
-
-      <button data-sym="BTCUSDT"
-        class="sym-btn active rounded-lg border border-cyan-400/20
-               bg-cyan-400/[0.08] px-3 py-1.5 font-mono text-[10px]
-               font-semibold text-cyan-300">
-        BTCUSDT
-      </button>
-
-      <button data-sym="ETHUSDT"
-        class="sym-btn rounded-lg border border-white/[0.06]
-               bg-white/[0.02] px-3 py-1.5 font-mono text-[10px]
-               text-slate-500 hover:text-slate-200">
-        ETHUSDT
-      </button>
-
-      <span id="mktBadge"
-        class="rounded-full border border-amber-400/20 bg-amber-400/[0.05]
-               px-2.5 py-1 font-mono text-[9px] text-amber-300">
-        CONNECTING…
-      </span>
-
-      <span class="mx-1 hidden h-5 w-px bg-white/[0.07] sm:block"></span>
-
-      <span class="font-display text-[9px] tracking-[0.15em] text-slate-600">
-        TF
-      </span>
-
-      <button data-tf="M30"
-        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
-               text-slate-500 hover:bg-white/[0.04]">
-        M30
-      </button>
-
-      <button data-tf="H1"
-        class="tf-btn active rounded-lg bg-cyan-400/[0.08] px-2.5 py-1.5
-               font-mono text-[10px] font-semibold text-cyan-300">
-        H1
-      </button>
-
-      <button data-tf="H4"
-        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
-               text-slate-500 hover:bg-white/[0.04]">
-        H4
-      </button>
-
-      <button data-tf="D1"
-        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
-               text-slate-500 hover:bg-white/[0.04]">
-        D1
-      </button>
-
-      <button data-tf="W1"
-        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
-               text-slate-500 hover:bg-white/[0.04]">
-        W1
-      </button>
-
-      <span id="engBadge"
-        class="ml-auto font-mono text-[9px] tracking-wider text-slate-600">
-        ENGINE: …
-      </span>
-
-      <button id="btnSync"
-        class="rounded-lg border border-cyan-400/10 bg-cyan-400/[0.04]
-               px-3 py-1.5 font-mono text-[9px] font-semibold text-cyan-300
-               hover:bg-cyan-400/[0.08]">
-        ⟳ SYNC
-      </button>
-
-      <span id="sysStatus"
-        class="hidden font-mono text-[9px] text-slate-600 sm:inline">
-        —
-      </span>
     </div>
   </div>
 
 
   <!-- =========================================================
-       TICKER
-  ========================================================== -->
-  <div class="border-b border-white/[0.04] bg-black/30">
-    <div id="ticker"
-      class="mx-auto max-w-[1800px] truncate px-4 py-2 font-mono text-[9px]
-             tracking-wide text-cyan-400/60 lg:px-6">
-      FL-200 INITIALIZING…
-    </div>
-  </div>
-
-
-  <!-- =========================================================
-       MAIN
-  ========================================================== -->
-  <main class="mx-auto max-w-[1800px] px-3 py-4 sm:px-4 lg:px-6">
-
+       APP SHELL
+       ========================================================= -->
+  <div
+    id="appShell"
+    aria-hidden="true"
+    style="display:none"
+    class="min-h-screen"
+  >
 
     <!-- =======================================================
-         DASHBOARD
-    ======================================================== -->
-    <div class="section active space-y-4" id="dash">
+         TOP NAV
+         ======================================================= -->
+    <header class="sticky top-0 z-40 border-b border-white/[0.07] bg-[#03060d]/90 backdrop-blur-xl">
 
+      <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
 
-      <!-- LIVE CHART + SIGNAL -->
-      <div class="grid gap-4 xl:grid-cols-[1.55fr_1fr]">
+        <div class="flex min-h-[74px] items-center justify-between gap-4">
 
+          <!-- Brand -->
+          <button
+            data-s="dash"
+            class="group flex min-w-0 items-center gap-3 text-left"
+          >
 
-        <!-- CHART -->
-        <section class="overflow-hidden rounded-2xl border border-white/[0.06]
-                        bg-[#070b14]/90 shadow-2xl">
-
-          <div class="flex items-center justify-between border-b
-                      border-white/[0.05] px-4 py-3">
-
-            <div class="flex items-center gap-2">
-              <span class="flex h-7 w-7 items-center justify-center
-                           rounded-lg bg-cyan-400/[0.07]">
-                🌊
-              </span>
-              <div>
-                <div class="font-display text-[10px] font-semibold
-                            tracking-wider text-slate-200">
-                  CONTINUOUS MARKET
-                </div>
-                <div class="font-mono text-[8px] text-slate-600">
-                  TV-STYLE RUNNING GRID
-                </div>
-              </div>
-            </div>
-
-            <span id="gridStatus"
-              class="rounded-full bg-white/[0.03] px-2.5 py-1
-                     font-mono text-[8px] text-slate-500">
-              —
-            </span>
-          </div>
-
-
-          <div class="px-4 pt-3">
-            <div class="flex items-center justify-between">
-              <span id="gridSrc"
-                class="font-mono text-[9px] font-semibold text-cyan-400">
-                —
-              </span>
-
-              <span id="gridMeta"
-                class="font-mono text-[8px] text-slate-600">
-                —
-              </span>
-            </div>
-          </div>
-
-
-          <div class="relative mx-3 mt-2 overflow-hidden rounded-xl
-                      border border-white/[0.04] bg-black/30">
-
-            <canvas id="cvGrid"
-              class="h-[340px] w-full sm:h-[420px] lg:h-[480px]">
-            </canvas>
-          </div>
-
-
-          <div class="m-4 rounded-xl border border-cyan-400/[0.08]
-                      bg-cyan-400/[0.025] p-3">
-
-            <div class="mb-2 flex items-center gap-2">
-              <span class="text-xs">📖</span>
-              <span class="font-display text-[9px] font-semibold
-                           tracking-wider text-cyan-300">
-                CHART INTELLIGENCE
+            <div
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/[0.05]"
+            >
+              <span class="font-display text-xs font-bold tracking-wider text-cyan-300">
+                FL
               </span>
             </div>
 
-            <div class="text-[11px] leading-5 text-slate-500">
-              <b class="text-slate-300">Candles har 4 sec update</b> —
-              TradingView style running chart.
-              <b class="text-slate-300">Green / Red lines</b> =
-              current grid levels.
-              <b class="text-slate-300">★ Expected range</b> =
-              engine ka projected range.
-            </div>
-          </div>
-
-        </section>
-
-
-        <!-- HERMES DECISION CONSOLE -->
-        <section id="sdPanel"
-          class="overflow-hidden rounded-2xl border border-white/[0.06]
-                 bg-[#070b14]/90 shadow-2xl">
-
-          <div class="flex items-center justify-between border-b
-                      border-white/[0.05] px-4 py-3">
-
-            <div>
-              <div class="font-display text-[10px] font-semibold
-                          tracking-wider text-slate-200">
-                HERMES DECISION CONSOLE
+            <div class="min-w-0">
+              <div class="font-display text-sm font-bold tracking-[0.16em] text-white">
+                FL-200
               </div>
 
-              <div class="mt-1 font-mono text-[8px] text-slate-600">
-                <span id="recSym">—</span>
-                ·
-                <span id="recTF">H1</span>
+              <div class="truncate text-[10px] font-semibold uppercase tracking-[0.28em] text-cyan-300/70">
+                HERMES / FACE
               </div>
             </div>
 
-            <span id="sdSrc"
-              class="rounded-full bg-emerald-400/[0.06] px-2.5 py-1
-                     font-mono text-[8px] text-emerald-300">
-              —
-            </span>
-          </div>
-
-
-          <!-- DECISION -->
-          <div id="finStrip"
-            class="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]">
-
-            <div>
-              <div class="font-display text-[8px] tracking-wider text-slate-600">
-                LIVE EVALUATION · 4s
-              </div>
-
-              <div id="recNote"
-                class="mt-1 text-xs leading-5 text-slate-400">
-                —
-              </div>
-
-              <div id="recBy"
-                class="mt-1 font-mono text-[8px] text-slate-600">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.06]
-                        bg-black/20 px-4 py-3 text-center">
-              <div class="font-display text-[8px] text-slate-600">
-                DECISION
-              </div>
-              <div id="recAction"
-                class="mt-1 font-display text-xl font-bold text-white">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.06]
-                        bg-black/20 px-4 py-3 text-center">
-              <div class="font-display text-[8px] text-slate-600">
-                PRICE
-              </div>
-              <div id="recEntry"
-                class="mt-1 font-mono text-sm font-bold text-cyan-300">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.06]
-                        bg-black/20 px-4 py-3 text-center">
-              <div class="font-display text-[8px] text-slate-600">
-                L2 FORCE
-              </div>
-              <div id="l2ImbMini"
-                class="mt-1 font-mono text-sm font-bold text-slate-200">
-                —
-              </div>
-            </div>
-          </div>
-
-
-          <!-- ACTIVE TRADE -->
-          <div id="actBox"
-            class="mx-4 rounded-xl border border-white/[0.06]
-                   bg-black/20 p-4">
-
-            <div class="flex items-center justify-between gap-2">
-              <span id="actSig"
-                class="font-display text-[9px] font-semibold text-slate-400">
-                — KOI ACTIVE TRADE NAHI
-              </span>
-
-              <span id="actTime"
-                class="rounded-full border border-white/[0.07]
-                       px-2 py-1 font-mono text-[8px] text-slate-500">
-                —
-              </span>
-            </div>
-
-            <div id="actNote"
-              class="mt-3 text-[11px] leading-5 text-slate-500">
-              System har 4 sec check karta hai.
-            </div>
-
-            <div id="actRow"
-              class="mt-4 hidden grid grid-cols-2 gap-2 sm:grid-cols-4">
-
-              <div class="rounded-lg bg-white/[0.025] p-3">
-                <div class="font-display text-[8px] text-slate-600">ENTRY</div>
-                <div id="actEntry"
-                  class="mt-1 font-mono text-xs text-slate-200">—</div>
-              </div>
-
-              <div class="rounded-lg bg-emerald-400/[0.04] p-3">
-                <div class="font-display text-[8px] text-slate-600">TP</div>
-                <div id="actTp"
-                  class="mt-1 font-mono text-xs text-emerald-300">—</div>
-              </div>
-
-              <div class="rounded-lg bg-rose-400/[0.04] p-3">
-                <div class="font-display text-[8px] text-slate-600">SL</div>
-                <div id="actSl"
-                  class="mt-1 font-mono text-xs text-rose-300">—</div>
-              </div>
-
-              <div class="rounded-lg bg-amber-400/[0.04] p-3">
-                <div class="font-display text-[8px] text-slate-600">STATUS</div>
-                <div id="actStat"
-                  class="mt-1 font-mono text-xs text-amber-300">OPEN</div>
-              </div>
-
-            </div>
-          </div>
-
-
-          <!-- ENGINE DATA -->
-          <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3">
-
-            <div id="tvRow"
-              class="rounded-xl border border-white/[0.05] bg-black/20 p-3">
-            </div>
-
-            <div id="glvRow"
-              class="rounded-xl border border-white/[0.05] bg-black/20 p-3">
-            </div>
-
-            <div id="l2Row"
-              class="rounded-xl border border-cyan-400/[0.08]
-                     bg-cyan-400/[0.02] p-3">
-            </div>
-
-          </div>
-
-
-          <div class="flex flex-wrap items-center gap-2 px-4">
-
-            <span id="zPos"
-              class="rounded-full border border-purple-400/10
-                     bg-purple-400/[0.04] px-3 py-1.5 font-mono text-[8px]
-                     text-purple-300">
-              QEEMAT KAHAN: —
-            </span>
-
-            <span id="ctxLine"
-              class="font-mono text-[8px] text-slate-600">
-              ⏰ context: —
-            </span>
-
-          </div>
-
-
-          <div class="m-4 rounded-xl border border-white/[0.05]
-                      bg-white/[0.015] p-3">
-
-            <div class="mb-2 flex items-center gap-2">
-              <span>📖</span>
-              <span class="font-display text-[9px] text-cyan-300">
-                SIMPLE ZUBAAN
-              </span>
-            </div>
-
-            <div id="explainBody"
-              class="text-[11px] leading-5 text-slate-500">
-              …
-            </div>
-          </div>
-
-
-          <div id="finalBox"
-            class="mx-4 mb-4 rounded-xl border border-cyan-400/10
-                   bg-cyan-400/[0.025] p-4 font-mono text-[10px]
-                   leading-5 text-slate-400">
-            —
-          </div>
-
-        </section>
-
-      </div>
-
-
-      <!-- MARKET / HEART -->
-      <div class="grid gap-4 lg:grid-cols-[2fr_1fr]">
-
-        <section class="rounded-2xl border border-white/[0.06]
-                        bg-[#070b14]/90">
-
-          <div class="flex items-center justify-between border-b
-                      border-white/[0.05] px-4 py-3">
-            <span class="font-display text-[9px] tracking-wider">
-              📊 MARKET
-            </span>
-            <span id="mktLive"
-              class="font-mono text-[8px] text-emerald-300">
-              —
-            </span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-4">
-
-            <div class="rounded-xl border border-cyan-400/[0.08]
-                        bg-cyan-400/[0.025] p-4">
-              <div class="font-display text-[8px] text-slate-600">
-                LIVE PRICE
-              </div>
-              <div id="livePrice"
-                class="mt-2 font-mono text-xl font-bold text-cyan-300">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.05]
-                        bg-black/20 p-4">
-              <div class="font-display text-[8px] text-slate-600">
-                DATA
-              </div>
-              <div id="dataLayer"
-                class="mt-2 font-mono text-xs text-slate-300">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.05]
-                        bg-black/20 p-4">
-              <div class="font-display text-[8px] text-slate-600">
-                UPDATE
-              </div>
-              <div id="ageVal"
-                class="mt-2 font-mono text-xs text-slate-300">
-                —
-              </div>
-            </div>
-
-            <div class="rounded-xl border border-white/[0.05]
-                        bg-black/20 p-4">
-              <div class="font-display text-[8px] text-slate-600">
-                MARKET
-              </div>
-              <div class="mt-2 font-mono text-xs text-emerald-300">
-                24/7
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-
-        <section class="rounded-2xl border border-white/[0.06]
-                        bg-[#070b14]/90">
-
-          <div class="flex items-center justify-between border-b
-                      border-white/[0.05] px-4 py-3">
-            <span class="font-display text-[9px]">❤️ SYSTEM PULSE</span>
-            <span id="hbCount"
-              class="font-mono text-[8px] text-cyan-300">
-              HB 0
-            </span>
-          </div>
-
-          <div id="pulseBox"
-            class="min-h-[100px] p-4 font-mono text-[9px] leading-5
-                   text-slate-500">
-          </div>
-        </section>
-
-      </div>
-
-
-      <!-- ENGINES -->
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[9px]">
-            🛡️ ENGINE STACK
-          </span>
-
-          <span id="engWhy"
-            class="font-mono text-[8px] text-slate-600">
-            —
-          </span>
-        </div>
-
-        <div id="engGrid"
-          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
-        </div>
-
-      </section>
-
-
-      <!-- MODELS -->
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <div>
-            <div class="font-display text-[9px]">
-              🧬 INTELLIGENCE MODELS
-            </div>
-            <div class="mt-1 font-mono text-[8px] text-slate-600">
-              click model for details
-            </div>
-          </div>
-
-        </div>
-
-        <div id="modelGrid"
-          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
-        </div>
-
-      </section>
-
-
-      <!-- PILLARS -->
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[9px]">
-            🏛️ FL-200 TEN PILLARS
-          </span>
-
-          <span id="pillarScore"
-            class="font-mono text-[8px] text-cyan-300">
-            —
-          </span>
-        </div>
-
-        <div id="pillarGrid"
-          class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3
-                 lg:grid-cols-5">
-        </div>
-
-      </section>
-
-
-      <!-- LEDGER -->
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[9px]">
-            📒 DECISION LEDGER
-          </span>
-
-          <span id="ledgerMeta"
-            class="font-mono text-[8px] text-slate-600">
-          </span>
-
-        </div>
-
-        <div id="ledgerBox"
-          class="max-h-[260px] overflow-auto p-4 font-mono text-[9px]
-                 leading-5 text-slate-500">
-          —
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <!-- =======================================================
-         SCOREBOARD
-    ======================================================== -->
-    <div class="section space-y-4" id="scores">
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[10px]">
-            📊 SCOREBOARD
-          </span>
-
-          <button id="btnClearHist"
-            class="rounded-lg border border-rose-400/20
-                   bg-rose-400/[0.04] px-3 py-1.5 font-mono text-[9px]
-                   text-rose-400 hover:bg-rose-400/[0.1]">
-            🗑 CLEAR
           </button>
 
+          <!-- Desktop navigation -->
+          <nav class="hidden items-center gap-1 xl:flex">
+
+            <button data-s="dash"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              DASHBOARD
+            </button>
+
+            <button data-s="scores"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              SCOREBOARD
+            </button>
+
+            <button data-s="strategy"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              STRATEGY
+            </button>
+
+            <button data-s="rules"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              RULES
+            </button>
+
+            <button data-s="reports"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              REPORTS
+            </button>
+
+            <button data-s="pillars"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              PILLARS
+            </button>
+
+            <button data-s="account"
+              class="navBtn rounded-xl px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.05] hover:text-white">
+              ACCOUNT
+            </button>
+
+          </nav>
+
+
+          <!-- Status -->
+          <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+
+            <div
+              id="mktBadge"
+              class="hidden rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:block"
+            >
+              MARKET WAIT
+            </div>
+
+            <div
+              id="engBadge"
+              class="hidden rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 md:block"
+            >
+              ENGINE WAIT
+            </div>
+
+            <div class="flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5">
+
+              <span
+                id="sysStatus"
+                class="pulse-dot h-2 w-2 rounded-full bg-slate-500"
+              ></span>
+
+              <span class="hidden text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:inline">
+                SYSTEM
+              </span>
+
+            </div>
+
+            <button
+              id="openCfg"
+              type="button"
+              class="rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-2 text-xs font-bold text-slate-300 transition hover:bg-white/[0.06] hover:text-white"
+            >
+              CONFIG
+            </button>
+
+            <button
+              id="btnLogout"
+              type="button"
+              class="rounded-xl border border-rose-400/10 bg-rose-400/[0.04] px-3 py-2 text-xs font-bold text-rose-300 transition hover:bg-rose-400/[0.09]"
+            >
+              LOCK
+            </button>
+
+          </div>
+
         </div>
 
 
-        <div class="grid grid-cols-2 gap-3 p-4 lg:grid-cols-4">
+        <!-- Mobile navigation -->
+        <div class="overflow-x-auto pb-3 xl:hidden">
+          <div class="flex min-w-max gap-1">
 
-          <div class="rounded-xl border border-cyan-400/10
-                      bg-cyan-400/[0.025] p-5 text-center">
-            <div id="scTotal"
-              class="font-display text-3xl text-cyan-300">
-              0
+            <button data-s="dash" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              DASH
+            </button>
+
+            <button data-s="scores" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              SCORES
+            </button>
+
+            <button data-s="strategy" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              STRATEGY
+            </button>
+
+            <button data-s="rules" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              RULES
+            </button>
+
+            <button data-s="reports" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              REPORTS
+            </button>
+
+            <button data-s="pillars" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              PILLARS
+            </button>
+
+            <button data-s="account" class="navBtn rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2 text-[10px] font-bold text-slate-300">
+              ACCOUNT
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+
+    <!-- =======================================================
+         CONTROL BAR
+         ======================================================= -->
+    <div class="border-b border-white/[0.06] bg-[#050914]">
+
+      <div class="mx-auto max-w-[1800px] px-4 py-3 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              MARKET
             </div>
-            <div class="mt-2 font-mono text-[8px] text-slate-600">
-              TOTAL SIGNALS
+
+            <div id="symbolBtns" class="flex flex-wrap gap-1.5">
+
+              <button
+                data-symbol="BTCUSDT"
+                class="symbolBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200"
+              >
+                BTCUSDT
+              </button>
+
+              <button
+                data-symbol="ETHUSDT"
+                class="symbolBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400"
+              >
+                ETHUSDT
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              TIMEFRAME
+            </div>
+
+            <div id="tfBtns" class="flex flex-wrap gap-1.5">
+
+              <button data-tf="M30" class="tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400">
+                M30
+              </button>
+
+              <button data-tf="H1" class="tfBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200">
+                H1
+              </button>
+
+              <button data-tf="H4" class="tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400">
+                H4
+              </button>
+
+              <button data-tf="D1" class="tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400">
+                D1
+              </button>
+
+              <button data-tf="W1" class="tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400">
+                W1
+              </button>
+
+            </div>
+
+            <button
+              id="btnSync"
+              type="button"
+              class="ml-1 rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-2 text-[11px] font-bold text-cyan-200 transition hover:bg-cyan-400/[0.1]"
+            >
+              SYNC
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- =======================================================
+         TICKER
+         ======================================================= -->
+    <div
+      id="ticker"
+      class="border-b border-white/[0.05] bg-black/20"
+    ></div>
+
+
+    <!-- =======================================================
+         MAIN
+         ======================================================= -->
+    <main class="mx-auto max-w-[1800px] px-4 py-6 sm:px-6 lg:px-8">
+
+      <!-- =====================================================
+           DASHBOARD
+           ===================================================== -->
+      <section id="dash" class="section active">
+
+        <!-- Header -->
+        <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+
+          <div>
+            <div class="mb-2 flex items-center gap-2">
+
+              <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
+
+              <span class="text-[10px] font-bold uppercase tracking-[0.28em] text-cyan-300/80">
+                LIVE DECISION ENVIRONMENT
+              </span>
+
+            </div>
+
+            <h1 class="font-display text-2xl font-bold tracking-wider text-white sm:text-3xl">
+              HERMES COMMAND CENTER
+            </h1>
+
+            <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+              Private Heart engine + realtime market feed + decision telemetry.
+            </p>
+          </div>
+
+          <div
+            id="syncIn"
+            class="rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-3 text-right"
+          >
+            <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              LAST SYNC
+            </div>
+
+            <div id="gridMeta" class="mt-1 font-mono text-xs text-slate-300">
+              Waiting…
             </div>
           </div>
 
-          <div class="rounded-xl border border-emerald-400/10
-                      bg-emerald-400/[0.025] p-5 text-center">
-            <div id="scWin"
-              class="font-display text-3xl text-emerald-300">
-              0
+        </div>
+
+
+        <!-- ===================================================
+             PRIMARY GRID
+             =================================================== -->
+        <div class="grid gap-5 xl:grid-cols-[1.65fr_1fr]">
+
+          <!-- CHART -->
+          <div
+            class="scanline overflow-hidden rounded-3xl border border-white/[0.07] bg-[#060b15] shadow-terminal"
+          >
+
+            <div class="flex flex-col gap-3 border-b border-white/[0.06] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+
+              <div>
+
+                <div class="flex items-center gap-3">
+
+                  <div
+                    id="recSym"
+                    class="font-mono text-lg font-bold text-white"
+                  >
+                    BTCUSDT
+                  </div>
+
+                  <div
+                    id="recTF"
+                    class="rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-1 font-mono text-[10px] font-bold text-slate-400"
+                  >
+                    H1
+                  </div>
+
+                </div>
+
+                <div class="mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-600">
+                  <span id="sdSrc">BINANCE + HEART ENGINE</span>
+                </div>
+
+              </div>
+
+
+              <div class="flex items-center gap-2">
+
+                <div
+                  id="gridStatus"
+                  class="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400"
+                >
+                  GRID WAIT
+                </div>
+
+                <div
+                  id="gridSrc"
+                  class="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500"
+                >
+                  —
+                </div>
+
+              </div>
+
             </div>
-            <div class="mt-2 font-mono text-[8px] text-slate-600">
+
+            <div class="relative min-h-[430px] bg-[#040912]">
+
+              <canvas
+                id="cvGrid"
+                width="1400"
+                height="600"
+                class="h-[430px] w-full"
+              ></canvas>
+
+              <div class="pointer-events-none absolute left-5 top-5">
+                <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                  PRICE / GRID / EXPECTED
+                </div>
+              </div>
+
+              <div class="pointer-events-none absolute bottom-5 left-5 right-5 flex items-center justify-between">
+
+                <div class="font-mono text-[10px] text-slate-600">
+                  candle[1] anchor
+                </div>
+
+                <div class="font-mono text-[10px] text-slate-600">
+                  realtime
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DECISION CONSOLE -->
+          <div class="space-y-5">
+
+            <!-- Main recommendation -->
+            <div
+              class="overflow-hidden rounded-3xl border border-white/[0.07] bg-[#070c16] shadow-terminal"
+            >
+
+              <div class="border-b border-white/[0.06] px-5 py-4">
+
+                <div class="flex items-center justify-between gap-3">
+
+                  <div>
+                    <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                      HERMES DECISION
+                    </div>
+
+                    <div class="mt-1 text-sm font-semibold text-white">
+                      Final Signal
+                    </div>
+                  </div>
+
+                  <div
+                    id="finStrip"
+                    class="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 font-mono text-[10px] font-bold text-slate-400"
+                  >
+                    SIGNAL ONLY
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="p-5">
+
+                <div class="grid grid-cols-2 gap-3">
+
+                  <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      SYMBOL
+                    </div>
+
+                    <div
+                      id="recSym2"
+                      class="mt-2 font-mono text-lg font-bold text-white"
+                    >
+                      BTCUSDT
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      TIMEFRAME
+                    </div>
+
+                    <div
+                      id="recTF2"
+                      class="mt-2 font-mono text-lg font-bold text-white"
+                    >
+                      H1
+                    </div>
+                  </div>
+
+                </div>
+
+
+                <div
+                  id="recNote"
+                  class="mt-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 text-sm leading-6 text-slate-400"
+                >
+                  Waiting for realtime engine evaluation…
+                </div>
+
+
+                <div class="mt-5 grid grid-cols-2 gap-3">
+
+                  <div>
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      DECISION
+                    </div>
+
+                    <div
+                      id="recAction"
+                      class="mt-2 font-display text-2xl font-bold tracking-wider text-slate-300"
+                    >
+                      WAIT
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      ENTRY
+                    </div>
+
+                    <div
+                      id="recEntry"
+                      class="mt-2 font-mono text-xl font-bold text-white"
+                    >
+                      —
+                    </div>
+                  </div>
+
+                </div>
+
+
+                <div class="mt-5 grid grid-cols-2 gap-3">
+
+                  <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      L2 IMBALANCE
+                    </div>
+
+                    <div
+                      id="l2ImbMini"
+                      class="mt-2 font-mono text-xl font-bold text-cyan-200"
+                    >
+                      —
+                    </div>
+
+                  </div>
+
+                  <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+
+                    <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                      SOURCE
+                    </div>
+
+                    <div
+                      id="recBy"
+                      class="mt-2 font-mono text-xs font-bold text-slate-300"
+                    >
+                      —
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- Active trade -->
+            <div
+              id="actBox"
+              class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5"
+            >
+
+              <div class="flex items-center justify-between">
+
+                <div>
+                  <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                    ACTIVE PLAN
+                  </div>
+
+                  <div class="mt-1 text-sm font-semibold text-white">
+                    Signal Planning
+                  </div>
+                </div>
+
+                <div
+                  id="actStat"
+                  class="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[10px] font-bold uppercase text-slate-500"
+                >
+                  WAIT
+                </div>
+
+              </div>
+
+
+              <div class="mt-5 flex items-center justify-between">
+
+                <div>
+                  <div class="text-[9px] uppercase tracking-wider text-slate-600">
+                    SIGNAL
+                  </div>
+
+                  <div
+                    id="actSig"
+                    class="mt-1 font-display text-lg font-bold text-slate-300"
+                  >
+                    WAIT
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <div class="text-[9px] uppercase tracking-wider text-slate-600">
+                    TIME
+                  </div>
+
+                  <div
+                    id="actTime"
+                    class="mt-1 font-mono text-xs text-slate-400"
+                  >
+                    —
+                  </div>
+                </div>
+
+              </div>
+
+
+              <div
+                id="actNote"
+                class="mt-4 text-xs leading-5 text-slate-500"
+              >
+                No active setup.
+              </div>
+
+
+              <div
+                id="actRow"
+                class="mt-4 grid grid-cols-3 gap-2"
+              >
+
+                <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+                  <div class="text-[8px] uppercase tracking-wider text-slate-600">
+                    ENTRY
+                  </div>
+
+                  <div id="actEntry" class="mt-1 font-mono text-xs font-bold text-white">
+                    —
+                  </div>
+                </div>
+
+                <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+                  <div class="text-[8px] uppercase tracking-wider text-slate-600">
+                    TP
+                  </div>
+
+                  <div id="actTp" class="mt-1 font-mono text-xs font-bold text-emerald-300">
+                    —
+                  </div>
+                </div>
+
+                <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+                  <div class="text-[8px] uppercase tracking-wider text-slate-600">
+                    SL
+                  </div>
+
+                  <div id="actSl" class="mt-1 font-mono text-xs font-bold text-rose-300">
+                    —
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             GRID / L2 / MARKET TELEMETRY
+             ===================================================== -->
+        <div class="mt-5 grid gap-5 md:grid-cols-3">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              TRADINGVIEW GRID
+            </div>
+
+            <div id="tvRow" class="mt-4 space-y-2"></div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              GRID LEVELS
+            </div>
+
+            <div id="glvRow" class="mt-4 space-y-2"></div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              ORDER BOOK
+            </div>
+
+            <div id="l2Row" class="mt-4 space-y-2"></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTEXT
+             ===================================================== -->
+        <div class="mt-5 grid gap-5 lg:grid-cols-[1fr_1.4fr]">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="flex items-center justify-between">
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                POSITION CONTEXT
+              </div>
+
+              <div
+                id="zPos"
+                class="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5 font-mono text-[10px] text-slate-400"
+              >
+                MID
+              </div>
+            </div>
+
+            <div
+              id="ctxLine"
+              class="mt-4 text-sm leading-6 text-slate-400"
+            >
+              Waiting…
+            </div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              SIMPLE LANGUAGE EXPLANATION
+            </div>
+
+            <div
+              id="explainBody"
+              class="mt-4 text-sm leading-7 text-slate-400"
+            >
+              HERMES explanation will appear here after the first engine evaluation.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- FINAL -->
+        <div
+          id="finalBox"
+          class="mt-5 rounded-3xl border border-white/[0.07] bg-[#070c16] p-5"
+        >
+
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+            FINAL ENGINE OUTPUT
+          </div>
+
+          <pre
+            class="mt-4 max-h-[300px] overflow-auto whitespace-pre-wrap font-mono text-xs leading-6 text-slate-400"
+            id="finalText"
+          >Waiting for engine…</pre>
+
+        </div>
+
+
+        <!-- =====================================================
+             MARKET + SYSTEM
+             ===================================================== -->
+        <div class="mt-5 grid gap-5 lg:grid-cols-[1.35fr_1fr]">
+
+          <div class="grid gap-5 sm:grid-cols-2">
+
+            <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                MARKET LIVE
+              </div>
+
+              <div class="mt-5 flex items-end justify-between">
+
+                <div>
+                  <div class="text-[10px] uppercase tracking-wider text-slate-600">
+                    LIVE PRICE
+                  </div>
+
+                  <div
+                    id="livePrice"
+                    class="mt-1 font-mono text-3xl font-bold text-white"
+                  >
+                    —
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <div class="text-[10px] uppercase tracking-wider text-slate-600">
+                    MKT
+                  </div>
+
+                  <div
+                    id="mktLive"
+                    class="mt-1 text-xs font-bold text-slate-400"
+                  >
+                    OFFLINE
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                DATA LAYER
+              </div>
+
+              <div
+                id="dataLayer"
+                class="mt-4 font-mono text-xs leading-6 text-slate-400"
+              >
+                Initializing…
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="flex items-center justify-between">
+
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                SYSTEM PULSE
+              </div>
+
+              <div
+                id="pulseBox"
+                class="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5 text-[10px] font-bold text-slate-500"
+              >
+                BOOT
+              </div>
+
+            </div>
+
+            <div id="ageVal" class="mt-5 font-mono text-2xl font-bold text-white">
+              —
+            </div>
+
+            <div class="mt-1 text-[10px] uppercase tracking-wider text-slate-600">
+              DATA AGE
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+
+              <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+                <div class="text-[8px] uppercase tracking-wider text-slate-600">
+                  HEART POLL
+                </div>
+
+                <div id="hbCount" class="mt-1 font-mono text-xs text-cyan-200">
+                  0
+                </div>
+              </div>
+
+              <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+                <div class="text-[8px] uppercase tracking-wider text-slate-600">
+                  FAILURES
+                </div>
+
+                <div id="failCount" class="mt-1 font-mono text-xs text-slate-400">
+                  0
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ENGINE STACK / MODELS / PILLARS / LEDGER
+             ===================================================== -->
+        <div class="mt-5 grid gap-5 xl:grid-cols-3">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              ENGINE STACK
+            </div>
+
+            <div
+              id="engWhy"
+              class="mt-4 text-sm leading-6 text-slate-400"
+            >
+              Engine not yet evaluated.
+            </div>
+
+            <div
+              id="engGrid"
+              class="mt-4 space-y-2"
+            ></div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              MODEL MATRIX
+            </div>
+
+            <div id="modelGrid" class="mt-4 space-y-2"></div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="flex items-center justify-between">
+
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                PILLARS
+              </div>
+
+              <div
+                id="pillarScore"
+                class="font-mono text-sm font-bold text-cyan-200"
+              >
+                —
+              </div>
+
+            </div>
+
+            <div id="pillarGrid" class="mt-4 grid grid-cols-2 gap-2"></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Ledger -->
+        <div class="mt-5 rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+            <div>
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                DECISION LEDGER
+              </div>
+
+              <div
+                id="ledgerMeta"
+                class="mt-1 text-xs text-slate-500"
+              >
+                ledger.jsonl
+              </div>
+            </div>
+
+            <button
+              id="btnClearHist"
+              type="button"
+              class="rounded-lg border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 transition hover:text-white"
+            >
+              CLEAR VIEW
+            </button>
+
+          </div>
+
+          <div
+            id="ledgerBox"
+            class="mt-4 overflow-auto"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           SCOREBOARD
+           ===================================================== -->
+      <section id="scores" class="section">
+
+        <div class="mb-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+            PERFORMANCE
+          </div>
+
+          <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+            SCOREBOARD
+          </h2>
+        </div>
+
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] uppercase tracking-[0.2em] text-slate-600">
+              TOTAL
+            </div>
+            <div id="scTotal" class="mt-3 font-mono text-3xl font-bold text-white">0</div>
+          </div>
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] uppercase tracking-[0.2em] text-slate-600">
               WIN
             </div>
+            <div id="scWin" class="mt-3 font-mono text-3xl font-bold text-emerald-300">0</div>
           </div>
 
-          <div class="rounded-xl border border-rose-400/10
-                      bg-rose-400/[0.025] p-5 text-center">
-            <div id="scLoss"
-              class="font-display text-3xl text-rose-300">
-              0
-            </div>
-            <div class="mt-2 font-mono text-[8px] text-slate-600">
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] uppercase tracking-[0.2em] text-slate-600">
               LOSS
             </div>
+            <div id="scLoss" class="mt-3 font-mono text-3xl font-bold text-rose-300">0</div>
           </div>
 
-          <div class="rounded-xl border border-amber-400/10
-                      bg-amber-400/[0.025] p-5 text-center">
-            <div id="scOpen"
-              class="font-display text-3xl text-amber-300">
-              0
-            </div>
-            <div class="mt-2 font-mono text-[8px] text-slate-600">
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] uppercase tracking-[0.2em] text-slate-600">
               OPEN
             </div>
+            <div id="scOpen" class="mt-3 font-mono text-3xl font-bold text-amber-300">0</div>
+          </div>
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] uppercase tracking-[0.2em] text-slate-600">
+              WIN RATE
+            </div>
+            <div id="scWR" class="mt-3 font-mono text-3xl font-bold text-cyan-200">—</div>
           </div>
 
         </div>
 
 
-        <div class="grid gap-4 p-4 lg:grid-cols-2">
+        <div class="mt-5 grid gap-5 lg:grid-cols-2">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="flex items-center justify-between">
+              <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                WIN RATE
+              </div>
+              <div id="scWRBar" class="font-mono text-xs text-cyan-200">0%</div>
+            </div>
+
+            <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.05]">
+              <div
+                id="wrFill"
+                class="h-full w-0 rounded-full bg-cyan-300/70 transition-all duration-500"
+              ></div>
+            </div>
+
+            <div
+              id="scWRNote"
+              class="mt-4 text-xs leading-5 text-slate-500"
+            >
+              Waiting for performance data.
+            </div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              HISTORY
+            </div>
+
+            <div id="histBox" class="mt-4 max-h-[420px] overflow-auto"></div>
+          </div>
+
+        </div>
+
+
+        <div class="mt-5 grid gap-5 md:grid-cols-2">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              IMPROVEMENT
+            </div>
+
+            <div id="impMeta" class="mt-3 text-xs text-slate-500">
+              —
+            </div>
+
+            <div id="impGrid" class="mt-4 space-y-2"></div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              SYSTEM ACCURACY
+            </div>
+
+            <div id="sysAcc" class="mt-3 font-mono text-3xl font-bold text-white">
+              —
+            </div>
+
+            <div class="mt-2 text-xs text-slate-500">
+              Source: perf.json / Heart telemetry
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           STRATEGY
+           ===================================================== -->
+      <section id="strategy" class="section">
+
+        <div class="mb-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+            PRIVATE HEART
+          </div>
+
+          <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+            STRATEGY
+          </h2>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Read-only strategy documents from the private Heart repository.
+          </p>
+        </div>
+
+
+        <div class="grid gap-5 lg:grid-cols-2">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="flex items-center justify-between">
+
+              <div>
+                <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+                  STRATEGY.MD
+                </div>
+
+                <div class="mt-1 text-sm font-semibold text-white">
+                  Strategy Law
+                </div>
+              </div>
+
+              <button
+                data-view-file="strategy.md"
+                class="rounded-lg border border-white/[0.07] bg-white/[0.025] px-3 py-2 text-[10px] font-bold text-slate-400 hover:text-white"
+              >
+                OPEN
+              </button>
+
+            </div>
+
+            <pre
+              id="stratBox"
+              class="mt-4 max-h-[520px] overflow-auto whitespace-pre-wrap font-mono text-xs leading-6 text-slate-400"
+            >Loading strategy…</pre>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              MASTER RULES
+            </div>
+
+            <pre
+              id="rulesBox"
+              class="mt-4 max-h-[520px] overflow-auto whitespace-pre-wrap font-mono text-xs leading-6 text-slate-400"
+            >Loading FL-200_MASTER.md…</pre>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           RULES
+           ===================================================== -->
+      <section id="rules" class="section">
+
+        <div class="mb-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+            OPERATING FRAMEWORK
+          </div>
+
+          <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+            RULES
+          </h2>
+        </div>
+
+
+        <div class="grid gap-5 lg:grid-cols-3">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-sm font-bold text-white">
+              SIGNAL ONLY
+            </div>
+
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+              HERMES generates an analytical signal. It does not automatically execute trades.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-sm font-bold text-white">
+              PRIVATE HEART
+            </div>
+
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+              Strategy engine and state remain inside the private repository.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+            <div class="text-sm font-bold text-white">
+              READ-ONLY
+            </div>
+
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+              The FACE terminal reads Heart data using a fine-grained GitHub token with Contents: Read.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="mt-5 rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+            REPOSITORY SECURITY POLICY
+          </div>
+
+          <pre
+            id="securityBox"
+            class="mt-4 max-h-[620px] overflow-auto whitespace-pre-wrap font-mono text-xs leading-6 text-slate-400"
+          >Loading SECURITY.md…</pre>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           REPORTS
+           ===================================================== -->
+      <section id="reports" class="section">
+
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
           <div>
-            <div class="text-center font-display text-sm">
-              WIN RATE:
-              <span id="scWR" class="text-emerald-300">—</span>
+            <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+              HEART TELEMETRY
             </div>
 
-            <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.05]">
-              <div id="scWRBar"
-                class="h-full rounded-full bg-emerald-400 transition-all"
-                style="width:0%">
-              </div>
-            </div>
-
-            <div id="scWRNote"
-              class="mt-2 text-center font-mono text-[8px] text-slate-600">
-            </div>
-
-            <div class="mt-4 rounded-xl border border-cyan-400/[0.07]
-                        bg-cyan-400/[0.02] p-4 text-[11px] leading-5
-                        text-slate-500">
-
-              <div class="mb-2 font-display text-[9px] text-cyan-300">
-                📖 HOW IT IS COUNTED
-              </div>
-
-              Har signal event hai:
-              TP pehle mila = WIN,
-              SL pehle = LOSS.
-              Virtual tracking only.
-            </div>
+            <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+              REPORTS
+            </h2>
           </div>
 
-
-          <div>
-            <div class="mb-2 font-display text-[9px] text-cyan-300">
-              📜 HISTORY
-            </div>
-
-            <div id="histBox"
-              class="max-h-[300px] overflow-auto rounded-xl
-                     border border-white/[0.05] bg-black/20 p-3
-                     font-mono text-[9px] leading-5 text-slate-500">
-              Abhi koi event nahi…
-            </div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[9px]">
-            📈 MODEL IMPROVEMENT
-          </span>
-
-          <span id="impMeta"
-            class="font-mono text-[8px] text-slate-600">
-            —
-          </span>
-
-        </div>
-
-        <div id="impGrid"
-          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
-        </div>
-
-      </section>
-
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[9px]">
-            🎯 SYSTEM ACCURACY
-          </span>
-        </div>
-
-        <div id="sysAcc"
-          class="p-5 font-mono text-xs text-slate-500">
-          —
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <!-- =======================================================
-         STRATEGY
-    ======================================================== -->
-    <div class="section" id="strategy">
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[10px]">
-            ⚔️ STRATEGY
-          </span>
-        </div>
-
-        <div id="stratBox"
-          class="p-5 font-mono text-[10px] leading-6 text-slate-400">
-          …
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <!-- =======================================================
-         RULES
-    ======================================================== -->
-    <div class="section" id="rules">
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[10px]">
-            📜 RULE ENGINE
-          </span>
-        </div>
-
-        <div id="rulesBox"
-          class="flex flex-col gap-2 p-4">
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <!-- =======================================================
-         REPORTS
-    ======================================================== -->
-    <div class="section space-y-4" id="reports">
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
-
-          <span class="font-display text-[10px]">
-            🩺 LIVE RUN
-          </span>
-
-          <button id="repRefresh"
-            class="rounded-lg border border-white/[0.07]
-                   bg-white/[0.02] px-3 py-1.5 font-mono text-[9px]
-                   text-slate-400 hover:text-cyan-300">
-            ⟳
+          <button
+            id="repRefresh"
+            type="button"
+            class="rounded-xl border border-cyan-400/15 bg-cyan-400/[0.05] px-4 py-2.5 text-xs font-bold text-cyan-200 hover:bg-cyan-400/[0.09]"
+          >
+            REFRESH REPORTS
           </button>
 
         </div>
 
-        <div id="repSummary"
-          class="p-5 font-mono text-[10px] leading-6 text-slate-500">
-          …
+
+        <div class="grid gap-5 lg:grid-cols-[1fr_1.3fr]">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              REPORT SUMMARY
+            </div>
+
+            <div
+              id="repSummary"
+              class="mt-4 text-sm leading-7 text-slate-400"
+            >
+              Loading…
+            </div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              REPOSITORY MAP
+            </div>
+
+            <div id="repScan" class="mt-4"></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="mt-5 rounded-3xl border border-white/[0.07] bg-[#070c16] p-5">
+
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+            AVAILABLE HEART FILES
+          </div>
+
+          <div
+            id="repFiles"
+            class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          ></div>
+
         </div>
 
       </section>
 
 
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
+      <!-- =====================================================
+           PILLARS
+           ===================================================== -->
+      <section id="pillars" class="section">
 
-        <div class="flex items-center justify-between border-b
-                    border-white/[0.05] px-4 py-3">
+        <div class="mb-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+            HERMES CORE
+          </div>
 
-          <span class="font-display text-[10px]">
-            📥 HEART FILES
-          </span>
+          <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+            TEN PILLARS
+          </h2>
+        </div>
 
-          <span id="repScan"
-            class="font-mono text-[8px] text-slate-600">
-            —
-          </span>
+
+        <div
+          id="pillarPageGrid"
+          class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+        ></div>
+
+      </section>
+
+
+      <!-- =====================================================
+           ACCOUNT
+           ===================================================== -->
+      <section id="account" class="section">
+
+        <div class="mb-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300/70">
+            TERMINAL SESSION
+          </div>
+
+          <h2 class="mt-2 font-display text-2xl font-bold tracking-wider text-white">
+            ACCOUNT
+          </h2>
+        </div>
+
+
+        <div class="grid gap-5 lg:grid-cols-2">
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-6">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+              SESSION
+            </div>
+
+            <div class="mt-5 space-y-3">
+
+              <div class="flex items-center justify-between border-b border-white/[0.05] pb-3">
+                <span class="text-xs text-slate-500">Repository</span>
+                <span id="accRepo" class="font-mono text-xs text-slate-300">—</span>
+              </div>
+
+              <div class="flex items-center justify-between border-b border-white/[0.05] pb-3">
+                <span class="text-xs text-slate-500">Branch</span>
+                <span id="accBranch" class="font-mono text-xs text-slate-300">—</span>
+              </div>
+
+              <div class="flex items-center justify-between border-b border-white/[0.05] pb-3">
+                <span class="text-xs text-slate-500">Token policy</span>
+                <span id="accTokenPolicy" class="font-mono text-xs text-emerald-300">Read-only</span>
+              </div>
+
+              <div class="flex items-center justify-between border-b border-white/[0.05] pb-3">
+                <span class="text-xs text-slate-500">Engine</span>
+                <span id="accEngine" class="font-mono text-xs text-slate-300">—</span>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-slate-500">Session</span>
+                <span id="accSession" class="font-mono text-xs text-cyan-200">ACTIVE</span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="rounded-3xl border border-rose-400/10 bg-rose-400/[0.025] p-6">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-rose-300/60">
+              SECURITY
+            </div>
+
+            <div class="mt-3 text-sm font-semibold text-white">
+              Lock and wipe session
+            </div>
+
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+              Removes the GitHub token from the browser session and locks the terminal.
+            </p>
+
+            <button
+              id="btnLogout2"
+              type="button"
+              class="mt-5 rounded-xl border border-rose-400/15 bg-rose-400/[0.06] px-4 py-3 text-xs font-bold uppercase tracking-wider text-rose-300 transition hover:bg-rose-400/[0.1]"
+            >
+              LOCK + WIPE SESSION
+            </button>
+
+          </div>
 
         </div>
 
-        <div id="repFiles"
-          class="p-4">
-          …
+
+        <div class="mt-5 rounded-3xl border border-white/[0.07] bg-[#070c16] p-6">
+
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+            PERFORMANCE SNAPSHOT
+          </div>
+
+          <div class="mt-5 grid gap-4 sm:grid-cols-3">
+
+            <div>
+              <div class="text-[9px] uppercase tracking-wider text-slate-600">
+                EQUITY
+              </div>
+              <div id="accEq" class="mt-2 font-mono text-xl font-bold text-white">
+                —
+              </div>
+            </div>
+
+            <div>
+              <div class="text-[9px] uppercase tracking-wider text-slate-600">
+                TRADES
+              </div>
+              <div id="accTr" class="mt-2 font-mono text-xl font-bold text-white">
+                —
+              </div>
+            </div>
+
+            <div>
+              <div class="text-[9px] uppercase tracking-wider text-slate-600">
+                PNL
+              </div>
+              <div id="accPnl" class="mt-2 font-mono text-xl font-bold text-white">
+                —
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
       </section>
 
-    </div>
+    </main>
 
 
     <!-- =======================================================
-         PILLARS
-    ======================================================== -->
-    <div class="section space-y-4" id="pillars">
+         FOOTER
+         ======================================================= -->
+    <footer class="border-t border-white/[0.06] bg-black/20">
 
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
+      <div class="mx-auto flex max-w-[1800px] flex-col gap-3 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
 
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[10px]">
-            🏛️ PILLAR LAW
+        <div class="text-[10px] uppercase tracking-[0.2em] text-slate-700">
+          FL-200 / HERMES / FACE
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.16em] text-slate-600">
+
+          <span>
+            SIGNAL ONLY
           </span>
-        </div>
 
-        <div class="p-5">
-          <div class="rounded-xl border border-purple-400/[0.08]
-                      bg-purple-400/[0.025] p-4 font-mono text-[10px]
-                      leading-6 text-slate-400">
-            P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST ·
-            P5 COMPARE · P6 LESSONS · P7 RISK · P8 EVENT-TAG ·
-            P9 SECURITY · P10 HEALTH
-            <br><br>
-            <span class="text-amber-300">
-              Conflict Priority:
-            </span>
-            SECURITY &gt; RISK &gt; DATA &gt; LEARNING &gt; PERFORMANCE
-          </div>
-        </div>
-
-      </section>
-
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[10px]">
-            🧠 SELF-STATES
+          <span>
+            READ ONLY
           </span>
-        </div>
 
-        <div id="selfBox"
-          class="p-5 font-mono text-[10px] leading-6 text-slate-500">
-          —
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <!-- =======================================================
-         ACCOUNT
-    ======================================================== -->
-    <div class="section" id="account">
-
-      <section class="rounded-2xl border border-white/[0.06]
-                      bg-[#070b14]/90">
-
-        <div class="border-b border-white/[0.05] px-4 py-3">
-          <span class="font-display text-[10px]">
-            💼 ACCOUNT
+          <span>
+            NO AUTO EXECUTION
           </span>
-        </div>
-
-        <div class="grid gap-3 p-4 md:grid-cols-3">
-
-          <div class="rounded-xl border border-white/[0.05]
-                      bg-black/20 p-5 text-center">
-
-            <div class="font-display text-[8px] text-slate-600">
-              EQUITY
-            </div>
-
-            <div id="accEq"
-              class="mt-2 font-mono text-xl font-bold text-cyan-300">
-              —
-            </div>
-
-          </div>
-
-
-          <div class="rounded-xl border border-white/[0.05]
-                      bg-black/20 p-5 text-center">
-
-            <div class="font-display text-[8px] text-slate-600">
-              TRADES TODAY
-            </div>
-
-            <div id="accTr"
-              class="mt-2 font-mono text-xl font-bold text-slate-200">
-              —
-            </div>
-
-          </div>
-
-
-          <div class="rounded-xl border border-white/[0.05]
-                      bg-black/20 p-5 text-center">
-
-            <div class="font-display text-[8px] text-slate-600">
-              DAY PNL
-            </div>
-
-            <div id="accPnl"
-              class="mt-2 font-mono text-xl font-bold text-emerald-300">
-              —
-            </div>
-
-          </div>
 
         </div>
 
-      </section>
+      </div>
 
-    </div>
+    </footer>
 
-  </main>
+  </div>
 
 
   <!-- =========================================================
        CONFIG DRAWER
-  ========================================================== -->
+       ========================================================= -->
+  <div
+    id="cfgOverlay"
+    class="fixed inset-0 z-[80] hidden bg-black/70 backdrop-blur-sm"
+  >
 
-  <div id="cfgOverlay"
-    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
+    <div
+      id="cfgPanel"
+      class="absolute right-0 top-0 h-full w-full max-w-xl overflow-auto border-l border-white/[0.07] bg-[#050914] shadow-2xl"
+    >
+
+      <div class="sticky top-0 z-10 flex items-center justify-between border-b border-white/[0.06] bg-[#050914]/95 px-5 py-4 backdrop-blur-xl">
+
+        <div>
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-cyan-300/70">
+            FACE CONFIG
+          </div>
+
+          <div class="mt-1 text-sm font-semibold text-white">
+            Terminal configuration
+          </div>
+        </div>
+
+        <button
+          id="closeCfg"
+          type="button"
+          class="rounded-lg border border-white/[0.07] px-3 py-2 text-xs text-slate-400 hover:text-white"
+        >
+          CLOSE
+        </button>
+
+      </div>
+
+      <div class="p-5">
+
+        <div
+          id="cfgInfo"
+          class="rounded-2xl border border-white/[0.06] bg-black/20 p-4"
+        ></div>
+
+        <button
+          id="btnEngineReload"
+          type="button"
+          class="mt-4 w-full rounded-xl border border-cyan-400/15 bg-cyan-400/[0.05] px-4 py-3 text-xs font-bold uppercase tracking-wider text-cyan-200 hover:bg-cyan-400/[0.09]"
+        >
+          RELOAD PRIVATE ENGINE
+        </button>
+
+        <div class="mt-4">
+          <button
+            id="btnLogout2x"
+            type="button"
+            class="hidden"
+          ></button>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
-
-  <aside id="cfgPanel"
-    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
-           max-w-md border-l border-white/[0.08]
-           bg-[#070b14] shadow-2xl">
-
-    <div class="flex items-center justify-between border-b
-                border-white/[0.06] px-5 py-4">
-
-      <div class="font-display text-xs text-cyan-300">
-        ⚙ CONFIGURATION
-      </div>
-
-      <button id="closeCfg"
-        class="close rounded-lg border border-white/[0.07]
-               px-3 py-2 text-slate-500 hover:text-white">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="side-b space-y-4 overflow-auto p-5">
-
-      <div id="cfgInfo"
-        class="rounded-xl border border-white/[0.06]
-               bg-black/20 p-4 font-mono text-[10px]
-               leading-6 text-slate-500">
-        —
-      </div>
-
-      <div class="flex gap-2">
-
-        <button id="btnEngineReload"
-          class="flex-1 rounded-xl border border-cyan-400/10
-                 bg-cyan-400/[0.05] px-4 py-3 font-mono text-[9px]
-                 font-semibold text-cyan-300 hover:bg-cyan-400/[0.1]">
-          ⟳ RELOAD ENGINE
-        </button>
-
-        <button id="btnLogout2"
-          class="rounded-xl border border-rose-400/20
-                 bg-rose-400/[0.04] px-4 py-3 font-mono text-[9px]
-                 text-rose-400 hover:bg-rose-400/[0.1]">
-          EXIT
-        </button>
-
-      </div>
-
-    </div>
-  </aside>
 
 
   <!-- =========================================================
-       MODEL DETAIL DRAWER
-  ========================================================== -->
+       MODEL DETAIL MODAL
+       ========================================================= -->
+  <div
+    id="modOverlay"
+    class="fixed inset-0 z-[85] hidden items-center justify-center bg-black/70 p-5 backdrop-blur-sm"
+  >
 
-  <div id="modOverlay"
-    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
+    <div
+      class="w-full max-w-2xl overflow-hidden rounded-3xl border border-white/[0.08] bg-[#070c16] shadow-2xl"
+    >
+
+      <div class="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
+
+        <div>
+          <div
+            id="modTitle"
+            class="font-display text-sm font-bold tracking-wider text-white"
+          >
+            MODEL
+          </div>
+
+          <div
+            id="modInst"
+            class="mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-600"
+          >
+            —
+          </div>
+        </div>
+
+        <button
+          id="closeMod"
+          type="button"
+          class="rounded-lg border border-white/[0.07] px-3 py-2 text-xs text-slate-400 hover:text-white"
+        >
+          CLOSE
+        </button>
+
+      </div>
+
+      <div
+        id="modDetail"
+        class="max-h-[70vh] overflow-auto p-5"
+      ></div>
+
+    </div>
+
   </div>
-
-  <aside id="modDetail"
-    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
-           max-w-md border-l border-white/[0.08]
-           bg-[#070b14] shadow-2xl">
-
-    <div class="flex items-center justify-between border-b
-                border-white/[0.06] px-5 py-4">
-
-      <div id="modTitle"
-        class="side-t font-display text-xs text-cyan-300">
-        MODEL
-      </div>
-
-      <button id="closeMod"
-        class="close rounded-lg border border-white/[0.07]
-               px-3 py-2 text-slate-500 hover:text-white">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="side-b overflow-auto p-5">
-
-      <div id="modInst"
-        class="rounded-xl border border-white/[0.06]
-               bg-black/20 p-4 font-mono text-[10px]
-               leading-6 text-slate-400">
-      </div>
-
-    </div>
-  </aside>
 
 
   <!-- =========================================================
        FILE VIEWER
-  ========================================================== -->
+       ========================================================= -->
+  <div
+    id="fileOverlay"
+    class="fixed inset-0 z-[90] hidden bg-black/70 p-4 backdrop-blur-sm sm:p-8"
+  >
 
-  <div id="fileOverlay"
-    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
-  </div>
+    <div class="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-[#050914]">
 
-  <aside id="fileViewer"
-    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
-           max-w-2xl border-l border-white/[0.08]
-           bg-[#070b14] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
 
-    <div class="flex items-center justify-between border-b
-                border-white/[0.06] px-5 py-4">
+        <div>
+          <div class="text-[9px] font-bold uppercase tracking-[0.22em] text-slate-600">
+            PRIVATE FILE
+          </div>
 
-      <div id="fvTitle"
-        class="side-t font-display text-xs text-cyan-300">
-        FILE
+          <div
+            id="fvTitle"
+            class="mt-1 font-mono text-sm font-bold text-white"
+          >
+            —
+          </div>
+        </div>
+
+        <button
+          id="closeFv"
+          type="button"
+          class="rounded-lg border border-white/[0.07] px-3 py-2 text-xs text-slate-400 hover:text-white"
+        >
+          CLOSE
+        </button>
+
       </div>
 
-      <button id="closeFv"
-        class="close rounded-lg border border-white/[0.07]
-               px-3 py-2 text-slate-500 hover:text-white">
-        ✕
-      </button>
+      <pre
+        id="fvBody"
+        class="flex-1 overflow-auto whitespace-pre-wrap p-5 font-mono text-xs leading-6 text-slate-400"
+      ></pre>
 
     </div>
 
-    <div id="fvBody"
-      class="side-b max-h-[calc(100vh-70px)] overflow-auto p-5">
-    </div>
+  </div>
 
-  </aside>
 
-</div>
-<!-- /appShell -->
+  <!-- =========================================================
+       CONFIG FIRST
+       Exact separate config.js
+       ========================================================= -->
+  <script src="config.js"></script>
+
+
+  <!-- =========================================================
+       HERMES FRONT-END ENGINE
+       ========================================================= -->
+  <script>
+  (() => {
+
+    "use strict";
+
+
+    /* =========================================================
+       GLOBAL HELPERS
+       ========================================================= */
+
+    const $ = id => document.getElementById(id);
+
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    const C = window.FL200_CONFIG || {};
+
+    let STATE = null;
+    let PERF = null;
+    let LEDGER = [];
+    let STRATEGY_TEXT = "";
+    let MASTER_TEXT = "";
+    let SECURITY_TEXT = "";
+
+    let TOKEN = "";
+
+    let CUR_SYM = C?.ui?.defaultSymbol || "BTCUSDT";
+    let CUR_TF = C?.ui?.defaultTf || "H1";
+
+    let ENGINE_TEXT = "";
+    let ENGINE = null;
+    let CURRENT_SIGNAL = null;
+    let CURRENT_CANDLES = [];
+    let CURRENT_DEPTH = null;
+
+    let TICKER_DATA = {};
+
+    const LIVE = {
+      pollMs: C.pollMs || 4000,
+      staleMs: C.staleMs || 30000,
+      deadMs: C.deadMs || 120000,
+
+      timer: null,
+      rtTimer: null,
+
+      busy: false,
+      marketBusy: false,
+
+      failures: 0,
+
+      lastFetch: 0,
+      lastMarket: 0,
+
+      active: false,
+
+      heartbeat: 0
+    };
+
+
+    const KNOWN_FILES = [
+      "engine.js",
+      "state.json",
+      "perf.json",
+      "ledger.jsonl",
+      "strategy.md",
+      "FL-200_MASTER.md",
+      "README.md",
+      "SECURITY.md"
+    ];
+
+
+    /* =========================================================
+       BASIC FORMATTERS
+       ========================================================= */
+
+    function esc(value) {
+
+      if (value == null) return "";
+
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+
+    function num(value, digits = 2) {
+
+      if (value == null || value === "") {
+        return "—";
+      }
+
+      const n = Number(value);
+
+      if (!Number.isFinite(n)) {
+        return esc(value);
+      }
+
+      return n.toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
+    }
+
+
+    function pct(value, digits = 1) {
+
+      if (value == null || value === "") {
+        return "—";
+      }
+
+      const n = Number(value);
+
+      if (!Number.isFinite(n)) {
+        return "—";
+      }
+
+      return `${n.toFixed(digits)}%`;
+    }
+
+
+    function timeNow() {
+      return new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+
+
+    function ageText(ms) {
+
+      if (!Number.isFinite(ms)) {
+        return "—";
+      }
+
+      if (ms < 1000) {
+        return "LIVE";
+      }
+
+      const sec = Math.floor(ms / 1000);
+
+      if (sec < 60) {
+        return `${sec}s`;
+      }
+
+      const min = Math.floor(sec / 60);
+
+      if (min < 60) {
+        return `${min}m`;
+      }
+
+      const hr = Math.floor(min / 60);
+
+      return `${hr}h`;
+    }
+
+
+    function relativeAge(timestamp) {
+
+      if (!timestamp) {
+        return "—";
+      }
+
+      const t = Number(timestamp);
+
+      if (!Number.isFinite(t)) {
+        return "—";
+      }
+
+      return ageText(Date.now() - t);
+    }
+
+
+    function safeJsonParse(text, fallback = null) {
+
+      try {
+        return JSON.parse(text);
+      } catch {
+        return fallback;
+      }
+
+    }
+
+
+    function base64Decode(value) {
+
+      try {
+
+        const binary = atob(value.replace(/\s/g, ""));
+
+        const bytes = Uint8Array.from(
+          binary,
+          char => char.charCodeAt(0)
+        );
+
+        return new TextDecoder().decode(bytes);
+
+      } catch {
+
+        return "";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       TOKEN / AUTH
+       ========================================================= */
+
+    function getSessionToken() {
+
+      try {
+        return sessionStorage.getItem(
+          C?.tokenPolicy?.sessionKey || "fl200_face_tok"
+        ) || "";
+      } catch {
+        return "";
+      }
+
+    }
+
+
+    function setSessionToken(token) {
+
+      TOKEN = token || "";
+
+      try {
+
+        const key =
+          C?.tokenPolicy?.sessionKey ||
+          "fl200_face_tok";
+
+        if (TOKEN) {
+          sessionStorage.setItem(key, TOKEN);
+        } else {
+          sessionStorage.removeItem(key);
+        }
+
+      } catch {}
+
+    }
+
+
+    function wipeSession() {
+
+      TOKEN = "";
+
+      try {
+        sessionStorage.removeItem(
+          C?.tokenPolicy?.sessionKey || "fl200_face_tok"
+        );
+      } catch {}
+
+      try {
+        localStorage.removeItem("hermes_tok");
+      } catch {}
+
+      STATE = null;
+      PERF = null;
+      LEDGER = [];
+      CURRENT_SIGNAL = null;
+      CURRENT_CANDLES = [];
+      CURRENT_DEPTH = null;
+
+      if (LIVE.timer) {
+        clearInterval(LIVE.timer);
+        LIVE.timer = null;
+      }
+
+      if (LIVE.rtTimer) {
+        clearInterval(LIVE.rtTimer);
+        LIVE.rtTimer = null;
+      }
+
+      LIVE.active = false;
+      LIVE.busy = false;
+      LIVE.marketBusy = false;
+
+    }
+
+
+    async function validateToken(token) {
+
+      const base =
+        `${C.github.api}/repos/${C.heartRepo}`;
+
+      const repoResp = await fetch(
+        `${base}?_=${Date.now()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: C?.github?.accept || "application/vnd.github+json"
+          },
+
+          cache: "no-store"
+        }
+      );
+
+      if (repoResp.status === 401) {
+
+        throw new Error(
+          "401 — FACE_TOKEN incorrect or expired."
+        );
+
+      }
+
+      if (repoResp.status === 403) {
+
+        throw new Error(
+          "403 — token does not have permission."
+        );
+
+      }
+
+      if (repoResp.status === 404) {
+
+        throw new Error(
+          "404 — FL-200-Private access not available."
+        );
+
+      }
+
+      if (!repoResp.ok) {
+
+        throw new Error(
+          `GitHub ${repoResp.status}`
+        );
+
+      }
+
+
+      const rootResp = await fetch(
+        `${base}/contents/?ref=${encodeURIComponent(C.branch)}&_=${Date.now()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: C?.github?.accept || "application/vnd.github+json"
+          },
+
+          cache: "no-store"
+        }
+      );
+
+
+      if (!rootResp.ok) {
+
+        throw new Error(
+          `Repository contents read failed (${rootResp.status}).`
+        );
+
+      }
+
+
+      return true;
+
+    }
+
+
+    function unlockUI() {
+
+      document.body.classList.remove("locked");
+
+      const lock = $("lock");
+
+      if (lock) {
+        lock.style.display = "none";
+      }
+
+
+      const shell = $("appShell");
+
+      if (shell) {
+
+        shell.style.display = "block";
+
+        shell.removeAttribute("aria-hidden");
+
+      }
+
+
+      LIVE.active = true;
+
+
+      updateAccount();
+
+      pulse(
+        "FACE online · Heart sync 4s",
+        "ok"
+      );
+
+
+      Promise.allSettled([
+        loadEngine(true),
+        loadHeartState(),
+        loadPerformance(),
+        loadLedger(),
+        loadStrategy(),
+        loadRepositoryMap()
+      ]).then(() => {
+
+        renderAll();
+
+        startHeartbeat();
+
+        refreshMarket(true);
+
+      });
+
+    }
+
+
+    /* =========================================================
+       LOCK SCREEN UI
+       ========================================================= */
+
+    $("toggleToken").addEventListener(
+      "click",
+      () => {
+
+        const input = $("ltok");
+
+        if (!input) return;
+
+        const visible =
+          input.type === "text";
+
+        input.type =
+          visible ? "password" : "text";
+
+        $("toggleToken").textContent =
+          visible ? "SHOW" : "HIDE";
+
+      }
+    );
+
+
+    $("lockBtn").addEventListener(
+      "click",
+      async () => {
+
+        const token =
+          $("ltok").value.trim();
+
+        const err =
+          $("lockErr");
+
+        if (!token) {
+
+          err.textContent =
+            "FACE_TOKEN zaroori hai.";
+
+          return;
+        }
+
+
+        err.textContent =
+          "Verifying FACE_TOKEN…";
+
+
+        try {
+
+          await validateToken(token);
+
+          setSessionToken(token);
+
+          err.textContent = "";
+
+          unlockUI();
+
+        } catch (error) {
+
+          TOKEN = "";
+
+          err.textContent =
+            error?.message ||
+            "Authentication failed.";
+
+        }
+
+      }
+    );
+
+
+    $("ltok").addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+          $("lockBtn").click();
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       GITHUB
+       ========================================================= */
+
+    async function ghFetch(
+      repo,
+      path,
+      accept = null
+    ) {
+
+      if (!TOKEN) {
+        throw new Error("No FACE_TOKEN.");
+      }
+
+      const url =
+        `${C.github.api}/repos/${repo}/contents/${path}` +
+        `?ref=${encodeURIComponent(C.branch)}` +
+        `&_=${Date.now()}`;
+
+      const response =
+        await fetch(url, {
+
+          headers: {
+
+            Authorization:
+              `Bearer ${TOKEN}`,
+
+            Accept:
+              accept ||
+              C?.github?.accept ||
+              "application/vnd.github+json"
+
+          },
+
+          cache: "no-store"
+
+        });
+
+
+      if (response.status === 401) {
+        throw new Error("GitHub 401.");
+      }
+
+      if (response.status === 403) {
+        throw new Error("GitHub 403.");
+      }
+
+      if (response.status === 404) {
+        throw new Error(`File not found: ${path}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          `GitHub ${response.status}: ${path}`
+        );
+      }
+
+
+      return response;
+
+    }
+
+
+    async function ghJson(
+      repo,
+      path
+    ) {
+
+      const response =
+        await ghFetch(repo, path);
+
+      const payload =
+        await response.json();
+
+
+      if (
+        payload &&
+        typeof payload.content === "string"
+      ) {
+
+        return safeJsonParse(
+          base64Decode(payload.content),
+          null
+        );
+
+      }
+
+
+      return payload;
+
+    }
+
+
+    async function ghText(
+      repo,
+      path
+    ) {
+
+      const response =
+        await ghFetch(
+          repo,
+          path,
+          "application/vnd.github.raw+json"
+        );
+
+
+      return response.text();
+
+    }
+
+
+    async function ghRoot() {
+
+      const response =
+        await ghFetch(
+          C.heartRepo,
+          "",
+          C?.github?.accept ||
+          "application/vnd.github+json"
+        );
+
+      return response.json();
+
+    }
+
+
+    /* =========================================================
+       ENGINE
+       ========================================================= */
+
+    async function loadEngine(force = false) {
+
+      if (
+        ENGINE &&
+        !force
+      ) {
+        return ENGINE;
+      }
+
+
+      try {
+
+        ENGINE_TEXT =
+          await ghText(
+            C.heartRepo,
+            C.enginePath
+          );
+
+
+        const runner =
+          new Function(
+            `"use strict";\n${ENGINE_TEXT}\n//# sourceURL=FL200-Private-engine.js`
+          );
+
+
+        runner();
+
+
+        ENGINE =
+          window.FL200_ENGINE ||
+          null;
+
+
+        if (!ENGINE) {
+
+          throw new Error(
+            "FL200_ENGINE not exposed by engine.js."
+          );
+
+        }
+
+
+        $("engBadge").textContent =
+          `ENGINE v${ENGINE.version || "?"}`;
+
+        $("engBadge").className =
+          "hidden rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300 md:block";
+
+
+        updateAccount();
+
+        return ENGINE;
+
+      } catch (error) {
+
+        ENGINE = null;
+
+        $("engBadge").textContent =
+          "ENGINE ERROR";
+
+        $("engBadge").className =
+          "hidden rounded-full border border-rose-400/15 bg-rose-400/[0.05] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-rose-300 md:block";
+
+
+        setText(
+          "engWhy",
+          `Engine load failed: ${error.message}`
+        );
+
+
+        throw error;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       HEART FILES
+       ========================================================= */
+
+    async function loadHeartState() {
+
+      try {
+
+        STATE =
+          await ghJson(
+            C.heartRepo,
+            C.statePaths[0]
+          );
+
+        LIVE.lastFetch = Date.now();
+
+        return STATE;
+
+      } catch (error) {
+
+        console.warn(
+          "state.json",
+          error
+        );
+
+        return null;
+
+      }
+
+    }
+
+
+    async function loadPerformance() {
+
+      try {
+
+        PERF =
+          await ghJson(
+            C.heartRepo,
+            C.perfPaths[0]
+          );
+
+        return PERF;
+
+      } catch (error) {
+
+        console.warn(
+          "perf.json",
+          error
+        );
+
+        return null;
+
+      }
+
+    }
+
+
+    async function loadLedger() {
+
+      try {
+
+        const text =
+          await ghText(
+            C.heartRepo,
+            C.ledgerPaths[0]
+          );
+
+
+        LEDGER =
+          text
+            .split(/\r?\n/)
+            .filter(Boolean)
+            .slice(-1000)
+            .map(line => {
+
+              const parsed =
+                safeJsonParse(
+                  line,
+                  null
+                );
+
+              return parsed || {
+                raw: line
+              };
+
+            });
+
+
+        renderLedger();
+
+        return LEDGER;
+
+      } catch (error) {
+
+        console.warn(
+          "ledger.jsonl",
+          error
+        );
+
+        return [];
+
+      }
+
+    }
+
+
+    async function loadStrategy() {
+
+      try {
+
+        const [
+          strategy,
+          master,
+          security
+        ] = await Promise.all([
+
+          ghText(
+            C.heartRepo,
+            C.strategyPaths[0]
+          ),
+
+          ghText(
+            C.heartRepo,
+            C.strategyPaths[1]
+          ),
+
+          ghText(
+            C.heartRepo,
+            "SECURITY.md"
+          )
+
+        ]);
+
+
+        STRATEGY_TEXT = strategy || "";
+
+        MASTER_TEXT = master || "";
+
+        SECURITY_TEXT = security || "";
+
+
+        setText(
+          "stratBox",
+          STRATEGY_TEXT || "No strategy.md content."
+        );
+
+        setText(
+          "rulesBox",
+          MASTER_TEXT || "No FL-200_MASTER.md content."
+        );
+
+        setText(
+          "securityBox",
+          SECURITY_TEXT || "No SECURITY.md content."
+        );
+
+
+        return true;
+
+      } catch (error) {
+
+        setText(
+          "stratBox",
+          `Strategy load failed: ${error.message}`
+        );
+
+        setText(
+          "rulesBox",
+          `Master rule load failed: ${error.message}`
+        );
+
+        setText(
+          "securityBox",
+          `Security file load failed: ${error.message}`
+        );
+
+        return false;
+
+      }
+
+    }
+
+
+    async function loadRepositoryMap() {
+
+      try {
+
+        const root =
+          await ghRoot();
+
+        renderRepositoryMap(root);
+
+        return root;
+
+      } catch (error) {
+
+        console.warn(
+          "Repository map",
+          error
+        );
+
+        return [];
+
+      }
+
+    }
+
+
+    /* =========================================================
+       MARKET DATA
+       ========================================================= */
+
+    async function fetchKlines(
+      symbol,
+      tf
+    ) {
+
+      const interval =
+        C.binTf[tf] ||
+        "1h";
+
+      const limit =
+        C?.market?.limit ||
+        200;
+
+
+      const url =
+        `${C.market.base}${C.market.klines}` +
+        `?symbol=${encodeURIComponent(symbol)}` +
+        `&interval=${encodeURIComponent(interval)}` +
+        `&limit=${limit}`;
+
+
+      const response =
+        await fetch(
+          `${url}&_=${Date.now()}`,
+          {
+            cache: "no-store"
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Kline ${response.status}`
+        );
+
+      }
+
+
+      const rows =
+        await response.json();
+
+
+      return rows.map(row => ({
+
+        t: Number(row[0]),
+
+        o: Number(row[1]),
+
+        h: Number(row[2]),
+
+        l: Number(row[3]),
+
+        c: Number(row[4]),
+
+        v: Number(row[5]),
+
+        closeT: Number(row[6])
+
+      }));
+
+    }
+
+
+    async function fetchDepth(
+      symbol
+    ) {
+
+      const limit =
+        Math.max(
+          20,
+          Number(C?.l2?.depth || 20)
+        );
+
+
+      const url =
+        `${C.market.base}${C.market.depth}` +
+        `?symbol=${encodeURIComponent(symbol)}` +
+        `&limit=${limit}`;
+
+
+      const response =
+        await fetch(
+          `${url}&_=${Date.now()}`,
+          {
+            cache: "no-store"
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Depth ${response.status}`
+        );
+
+      }
+
+
+      return response.json();
+
+    }
+
+
+    async function fetchTicker(
+      symbol
+    ) {
+
+      const url =
+        `${C.market.base}/api/v3/ticker/price` +
+        `?symbol=${encodeURIComponent(symbol)}`;
+
+
+      const response =
+        await fetch(
+          `${url}&_=${Date.now()}`,
+          {
+            cache: "no-store"
+          }
+        );
+
+
+      if (!response.ok) {
+        throw new Error(
+          `Ticker ${response.status}`
+        );
+      }
+
+
+      const row =
+        await response.json();
+
+
+      return Number(row.price);
+
+    }
+
+
+    async function refreshMarket(
+      force = false
+    ) {
+
+      if (!LIVE.active) {
+        return;
+      }
+
+
+      if (
+        LIVE.marketBusy &&
+        !force
+      ) {
+        return;
+      }
+
+
+      LIVE.marketBusy = true;
+
+
+      try {
+
+        const [
+          candles,
+          depth,
+          btcPrice,
+          ethPrice
+        ] = await Promise.all([
+
+          fetchKlines(
+            CUR_SYM,
+            CUR_TF
+          ),
+
+          fetchDepth(
+            CUR_SYM
+          ),
+
+          fetchTicker(
+            "BTCUSDT"
+          ),
+
+          fetchTicker(
+            "ETHUSDT"
+          )
+
+        ]);
+
+
+        CURRENT_CANDLES =
+          candles;
+
+        CURRENT_DEPTH =
+          depth;
+
+
+        TICKER_DATA.BTCUSDT =
+          btcPrice;
+
+        TICKER_DATA.ETHUSDT =
+          ethPrice;
+
+
+        LIVE.lastMarket =
+          Date.now();
+
+
+        evaluateCurrentMarket();
+
+        renderTicker();
+
+        renderAll();
+
+
+      } catch (error) {
+
+        LIVE.failures++;
+
+        setText(
+          "dataLayer",
+          `Market feed error: ${error.message}`
+        );
+
+        pulse(
+          `Market feed error · ${error.message}`,
+          "bad"
+        );
+
+      } finally {
+
+        LIVE.marketBusy = false;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       ENGINE EVALUATION
+       ========================================================= */
+
+    function evaluateCurrentMarket() {
+
+      if (
+        !ENGINE ||
+        !CURRENT_CANDLES?.length
+      ) {
+        return null;
+      }
+
+
+      let result = null;
+
+
+      try {
+
+        if (
+          typeof ENGINE.fullSignalL2 ===
+          "function" &&
+          CURRENT_DEPTH
+        ) {
+
+          result =
+            ENGINE.fullSignalL2(
+              CURRENT_CANDLES,
+              CURRENT_DEPTH,
+              CUR_SYM,
+              CUR_TF
+            );
+
+        }
+
+
+        if (
+          !result &&
+          typeof ENGINE.fullSignal ===
+          "function"
+        ) {
+
+          result =
+            ENGINE.fullSignal(
+              CURRENT_CANDLES,
+              CUR_TF
+            );
+
+        }
+
+
+        CURRENT_SIGNAL =
+          result || null;
+
+
+        return CURRENT_SIGNAL;
+
+      } catch (error) {
+
+        console.warn(
+          "Engine evaluation",
+          error
+        );
+
+        CURRENT_SIGNAL = null;
+
+        setText(
+          "engWhy",
+          `Evaluation error: ${error.message}`
+        );
+
+        return null;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       STATE EXTRACTION HELPERS
+       ========================================================= */
+
+    function deepFind(
+      obj,
+      keys,
+      depth = 0
+    ) {
+
+      if (
+        obj == null ||
+        depth > 6
+      ) {
+        return undefined;
+      }
+
+
+      if (
+        typeof obj !== "object"
+      ) {
+        return undefined;
+      }
+
+
+      for (const key of keys) {
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            obj,
+            key
+          )
+        ) {
+          return obj[key];
+        }
+
+      }
+
+
+      for (const key of Object.keys(obj)) {
+
+        const value =
+          obj[key];
+
+        const found =
+          deepFind(
+            value,
+            keys,
+            depth + 1
+          );
+
+        if (found !== undefined) {
+          return found;
+        }
+
+      }
+
+
+      return undefined;
+
+    }
+
+
+    function stateValue(keys) {
+
+      return deepFind(
+        STATE,
+        keys
+      );
+
+    }
+
+
+    function performanceValue(keys) {
+
+      return deepFind(
+        PERF,
+        keys
+      );
+
+    }
+
+
+    /* =========================================================
+       RENDER HELPERS
+       ========================================================= */
+
+    function setText(
+      id,
+      value
+    ) {
+
+      const node =
+        $(id);
+
+      if (!node) return;
+
+      node.textContent =
+        value == null ||
+        value === ""
+          ? "—"
+          : String(value);
+
+    }
+
+
+    function toneForSignal(
+      signal
+    ) {
+
+      if (signal === "BUY") {
+        return "text-emerald-300";
+      }
+
+      if (signal === "SELL") {
+        return "text-rose-300";
+      }
+
+      return "text-slate-300";
+
+    }
+
+
+    function borderForSignal(
+      signal
+    ) {
+
+      if (signal === "BUY") {
+        return "border-emerald-400/20 bg-emerald-400/[0.05]";
+      }
+
+      if (signal === "SELL") {
+        return "border-rose-400/20 bg-rose-400/[0.05]";
+      }
+
+      return "border-white/[0.07] bg-white/[0.025]";
+
+    }
+
+
+    function renderTicker() {
+
+      const btc =
+        TICKER_DATA.BTCUSDT;
+
+      const eth =
+        TICKER_DATA.ETHUSDT;
+
+
+      const active =
+        TICKER_DATA[CUR_SYM];
+
+
+      $("ticker").innerHTML = `
+
+        <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
+
+          <div class="flex min-w-max items-center gap-6 overflow-x-auto py-2">
+
+            <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-700">
+              LIVE TAPE
+            </div>
+
+
+            <div class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+              <span class="font-mono text-[11px] font-bold text-white">BTCUSDT</span>
+              <span class="font-mono text-[11px] text-slate-400">
+                ${btc != null ? num(btc, 2) : "—"}
+              </span>
+            </div>
+
+
+            <div class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
+              <span class="font-mono text-[11px] font-bold text-white">ETHUSDT</span>
+              <span class="font-mono text-[11px] text-slate-400">
+                ${eth != null ? num(eth, 2) : "—"}
+              </span>
+            </div>
+
+
+            <div class="ml-auto flex items-center gap-2">
+
+              <span class="font-mono text-[10px] text-slate-600">
+                ${CUR_SYM}
+              </span>
+
+              <span class="font-mono text-[12px] font-bold text-cyan-200">
+                ${active != null ? num(active, 2) : "—"}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+    }
+
+
+    /* =========================================================
+       DASHBOARD RENDER
+       ========================================================= */
+
+    function renderDecision() {
+
+      const data =
+        CURRENT_SIGNAL;
+
+
+      const signal =
+        data?.signal ||
+        "WAIT";
+
+
+      const conf =
+        data?.confidence;
+
+
+      const entry =
+        data?.entryPlan?.entry ??
+        data?.plans?.B1?.entry ??
+        null;
+
+
+      setText(
+        "recSym",
+        CUR_SYM
+      );
+
+      setText(
+        "recSym2",
+        CUR_SYM
+      );
+
+      setText(
+        "recTF",
+        CUR_TF
+      );
+
+      setText(
+        "recTF2",
+        CUR_TF
+      );
+
+
+      $("recAction").textContent =
+        signal;
+
+      $("recAction").className =
+        `mt-2 font-display text-2xl font-bold tracking-wider ${toneForSignal(signal)}`;
+
+
+      $("finStrip").textContent =
+        signal === "WAIT"
+          ? "SIGNAL ONLY"
+          : `${signal} · ${conf ?? "—"}%`;
+
+
+      $("finStrip").className =
+        `rounded-full border px-3 py-1.5 font-mono text-[10px] font-bold ${
+          signal === "BUY"
+            ? "border-emerald-400/20 bg-emerald-400/[0.05] text-emerald-300"
+            : signal === "SELL"
+              ? "border-rose-400/20 bg-rose-400/[0.05] text-rose-300"
+              : "border-white/[0.08] bg-white/[0.025] text-slate-400"
+        }`;
+
+
+      const why =
+        data?.final?.why ||
+        data?.reason ||
+        "No decisive confluence yet.";
+
+
+      setText(
+        "recNote",
+        `${why}${conf != null ? ` · Confidence ${conf}%` : ""}`
+      );
+
+
+      setText(
+        "recEntry",
+        entry != null
+          ? num(entry, 2)
+          : "—"
+      );
+
+
+      setText(
+        "recBy",
+        data?.src ||
+        "realtime-engine"
+      );
+
+
+      const imb =
+        data?.l2?.imb ??
+        stateValue([
+          "imbalance",
+          "l2Imbalance",
+          "imb"
+        ]);
+
+
+      setText(
+        "l2ImbMini",
+        imb != null
+          ? `${Number(imb).toFixed(1)}%`
+          : "—"
+      );
+
+    }
+
+
+    function renderActivePlan() {
+
+      const data =
+        CURRENT_SIGNAL;
+
+      const signal =
+        data?.signal ||
+        "WAIT";
+
+      const plan =
+        data?.entryPlan ||
+        null;
+
+
+      setText(
+        "actSig",
+        signal
+      );
+
+
+      $("actSig").className =
+        `mt-1 font-display text-lg font-bold ${toneForSignal(signal)}`;
+
+
+      setText(
+        "actTime",
+        timeNow()
+      );
+
+
+      const why =
+        data?.final?.why ||
+        data?.reason ||
+        "No active setup.";
+
+
+      setText(
+        "actNote",
+        why
+      );
+
+
+      setText(
+        "actEntry",
+        plan?.entry != null
+          ? num(plan.entry, 2)
+          : "—"
+      );
+
+
+      setText(
+        "actTp",
+        plan?.tp != null
+          ? num(plan.tp, 2)
+          : "—"
+      );
+
+
+      setText(
+        "actSl",
+        plan?.sl != null
+          ? num(plan.sl, 2)
+          : "—"
+      );
+
+
+      setText(
+        "actStat",
+        signal === "WAIT"
+          ? "WAIT"
+          : "SIGNAL"
+      );
+
+    }
+
+
+    function renderGridData() {
+
+      const grid =
+        CURRENT_SIGNAL?.grid;
+
+
+      if (!grid) {
+
+        setText(
+          "gridStatus",
+          "GRID WAIT"
+        );
+
+        setText(
+          "gridSrc",
+          "—"
+        );
+
+        $("tvRow").innerHTML =
+          emptyRow("Grid data not available.");
+
+        $("glvRow").innerHTML =
+          emptyRow("Levels not available.");
+
+        return;
+      }
+
+
+      setText(
+        "gridStatus",
+        `${grid.color || "GRID"} · LIVE`
+      );
+
+
+      setText(
+        "gridSrc",
+        CURRENT_SIGNAL?.src ||
+        "engine"
+      );
+
+
+      const a =
+        grid.anchor || {};
+
+      const b =
+        grid.bands || {};
+
+      const ext =
+        grid.ext || {};
+
+      const expected =
+        grid.expected || {};
+
+      $("tvRow").innerHTML = [
+
+        miniRow(
+          "Anchor O",
+          num(a.O)
+        ),
+
+        miniRow(
+          "Anchor H",
+          num(a.H)
+        ),
+
+        miniRow(
+          "Anchor L",
+          num(a.L)
+        ),
+
+        miniRow(
+          "Anchor C",
+          num(a.C)
+        ),
+
+        miniRow(
+          "Range",
+          num(a.R)
+        ),
+
+        miniRow(
+          "Expected H",
+          num(expected.high)
+        ),
+
+        miniRow(
+          "Expected L",
+          num(expected.low)
+        )
+
+      ].join("");
+
+
+      $("glvRow").innerHTML = [
+
+        miniRow(
+          "0%",
+          num(b.l0)
+        ),
+
+        miniRow(
+          "33%",
+          num(b.l33)
+        ),
+
+        miniRow(
+          "66%",
+          num(b.l66)
+        ),
+
+        miniRow(
+          "100%",
+          num(b.l100)
+        ),
+
+        miniRow(
+          "-33%",
+          num(ext.m33)
+        ),
+
+        miniRow(
+          "133%",
+          num(ext.p133)
+        ),
+
+        miniRow(
+          "167%",
+          num(ext.p167)
+        ),
+
+        miniRow(
+          "200%",
+          num(ext.p200)
+        )
+
+      ].join("");
+
+    }
+
+
+    function renderL2() {
+
+      const l2 =
+        CURRENT_SIGNAL?.l2;
+
+
+      if (!l2) {
+
+        $("l2Row").innerHTML =
+          emptyRow(
+            "Realtime L2 unavailable."
+          );
+
+        return;
+
+      }
+
+
+      const bids =
+        l2.walls_b || [];
+
+      const asks =
+        l2.walls_a || [];
+
+
+      $("l2Row").innerHTML = [
+
+        miniRow(
+          "Bid",
+          num(l2.bid)
+        ),
+
+        miniRow(
+          "Ask",
+          num(l2.ask)
+        ),
+
+        miniRow(
+          "Mid",
+          num(l2.mid)
+        ),
+
+        miniRow(
+          "Spread",
+          num(l2.spread, 4)
+        ),
+
+        miniRow(
+          "Imbalance",
+          pct(l2.imb, 1)
+        ),
+
+        miniRow(
+          "Bid Walls",
+          String(bids.length)
+        ),
+
+        miniRow(
+          "Ask Walls",
+          String(asks.length)
+        )
+
+      ].join("");
+
+    }
+
+
+    function renderContext() {
+
+      const z =
+        CURRENT_SIGNAL?.firstZone?.zone ||
+        CURRENT_SIGNAL?.final?.first_zone ||
+        "MID";
+
+
+      setText(
+        "zPos",
+        z
+      );
+
+
+      const color =
+        CURRENT_SIGNAL?.grid?.color ||
+        "UNKNOWN";
+
+
+      const imbalance =
+        CURRENT_SIGNAL?.l2?.imb;
+
+
+      const signal =
+        CURRENT_SIGNAL?.signal ||
+        "WAIT";
+
+
+      setText(
+        "ctxLine",
+        `${CUR_SYM} ${CUR_TF} · ${color} anchor · zone ${z} · signal ${signal} · L2 ${imbalance != null ? Number(imbalance).toFixed(1) + "%" : "unavailable"}`
+      );
+
+
+      const reason =
+        CURRENT_SIGNAL?.final?.why ||
+        "Waiting for engine reasoning.";
+
+
+      const planText =
+        CURRENT_SIGNAL?.entryPlan
+          ? `Entry ${num(CURRENT_SIGNAL.entryPlan.entry)} · SL ${num(CURRENT_SIGNAL.entryPlan.sl)} · TP ${num(CURRENT_SIGNAL.entryPlan.tp)}`
+          : "No entry plan";
+
+
+      setText(
+        "explainBody",
+        `${reason}. ${planText}. This is a signal-only analytical output; user decides whether to act.`
+      );
+
+    }
+
+
+    function renderFinal() {
+
+      const data =
+        CURRENT_SIGNAL;
+
+
+      let text = "";
+
+
+      if (
+        data?.final?.block
+      ) {
+
+        text =
+          data.final.block;
+
+      } else {
+
+        text =
+          JSON.stringify(
+            data || {
+              status:
+                "Waiting for engine"
+            },
+            null,
+            2
+          );
+
+      }
+
+
+      setText(
+        "finalText",
+        text
+      );
+
+    }
+
+
+    function renderIndicators() {
+
+      const indicators =
+        CURRENT_SIGNAL?.indicators ||
+        {};
+
+
+      const models =
+        CURRENT_SIGNAL?.models ||
+        {};
+
+
+      const grid =
+        models.grid || {};
+
+      const l2 =
+        models.l2 || {};
+
+      const quant =
+        models.quant || {};
+
+      const taurus =
+        models.taurus || {};
+
+
+      $("engGrid").innerHTML = [
+
+        miniRow(
+          "RSI",
+          indicators.RSI ?? "—"
+        ),
+
+        miniRow(
+          "MACD-H",
+          indicators["MACD-HIST"] ?? "—"
+        ),
+
+        miniRow(
+          "EMA20",
+          indicators.EMA20 ?? "—"
+        ),
+
+        miniRow(
+          "EMA50",
+          indicators.EMA50 ?? "—"
+        )
+
+      ].join("");
+
+
+      $("modelGrid").innerHTML = [
+
+        modelRow(
+          "GRID",
+          grid.bias,
+          grid.confidence,
+          grid.reasoning
+        ),
+
+        modelRow(
+          "L2",
+          l2.bias,
+          l2.confidence,
+          l2.reasoning
+        ),
+
+        modelRow(
+          "QUANT",
+          quant.bias,
+          quant.confidence,
+          quant.reasoning
+        ),
+
+        modelRow(
+          "TAURUS",
+          taurus.bias,
+          taurus.confidence,
+          taurus.reasoning
+        )
+
+      ].join("");
+
+
+      const why =
+        CURRENT_SIGNAL?.final?.why ||
+        "No engine output yet.";
+
+
+      setText(
+        "engWhy",
+        why
+      );
+
+
+      const tf =
+        CURRENT_SIGNAL?.tf ||
+        CUR_TF;
+
+
+      setText(
+        "gridMeta",
+        `${CUR_SYM} · ${tf} · ${timeNow()}`
+      );
+
+    }
+
+
+    /* =========================================================
+       PILLARS
+       ========================================================= */
+
+    function renderPillars() {
+
+      const names =
+        C.pillarNames || {};
+
+
+      const source =
+        STATE?.pillars ||
+        STATE?.pillarScores ||
+        STATE?.scores?.pillars ||
+        {};
+
+
+      const entries =
+        Object.entries(names);
+
+
+      const values =
+        [];
+
+
+      for (const [key, name] of entries) {
+
+        const raw =
+          source?.[key] ??
+          source?.[key.toLowerCase()] ??
+          source?.[name];
+
+
+        let score = null;
+
+
+        if (
+          typeof raw === "number"
+        ) {
+
+          score =
+            raw > 1
+              ? raw
+              : raw * 100;
+
+        } else if (
+          typeof raw === "object" &&
+          raw !== null
+        ) {
+
+          score =
+            raw.score ??
+            raw.value ??
+            null;
+
+        }
+
+
+        values.push({
+          key,
+          name,
+          score
+        });
+
+      }
+
+
+      const valid =
+        values
+          .map(x => x.score)
+          .filter(v => Number.isFinite(Number(v)));
+
+
+      const avg =
+        valid.length
+          ? valid.reduce(
+              (a, b) => a + Number(b),
+              0
+            ) / valid.length
+          : null;
+
+
+      setText(
+        "pillarScore",
+        avg == null
+          ? "—"
+          : `${avg.toFixed(0)} / 100`
+      );
+
+
+      $("pillarGrid").innerHTML =
+        values.map(renderPillarMini).join("");
+
+
+      $("pillarPageGrid").innerHTML =
+        values.map(renderPillarLarge).join("");
+
+    }
+
+
+    function renderPillarMini(
+      item
+    ) {
+
+      const score =
+        Number.isFinite(Number(item.score))
+          ? Math.max(
+              0,
+              Math.min(
+                100,
+                Number(item.score)
+              )
+            )
+          : null;
+
+
+      return `
+
+        <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+
+          <div class="flex items-center justify-between gap-2">
+
+            <span class="font-mono text-[10px] font-bold text-slate-300">
+              ${esc(item.key)}
+            </span>
+
+            <span class="font-mono text-[10px] text-slate-500">
+              ${score == null ? "—" : score.toFixed(0)}
+            </span>
+
+          </div>
+
+          <div class="mt-2 text-[9px] uppercase tracking-wider text-slate-600">
+            ${esc(item.name)}
+          </div>
+
+          <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.04]">
+
+            <div
+              class="h-full rounded-full bg-cyan-300/60"
+              style="width:${score == null ? 0 : score}%"
+            ></div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    function renderPillarLarge(
+      item
+    ) {
+
+      const score =
+        Number.isFinite(Number(item.score))
+          ? Math.max(
+              0,
+              Math.min(
+                100,
+                Number(item.score)
+              )
+            )
+          : null;
+
+
+      return `
+
+        <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5 transition hover:border-cyan-400/10">
+
+          <div class="flex items-start justify-between gap-3">
+
+            <div>
+
+              <div class="font-display text-sm font-bold tracking-wider text-white">
+                ${esc(item.key)}
+              </div>
+
+              <div class="mt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                ${esc(item.name)}
+              </div>
+
+            </div>
+
+            <div class="font-mono text-xl font-bold text-cyan-200">
+              ${score == null ? "—" : score.toFixed(0)}
+            </div>
+
+          </div>
+
+
+          <div class="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.05]">
+
+            <div
+              class="h-full rounded-full bg-cyan-300/65"
+              style="width:${score == null ? 0 : score}%"
+            ></div>
+
+          </div>
+
+
+          <div class="mt-3 text-[10px] leading-5 text-slate-600">
+            HERMES operating pillar
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       LEDGER
+       ========================================================= */
+
+    function renderLedger() {
+
+      const box =
+        $("ledgerBox");
+
+
+      if (!box) return;
+
+
+      if (!LEDGER.length) {
+
+        box.innerHTML = emptyRow(
+          "No ledger entries."
+        );
+
+        setText(
+          "ledgerMeta",
+          "ledger.jsonl · no entries"
+        );
+
+        return;
+
+      }
+
+
+      const rows =
+        LEDGER
+          .slice()
+          .reverse()
+          .slice(0, 100);
+
+
+      const html = `
+
+        <div class="min-w-[900px]">
+
+          <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 border-b border-white/[0.06] px-3 pb-3 text-[9px] font-bold uppercase tracking-wider text-slate-600">
+
+            <div>TIME</div>
+            <div>SYMBOL</div>
+            <div>SIGNAL</div>
+            <div>DETAIL</div>
+            <div>HASH</div>
+
+          </div>
+
+
+          <div class="divide-y divide-white/[0.04]">
+
+            ${rows.map((item, index) => {
+
+              const time =
+                item.time ||
+                item.timestamp ||
+                item.ts ||
+                item.created_at ||
+                "—";
+
+
+              const symbol =
+                item.symbol ||
+                item.sym ||
+                item.market ||
+                "—";
+
+
+              const signal =
+                item.signal ||
+                item.final?.signal ||
+                item.action ||
+                "—";
+
+
+              const detail =
+                item.reason ||
+                item.why ||
+                item.message ||
+                item.final?.why ||
+                "Ledger event";
+
+
+              const hash =
+                item.hash ||
+                item.digest ||
+                item.sha256 ||
+                "—";
+
+
+              return `
+
+                <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 px-3 py-3 text-[10px]">
+
+                  <div class="font-mono text-slate-500">
+                    ${esc(formatLedgerTime(time))}
+                  </div>
+
+                  <div class="font-mono font-bold text-slate-300">
+                    ${esc(symbol)}
+                  </div>
+
+                  <div class="font-display font-bold ${toneForSignal(signal)}">
+                    ${esc(signal)}
+                  </div>
+
+                  <div class="truncate text-slate-500">
+                    ${esc(detail)}
+                  </div>
+
+                  <div class="truncate font-mono text-[9px] text-slate-700">
+                    ${esc(String(hash).slice(0, 18))}
+                  </div>
+
+                </div>
+
+              `;
+
+            }).join("")}
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      box.innerHTML =
+        html;
+
+
+      setText(
+        "ledgerMeta",
+        `ledger.jsonl · ${LEDGER.length} entries`
+      );
+
+    }
+
+
+    function formatLedgerTime(value) {
+
+      if (!value) {
+        return "—";
+      }
+
+
+      if (
+        typeof value === "number" ||
+        /^\d+$/.test(String(value))
+      ) {
+
+        const n =
+          Number(value);
+
+        if (
+          n > 10000000000
+        ) {
+
+          return new Date(n)
+            .toLocaleString();
+
+        }
+
+        return new Date(n * 1000)
+          .toLocaleString();
+
+      }
+
+
+      return String(value);
+
+    }
+
+
+    /* =========================================================
+       SCOREBOARD
+       ========================================================= */
+
+    function collectTradeStats() {
+
+      const source =
+        PERF ||
+        STATE ||
+        {};
+
+
+      const totalRaw =
+        deepFind(
+          source,
+          [
+            "total",
+            "totalTrades",
+            "trades"
+          ]
+        );
+
+
+      const winRaw =
+        deepFind(
+          source,
+          [
+            "wins",
+            "win",
+            "winningTrades"
+          ]
+        );
+
+
+      const lossRaw =
+        deepFind(
+          source,
+          [
+            "losses",
+            "loss",
+            "losingTrades"
+          ]
+        );
+
+
+      const openRaw =
+        deepFind(
+          source,
+          [
+            "open",
+            "openTrades",
+            "active"
+          ]
+        );
+
+
+      const wrRaw =
+        deepFind(
+          source,
+          [
+            "winRate",
+            "wr",
+            "accuracy"
+          ]
+        );
+
+
+      let total =
+        Number(totalRaw);
+
+      let wins =
+        Number(winRaw);
+
+      let losses =
+        Number(lossRaw);
+
+      let open =
+        Number(openRaw);
+
+      let wr =
+        Number(wrRaw);
+
+
+      const ledgerTrades =
+        LEDGER.filter(
+          x =>
+            x &&
+            (
+              x.signal ||
+              x.action ||
+              x.final?.signal
+            )
+        );
+
+
+      if (
+        !Number.isFinite(total)
+      ) {
+        total = ledgerTrades.length;
+      }
+
+
+      if (
+        !Number.isFinite(wins)
+      ) {
+        wins = 0;
+      }
+
+
+      if (
+        !Number.isFinite(losses)
+      ) {
+        losses = 0;
+      }
+
+
+      if (
+        !Number.isFinite(open)
+      ) {
+        open = Math.max(
+          0,
+          total - wins - losses
+        );
+      }
+
+
+      if (
+        !Number.isFinite(wr)
+      ) {
+
+        wr =
+          wins + losses > 0
+            ? wins / (wins + losses) * 100
+            : null;
+
+      } else if (
+        wr >= 0 &&
+        wr <= 1
+      ) {
+
+        wr *= 100;
+
+      }
+
+
+      return {
+        total,
+        wins,
+        losses,
+        open,
+        wr
+      };
+
+    }
+
+
+    function renderScoreboard() {
+
+      const stats =
+        collectTradeStats();
+
+
+      setText(
+        "scTotal",
+        stats.total
+      );
+
+      setText(
+        "scWin",
+        stats.wins
+      );
+
+      setText(
+        "scLoss",
+        stats.losses
+      );
+
+      setText(
+        "scOpen",
+        stats.open
+      );
+
+      setText(
+        "scWR",
+        stats.wr == null
+          ? "—"
+          : `${stats.wr.toFixed(1)}%`
+      );
+
+
+      const wr =
+        stats.wr == null
+          ? 0
+          : Math.max(
+              0,
+              Math.min(
+                100,
+                stats.wr
+              )
+            );
+
+
+      $("scWRBar").textContent =
+        `${wr.toFixed(1)}%`;
+
+
+      $("wrFill").style.width =
+        `${wr}%`;
+
+
+      setText(
+        "scWRNote",
+        stats.wr == null
+          ? "No settled trade statistics available."
+          : `${stats.wins} wins / ${stats.losses} losses / ${stats.open} open.`
+      );
+
+
+      const accuracy =
+        performanceValue([
+          "systemAccuracy",
+          "accuracy",
+          "acc",
+          "score"
+        ]);
+
+
+      setText(
+        "sysAcc",
+        accuracy == null
+          ? stats.wr == null
+            ? "—"
+            : `${stats.wr.toFixed(1)}%`
+          : (
+              Number(accuracy) <= 1
+                ? `${(Number(accuracy) * 100).toFixed(1)}%`
+                : `${Number(accuracy).toFixed(1)}%`
+            )
+      );
+
+
+      renderHistory();
+
+      renderImprovement();
+
+    }
+
+
+    function renderHistory() {
+
+      const box =
+        $("histBox");
+
+
+      if (
+        !LEDGER.length
+      ) {
+
+        box.innerHTML =
+          emptyRow(
+            "No decision history available."
+          );
+
+        return;
+
+      }
+
+
+      box.innerHTML = `
+        <div class="space-y-2">
+
+          ${LEDGER
+            .slice()
+            .reverse()
+            .slice(0, 40)
+            .map(item => {
+
+              const signal =
+                item.signal ||
+                item.final?.signal ||
+                item.action ||
+                "EVENT";
+
+
+              const symbol =
+                item.symbol ||
+                item.sym ||
+                "—";
+
+
+              const time =
+                item.time ||
+                item.timestamp ||
+                item.ts ||
+                "—";
+
+
+              return `
+
+                <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
+
+                  <div class="min-w-0">
+
+                    <div class="flex items-center gap-2">
+
+                      <span class="font-display text-[10px] font-bold ${toneForSignal(signal)}">
+                        ${esc(signal)}
+                      </span>
+
+                      <span class="font-mono text-[10px] text-slate-600">
+                        ${esc(symbol)}
+                      </span>
+
+                    </div>
+
+                    <div class="mt-1 truncate text-[10px] text-slate-600">
+                      ${esc(item.reason || item.why || item.message || "")}
+                    </div>
+
+                  </div>
+
+                  <div class="shrink-0 font-mono text-[9px] text-slate-700">
+                    ${esc(formatLedgerTime(time))}
+                  </div>
+
+                </div>
+
+              `;
+
+            }).join("")}
+
+        </div>
+      `;
+
+    }
+
+
+    function renderImprovement() {
+
+      const source =
+        PERF ||
+        {};
+
+
+      const keys = [
+        ["Backtest", ["backtest", "backtestAccuracy"]],
+        ["Live", ["liveAccuracy", "live"]],
+        ["Recent", ["recentAccuracy", "recent"]],
+        ["System", ["systemAccuracy", "accuracy"]]
+      ];
+
+
+      const rows =
+        keys.map(
+          ([label, paths]) => {
+
+            const raw =
+              deepFind(
+                source,
+                paths
+              );
+
+
+            if (
+              raw == null
+            ) {
+              return miniRow(
+                label,
+                "—"
+              );
+            }
+
+
+            const value =
+              Number(raw);
+
+
+            return miniRow(
+              label,
+              Number.isFinite(value)
+                ? (
+                    value <= 1
+                      ? `${(value * 100).toFixed(1)}%`
+                      : `${value.toFixed(1)}%`
+                  )
+                : String(raw)
+            );
+
+          }
+        );
+
+
+      $("impGrid").innerHTML =
+        rows.join("");
+
+
+      setText(
+        "impMeta",
+        "Performance data is read directly from perf.json."
+      );
+
+    }
+
+
+    /* =========================================================
+       REPORTS
+       ========================================================= */
+
+    function renderRepositoryMap(
+      root
+    ) {
+
+      const knownNames =
+        new Set([
+          ...KNOWN_FILES,
+          "skills",
+          ".github"
+        ]);
+
+
+      const all =
+        Array.isArray(root)
+          ? root
+          : [];
+
+
+      const filtered =
+        all.filter(
+          item =>
+            knownNames.has(item.name)
+        );
+
+
+      $("repScan").innerHTML = `
+
+        <div class="space-y-2">
+
+          ${filtered.map(item => `
+
+            <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
+
+              <div class="flex min-w-0 items-center gap-3">
+
+                <span class="font-mono text-xs ${
+                  item.type === "dir"
+                    ? "text-amber-300"
+                    : "text-cyan-200"
+                }">
+                  ${item.type === "dir" ? "DIR" : "FILE"}
+                </span>
+
+                <span class="truncate font-mono text-xs text-slate-300">
+                  ${esc(item.name)}
+                </span>
+
+              </div>
+
+              <span class="shrink-0 text-[9px] text-slate-700">
+                ${item.type === "dir" ? "directory" : "root"}
+              </span>
+
+            </div>
+
+          `).join("")}
+
+        </div>
+
+      `;
+
+
+      $("repFiles").innerHTML =
+        KNOWN_FILES.map(file => {
+
+          const desc =
+            C.reportDesc?.[file] ||
+            "Private Heart file";
+
+
+          return `
+
+            <button
+              data-view-file="${esc(file)}"
+              type="button"
+              class="group rounded-2xl border border-white/[0.06] bg-black/20 p-4 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.025]"
+            >
+
+              <div class="flex items-start justify-between gap-3">
+
+                <div class="min-w-0">
+
+                  <div class="truncate font-mono text-xs font-bold text-slate-300 group-hover:text-white">
+                    ${esc(file)}
+                  </div>
+
+                  <div class="mt-2 text-[10px] leading-5 text-slate-600">
+                    ${esc(desc)}
+                  </div>
+
+                </div>
+
+                <span class="font-mono text-[9px] text-slate-700">
+                  READ
+                </span>
+
+              </div>
+
+            </button>
+
+          `;
+
+        }).join("");
+
+
+      setText(
+        "repSummary",
+        `Private Heart repository loaded. ${KNOWN_FILES.length} root files are configured for FACE access.`
+      );
+
+    }
+
+
+    $("repRefresh").addEventListener(
+      "click",
+      async () => {
+
+        pulse(
+          "Refreshing Heart reports…",
+          "pa"
+        );
+
+        await Promise.allSettled([
+          loadHeartState(),
+          loadPerformance(),
+          loadLedger(),
+          loadStrategy(),
+          loadRepositoryMap()
+        ]);
+
+        renderAll();
+
+      }
+    );
+
+
+    /* =========================================================
+       FILE VIEWER
+       ========================================================= */
+
+    async function openFileViewer(
+      file
+    ) {
+
+      $("fvTitle").textContent =
+        file;
+
+
+      $("fvBody").textContent =
+        "Loading…";
+
+
+      $("fileOverlay").classList.remove(
+        "hidden"
+      );
+
+
+      try {
+
+        const text =
+          await ghText(
+            C.heartRepo,
+            file
+          );
+
+
+        $("fvBody").textContent =
+          text;
+
+      } catch (error) {
+
+        $("fvBody").textContent =
+          `Unable to read ${file}\n\n${error.message}`;
+
+      }
+
+    }
+
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        const button =
+          event.target.closest(
+            "[data-view-file]"
+          );
+
+
+        if (!button) {
+          return;
+        }
+
+
+        openFileViewer(
+          button.getAttribute(
+            "data-view-file"
+          )
+        );
+
+      }
+    );
+
+
+    $("closeFv").addEventListener(
+      "click",
+      () => {
+        $("fileOverlay").classList.add(
+          "hidden"
+        );
+      }
+    );
+
+
+    $("fileOverlay").addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          $("fileOverlay")
+        ) {
+          $("fileOverlay").classList.add(
+            "hidden"
+          );
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       CONFIG DRAWER
+       ========================================================= */
+
+    function renderConfig() {
+
+      const publicConfig =
+        {
+          ...C,
+
+          tokenPolicy: {
+            ...(C.tokenPolicy || {}),
+            token: "[SESSION ONLY / HIDDEN]"
+          }
+        };
+
+
+      $("cfgInfo").innerHTML = `
+
+        <pre class="whitespace-pre-wrap font-mono text-[10px] leading-6 text-slate-400">${esc(
+          JSON.stringify(
+            publicConfig,
+            null,
+            2
+          )
+        )}</pre>
+
+      `;
+
+    }
+
+
+    $("openCfg").addEventListener(
+      "click",
+      () => {
+
+        renderConfig();
+
+        $("cfgOverlay").classList.remove(
+          "hidden"
+        );
+
+      }
+    );
+
+
+    $("closeCfg").addEventListener(
+      "click",
+      () => {
+
+        $("cfgOverlay").classList.add(
+          "hidden"
+        );
+
+      }
+    );
+
+
+    $("cfgOverlay").addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          $("cfgOverlay")
+        ) {
+
+          $("cfgOverlay").classList.add(
+            "hidden"
+          );
+
+        }
+
+      }
+    );
+
+
+    $("btnEngineReload").addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          pulse(
+            "Reloading private engine…",
+            "pa"
+          );
+
+          await loadEngine(true);
+
+          evaluateCurrentMarket();
+
+          renderAll();
+
+          pulse(
+            `Engine v${ENGINE?.version || "?"} reloaded`,
+            "ok"
+          );
+
+        } catch (error) {
+
+          pulse(
+            `Engine reload failed · ${error.message}`,
+            "bad"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       MODEL MODAL
+       ========================================================= */
+
+    function openModelModal(
+      name,
+      data
+    ) {
+
+      $("modTitle").textContent =
+        name;
+
+
+      $("modInst").textContent =
+        "Heart engine model telemetry";
+
+
+      $("modDetail").innerHTML = `
+
+        <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
+
+          <pre class="whitespace-pre-wrap font-mono text-xs leading-6 text-slate-400">${esc(
+            JSON.stringify(
+              data || {},
+              null,
+              2
+            )
+          )}</pre>
+
+        </div>
+
+      `;
+
+
+      $("modOverlay").classList.remove(
+        "hidden"
+      );
+
+      $("modOverlay").classList.add(
+        "flex"
+      );
+
+    }
+
+
+    document.addEventListener(
+      "click",
+      event => {
+
+        const model =
+          event.target.closest(
+            "[data-model]"
+          );
+
+
+        if (!model) return;
+
+
+        const name =
+          model.getAttribute(
+            "data-model"
+          );
+
+
+        const map = {
+          GRID:
+            CURRENT_SIGNAL?.models?.grid,
+
+          L2:
+            CURRENT_SIGNAL?.models?.l2,
+
+          QUANT:
+            CURRENT_SIGNAL?.models?.quant,
+
+          TAURUS:
+            CURRENT_SIGNAL?.models?.taurus
+        };
+
+
+        openModelModal(
+          name,
+          map[name]
+        );
+
+      }
+    );
+
+
+    $("closeMod").addEventListener(
+      "click",
+      closeModelModal
+    );
+
+
+    $("modOverlay").addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          $("modOverlay")
+        ) {
+          closeModelModal();
+        }
+
+      }
+    );
+
+
+    function closeModelModal() {
+
+      $("modOverlay").classList.add(
+        "hidden"
+      );
+
+      $("modOverlay").classList.remove(
+        "flex"
+      );
+
+    }
+
+
+    /* =========================================================
+       ACCOUNT
+       ========================================================= */
+
+    function updateAccount() {
+
+      setText(
+        "accRepo",
+        C.heartRepo
+      );
+
+      setText(
+        "accBranch",
+        C.branch
+      );
+
+      setText(
+        "accTokenPolicy",
+        C?.tokenPolicy?.scope ||
+        "read-only"
+      );
+
+      setText(
+        "accEngine",
+        ENGINE?.version
+          ? `v${ENGINE.version}`
+          : "—"
+      );
+
+      setText(
+        "accSession",
+        TOKEN
+          ? "ACTIVE"
+          : "LOCKED"
+      );
+
+      const equity =
+        deepFind(
+          PERF || STATE,
+          [
+            "equity",
+            "balance",
+            "accountEquity"
+          ]
+        );
+
+
+      const trades =
+        deepFind(
+          PERF || STATE,
+          [
+            "trades",
+            "totalTrades",
+            "count"
+          ]
+        );
+
+
+      const pnl =
+        deepFind(
+          PERF || STATE,
+          [
+            "pnl",
+            "profit",
+            "profitLoss"
+          ]
+        );
+
+
+      setText(
+        "accEq",
+        equity == null
+          ? "—"
+          : num(equity, 2)
+      );
+
+
+      setText(
+        "accTr",
+        trades == null
+          ? "—"
+          : trades
+      );
+
+
+      setText(
+        "accPnl",
+        pnl == null
+          ? "—"
+          : num(pnl, 2)
+      );
+
+    }
+
+
+    /* =========================================================
+       HEARTBEAT
+       ========================================================= */
+
+    function startHeartbeat() {
+
+      if (LIVE.timer) {
+        clearInterval(
+          LIVE.timer
+        );
+      }
+
+
+      if (LIVE.rtTimer) {
+        clearInterval(
+          LIVE.rtTimer
+        );
+      }
+
+
+      LIVE.timer =
+        setInterval(
+          async () => {
+
+            if (!LIVE.active) {
+              return;
+            }
+
+
+            if (
+              LIVE.busy
+            ) {
+              return;
+            }
+
+
+            LIVE.busy = true;
+
+
+            try {
+
+              LIVE.heartbeat++;
+
+
+              setText(
+                "hbCount",
+                LIVE.heartbeat
+              );
+
+
+              await loadHeartState();
+
+              if (
+                LIVE.heartbeat % 5 ===
+                0
+              ) {
+
+                await loadPerformance();
+
+              }
+
+
+              updateAccount();
+
+              renderAll();
+
+            } catch (error) {
+
+              LIVE.failures++;
+
+              setText(
+                "failCount",
+                LIVE.failures
+              );
+
+            } finally {
+
+              LIVE.busy = false;
+
+            }
+
+          },
+          C.pollMs || 4000
+        );
+
+
+      LIVE.rtTimer =
+        setInterval(
+          () => {
+
+            if (!LIVE.active) {
+              return;
+            }
+
+            refreshMarket();
+
+            updateAgeDisplay();
+
+          },
+          C.pollMs || 4000
+        );
+
+    }
+
+
+    function updateAgeDisplay() {
+
+      const source =
+        Math.max(
+          LIVE.lastFetch || 0,
+          LIVE.lastMarket || 0
+        );
+
+
+      const elapsed =
+        source
+          ? Date.now() - source
+          : Infinity;
+
+
+      setText(
+        "ageVal",
+        ageText(elapsed)
+      );
+
+
+      if (
+        elapsed <
+        LIVE.staleMs
+      ) {
+
+        $("sysStatus").className =
+          "pulse-dot h-2 w-2 rounded-full bg-emerald-300";
+
+      } else if (
+        elapsed <
+        LIVE.deadMs
+      ) {
+
+        $("sysStatus").className =
+          "pulse-dot h-2 w-2 rounded-full bg-amber-300";
+
+      } else {
+
+        $("sysStatus").className =
+          "pulse-dot h-2 w-2 rounded-full bg-rose-300";
+
+      }
+
+
+      const live =
+        elapsed <
+        LIVE.deadMs;
+
+
+      setText(
+        "mktLive",
+        live
+          ? "ONLINE"
+          : "STALE"
+      );
+
+
+      $("mktLive").className =
+        `mt-1 text-xs font-bold ${
+          live
+            ? "text-emerald-300"
+            : "text-rose-300"
+        }`;
+
+    }
+
+
+    function pulse(
+      message,
+      type = "pa"
+    ) {
+
+      setText(
+        "pulseBox",
+        message
+      );
+
+
+      if (type === "ok") {
+
+        $("pulseBox").className =
+          "rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-emerald-300";
+
+      } else if (type === "bad") {
+
+        $("pulseBox").className =
+          "rounded-full border border-rose-400/15 bg-rose-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-rose-300";
+
+      } else {
+
+        $("pulseBox").className =
+          "rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-cyan-200";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       CHART
+       ========================================================= */
+
+    function drawChart() {
+
+      const canvas =
+        $("cvGrid");
+
+
+      if (!canvas) return;
+
+
+      const rect =
+        canvas.getBoundingClientRect();
+
+
+      if (
+        rect.width <= 0
+      ) {
+        return;
+      }
+
+
+      const dpr =
+        window.devicePixelRatio ||
+        1;
+
+
+      canvas.width =
+        Math.floor(
+          rect.width * dpr
+        );
+
+      canvas.height =
+        Math.floor(
+          430 * dpr
+        );
+
+
+      const ctx =
+        canvas.getContext(
+          "2d"
+        );
+
+
+      ctx.scale(
+        dpr,
+        dpr
+      );
+
+
+      const W =
+        rect.width;
+
+      const H =
+        430;
+
+
+      ctx.clearRect(
+        0,
+        0,
+        W,
+        H
+      );
+
+
+      /* Background */
+      ctx.fillStyle =
+        "#040912";
+
+      ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+      );
+
+
+      /* Grid */
+      ctx.strokeStyle =
+        "rgba(255,255,255,.035)";
+
+      ctx.lineWidth =
+        1;
+
+
+      for (
+        let x = 0;
+        x < W;
+        x += 60
+      ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          x,
+          0
+        );
+
+        ctx.lineTo(
+          x,
+          H
+        );
+
+        ctx.stroke();
+
+      }
+
+
+      for (
+        let y = 0;
+        y < H;
+        y += 50
+      ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          0,
+          y
+        );
+
+        ctx.lineTo(
+          W,
+          y
+        );
+
+        ctx.stroke();
+
+      }
+
+
+      const candles =
+        CURRENT_CANDLES.slice(
+          -90
+        );
+
+
+      if (
+        candles.length < 3
+      ) {
+
+        ctx.fillStyle =
+          "#64748b";
+
+        ctx.font =
+          "12px JetBrains Mono";
+
+        ctx.fillText(
+          "Waiting for market candles…",
+          24,
+          54
+        );
+
+        return;
+
+      }
+
+
+      const rawHigh =
+        Math.max(
+          ...candles.map(
+            c => Number(c.h)
+          )
+        );
+
+
+      const rawLow =
+        Math.min(
+          ...candles.map(
+            c => Number(c.l)
+          )
+        );
+
+
+      const grid =
+        CURRENT_SIGNAL?.grid;
+
+
+      const levelValues = [
+
+        grid?.bands?.l0,
+
+        grid?.bands?.l33,
+
+        grid?.bands?.l66,
+
+        grid?.bands?.l100,
+
+        grid?.expected?.high,
+
+        grid?.expected?.low
+
+      ]
+        .map(Number)
+        .filter(Number.isFinite);
+
+
+      let hi =
+        Math.max(
+          rawHigh,
+          ...levelValues
+        );
+
+
+      let lo =
+        Math.min(
+          rawLow,
+          ...levelValues
+        );
+
+
+      const pad =
+        (hi - lo) *
+        0.08;
+
+
+      hi += pad;
+
+      lo -= pad;
+
+
+      const left =
+        54;
+
+      const right =
+        18;
+
+      const top =
+        28;
+
+      const bottom =
+        34;
+
+
+      const chartW =
+        W -
+        left -
+        right;
+
+      const chartH =
+        H -
+        top -
+        bottom;
+
+
+      const xFor =
+        index =>
+          left +
+          (
+            index /
+            Math.max(
+              candles.length - 1,
+              1
+            )
+          ) *
+          chartW;
+
+
+      const yFor =
+        price =>
+          top +
+          (
+            hi - price
+          ) /
+          (
+            hi - lo
+          ) *
+          chartH;
+
+
+      /* Grid levels */
+      if (grid) {
+
+        const levels = [
+
+          ["0%", grid.bands?.l0],
+          ["33%", grid.bands?.l33],
+          ["66%", grid.bands?.l66],
+          ["100%", grid.bands?.l100],
+          ["Expected H", grid.expected?.high],
+          ["Expected L", grid.expected?.low]
+
+        ];
+
+
+        for (
+          const [name, value]
+          of levels
+        ) {
+
+          const p =
+            Number(value);
+
+          if (
+            !Number.isFinite(p)
+          ) {
+            continue;
+          }
+
+
+          const y =
+            yFor(p);
+
+
+          ctx.strokeStyle =
+            name === "Expected H" ||
+            name === "Expected L"
+              ? "rgba(167,139,250,.35)"
+              : "rgba(34,211,238,.16)";
+
+
+          ctx.lineWidth =
+            name === "33%" ||
+            name === "66%"
+              ? 1.4
+              : 1;
+
+
+          ctx.setLineDash(
+            name === "Expected H" ||
+            name === "Expected L"
+              ? [5, 5]
+              : []
+          );
+
+
+          ctx.beginPath();
+
+          ctx.moveTo(
+            left,
+            y
+          );
+
+          ctx.lineTo(
+            W - right,
+            y
+          );
+
+          ctx.stroke();
+
+
+          ctx.setLineDash([]);
+
+
+          ctx.fillStyle =
+            "rgba(148,163,184,.55)";
+
+          ctx.font =
+            "9px JetBrains Mono";
+
+
+          ctx.fillText(
+            `${name} ${num(p, 2)}`,
+            6,
+            y - 4
+          );
+
+        }
+
+      }
+
+
+      /* Candles */
+      const slot =
+        chartW /
+        candles.length;
+
+      const bodyW =
+        Math.max(
+          2,
+          Math.min(
+            9,
+            slot * 0.62
+          )
+        );
+
+
+      candles.forEach(
+        (candle, i) => {
+
+          const x =
+            xFor(i);
+
+
+          const o =
+            yFor(Number(candle.o));
+
+          const h =
+            yFor(Number(candle.h));
+
+          const l =
+            yFor(Number(candle.l));
+
+          const c =
+            yFor(Number(candle.c));
+
+
+          const bullish =
+            Number(candle.c) >=
+            Number(candle.o);
+
+
+          ctx.strokeStyle =
+            bullish
+              ? "rgba(52,211,153,.72)"
+              : "rgba(251,113,133,.72)";
+
+          ctx.lineWidth =
+            1;
+
+
+          ctx.beginPath();
+
+          ctx.moveTo(
+            x,
+            h
+          );
+
+          ctx.lineTo(
+            x,
+            l
+          );
+
+          ctx.stroke();
+
+
+          const topBody =
+            Math.min(
+              o,
+              c
+            );
+
+          const bodyH =
+            Math.max(
+              1,
+              Math.abs(
+                c - o
+              )
+            );
+
+
+          ctx.fillStyle =
+            bullish
+              ? "rgba(52,211,153,.65)"
+              : "rgba(251,113,133,.65)";
+
+
+          ctx.fillRect(
+            x - bodyW / 2,
+            topBody,
+            bodyW,
+            bodyH
+          );
+
+        }
+      );
+
+
+      /* Current price */
+      const last =
+        Number(
+          candles[candles.length - 1].c
+        );
+
+
+      if (
+        Number.isFinite(last)
+      ) {
+
+        const y =
+          yFor(last);
+
+
+        ctx.strokeStyle =
+          "rgba(255,255,255,.32)";
+
+
+        ctx.setLineDash(
+          [4, 4]
+        );
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          left,
+          y
+        );
+
+        ctx.lineTo(
+          W - right,
+          y
+        );
+
+        ctx.stroke();
+
+
+        ctx.setLineDash([]);
+
+
+        ctx.fillStyle =
+          "#ffffff";
+
+        ctx.font =
+          "bold 10px JetBrains Mono";
+
+
+        ctx.fillText(
+          num(last, 2),
+          W - 92,
+          y - 5
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       GENERIC ROWS
+       ========================================================= */
+
+    function miniRow(
+      label,
+      value
+    ) {
+
+      return `
+
+        <div class="flex items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-black/20 px-3 py-2.5">
+
+          <span class="text-[9px] uppercase tracking-[0.12em] text-slate-600">
+            ${esc(label)}
+          </span>
+
+          <span class="truncate font-mono text-[10px] font-bold text-slate-300">
+            ${esc(value)}
+          </span>
+
+        </div>
+
+      `;
+
+    }
+
+
+    function modelRow(
+      name,
+      bias,
+      confidence,
+      reasoning
+    ) {
+
+      const signal =
+        bias ||
+        "HOLD";
+
+
+      return `
+
+        <button
+          type="button"
+          data-model="${esc(name)}"
+          class="w-full rounded-xl border border-white/[0.05] bg-black/20 p-3 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.02]"
+        >
+
+          <div class="flex items-center justify-between gap-3">
+
+            <div class="font-display text-[10px] font-bold tracking-wider text-white">
+              ${esc(name)}
+            </div>
+
+            <div class="font-mono text-[10px] font-bold ${toneForSignal(signal)}">
+              ${esc(signal)}
+            </div>
+
+          </div>
+
+          <div class="mt-2 flex items-center justify-between gap-3">
+
+            <div class="truncate text-[9px] text-slate-600">
+              ${esc(reasoning || "No reasoning")}
+            </div>
+
+            <div class="shrink-0 font-mono text-[9px] text-slate-500">
+              ${confidence == null ? "—" : `${confidence}%`}
+            </div>
+
+          </div>
+
+        </button>
+
+      `;
+
+    }
+
+
+    function emptyRow(
+      message
+    ) {
+
+      return `
+
+        <div class="rounded-xl border border-dashed border-white/[0.06] bg-black/10 px-4 py-5 text-center text-[10px] text-slate-600">
+          ${esc(message)}
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    function showSection(
+      id
+    ) {
+
+      $$(".section").forEach(
+        section => {
+
+          section.classList.toggle(
+            "active",
+            section.id === id
+          );
+
+        }
+      );
+
+
+      $$(".navBtn").forEach(
+        button => {
+
+          const active =
+            button.dataset.s === id;
+
+
+          button.classList.toggle(
+            "text-cyan-200",
+            active
+          );
+
+          button.classList.toggle(
+            "bg-cyan-400/[0.06]",
+            active
+          );
+
+        }
+      );
+
+      if (id === "dash") {
+        setTimeout(
+          drawChart,
+          30
+        );
+      }
+
+    }
+
+
+    $$(".navBtn").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            showSection(
+              button.dataset.s
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       SYMBOL / TF
+       ========================================================= */
+
+    function refreshControlState() {
+
+      $$(".symbolBtn").forEach(
+        btn => {
+
+          const active =
+            btn.dataset.symbol ===
+            CUR_SYM;
+
+
+          btn.className =
+            active
+              ? "symbolBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200"
+              : "symbolBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400";
+
+        }
+      );
+
+
+      $$(".tfBtn").forEach(
+        btn => {
+
+          const active =
+            btn.dataset.tf ===
+            CUR_TF;
+
+
+          btn.className =
+            active
+              ? "tfBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200"
+              : "tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400";
+
+        }
+      );
+
+    }
+
+
+    $$(".symbolBtn").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            CUR_SYM =
+              button.dataset.symbol ||
+              CUR_SYM;
+
+            refreshControlState();
+
+            pulse(
+              `${CUR_SYM} selected`,
+              "pa"
+            );
+
+            await refreshMarket(true);
+
+          }
+        );
+
+      }
+    );
+
+
+    $$(".tfBtn").forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            CUR_TF =
+              button.dataset.tf ||
+              CUR_TF;
+
+            refreshControlState();
+
+            pulse(
+              `${CUR_TF} selected`,
+              "pa"
+            );
+
+            await refreshMarket(true);
+
+          }
+        );
+
+      }
+    );
+
+
+    $("btnSync").addEventListener(
+      "click",
+      async () => {
+
+        pulse(
+          "Manual sync…",
+          "pa"
+        );
+
+
+        await Promise.allSettled([
+          loadHeartState(),
+          loadPerformance(),
+          loadLedger(),
+          refreshMarket(true)
+        ]);
+
+
+        renderAll();
+
+        pulse(
+          "Manual sync complete",
+          "ok"
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       LOCK / WIPE
+       ========================================================= */
+
+    function lockAndWipe() {
+
+      wipeSession();
+
+      $("appShell").style.display =
+        "none";
+
+      $("appShell").setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+
+      $("lock").style.display =
+        "flex";
+
+
+      $("ltok").value =
+        "";
+
+
+      $("lockErr").textContent =
+        "";
+
+
+      $("ltok").focus();
+
+    }
+
+
+    $("btnLogout").addEventListener(
+      "click",
+      lockAndWipe
+    );
+
+
+    $("btnLogout2").addEventListener(
+      "click",
+      lockAndWipe
+    );
+
+
+    $("btnClearHist").addEventListener(
+      "click",
+      () => {
+
+        LEDGER = [];
+
+        renderLedger();
+
+        renderHistory();
+
+        pulse(
+          "History view cleared",
+          "pa"
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       MAIN RENDER
+       ========================================================= */
+
+    function renderDataLayer() {
+
+      const candles =
+        CURRENT_CANDLES?.length ||
+        0;
+
+
+      const hasDepth =
+        !!CURRENT_DEPTH;
+
+
+      const engine =
+        !!ENGINE;
+
+
+      setText(
+        "dataLayer",
+        [
+          `GitHub Heart: ${STATE ? "READY" : "WAIT"}`,
+          `perf.json: ${PERF ? "READY" : "WAIT"}`,
+          `engine.js: ${engine ? "READY" : "WAIT"}`,
+          `candles: ${candles}`,
+          `L2: ${hasDepth ? "READY" : "WAIT"}`,
+          `poll: ${C.pollMs || 4000}ms`
+        ].join("\n")
+      );
+
+    }
+
+
+    function renderAll() {
+
+      refreshControlState();
+
+      renderDecision();
+
+      renderActivePlan();
+
+      renderGridData();
+
+      renderL2();
+
+      renderContext();
+
+      renderFinal();
+
+      renderIndicators();
+
+      renderPillars();
+
+      renderTicker();
+
+      renderLedger();
+
+      renderScoreboard();
+
+      renderDataLayer();
+
+      updateAccount();
+
+      updateAgeDisplay();
+
+      drawChart();
+
+    }
+
+
+    /* =========================================================
+       RESIZE
+       ========================================================= */
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        drawChart();
+
+      }
+    );
+
+
+    /* =========================================================
+       INITIALIZATION
+       ========================================================= */
+
+    (async function init() {
+
+      showSection(
+        "dash"
+      );
+
+
+      setText(
+        "recSym",
+        CUR_SYM
+      );
+
+      setText(
+        "recSym2",
+        CUR_SYM
+      );
+
+      setText(
+        "recTF",
+        CUR_TF
+      );
+
+      setText(
+        "recTF2",
+        CUR_TF
+      );
+
+
+      setText(
+        "gridMeta",
+        "Waiting…"
+      );
+
+
+      if (!C || !C.heartRepo) {
+
+        $("lockErr").textContent =
+          "config.js missing or invalid.";
+
+        return;
+
+      }
+
+
+      const existing =
+        getSessionToken();
+
+
+      /*
+       * Existing session is allowed only after
+       * checking that the token still has access.
+       */
+      if (existing) {
+
+        try {
+
+          await validateToken(
+            existing
+          );
+
+          setSessionToken(
+            existing
+          );
+
+          unlockUI();
+
+          return;
+
+        } catch {
+
+          wipeSession();
+
+        }
+
+      }
+
+
+      $("lock").style.display =
+        "flex";
+
+
+      $("appShell").style.display =
+        "none";
+
+
+      $("ltok").focus();
+
+    })();
+
+  })();
+  </script>
+
 </body>
-
 </html>

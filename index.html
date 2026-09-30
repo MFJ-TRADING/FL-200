@@ -8,1413 +8,69 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
     rel="stylesheet">
-  <style>
-    :root {
-      --bg: #020617;
-      --panel: rgba(8, 12, 24, .93);
-      --border: rgba(0, 243, 255, .2);
-      --cyan: #00f3ff;
-      --green: #00ff66;
-      --red: #ff0055;
-      --amber: #ffaa00;
-      --purple: #bd00ff;
-      --text: #e2e8f0;
-      --muted: #7d8ca3
-    }
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 17px;
-      background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 243, 255, .07), transparent), linear-gradient(rgba(0, 243, 255, .02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, .02) 1px, transparent 1px);
-      background-size: 100% 100%, 28px 28px, 28px 28px;
-      min-height: 100vh;
-      overflow-x: hidden
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: .4
-      }
-
-      50% {
-        opacity: 1
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+        display: ["Orbitron", "sans-serif"]
+      },
+      colors: {
+        terminal: {
+          950: "#02040a",
+          900: "#070b14",
+          800: "#0c1220",
+          700: "#121a2b"
+        },
+        neon: {
+          cyan: "#22d3ee",
+          green: "#34d399",
+          red: "#fb7185",
+          amber: "#fbbf24",
+          purple: "#a78bfa"
+        }
       }
     }
-
-    @keyframes flash {
-      0% {
-        text-shadow: 0 0 14px var(--cyan);
-        color: #fff
-      }
-
-      100% {}
-    }
-
-    @keyframes glow {
-
-      0%,
-      100% {
-        box-shadow: 0 0 4px rgba(0, 255, 102, .25)
-      }
-
-      50% {
-        box-shadow: 0 0 12px rgba(0, 255, 102, .55)
-      }
-    }
-
-    @keyframes pollfill {
-      0% {
-        width: 0
-      }
-
-      92% {
-        width: 88%
-      }
-
-      100% {
-        width: 100%
-      }
-    }
-
-    @keyframes slidein {
-      0% {
-        opacity: 0;
-        transform: translateY(-6px)
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    @keyframes tickmove {
-      0% {
-        transform: translateX(0)
-      }
-
-      100% {
-        transform: translateX(-50%)
-      }
-    }
-
-    .flash {
-      animation: flash .7s
-    }
-
-    .blink {
-      animation: pulse 1.2s infinite
-    }
-
-    #pollbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      z-index: 150;
-      width: 0;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      animation: pollfill 5s linear infinite;
-      box-shadow: 0 0 8px var(--cyan)
-    }
-
-    #pollbar.err {
-      background: var(--red);
-      box-shadow: 0 0 8px var(--red)
-    }
-
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: rgba(5, 8, 18, .97);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      flex-wrap: wrap;
-      gap: 6px
-    }
-
-    .brand {
-      font-family: 'Orbitron';
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: 2px
-    }
-
-    .brand span {
-      color: var(--cyan)
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 3px;
-      flex-wrap: wrap
-    }
-
-    .nav-btn {
-      font-family: 'Orbitron';
-      font-size: .78rem;
-      color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: 1px solid transparent;
-      background: transparent;
-      cursor: pointer;
-      white-space: nowrap
-    }
-
-    .nav-btn:hover,
-    .nav-btn.active {
-      color: var(--cyan);
-      background: rgba(0, 243, 255, .1);
-      border-color: rgba(0, 243, 255, .3)
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap
-    }
-
-    .status {
-      background: rgba(0, 255, 102, .08);
-      border: 1px solid rgba(0, 255, 102, .35);
-      color: var(--green);
-      padding: 4px 10px;
-      font-family: 'Orbitron';
-      font-size: .7rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      animation: glow 2s infinite
-    }
-
-    .dot {
-      width: 7px;
-      height: 7px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 1.2s infinite
-    }
-
-    .tier-badge {
-      font-family: 'Orbitron';
-      font-size: .66rem;
-      padding: 3px 8px;
-      border-radius: 3px;
-      background: rgba(189, 0, 255, .08);
-      border: 1px solid rgba(189, 0, 255, .3);
-      color: var(--purple)
-    }
-
-    .syncin {
-      font-family: 'JetBrains Mono';
-      font-size: .7rem;
-      color: var(--muted)
-    }
-
-    .engbadge {
-      font-family: 'Orbitron';
-      font-size: .76rem;
-      padding: 4px 10px;
-      border-radius: 4px;
-      border: 1px solid var(--border)
-    }
-
-    .control-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      padding: 9px 12px;
-      background: rgba(0, 0, 0, .35);
-      border-bottom: 1px solid var(--border)
-    }
-
-    .sym-btn,
-    .tf-btn {
-      font-family: 'Orbitron';
-      font-size: .8rem;
-      padding: 5px 12px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer
-    }
-
-    .sym-btn.active,
-    .tf-btn.active {
-      background: rgba(0, 243, 255, .15);
-      color: var(--cyan);
-      border-color: var(--cyan)
-    }
-
-    .badge-closed {
-      background: rgba(255, 0, 85, .15);
-      color: var(--red);
-      border: 1px solid rgba(255, 0, 85, .4);
-      padding: 3px 9px;
-      border-radius: 3px;
-      font-size: .73rem;
-      font-family: 'Orbitron'
-    }
-
-    .badge-open {
-      background: rgba(0, 255, 102, .12);
-      color: var(--green);
-      border: 1px solid rgba(0, 255, 102, .35);
-      padding: 3px 9px;
-      border-radius: 3px;
-      font-size: .73rem;
-      font-family: 'Orbitron';
-      animation: glow 2s infinite
-    }
-
-    .ticker {
-      overflow: hidden;
-      border-bottom: 1px solid var(--border);
-      background: rgba(0, 0, 0, .4);
-      padding: 5px 0
-    }
-
-    .ticker-inner {
-      display: inline-block;
-      white-space: nowrap;
-      animation: tickmove 28s linear infinite;
-      font-family: 'JetBrains Mono';
-      font-size: .82rem;
-      color: var(--muted)
-    }
-
-    .ticker-inner b {
-      color: var(--cyan)
-    }
-
-    .ticker-inner .g {
-      color: var(--green)
-    }
-
-    .ticker-inner .r {
-      color: var(--red)
-    }
-
-    .main {
-      max-width: 1680px;
-      margin: 0 auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px
-    }
-
-    .split-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      align-items: start
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px
-    }
-
-    .full {
-      grid-column: span 3
-    }
-
-    .span2 {
-      grid-column: span 2
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 12px;
-      position: relative;
-      min-width: 0
-    }
-
-    .panel::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid var(--cyan);
-      border-bottom: 2px solid var(--cyan);
-      opacity: .55
-    }
-
-    .ph {
-      font-family: 'Orbitron';
-      font-size: .95rem;
-      color: var(--cyan);
-      letter-spacing: 1px;
-      margin-bottom: 9px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid rgba(0, 243, 255, .1);
-      padding-bottom: 6px;
-      flex-wrap: wrap
-    }
-
-    .live {
-      font-size: .76rem;
-      color: var(--green)
-    }
-
-    .live.warn {
-      color: var(--amber)
-    }
-
-    .fin-strip {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr 1fr;
-      gap: 8px;
-      align-items: center;
-      background: linear-gradient(135deg, rgba(0, 255, 102, .09), rgba(0, 243, 255, .03));
-      border: 1px solid rgba(0, 255, 102, .3);
-      border-radius: 5px;
-      padding: 11px 13px;
-      margin-bottom: 10px
-    }
-
-    .fin-strip.wait {
-      border-color: rgba(255, 170, 0, .3);
-      background: linear-gradient(135deg, rgba(255, 170, 0, .07), rgba(0, 243, 255, .02))
-    }
-
-    .fin-strip.sell {
-      border-color: rgba(255, 0, 85, .35);
-      background: linear-gradient(135deg, rgba(255, 0, 85, .08), rgba(0, 243, 255, .02))
-    }
-
-    .action-title {
-      font-family: 'Orbitron';
-      font-size: .92rem;
-      line-height: 1.4
-    }
-
-    .action-signal {
-      font-size: 1.8rem;
-      font-family: 'Orbitron';
-      color: var(--green);
-      font-weight: 900
-    }
-
-    .action-signal.wait {
-      color: var(--amber)
-    }
-
-    .action-signal.sell {
-      color: var(--red)
-    }
-
-    .plain {
-      font-size: .85rem;
-      color: var(--muted);
-      line-height: 1.5
-    }
-
-    .plain b {
-      color: var(--text)
-    }
-
-    .byline {
-      font-family: 'JetBrains Mono';
-      font-size: .66rem;
-      color: var(--purple);
-      margin-top: 3px
-    }
-
-    .mbox {
-      background: rgba(0, 0, 0, .35);
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      border-radius: 4px;
-      min-width: 0
-    }
-
-    .mlabel {
-      font-size: .72rem;
-      color: var(--muted)
-    }
-
-    .mval {
-      font-family: 'Orbitron';
-      font-size: 1rem;
-      word-break: break-all
-    }
-
-    .mval.g {
-      color: var(--green)
-    }
-
-    .mval.r {
-      color: var(--red)
-    }
-
-    .mval.y {
-      color: var(--amber)
-    }
-
-    .mval.na {
-      color: var(--muted);
-      font-size: .83rem
-    }
-
-    .mgrid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px
-    }
-
-    .price {
-      font-family: 'Orbitron';
-      font-size: 1.8rem;
-      font-weight: 800
-    }
-
-    .pulse-box {
-      font-family: 'JetBrains Mono';
-      font-size: .76rem;
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 10px;
-      height: 140px;
-      overflow-y: auto;
-      line-height: 1.7
-    }
-
-    .pulse-box .pg {
-      color: var(--green)
-    }
-
-    .pulse-box .pr {
-      color: var(--red)
-    }
-
-    .pulse-box .pa {
-      color: var(--amber)
-    }
-
-    .eng-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 7px
-    }
-
-    .eng {
-      display: grid;
-      grid-template-columns: 170px 135px 1fr;
-      gap: 10px;
-      align-items: center;
-      background: rgba(0, 0, 0, .35);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 8px 12px;
-      opacity: .6
-    }
-
-    .eng.act {
-      opacity: 1;
-      border-color: var(--green)
-    }
-
-    .eng .en {
-      font-family: 'Orbitron';
-      font-size: .8rem;
-      color: var(--cyan)
-    }
-
-    .eng .es {
-      font-family: 'Orbitron';
-      font-size: .74rem
-    }
-
-    .eng .ed {
-      font-family: 'JetBrains Mono';
-      font-size: .74rem;
-      color: var(--muted)
-    }
-
-    .candle-wrap {
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      overflow: hidden
-    }
-
-    .candle-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: .8rem;
-      flex-wrap: wrap;
-      gap: 4px
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 380px;
-      background: #060913
-    }
-
-    .glv {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin-top: 8px
-    }
-
-    .glv .mbox {
-      text-align: center
-    }
-
-    .glv .mval {
-      font-size: .94rem
-    }
-
-    .lv4 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 8px
-    }
-
-    .lvb {
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 9px;
-      text-align: center
-    }
-
-    .lvb .lt {
-      font-family: 'Orbitron';
-      font-size: .72rem;
-      letter-spacing: 1px;
-      margin-bottom: 3px
-    }
-
-    .lvb .lp {
-      font-family: 'Orbitron';
-      font-size: 1.15rem;
-      font-weight: 800
-    }
-
-    .lvb.buy {
-      border-color: rgba(0, 255, 102, .45)
-    }
-
-    .lvb.buy .lt,
-    .lvb.buy .lp {
-      color: var(--green)
-    }
-
-    .lvb.sell {
-      border-color: rgba(255, 0, 85, .45)
-    }
-
-    .lvb.sell .lt,
-    .lvb.sell .lp {
-      color: var(--red)
-    }
-
-    .lvb .pct {
-      font-family: 'JetBrains Mono';
-      font-size: .66rem;
-      color: var(--muted);
-      margin-top: 3px
-    }
-
-    .explain {
-      background: rgba(0, 243, 255, .04);
-      border: 1px dashed rgba(0, 243, 255, .3);
-      border-radius: 5px;
-      padding: 10px 12px;
-      margin-top: 9px;
-      font-size: .9rem;
-      line-height: 1.7
-    }
-
-    .explain .xt {
-      font-family: 'Orbitron';
-      font-size: .72rem;
-      color: var(--cyan);
-      letter-spacing: 1px;
-      margin-bottom: 5px
-    }
-
-    .explain b {
-      color: var(--text)
-    }
-
-    .actbox {
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 11px;
-      margin-top: 9px;
-      background: rgba(0, 0, 0, .4)
-    }
-
-    .actbox.buy {
-      border-color: rgba(0, 255, 102, .5);
-      box-shadow: 0 0 12px rgba(0, 255, 102, .15)
-    }
-
-    .actbox.sell {
-      border-color: rgba(255, 0, 85, .5);
-      box-shadow: 0 0 12px rgba(255, 0, 85, .15)
-    }
-
-    .actbox .ah {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 6px
-    }
-
-    .actbox .as {
-      font-family: 'Orbitron';
-      font-size: 1.3rem;
-      font-weight: 900
-    }
-
-    .actbox.buy .as {
-      color: var(--green)
-    }
-
-    .actbox.sell .as {
-      color: var(--red)
-    }
-
-    .actbox .row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-      margin-top: 6px
-    }
-
-    .zonebadge {
-      font-family: 'Orbitron';
-      font-size: .8rem;
-      padding: 5px 12px;
-      border-radius: 4px;
-      border: 1px solid var(--border)
-    }
-
-    .zb-buy {
-      color: var(--green);
-      border-color: rgba(0, 255, 102, .4);
-      background: rgba(0, 255, 102, .08)
-    }
-
-    .zb-sell {
-      color: var(--red);
-      border-color: rgba(255, 0, 85, .4);
-      background: rgba(255, 0, 85, .08)
-    }
-
-    .zb-mid {
-      color: var(--amber);
-      border-color: rgba(255, 170, 0, .35);
-      background: rgba(255, 170, 0, .07)
-    }
-
-    .gz {
-      font-size: .74rem;
-      font-family: 'JetBrains Mono';
-      color: var(--muted)
-    }
-
-    .final-box {
-      font-family: 'JetBrains Mono';
-      font-size: .78rem;
-      background: rgba(0, 0, 0, .45);
-      border: 1px solid rgba(0, 243, 255, .25);
-      border-radius: 4px;
-      padding: 11px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-      overflow-x: auto;
-      max-height: 160px;
-      overflow-y: auto
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 10px
-    }
-
-    .sc {
-      background: rgba(0, 0, 0, .35);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 12px;
-      text-align: center
-    }
-
-    .sc .n {
-      font-family: 'Orbitron';
-      font-size: 1.9rem;
-      font-weight: 900
-    }
-
-    .sc .n.g {
-      color: var(--green)
-    }
-
-    .sc .n.r {
-      color: var(--red)
-    }
-
-    .sc .n.y {
-      color: var(--amber)
-    }
-
-    .sc .n.c {
-      color: var(--cyan)
-    }
-
-    .sc .l {
-      font-size: .8rem;
-      color: var(--muted);
-      margin-top: 3px
-    }
-
-    .wr-bar {
-      height: 14px;
-      background: rgba(255, 255, 255, .06);
-      border-radius: 7px;
-      overflow: hidden;
-      margin: 10px 0 4px
-    }
-
-    .wr-fill {
-      height: 100%;
-      border-radius: 7px;
-      background: linear-gradient(90deg, var(--green), #00ffaa);
-      transition: width .5s
-    }
-
-    .wr-fill.mid {
-      background: linear-gradient(90deg, var(--amber), #ffcc44)
-    }
-
-    .wr-fill.low {
-      background: linear-gradient(90deg, var(--red), #ff5588)
-    }
-
-    .hist {
-      font-family: 'JetBrains Mono';
-      font-size: .78rem;
-      max-height: 230px;
-      overflow-y: auto;
-      line-height: 1.8
-    }
-
-    .hist div {
-      border-bottom: 1px solid rgba(0, 243, 255, .06);
-      padding: 3px 2px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap
-    }
-
-    .hist .win {
-      color: var(--green)
-    }
-
-    .hist .loss {
-      color: var(--red)
-    }
-
-    .hist .wait {
-      color: var(--amber)
-    }
-
-    .model-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px
-    }
-
-    .mcard {
-      background: rgba(10, 16, 32, .8);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 11px;
-      cursor: pointer;
-      min-width: 0
-    }
-
-    .mname {
-      font-family: 'Orbitron';
-      font-size: .82rem;
-      font-weight: 700
-    }
-
-    .mtype {
-      font-size: .68rem;
-      color: var(--muted)
-    }
-
-    .mpred {
-      font-family: 'Orbitron';
-      font-size: 1.15rem;
-      color: var(--cyan);
-      font-weight: 800;
-      margin: 5px 0 3px
-    }
-
-    .msig {
-      font-size: .76rem;
-      font-weight: 700;
-      color: var(--green)
-    }
-
-    .msig.na {
-      color: var(--muted)
-    }
-
-    .wbar {
-      height: 4px;
-      background: rgba(255, 255, 255, .07);
-      border-radius: 2px;
-      margin-top: 5px;
-      overflow: hidden
-    }
-
-    .wfill {
-      height: 100%;
-      border-radius: 2px;
-      background: linear-gradient(90deg, var(--green), #00ffaa)
-    }
-
-    .pillar-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 6px
-    }
-
-    .pcard {
-      background: rgba(0, 0, 0, .3);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 8px 2px;
-      text-align: center
-    }
-
-    .pname {
-      font-family: 'Orbitron';
-      font-size: .6rem;
-      color: var(--muted)
-    }
-
-    .pstat {
-      font-family: 'Orbitron';
-      font-size: 1rem;
-      margin-top: 3px
-    }
-
-    .pstat.ok {
-      color: var(--green)
-    }
-
-    .pstat.warn {
-      color: var(--amber)
-    }
-
-    .imp-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px
-    }
-
-    .imp {
-      background: rgba(0, 0, 0, .3);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 10px
-    }
-
-    .ih {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-family: 'Orbitron';
-      font-size: .82rem;
-      flex-wrap: wrap;
-      gap: 3px
-    }
-
-    .ia {
-      font-size: 1.1rem;
-      color: var(--cyan)
-    }
-
-    .in {
-      font-size: .73rem;
-      color: var(--muted);
-      margin-top: 4px
-    }
-
-    .sysacc {
-      text-align: center;
-      padding: 8px 0
-    }
-
-    .sysacc .big {
-      font-family: 'Orbitron';
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--green)
-    }
-
-    .sysacc .big.low {
-      color: var(--amber)
-    }
-
-    .sysacc .sub {
-      font-size: .78rem;
-      color: var(--muted);
-      margin-top: 4px;
-      line-height: 1.5
-    }
-
-    .ledger-box {
-      font-family: 'JetBrains Mono';
-      font-size: .8rem;
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 10px;
-      line-height: 1.7;
-      max-height: 200px;
-      overflow-y: auto
-    }
-
-    .rep-sum {
-      font-size: .98rem;
-      line-height: 1.85;
-      white-space: pre-wrap
-    }
-
-    .rep-file {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, .35);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 9px 12px;
-      margin-bottom: 7px;
-      flex-wrap: wrap
-    }
-
-    .rep-file .fn {
-      font-family: 'JetBrains Mono';
-      font-size: .85rem;
-      flex: 1;
-      min-width: 140px
-    }
-
-    .rep-file .fs {
-      font-family: 'JetBrains Mono';
-      font-size: .73rem;
-      color: var(--muted)
-    }
-
-    .rbtn {
-      font-family: 'Orbitron';
-      font-size: .66rem;
-      padding: 5px 11px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: rgba(0, 243, 255, .08);
-      color: var(--cyan)
-    }
-
-    .rule {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0, 0, 0, .35);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 8px 12px;
-      font-size: .92rem;
-      gap: 6px;
-      flex-wrap: wrap
-    }
-
-    .rule b {
-      font-family: 'Orbitron';
-      color: var(--cyan)
-    }
-
-    .rule i {
-      font-family: 'Orbitron';
-      font-style: normal;
-      font-size: .76rem;
-      color: var(--green)
-    }
-
-    .guide {
-      font-size: .93rem;
-      line-height: 1.85
-    }
-
-    .guide b {
-      color: var(--cyan)
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .55);
-      z-index: 200;
-      opacity: 0;
-      visibility: hidden;
-      transition: .3s
-    }
-
-    .overlay.open {
-      opacity: 1;
-      visibility: visible
-    }
-
-    .side {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 430px;
-      max-width: 100%;
-      height: 100vh;
-      background: rgba(6, 10, 22, .98);
-      border-left: 1px solid var(--border);
-      z-index: 210;
-      transform: translateX(100%);
-      transition: transform .32s;
-      display: flex;
-      flex-direction: column
-    }
-
-    .side.open {
-      transform: translateX(0)
-    }
-
-    .side-h {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .side-t {
-      font-family: 'Orbitron';
-      font-size: 1rem;
-      color: var(--cyan)
-    }
-
-    .close {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 30px;
-      height: 30px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem
-    }
-
-    .side-b {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px 14px
-    }
-
-    .inst {
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid rgba(0, 243, 255, .18);
-      border-radius: 4px;
-      padding: 12px;
-      font-family: 'JetBrains Mono';
-      font-size: .83rem;
-      line-height: 1.6;
-      white-space: pre-wrap
-    }
-
-    .section {
-      display: none
-    }
-
-    .section.active {
-      display: block
-    }
-
-    .lockwrap {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      padding: 16px
-    }
-
-    .lockcard {
-      width: 380px;
-      max-width: 100%;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 15px 10px 0px 10px;
-      text-align: center;
-    }
-
-    .locklogo {
-      font-family: 'Orbitron';
-      font-size: 1.7rem;
-      font-weight: 900;
-      margin-bottom: 4px
-    }
-
-    .lockcard input {
-      width: 100%;
-      background: rgba(0, 0, 0, .4);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 11px 13px;
-      font-size: .95rem;
-      border-radius: 5px;
-      outline: none;
-      margin-bottom: 9px;
-      font-family: 'JetBrains Mono'
-    }
-
-    .lockbtn {
-      width: 100%;
-      font-family: 'Orbitron';
-      font-size: .60rem;
-      padding: 11px;
-      border-radius: 5px;
-      border: 1px solid rgba(0, 243, 255, .4);
-      background: rgba(0, 243, 255, .12);
-      color: var(--cyan);
-      cursor: pointer;
-    }
-
-    .lockbtn2 {
-      width: 100%;
-      font-family: 'JetBrains Mono';
-      font-size: .72rem;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid rgba(255, 170, 0, .3);
-      background: rgba(255, 170, 0, .06);
-      color: var(--amber);
-      cursor: pointer;
-      margin-top: 6px
-    }
-
-    .lerr {
-      font-size: .78rem;
-      color: var(--red);
-      margin-top: 9px;
-      min-height: 30px;
-      line-height: 1.5
-    }
-
-    @media(max-width:1200px) {
-      .fin-strip {
-        grid-template-columns: 1fr 1fr 1fr
-      }
-
-      .score-grid {
-        grid-template-columns: repeat(2, 1fr)
-      }
-    }
-
-    @media(max-width:950px) {
-      .grid {
-        grid-template-columns: 1fr 1fr
-      }
-
-      .full,
-      .span2 {
-        grid-column: span 2
-      }
-
-      .split-grid {
-        grid-template-columns: 1fr
-      }
-
-      .mgrid,
-      .imp-grid {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .glv {
-        grid-template-columns: repeat(3, 1fr)
-      }
-
-      .lv4 {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .model-grid {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .pillar-grid {
-        grid-template-columns: repeat(5, 1fr)
-      }
-
-      canvas {
-        height: 300px
-      }
-
-      .eng {
-        grid-template-columns: 1fr
-      }
-
-      .fin-strip {
-        grid-template-columns: 1fr 1fr
-      }
-
-      .actbox .row {
-        grid-template-columns: 1fr 1fr
-      }
-    }
-
-    @media(max-width:580px) {
-      body {
-        font-size: 15px
-      }
-
-      .main {
-        padding: 8px
-      }
-
-      .panel {
-        padding: 10px
-      }
-
-      .grid {
-        grid-template-columns: 1fr
-      }
-
-      .full,
-      .span2 {
-        grid-column: span 1
-      }
-
-      .mgrid,
-      .model-grid,
-      .imp-grid,
-      .fin-strip {
-        grid-template-columns: 1fr
-      }
-
-      .glv {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .lv4 {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .pillar-grid {
-        grid-template-columns: repeat(5, 1fr)
-      }
-
-      .score-grid {
-        grid-template-columns: repeat(2, 1fr)
-      }
-
-      .nav-links {
-        display: none
-      }
-
-      .side {
-        width: 100%
-      }
-
-      canvas {
-        height: 260px
-      }
-
-      .action-signal {
-        font-size: 1.5rem
-      }
-
-      .price {
-        font-size: 1.5rem
-      }
-
-      .syncin {
-        display: none
-      }
-    }
-
-    body.locked #appShell {
-      display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important
-    }
-
-    body.locked .lockwrap {
-      display: flex !important
-    }
-
-    body:not(.locked) .lockwrap {
-      display: none !important
-    }
-
-    body:not(.locked) #appShell {
-      display: block
-    }
-
-    #appShell {
-      display: none
-    }
-  </style>
+  }
+};
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* Tailwind-only UI helpers — old dashboard CSS is NOT used */
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #02040a;
+}
+body {
+  font-family: Inter, sans-serif;
+  color: #e5e7eb;
+}
+button {
+  font-family: inherit;
+}
+canvas {
+  display: block;
+  width: 100%;
+}
+.section {
+  display: none;
+}
+.section.active {
+  display: block;
+}
+#appShell {
+  min-height: 100vh;
+}
+</style>
 </head>
 
 <body class="locked">
@@ -1432,332 +88,1269 @@
     </div>
   </div>
 
-  <div id="appShell">
-    <nav class="top-nav">
-      <div class="brand">⚡ FL-200 <span>FACE</span></div>
-      <div class="nav-links">
-        <button class="nav-btn active" data-s="dash">DASHBOARD</button>
-        <button class="nav-btn" data-s="scores">📊 SCOREBOARD</button>
-        <button class="nav-btn" data-s="strategy">STRATEGY</button>
-        <button class="nav-btn" data-s="rules">RULES</button>
-        <button class="nav-btn" data-s="reports">REPORTS</button>
-        <button class="nav-btn" data-s="pillars">PILLARS</button>
-        <button class="nav-btn" data-s="account">ACCOUNT</button>
-      </div>
-      <div class="nav-right">
-        <span class="tier-badge">LIVE 4s</span>
-        <span class="syncin" id="syncIn">sync —</span>
-        <div class="status">
-          <div class="dot"></div> v12.1
+  <div id="appShell"
+  class="min-h-screen bg-[#02040a] text-slate-200 font-sans selection:bg-cyan-400/20 selection:text-cyan-200">
+
+  <!-- =========================================================
+       TOP NAVIGATION
+  ========================================================== -->
+  <nav class="sticky top-0 z-50 border-b border-white/[0.06]
+              bg-[#02040a]/90 backdrop-blur-2xl">
+
+    <div class="mx-auto flex min-h-[68px] max-w-[1800px] items-center gap-4 px-4 lg:px-6">
+
+      <!-- BRAND -->
+      <div class="flex min-w-fit items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl
+                    border border-cyan-400/20 bg-cyan-400/[0.07]
+                    shadow-[0_0_30px_rgba(34,211,238,.08)]">
+          <span class="text-xl">⚡</span>
         </div>
-        <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
-        <button class="nav-btn rd" id="btnLogout"
-          style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
-      </div>
-    </nav>
 
-    <div class="control-bar">
-      <span style="font-family:'Orbitron';font-size:.78rem;color:var(--muted)">SYMBOL:</span>
-      <button class="sym-btn active" data-sym="BTCUSDT">BTCUSDT</button>
-      <button class="sym-btn" data-sym="ETHUSDT">ETHUSDT</button>
-      <span id="mktBadge" class="badge-closed">CONNECTING…</span>
-      <span style="width:1px;height:18px;background:var(--border);margin:0 4px"></span>
-      <span style="font-family:'Orbitron';font-size:.78rem;color:var(--muted)">TF:</span>
-      <button class="tf-btn" data-tf="M30">M30</button>
-      <button class="tf-btn active" data-tf="H1">H1</button>
-      <button class="tf-btn" data-tf="H4">H4</button>
-      <button class="tf-btn" data-tf="D1">D1</button>
-      <button class="tf-btn" data-tf="W1">W1</button>
-      <span id="engBadge" class="engbadge" style="margin-left:auto;color:var(--muted)">ENGINE: …</span>
-      <button class="rbtn" id="btnSync">⟳ SYNC</button>
-      <span style="font-size:.82rem;color:var(--muted)" id="sysStatus">—</span>
-    </div>
-
-    <div class="ticker">
-      <div class="ticker-inner" id="ticker">FL-200 INITIALIZING…</div>
-    </div>
-
-    <div class="main">
-      <div class="section active" id="dash">
-
-        <div class="split-grid">
-
-          <div class="panel">
-            <div class="ph"><span>🌊 CONTINUOUS — LIVE CHART (TV-style running)</span><span id="gridStatus"
-                class="live">—</span></div>
-            <div class="candle-wrap">
-              <div class="candle-head">
-                <span style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan)" id="gridSrc">—</span>
-                <span style="font-size:.78rem;color:var(--muted)" id="gridMeta">—</span>
-              </div>
-              <canvas id="cvGrid"></canvas>
-            </div>
-            <div class="explain">
-              <div class="xt">📖 YE CHART KYA HAI</div>
-              <b>Candles har 4 sec update</b> — TradingView jaisa chalta hua chart (aakhri candle live). <b>Green/red
-                lines</b> = is ghante ke grid levels (har nayi candle close par naye). <b>★ Andaza boxes</b> = is ghante
-              ka expected range. 60 candles ki history chalti rehti hai.
-            </div>
+        <div>
+          <div class="font-display text-sm font-bold tracking-[0.18em] text-white">
+            FL-200
           </div>
+          <div class="font-mono text-[9px] tracking-[0.28em] text-cyan-400/70">
+            HERMES COMMAND
+          </div>
+        </div>
+      </div>
 
-          <div class="panel" id="sdPanel">
-            <div class="ph"><span>🎯 SIGNAL DATA · <span id="recSym">—</span> · <span id="recTF">H1</span></span><span
-                id="sdSrc" class="live">—</span></div>
+      <!-- NAV -->
+      <div class="hidden flex-1 items-center justify-center gap-1 xl:flex">
 
-            <div class="fin-strip" id="finStrip">
+        <button data-s="dash"
+          class="nav-btn active rounded-lg border border-cyan-400/10
+                 bg-cyan-400/[0.08] px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-cyan-300 transition hover:bg-cyan-400/[0.13]">
+          DASHBOARD
+        </button>
+
+        <button data-s="scores"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          📊 SCOREBOARD
+        </button>
+
+        <button data-s="strategy"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          STRATEGY
+        </button>
+
+        <button data-s="rules"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          RULES
+        </button>
+
+        <button data-s="reports"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          REPORTS
+        </button>
+
+        <button data-s="pillars"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          PILLARS
+        </button>
+
+        <button data-s="account"
+          class="nav-btn rounded-lg px-3 py-2 text-[10px] font-semibold
+                 tracking-wider text-slate-500 transition hover:bg-white/[0.04]
+                 hover:text-slate-200">
+          ACCOUNT
+        </button>
+      </div>
+
+      <!-- STATUS -->
+      <div class="ml-auto flex items-center gap-2">
+
+        <span class="hidden rounded-full border border-emerald-400/20
+                     bg-emerald-400/[0.07] px-2.5 py-1 font-mono text-[9px]
+                     font-semibold tracking-wider text-emerald-300 sm:inline-flex">
+          LIVE 4s
+        </span>
+
+        <span id="syncIn"
+          class="hidden font-mono text-[10px] text-slate-600 md:inline">
+          sync —
+        </span>
+
+        <div class="hidden items-center gap-2 rounded-lg border
+                    border-white/[0.06] bg-white/[0.025] px-2.5 py-1.5 md:flex">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400
+                       shadow-[0_0_10px_rgba(52,211,153,.8)]"></span>
+          <span class="font-mono text-[9px] text-slate-500">v12.1</span>
+        </div>
+
+        <button id="openCfg"
+          class="rounded-lg border border-white/[0.08] bg-white/[0.025]
+                 px-3 py-2 text-sm text-slate-400 transition
+                 hover:border-cyan-400/20 hover:bg-cyan-400/[0.06]
+                 hover:text-cyan-300">
+          ⚙
+        </button>
+
+        <button id="btnLogout"
+          class="rounded-lg border border-rose-400/20 bg-rose-400/[0.04]
+                 px-3 py-2 text-[9px] font-bold tracking-wider text-rose-400
+                 transition hover:bg-rose-400/[0.1]">
+          EXIT
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE NAV -->
+    <div class="flex gap-1 overflow-x-auto border-t border-white/[0.04]
+                px-3 py-2 xl:hidden">
+      <button data-s="dash" class="nav-btn active whitespace-nowrap rounded-lg
+        bg-cyan-400/[0.08] px-3 py-1.5 text-[9px] text-cyan-300">
+        DASH
+      </button>
+      <button data-s="scores" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">SCORE</button>
+      <button data-s="strategy" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">STRATEGY</button>
+      <button data-s="rules" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">RULES</button>
+      <button data-s="reports" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">REPORTS</button>
+      <button data-s="pillars" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">PILLARS</button>
+      <button data-s="account" class="nav-btn whitespace-nowrap rounded-lg
+        px-3 py-1.5 text-[9px] text-slate-500">ACCOUNT</button>
+    </div>
+  </nav>
+
+
+  <!-- =========================================================
+       MARKET CONTROL BAR
+  ========================================================== -->
+  <div class="border-b border-white/[0.05] bg-[#070b14]/80">
+
+    <div class="mx-auto flex max-w-[1800px] flex-wrap items-center gap-2 px-4 py-2.5 lg:px-6">
+
+      <span class="font-display text-[9px] tracking-[0.15em] text-slate-600">
+        SYMBOL
+      </span>
+
+      <button data-sym="BTCUSDT"
+        class="sym-btn active rounded-lg border border-cyan-400/20
+               bg-cyan-400/[0.08] px-3 py-1.5 font-mono text-[10px]
+               font-semibold text-cyan-300">
+        BTCUSDT
+      </button>
+
+      <button data-sym="ETHUSDT"
+        class="sym-btn rounded-lg border border-white/[0.06]
+               bg-white/[0.02] px-3 py-1.5 font-mono text-[10px]
+               text-slate-500 hover:text-slate-200">
+        ETHUSDT
+      </button>
+
+      <span id="mktBadge"
+        class="rounded-full border border-amber-400/20 bg-amber-400/[0.05]
+               px-2.5 py-1 font-mono text-[9px] text-amber-300">
+        CONNECTING…
+      </span>
+
+      <span class="mx-1 hidden h-5 w-px bg-white/[0.07] sm:block"></span>
+
+      <span class="font-display text-[9px] tracking-[0.15em] text-slate-600">
+        TF
+      </span>
+
+      <button data-tf="M30"
+        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
+               text-slate-500 hover:bg-white/[0.04]">
+        M30
+      </button>
+
+      <button data-tf="H1"
+        class="tf-btn active rounded-lg bg-cyan-400/[0.08] px-2.5 py-1.5
+               font-mono text-[10px] font-semibold text-cyan-300">
+        H1
+      </button>
+
+      <button data-tf="H4"
+        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
+               text-slate-500 hover:bg-white/[0.04]">
+        H4
+      </button>
+
+      <button data-tf="D1"
+        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
+               text-slate-500 hover:bg-white/[0.04]">
+        D1
+      </button>
+
+      <button data-tf="W1"
+        class="tf-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px]
+               text-slate-500 hover:bg-white/[0.04]">
+        W1
+      </button>
+
+      <span id="engBadge"
+        class="ml-auto font-mono text-[9px] tracking-wider text-slate-600">
+        ENGINE: …
+      </span>
+
+      <button id="btnSync"
+        class="rounded-lg border border-cyan-400/10 bg-cyan-400/[0.04]
+               px-3 py-1.5 font-mono text-[9px] font-semibold text-cyan-300
+               hover:bg-cyan-400/[0.08]">
+        ⟳ SYNC
+      </button>
+
+      <span id="sysStatus"
+        class="hidden font-mono text-[9px] text-slate-600 sm:inline">
+        —
+      </span>
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       TICKER
+  ========================================================== -->
+  <div class="border-b border-white/[0.04] bg-black/30">
+    <div id="ticker"
+      class="mx-auto max-w-[1800px] truncate px-4 py-2 font-mono text-[9px]
+             tracking-wide text-cyan-400/60 lg:px-6">
+      FL-200 INITIALIZING…
+    </div>
+  </div>
+
+
+  <!-- =========================================================
+       MAIN
+  ========================================================== -->
+  <main class="mx-auto max-w-[1800px] px-3 py-4 sm:px-4 lg:px-6">
+
+
+    <!-- =======================================================
+         DASHBOARD
+    ======================================================== -->
+    <div class="section active space-y-4" id="dash">
+
+
+      <!-- LIVE CHART + SIGNAL -->
+      <div class="grid gap-4 xl:grid-cols-[1.55fr_1fr]">
+
+
+        <!-- CHART -->
+        <section class="overflow-hidden rounded-2xl border border-white/[0.06]
+                        bg-[#070b14]/90 shadow-2xl">
+
+          <div class="flex items-center justify-between border-b
+                      border-white/[0.05] px-4 py-3">
+
+            <div class="flex items-center gap-2">
+              <span class="flex h-7 w-7 items-center justify-center
+                           rounded-lg bg-cyan-400/[0.07]">
+                🌊
+              </span>
               <div>
-                <div class="action-title">🧭 LIVE EVALUATION (4s)</div>
-                <div class="plain" id="recNote">—</div>
-                <div class="byline" id="recBy">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">NATEEJA</div>
-                <div class="action-signal" id="recAction">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">QEEMAT</div>
-                <div class="mval" style="color:var(--cyan)" id="recEntry">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">ZOR</div>
-                <div class="mval" id="l2ImbMini">—</div>
-              </div>
-            </div>
-
-            <div class="actbox" id="actBox">
-              <div class="ah">
-                <span class="as" id="actSig">— KOI ACTIVE TRADE NAHI</span>
-                <span class="zonebadge zb-mid" id="actTime">—</span>
-              </div>
-              <div class="plain" id="actNote">System har 4 sec check karta hai — jaise hi shartein match, event ban
-                jayega.</div>
-              <div class="row" id="actRow" style="display:none">
-                <div class="mbox">
-                  <div class="mlabel">ENTRY</div>
-                  <div class="mval" id="actEntry">—</div>
+                <div class="font-display text-[10px] font-semibold
+                            tracking-wider text-slate-200">
+                  CONTINUOUS MARKET
                 </div>
-                <div class="mbox">
-                  <div class="mlabel">MUNAFA (TP)</div>
-                  <div class="mval g" id="actTp">—</div>
-                </div>
-                <div class="mbox">
-                  <div class="mlabel">NUQSAN (SL)</div>
-                  <div class="mval r" id="actSl">—</div>
-                </div>
-                <div class="mbox">
-                  <div class="mlabel">HALAT</div>
-                  <div class="mval y" id="actStat">OPEN</div>
+                <div class="font-mono text-[8px] text-slate-600">
+                  TV-STYLE RUNNING GRID
                 </div>
               </div>
             </div>
 
-            <div class="lv4" id="tvRow"></div>
-            <div class="glv" id="glvRow"></div>
-            <div class="glv" id="l2Row"></div>
-            <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
-              <span class="zonebadge zb-mid" id="zPos">QEEMAT KAHAN: —</span>
-              <span class="gz" id="ctxLine">⏰ context: —</span>
-            </div>
-            <div class="explain">
-              <div class="xt">📖 SIMPLE ZUBAAN</div>
-              <div id="explainBody">…</div>
-            </div>
-            <div class="final-box" id="finalBox">—</div>
+            <span id="gridStatus"
+              class="rounded-full bg-white/[0.03] px-2.5 py-1
+                     font-mono text-[8px] text-slate-500">
+              —
+            </span>
           </div>
 
-        </div>
 
-        <div class="grid">
-          <div class="panel span2">
-            <div class="ph"><span>📊 MARKET</span><span id="mktLive" class="live">—</span></div>
-            <div class="mgrid">
-              <div class="mbox">
-                <div class="mlabel">QEEMAT</div>
-                <div class="price" id="livePrice">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">DATA</div>
-                <div class="mval" id="dataLayer" style="margin-top:3px">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">UPDATE</div>
-                <div class="mval" id="ageVal" style="margin-top:3px">—</div>
-              </div>
-              <div class="mbox">
-                <div class="mlabel">BAZAAR</div>
-                <div class="mval" style="margin-top:3px">24/7</div>
-              </div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="ph"><span>❤️ PULSE</span><span id="hbCount" style="font-size:.72rem;color:var(--cyan)">HB
-                0</span></div>
-            <div class="pulse-box" id="pulseBox"></div>
-          </div>
-          <div class="panel full">
-            <div class="ph"><span>🛡️ ENGINES</span><span class="live" id="engWhy">—</span></div>
-            <div class="eng-grid" id="engGrid"></div>
-          </div>
-          <div class="panel full">
-            <div class="ph"><span>🧬 MODELS</span><span style="font-size:.72rem;color:var(--muted)">click =
-                tafseel</span></div>
-            <div class="model-grid" id="modelGrid"></div>
-          </div>
-          <div class="panel full">
-            <div class="ph"><span>🏛️ 10 PILLARS</span><span class="live" id="pillarScore">—</span></div>
-            <div class="pillar-grid" id="pillarGrid"></div>
-          </div>
-          <div class="panel full">
-            <div class="ph"><span>📒 LEDGER</span><span id="ledgerMeta"
-                style="font-size:.72rem;color:var(--muted)"></span></div>
-            <div class="ledger-box" id="ledgerBox">—</div>
-          </div>
-        </div>
-      </div>
+          <div class="px-4 pt-3">
+            <div class="flex items-center justify-between">
+              <span id="gridSrc"
+                class="font-mono text-[9px] font-semibold text-cyan-400">
+                —
+              </span>
 
-      <div class="section" id="scores">
-        <div class="panel full">
-          <div class="ph"><span>📊 SCOREBOARD</span><button class="rbtn" id="btnClearHist" style="color:var(--red)">🗑
-              CLEAR</button></div>
-          <div class="score-grid">
-            <div class="sc">
-              <div class="n c" id="scTotal">0</div>
-              <div class="l">KUL SIGNALS</div>
-            </div>
-            <div class="sc">
-              <div class="n g" id="scWin">0</div>
-              <div class="l">WIN ✓</div>
-            </div>
-            <div class="sc">
-              <div class="n r" id="scLoss">0</div>
-              <div class="l">LOSS ✗</div>
-            </div>
-            <div class="sc">
-              <div class="n y" id="scOpen">0</div>
-              <div class="l">OPEN ⏳</div>
+              <span id="gridMeta"
+                class="font-mono text-[8px] text-slate-600">
+                —
+              </span>
             </div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+
+          <div class="relative mx-3 mt-2 overflow-hidden rounded-xl
+                      border border-white/[0.04] bg-black/30">
+
+            <canvas id="cvGrid"
+              class="h-[340px] w-full sm:h-[420px] lg:h-[480px]">
+            </canvas>
+          </div>
+
+
+          <div class="m-4 rounded-xl border border-cyan-400/[0.08]
+                      bg-cyan-400/[0.025] p-3">
+
+            <div class="mb-2 flex items-center gap-2">
+              <span class="text-xs">📖</span>
+              <span class="font-display text-[9px] font-semibold
+                           tracking-wider text-cyan-300">
+                CHART INTELLIGENCE
+              </span>
+            </div>
+
+            <div class="text-[11px] leading-5 text-slate-500">
+              <b class="text-slate-300">Candles har 4 sec update</b> —
+              TradingView style running chart.
+              <b class="text-slate-300">Green / Red lines</b> =
+              current grid levels.
+              <b class="text-slate-300">★ Expected range</b> =
+              engine ka projected range.
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- HERMES DECISION CONSOLE -->
+        <section id="sdPanel"
+          class="overflow-hidden rounded-2xl border border-white/[0.06]
+                 bg-[#070b14]/90 shadow-2xl">
+
+          <div class="flex items-center justify-between border-b
+                      border-white/[0.05] px-4 py-3">
+
             <div>
-              <div style="text-align:center;font-family:'Orbitron';font-size:1.1rem">WIN RATE: <span id="scWR"
-                  style="color:var(--green)">—</span></div>
-              <div class="wr-bar">
-                <div class="wr-fill" id="scWRBar" style="width:0%"></div>
+              <div class="font-display text-[10px] font-semibold
+                          tracking-wider text-slate-200">
+                HERMES DECISION CONSOLE
               </div>
-              <div style="text-align:center;font-size:.8rem;color:var(--muted)" id="scWRNote"></div>
-              <div class="explain" style="margin-top:12px">
-                <div class="xt">📖 KAISE GINA JATA HAI</div>
-                Har signal <b>event</b> hai: TP pehle mila = WIN, SL pehle = LOSS. Virtual — paisa nahi lagta. Ek waqt
-                mein ek signal per symbol.
+
+              <div class="mt-1 font-mono text-[8px] text-slate-600">
+                <span id="recSym">—</span>
+                ·
+                <span id="recTF">H1</span>
               </div>
             </div>
+
+            <span id="sdSrc"
+              class="rounded-full bg-emerald-400/[0.06] px-2.5 py-1
+                     font-mono text-[8px] text-emerald-300">
+              —
+            </span>
+          </div>
+
+
+          <!-- DECISION -->
+          <div id="finStrip"
+            class="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]">
+
             <div>
-              <div style="font-family:'Orbitron';font-size:.8rem;color:var(--cyan);margin-bottom:5px">📜 HISTORY</div>
-              <div class="hist" id="histBox">Abhi koi event nahi…</div>
+              <div class="font-display text-[8px] tracking-wider text-slate-600">
+                LIVE EVALUATION · 4s
+              </div>
+
+              <div id="recNote"
+                class="mt-1 text-xs leading-5 text-slate-400">
+                —
+              </div>
+
+              <div id="recBy"
+                class="mt-1 font-mono text-[8px] text-slate-600">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.06]
+                        bg-black/20 px-4 py-3 text-center">
+              <div class="font-display text-[8px] text-slate-600">
+                DECISION
+              </div>
+              <div id="recAction"
+                class="mt-1 font-display text-xl font-bold text-white">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.06]
+                        bg-black/20 px-4 py-3 text-center">
+              <div class="font-display text-[8px] text-slate-600">
+                PRICE
+              </div>
+              <div id="recEntry"
+                class="mt-1 font-mono text-sm font-bold text-cyan-300">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.06]
+                        bg-black/20 px-4 py-3 text-center">
+              <div class="font-display text-[8px] text-slate-600">
+                L2 FORCE
+              </div>
+              <div id="l2ImbMini"
+                class="mt-1 font-mono text-sm font-bold text-slate-200">
+                —
+              </div>
             </div>
           </div>
-        </div>
-        <div class="panel full">
-          <div class="ph"><span>📈 MODEL IMPROVEMENT</span><span id="impMeta"
-              style="font-size:.72rem;color:var(--muted)">—</span></div>
-          <div class="imp-grid" id="impGrid"></div>
-        </div>
-        <div class="panel full">
-          <div class="ph"><span>🎯 SYSTEM ACCURACY</span></div>
-          <div class="sysacc" id="sysAcc">—</div>
-        </div>
-      </div>
 
-      <div class="section" id="strategy">
-        <div class="panel full">
-          <div class="ph"><span>⚔️ STRATEGY</span></div>
-          <div class="inst" id="stratBox">…</div>
-        </div>
-      </div>
-      <div class="section" id="rules">
-        <div class="panel full">
-          <div class="ph"><span>📜 RULES</span></div>
-          <div style="display:flex;flex-direction:column;gap:6px" id="rulesBox"></div>
-        </div>
-      </div>
-      <div class="section" id="reports">
-        <div class="panel full">
-          <div class="ph"><span>🩺 LIVE RUN</span><button class="rbtn" id="repRefresh">⟳</button></div>
-          <div class="rep-sum" id="repSummary">…</div>
-        </div>
-        <div class="panel full">
-          <div class="ph"><span>📥 HEART FILES</span><span style="font-size:.72rem;color:var(--muted)"
-              id="repScan">—</span></div>
-          <div id="repFiles">…</div>
-        </div>
-      </div>
-      <div class="section" id="pillars">
-        <div class="panel full">
-          <div class="ph"><span>🏛️ PILLAR LAW</span></div>
-          <div class="inst">P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST · P5 COMPARE ·
-            P6 LESSONS · P7 RISK · P8 EVENT-TAG · P9 SECURITY · P10 HEALTH
-            Conflict: SECURITY > RISK > DATA > LEARNING > PERFORMANCE</div>
-        </div>
-        <div class="panel full">
-          <div class="ph"><span>🧠 SELF-STATES</span></div>
-          <div class="inst" id="selfBox">—</div>
-        </div>
-      </div>
-      <div class="section" id="account">
-        <div class="panel full">
-          <div class="ph"><span>💼 ACCOUNT</span></div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-            <div class="mbox" style="text-align:center">
-              <div class="mlabel">EQUITY</div>
-              <div class="mval" id="accEq">—</div>
+
+          <!-- ACTIVE TRADE -->
+          <div id="actBox"
+            class="mx-4 rounded-xl border border-white/[0.06]
+                   bg-black/20 p-4">
+
+            <div class="flex items-center justify-between gap-2">
+              <span id="actSig"
+                class="font-display text-[9px] font-semibold text-slate-400">
+                — KOI ACTIVE TRADE NAHI
+              </span>
+
+              <span id="actTime"
+                class="rounded-full border border-white/[0.07]
+                       px-2 py-1 font-mono text-[8px] text-slate-500">
+                —
+              </span>
             </div>
-            <div class="mbox" style="text-align:center">
-              <div class="mlabel">TRADES TODAY</div>
-              <div class="mval" id="accTr">—</div>
+
+            <div id="actNote"
+              class="mt-3 text-[11px] leading-5 text-slate-500">
+              System har 4 sec check karta hai.
             </div>
-            <div class="mbox" style="text-align:center">
-              <div class="mlabel">DAY PNL</div>
-              <div class="mval" id="accPnl">—</div>
+
+            <div id="actRow"
+              class="mt-4 hidden grid grid-cols-2 gap-2 sm:grid-cols-4">
+
+              <div class="rounded-lg bg-white/[0.025] p-3">
+                <div class="font-display text-[8px] text-slate-600">ENTRY</div>
+                <div id="actEntry"
+                  class="mt-1 font-mono text-xs text-slate-200">—</div>
+              </div>
+
+              <div class="rounded-lg bg-emerald-400/[0.04] p-3">
+                <div class="font-display text-[8px] text-slate-600">TP</div>
+                <div id="actTp"
+                  class="mt-1 font-mono text-xs text-emerald-300">—</div>
+              </div>
+
+              <div class="rounded-lg bg-rose-400/[0.04] p-3">
+                <div class="font-display text-[8px] text-slate-600">SL</div>
+                <div id="actSl"
+                  class="mt-1 font-mono text-xs text-rose-300">—</div>
+              </div>
+
+              <div class="rounded-lg bg-amber-400/[0.04] p-3">
+                <div class="font-display text-[8px] text-slate-600">STATUS</div>
+                <div id="actStat"
+                  class="mt-1 font-mono text-xs text-amber-300">OPEN</div>
+              </div>
+
             </div>
           </div>
+
+
+          <!-- ENGINE DATA -->
+          <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3">
+
+            <div id="tvRow"
+              class="rounded-xl border border-white/[0.05] bg-black/20 p-3">
+            </div>
+
+            <div id="glvRow"
+              class="rounded-xl border border-white/[0.05] bg-black/20 p-3">
+            </div>
+
+            <div id="l2Row"
+              class="rounded-xl border border-cyan-400/[0.08]
+                     bg-cyan-400/[0.02] p-3">
+            </div>
+
+          </div>
+
+
+          <div class="flex flex-wrap items-center gap-2 px-4">
+
+            <span id="zPos"
+              class="rounded-full border border-purple-400/10
+                     bg-purple-400/[0.04] px-3 py-1.5 font-mono text-[8px]
+                     text-purple-300">
+              QEEMAT KAHAN: —
+            </span>
+
+            <span id="ctxLine"
+              class="font-mono text-[8px] text-slate-600">
+              ⏰ context: —
+            </span>
+
+          </div>
+
+
+          <div class="m-4 rounded-xl border border-white/[0.05]
+                      bg-white/[0.015] p-3">
+
+            <div class="mb-2 flex items-center gap-2">
+              <span>📖</span>
+              <span class="font-display text-[9px] text-cyan-300">
+                SIMPLE ZUBAAN
+              </span>
+            </div>
+
+            <div id="explainBody"
+              class="text-[11px] leading-5 text-slate-500">
+              …
+            </div>
+          </div>
+
+
+          <div id="finalBox"
+            class="mx-4 mb-4 rounded-xl border border-cyan-400/10
+                   bg-cyan-400/[0.025] p-4 font-mono text-[10px]
+                   leading-5 text-slate-400">
+            —
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- MARKET / HEART -->
+      <div class="grid gap-4 lg:grid-cols-[2fr_1fr]">
+
+        <section class="rounded-2xl border border-white/[0.06]
+                        bg-[#070b14]/90">
+
+          <div class="flex items-center justify-between border-b
+                      border-white/[0.05] px-4 py-3">
+            <span class="font-display text-[9px] tracking-wider">
+              📊 MARKET
+            </span>
+            <span id="mktLive"
+              class="font-mono text-[8px] text-emerald-300">
+              —
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-4">
+
+            <div class="rounded-xl border border-cyan-400/[0.08]
+                        bg-cyan-400/[0.025] p-4">
+              <div class="font-display text-[8px] text-slate-600">
+                LIVE PRICE
+              </div>
+              <div id="livePrice"
+                class="mt-2 font-mono text-xl font-bold text-cyan-300">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.05]
+                        bg-black/20 p-4">
+              <div class="font-display text-[8px] text-slate-600">
+                DATA
+              </div>
+              <div id="dataLayer"
+                class="mt-2 font-mono text-xs text-slate-300">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.05]
+                        bg-black/20 p-4">
+              <div class="font-display text-[8px] text-slate-600">
+                UPDATE
+              </div>
+              <div id="ageVal"
+                class="mt-2 font-mono text-xs text-slate-300">
+                —
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-white/[0.05]
+                        bg-black/20 p-4">
+              <div class="font-display text-[8px] text-slate-600">
+                MARKET
+              </div>
+              <div class="mt-2 font-mono text-xs text-emerald-300">
+                24/7
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <section class="rounded-2xl border border-white/[0.06]
+                        bg-[#070b14]/90">
+
+          <div class="flex items-center justify-between border-b
+                      border-white/[0.05] px-4 py-3">
+            <span class="font-display text-[9px]">❤️ SYSTEM PULSE</span>
+            <span id="hbCount"
+              class="font-mono text-[8px] text-cyan-300">
+              HB 0
+            </span>
+          </div>
+
+          <div id="pulseBox"
+            class="min-h-[100px] p-4 font-mono text-[9px] leading-5
+                   text-slate-500">
+          </div>
+        </section>
+
+      </div>
+
+
+      <!-- ENGINES -->
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[9px]">
+            🛡️ ENGINE STACK
+          </span>
+
+          <span id="engWhy"
+            class="font-mono text-[8px] text-slate-600">
+            —
+          </span>
         </div>
-      </div>
-    </div>
 
-    <div class="overlay" id="cfgOverlay"></div>
-    <div class="side" id="cfgPanel">
-      <div class="side-h">
-        <div class="side-t">⚙ CONFIG</div><button class="close" id="closeCfg">✕</button>
-      </div>
-      <div class="side-b">
-        <div class="inst" id="cfgInfo">—</div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="rbtn" style="flex:1;padding:9px" id="btnEngineReload">⟳ RELOAD ENGINE</button>
-          <button class="rbtn rd" style="flex:1;padding:9px" id="btnLogout2">EXIT</button>
+        <div id="engGrid"
+          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
         </div>
-      </div>
+
+      </section>
+
+
+      <!-- MODELS -->
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <div>
+            <div class="font-display text-[9px]">
+              🧬 INTELLIGENCE MODELS
+            </div>
+            <div class="mt-1 font-mono text-[8px] text-slate-600">
+              click model for details
+            </div>
+          </div>
+
+        </div>
+
+        <div id="modelGrid"
+          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
+        </div>
+
+      </section>
+
+
+      <!-- PILLARS -->
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[9px]">
+            🏛️ FL-200 TEN PILLARS
+          </span>
+
+          <span id="pillarScore"
+            class="font-mono text-[8px] text-cyan-300">
+            —
+          </span>
+        </div>
+
+        <div id="pillarGrid"
+          class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3
+                 lg:grid-cols-5">
+        </div>
+
+      </section>
+
+
+      <!-- LEDGER -->
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[9px]">
+            📒 DECISION LEDGER
+          </span>
+
+          <span id="ledgerMeta"
+            class="font-mono text-[8px] text-slate-600">
+          </span>
+
+        </div>
+
+        <div id="ledgerBox"
+          class="max-h-[260px] overflow-auto p-4 font-mono text-[9px]
+                 leading-5 text-slate-500">
+          —
+        </div>
+
+      </section>
+
     </div>
 
-    <div class="overlay" id="modOverlay"></div>
-    <div class="side" id="modDetail">
-      <div class="side-h">
-        <div class="side-t" id="modTitle">MODEL</div><button class="close" id="closeMod">✕</button>
-      </div>
-      <div class="side-b">
-        <div class="inst" id="modInst"></div>
-      </div>
+
+    <!-- =======================================================
+         SCOREBOARD
+    ======================================================== -->
+    <div class="section space-y-4" id="scores">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[10px]">
+            📊 SCOREBOARD
+          </span>
+
+          <button id="btnClearHist"
+            class="rounded-lg border border-rose-400/20
+                   bg-rose-400/[0.04] px-3 py-1.5 font-mono text-[9px]
+                   text-rose-400 hover:bg-rose-400/[0.1]">
+            🗑 CLEAR
+          </button>
+
+        </div>
+
+
+        <div class="grid grid-cols-2 gap-3 p-4 lg:grid-cols-4">
+
+          <div class="rounded-xl border border-cyan-400/10
+                      bg-cyan-400/[0.025] p-5 text-center">
+            <div id="scTotal"
+              class="font-display text-3xl text-cyan-300">
+              0
+            </div>
+            <div class="mt-2 font-mono text-[8px] text-slate-600">
+              TOTAL SIGNALS
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-emerald-400/10
+                      bg-emerald-400/[0.025] p-5 text-center">
+            <div id="scWin"
+              class="font-display text-3xl text-emerald-300">
+              0
+            </div>
+            <div class="mt-2 font-mono text-[8px] text-slate-600">
+              WIN
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-rose-400/10
+                      bg-rose-400/[0.025] p-5 text-center">
+            <div id="scLoss"
+              class="font-display text-3xl text-rose-300">
+              0
+            </div>
+            <div class="mt-2 font-mono text-[8px] text-slate-600">
+              LOSS
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-amber-400/10
+                      bg-amber-400/[0.025] p-5 text-center">
+            <div id="scOpen"
+              class="font-display text-3xl text-amber-300">
+              0
+            </div>
+            <div class="mt-2 font-mono text-[8px] text-slate-600">
+              OPEN
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="grid gap-4 p-4 lg:grid-cols-2">
+
+          <div>
+            <div class="text-center font-display text-sm">
+              WIN RATE:
+              <span id="scWR" class="text-emerald-300">—</span>
+            </div>
+
+            <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.05]">
+              <div id="scWRBar"
+                class="h-full rounded-full bg-emerald-400 transition-all"
+                style="width:0%">
+              </div>
+            </div>
+
+            <div id="scWRNote"
+              class="mt-2 text-center font-mono text-[8px] text-slate-600">
+            </div>
+
+            <div class="mt-4 rounded-xl border border-cyan-400/[0.07]
+                        bg-cyan-400/[0.02] p-4 text-[11px] leading-5
+                        text-slate-500">
+
+              <div class="mb-2 font-display text-[9px] text-cyan-300">
+                📖 HOW IT IS COUNTED
+              </div>
+
+              Har signal event hai:
+              TP pehle mila = WIN,
+              SL pehle = LOSS.
+              Virtual tracking only.
+            </div>
+          </div>
+
+
+          <div>
+            <div class="mb-2 font-display text-[9px] text-cyan-300">
+              📜 HISTORY
+            </div>
+
+            <div id="histBox"
+              class="max-h-[300px] overflow-auto rounded-xl
+                     border border-white/[0.05] bg-black/20 p-3
+                     font-mono text-[9px] leading-5 text-slate-500">
+              Abhi koi event nahi…
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[9px]">
+            📈 MODEL IMPROVEMENT
+          </span>
+
+          <span id="impMeta"
+            class="font-mono text-[8px] text-slate-600">
+            —
+          </span>
+
+        </div>
+
+        <div id="impGrid"
+          class="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
+        </div>
+
+      </section>
+
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[9px]">
+            🎯 SYSTEM ACCURACY
+          </span>
+        </div>
+
+        <div id="sysAcc"
+          class="p-5 font-mono text-xs text-slate-500">
+          —
+        </div>
+
+      </section>
+
     </div>
 
-    <div class="overlay" id="fileOverlay"></div>
-    <div class="side" id="fileViewer" style="width:560px">
-      <div class="side-h">
-        <div class="side-t" id="fvTitle">FILE</div><button class="close" id="closeFv">✕</button>
-      </div>
-      <div class="side-b" id="fvBody"></div>
+
+    <!-- =======================================================
+         STRATEGY
+    ======================================================== -->
+    <div class="section" id="strategy">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[10px]">
+            ⚔️ STRATEGY
+          </span>
+        </div>
+
+        <div id="stratBox"
+          class="p-5 font-mono text-[10px] leading-6 text-slate-400">
+          …
+        </div>
+
+      </section>
+
     </div>
 
-  </div><!-- /appShell -->
-  <script src="config.js"></script>
+
+    <!-- =======================================================
+         RULES
+    ======================================================== -->
+    <div class="section" id="rules">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[10px]">
+            📜 RULE ENGINE
+          </span>
+        </div>
+
+        <div id="rulesBox"
+          class="flex flex-col gap-2 p-4">
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =======================================================
+         REPORTS
+    ======================================================== -->
+    <div class="section space-y-4" id="reports">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[10px]">
+            🩺 LIVE RUN
+          </span>
+
+          <button id="repRefresh"
+            class="rounded-lg border border-white/[0.07]
+                   bg-white/[0.02] px-3 py-1.5 font-mono text-[9px]
+                   text-slate-400 hover:text-cyan-300">
+            ⟳
+          </button>
+
+        </div>
+
+        <div id="repSummary"
+          class="p-5 font-mono text-[10px] leading-6 text-slate-500">
+          …
+        </div>
+
+      </section>
+
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="flex items-center justify-between border-b
+                    border-white/[0.05] px-4 py-3">
+
+          <span class="font-display text-[10px]">
+            📥 HEART FILES
+          </span>
+
+          <span id="repScan"
+            class="font-mono text-[8px] text-slate-600">
+            —
+          </span>
+
+        </div>
+
+        <div id="repFiles"
+          class="p-4">
+          …
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =======================================================
+         PILLARS
+    ======================================================== -->
+    <div class="section space-y-4" id="pillars">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[10px]">
+            🏛️ PILLAR LAW
+          </span>
+        </div>
+
+        <div class="p-5">
+          <div class="rounded-xl border border-purple-400/[0.08]
+                      bg-purple-400/[0.025] p-4 font-mono text-[10px]
+                      leading-6 text-slate-400">
+            P1 DATA · P2 ANALYZE · P3 SELF-IMPROVE · P4 PERSIST ·
+            P5 COMPARE · P6 LESSONS · P7 RISK · P8 EVENT-TAG ·
+            P9 SECURITY · P10 HEALTH
+            <br><br>
+            <span class="text-amber-300">
+              Conflict Priority:
+            </span>
+            SECURITY &gt; RISK &gt; DATA &gt; LEARNING &gt; PERFORMANCE
+          </div>
+        </div>
+
+      </section>
+
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[10px]">
+            🧠 SELF-STATES
+          </span>
+        </div>
+
+        <div id="selfBox"
+          class="p-5 font-mono text-[10px] leading-6 text-slate-500">
+          —
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =======================================================
+         ACCOUNT
+    ======================================================== -->
+    <div class="section" id="account">
+
+      <section class="rounded-2xl border border-white/[0.06]
+                      bg-[#070b14]/90">
+
+        <div class="border-b border-white/[0.05] px-4 py-3">
+          <span class="font-display text-[10px]">
+            💼 ACCOUNT
+          </span>
+        </div>
+
+        <div class="grid gap-3 p-4 md:grid-cols-3">
+
+          <div class="rounded-xl border border-white/[0.05]
+                      bg-black/20 p-5 text-center">
+
+            <div class="font-display text-[8px] text-slate-600">
+              EQUITY
+            </div>
+
+            <div id="accEq"
+              class="mt-2 font-mono text-xl font-bold text-cyan-300">
+              —
+            </div>
+
+          </div>
+
+
+          <div class="rounded-xl border border-white/[0.05]
+                      bg-black/20 p-5 text-center">
+
+            <div class="font-display text-[8px] text-slate-600">
+              TRADES TODAY
+            </div>
+
+            <div id="accTr"
+              class="mt-2 font-mono text-xl font-bold text-slate-200">
+              —
+            </div>
+
+          </div>
+
+
+          <div class="rounded-xl border border-white/[0.05]
+                      bg-black/20 p-5 text-center">
+
+            <div class="font-display text-[8px] text-slate-600">
+              DAY PNL
+            </div>
+
+            <div id="accPnl"
+              class="mt-2 font-mono text-xl font-bold text-emerald-300">
+              —
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================================================
+       CONFIG DRAWER
+  ========================================================== -->
+
+  <div id="cfgOverlay"
+    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
+  </div>
+
+  <aside id="cfgPanel"
+    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
+           max-w-md border-l border-white/[0.08]
+           bg-[#070b14] shadow-2xl">
+
+    <div class="flex items-center justify-between border-b
+                border-white/[0.06] px-5 py-4">
+
+      <div class="font-display text-xs text-cyan-300">
+        ⚙ CONFIGURATION
+      </div>
+
+      <button id="closeCfg"
+        class="close rounded-lg border border-white/[0.07]
+               px-3 py-2 text-slate-500 hover:text-white">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="side-b space-y-4 overflow-auto p-5">
+
+      <div id="cfgInfo"
+        class="rounded-xl border border-white/[0.06]
+               bg-black/20 p-4 font-mono text-[10px]
+               leading-6 text-slate-500">
+        —
+      </div>
+
+      <div class="flex gap-2">
+
+        <button id="btnEngineReload"
+          class="flex-1 rounded-xl border border-cyan-400/10
+                 bg-cyan-400/[0.05] px-4 py-3 font-mono text-[9px]
+                 font-semibold text-cyan-300 hover:bg-cyan-400/[0.1]">
+          ⟳ RELOAD ENGINE
+        </button>
+
+        <button id="btnLogout2"
+          class="rounded-xl border border-rose-400/20
+                 bg-rose-400/[0.04] px-4 py-3 font-mono text-[9px]
+                 text-rose-400 hover:bg-rose-400/[0.1]">
+          EXIT
+        </button>
+
+      </div>
+
+    </div>
+  </aside>
+
+
+  <!-- =========================================================
+       MODEL DETAIL DRAWER
+  ========================================================== -->
+
+  <div id="modOverlay"
+    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
+  </div>
+
+  <aside id="modDetail"
+    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
+           max-w-md border-l border-white/[0.08]
+           bg-[#070b14] shadow-2xl">
+
+    <div class="flex items-center justify-between border-b
+                border-white/[0.06] px-5 py-4">
+
+      <div id="modTitle"
+        class="side-t font-display text-xs text-cyan-300">
+        MODEL
+      </div>
+
+      <button id="closeMod"
+        class="close rounded-lg border border-white/[0.07]
+               px-3 py-2 text-slate-500 hover:text-white">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="side-b overflow-auto p-5">
+
+      <div id="modInst"
+        class="rounded-xl border border-white/[0.06]
+               bg-black/20 p-4 font-mono text-[10px]
+               leading-6 text-slate-400">
+      </div>
+
+    </div>
+  </aside>
+
+
+  <!-- =========================================================
+       FILE VIEWER
+  ========================================================== -->
+
+  <div id="fileOverlay"
+    class="overlay fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm">
+  </div>
+
+  <aside id="fileViewer"
+    class="side fixed right-0 top-0 z-[80] hidden h-full w-full
+           max-w-2xl border-l border-white/[0.08]
+           bg-[#070b14] shadow-2xl">
+
+    <div class="flex items-center justify-between border-b
+                border-white/[0.06] px-5 py-4">
+
+      <div id="fvTitle"
+        class="side-t font-display text-xs text-cyan-300">
+        FILE
+      </div>
+
+      <button id="closeFv"
+        class="close rounded-lg border border-white/[0.07]
+               px-3 py-2 text-slate-500 hover:text-white">
+        ✕
+      </button>
+
+    </div>
+
+    <div id="fvBody"
+      class="side-b max-h-[calc(100vh-70px)] overflow-auto p-5">
+    </div>
+
+  </aside>
+
+</div>
+<!-- /appShell -->
+ <script src="config.js"></script>
   <script>
     function unlockUI() {
       document.body.classList.remove("locked");

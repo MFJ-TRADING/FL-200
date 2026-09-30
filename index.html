@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>FL-200-FACE</title>
+  <title>FL-200 · FACE v12.1</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
     rel="stylesheet">
@@ -1424,32 +1424,35 @@
     <div class="lockcard">
       <div class="locklogo">⚡ FL-200</div>
       <input id="ltok" type="password" placeholder="FACE_TOKEN — ghp_ or github_pat_ (READ only)">
+      <input id="lpass" type="password" placeholder="Password">
       <button class="lockbtn" id="lockBtn">UNLOCK</button>
       <button class="lockbtn2" id="btnWipe">WIPE</button>
       <div class="lerr" id="lockErr"></div>
+      
     </div>
   </div>
 
   <div id="appShell">
     <nav class="top-nav">
-      <div class="brand">FL-200</div>
+      <div class="brand">⚡ FL-200 <span>FACE</span></div>
       <div class="nav-links">
-        <button class="nav-btn active" data-s="dash">Dashboard</button>
-        <button class="nav-btn" data-s="scores">Performance</button>
-        <button class="nav-btn" data-s="strategy">Strategy</button>
-        <button class="nav-btn" data-s="rules">Rules</button>
-        <button class="nav-btn" data-s="reports">Reports</button>
-        <button class="nav-btn" data-s="pillars">Pillars</button>
-        <button class="nav-btn" data-s="account">Account</button>
+        <button class="nav-btn active" data-s="dash">DASHBOARD</button>
+        <button class="nav-btn" data-s="scores">📊 SCOREBOARD</button>
+        <button class="nav-btn" data-s="strategy">STRATEGY</button>
+        <button class="nav-btn" data-s="rules">RULES</button>
+        <button class="nav-btn" data-s="reports">REPORTS</button>
+        <button class="nav-btn" data-s="pillars">PILLARS</button>
+        <button class="nav-btn" data-s="account">ACCOUNT</button>
       </div>
       <div class="nav-right">
+        <span class="tier-badge">LIVE 4s</span>
         <span class="syncin" id="syncIn">sync —</span>
         <div class="status">
           <div class="dot"></div> v12.1
         </div>
         <button class="nav-btn" id="openCfg" style="border:1px solid var(--border)">⚙</button>
         <button class="nav-btn rd" id="btnLogout"
-          style="border:1px solid rgba(255,0,85,.35);color:var(--red)">Logout</button>
+          style="border:1px solid rgba(255,0,85,.35);color:var(--red)">EXIT</button>
       </div>
     </nav>
 
@@ -2401,6 +2404,7 @@
       try { window.FL200_ENGINE = undefined; } catch (e) { }
       sessionStorage.clear();
       localStorage.removeItem("hermes_tok");
+      localStorage.removeItem("fl200_pass");
       localStorage.removeItem("fl200_ctx");
       localStorage.removeItem("fl200_events");
       localStorage.removeItem("fl200_face_tok");
@@ -2442,6 +2446,10 @@
       });
     }
     $("lockBtn").addEventListener("click", async function () {
+      const tok = $("ltok").value.trim(), pass = $("lpass").value.trim(), err = $("lockErr");
+      const saved = localStorage.getItem("fl200_pass");
+      if (saved && pass && saved !== pass) { err.textContent = "Galat password."; return; }
+      if (!saved && pass) localStorage.setItem("fl200_pass", pass);
       if (!tok) { err.textContent = "FACE_TOKEN zaroori hai."; return; }
       err.textContent = "Verifying token…";
       try {
@@ -2479,11 +2487,13 @@
     $("btnWipe").addEventListener("click", function () {
       sessionStorage.removeItem("fl200_face_tok");
       localStorage.removeItem("hermes_tok");
+      localStorage.removeItem("fl200_pass");
       localStorage.removeItem("fl200_ctx");
       localStorage.removeItem("fl200_events");
       location.reload();
     });
     $("ltok").addEventListener("keydown", e => { if (e.key === "Enter") $("lockBtn").click(); });
+    $("lpass").addEventListener("keydown", e => { if (e.key === "Enter") $("lockBtn").click(); });
     (function () {
       document.body.classList.add("locked");
       TOKEN = "";

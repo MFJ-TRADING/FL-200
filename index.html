@@ -1974,346 +1974,665 @@
   <!-- =========================================================
        HERMES FRONT-END ENGINE
        ========================================================= -->
-  <script>
-  (() => {
+<script>
+(() => {
 
-    "use strict";
+  "use strict";
 
+  /* =========================================================
+     FL-200 / HERMES FACE FRONT-END
+     ---------------------------------------------------------
+     PUBLIC FACE
+       ↓
+     Fine-grained GitHub PAT (Contents: Read)
+       ↓
+     PRIVATE HEART
+       MFJ-TRADING/FL-200-Private
 
-    /* =========================================================
-       GLOBAL HELPERS
-       ========================================================= */
+     EXACT HEART ROOT:
+       engine.js
+       state.json
+       perf.json
+       ledger.jsonl
+       strategy.md
+       FL-200_MASTER.md
+       README.md
+       SECURITY.md
+       skills/
+       .github/workflows/
 
-    const $ = id => document.getElementById(id);
-
-    const $$ = sel => Array.from(document.querySelectorAll(sel));
-
-    const C = window.FL200_CONFIG || {};
-
-    let STATE = null;
-    let PERF = null;
-    let LEDGER = [];
-    let STRATEGY_TEXT = "";
-    let MASTER_TEXT = "";
-    let SECURITY_TEXT = "";
-
-    let TOKEN = "";
-
-    let CUR_SYM = C?.ui?.defaultSymbol || "BTCUSDT";
-    let CUR_TF = C?.ui?.defaultTf || "H1";
-
-    let ENGINE_TEXT = "";
-    let ENGINE = null;
-    let CURRENT_SIGNAL = null;
-    let CURRENT_CANDLES = [];
-    let CURRENT_DEPTH = null;
-
-    let TICKER_DATA = {};
-
-    const LIVE = {
-      pollMs: C.pollMs || 4000,
-      staleMs: C.staleMs || 30000,
-      deadMs: C.deadMs || 120000,
-
-      timer: null,
-      rtTimer: null,
-
-      busy: false,
-      marketBusy: false,
-
-      failures: 0,
-
-      lastFetch: 0,
-      lastMarket: 0,
-
-      active: false,
-
-      heartbeat: 0
-    };
+     IMPORTANT:
+       - No password
+       - No localStorage token
+       - No GitHub write operations
+       - No Binance API key
+       - No auto execution
+       - Binance URLs contain NO fake "_" query parameter
+  ========================================================= */
 
 
-    const KNOWN_FILES = [
-      "engine.js",
-      "state.json",
-      "perf.json",
-      "ledger.jsonl",
-      "strategy.md",
-      "FL-200_MASTER.md",
-      "README.md",
-      "SECURITY.md"
-    ];
+  /* =========================================================
+     DOM HELPERS
+     ========================================================= */
+
+  const $ = id =>
+    document.getElementById(id);
+
+  const $$ = selector =>
+    Array.from(
+      document.querySelectorAll(selector)
+    );
 
 
-    /* =========================================================
-       BASIC FORMATTERS
-       ========================================================= */
+  /* =========================================================
+     CONFIG
+     ========================================================= */
 
-    function esc(value) {
+  const C =
+    window.FL200_CONFIG || {};
 
-      if (value == null) return "";
 
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+  if (!C.heartRepo) {
+
+    console.error(
+      "FL200_CONFIG missing or invalid."
+    );
+
+  }
+
+
+  /* =========================================================
+     GLOBAL STATE
+     ========================================================= */
+
+  let STATE = null;
+
+  let PERF = null;
+
+  let LEDGER = [];
+
+  let STRATEGY_TEXT = "";
+
+  let MASTER_TEXT = "";
+
+  let SECURITY_TEXT = "";
+
+  let TOKEN = "";
+
+  let ENGINE_TEXT = "";
+
+  let ENGINE = null;
+
+  let CURRENT_SIGNAL = null;
+
+  let CURRENT_CANDLES = [];
+
+  let CURRENT_DEPTH = null;
+
+  let TICKER_DATA = {};
+
+  let CUR_SYM =
+    C?.ui?.defaultSymbol ||
+    "BTCUSDT";
+
+  let CUR_TF =
+    C?.ui?.defaultTf ||
+    "H1";
+
+
+  /* =========================================================
+     LIVE CONTROL
+     ========================================================= */
+
+  const LIVE = {
+
+    pollMs:
+      Number(C.pollMs || 4000),
+
+    staleMs:
+      Number(C.staleMs || 30000),
+
+    deadMs:
+      Number(C.deadMs || 120000),
+
+    timer:
+      null,
+
+    rtTimer:
+      null,
+
+    busy:
+      false,
+
+    marketBusy:
+      false,
+
+    failures:
+      0,
+
+    lastFetch:
+      0,
+
+    lastMarket:
+      0,
+
+    active:
+      false,
+
+    heartbeat:
+      0
+
+  };
+
+
+  /* =========================================================
+     KNOWN HEART FILES
+     ========================================================= */
+
+  const KNOWN_FILES = [
+
+    "engine.js",
+    "state.json",
+    "perf.json",
+    "ledger.jsonl",
+    "strategy.md",
+    "FL-200_MASTER.md",
+    "README.md",
+    "SECURITY.md"
+
+  ];
+
+
+  /* =========================================================
+     BASIC HELPERS
+     ========================================================= */
+
+  function esc(value) {
+
+    if (
+      value === null ||
+      value === undefined
+    ) {
+      return "";
     }
 
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
 
-    function num(value, digits = 2) {
+  }
 
-      if (value == null || value === "") {
-        return "—";
-      }
 
-      const n = Number(value);
+  function setText(
+    id,
+    value
+  ) {
 
-      if (!Number.isFinite(n)) {
-        return esc(value);
-      }
+    const node = $(id);
 
-      return n.toLocaleString("en-US", {
-        minimumFractionDigits: digits,
-        maximumFractionDigits: digits
-      });
+    if (!node) {
+      return;
     }
 
+    node.textContent =
+      value === null ||
+      value === undefined ||
+      value === ""
+        ? "—"
+        : String(value);
 
-    function pct(value, digits = 1) {
+  }
 
-      if (value == null || value === "") {
-        return "—";
-      }
 
-      const n = Number(value);
+  function num(
+    value,
+    digits = 2
+  ) {
 
-      if (!Number.isFinite(n)) {
-        return "—";
-      }
-
-      return `${n.toFixed(digits)}%`;
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return "—";
     }
 
+    const n =
+      Number(value);
 
-    function timeNow() {
-      return new Date().toLocaleTimeString([], {
+    if (
+      !Number.isFinite(n)
+    ) {
+      return String(value);
+    }
+
+    return n.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits:
+          digits,
+
+        maximumFractionDigits:
+          digits
+      }
+    );
+
+  }
+
+
+  function pct(
+    value,
+    digits = 1
+  ) {
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return "—";
+    }
+
+    const n =
+      Number(value);
+
+    if (
+      !Number.isFinite(n)
+    ) {
+      return "—";
+    }
+
+    return `${n.toFixed(digits)}%`;
+
+  }
+
+
+  function timeNow() {
+
+    return new Date().toLocaleTimeString(
+      [],
+      {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit"
-      });
+      }
+    );
+
+  }
+
+
+  function ageText(ms) {
+
+    if (
+      !Number.isFinite(ms)
+    ) {
+      return "—";
     }
 
-
-    function ageText(ms) {
-
-      if (!Number.isFinite(ms)) {
-        return "—";
-      }
-
-      if (ms < 1000) {
-        return "LIVE";
-      }
-
-      const sec = Math.floor(ms / 1000);
-
-      if (sec < 60) {
-        return `${sec}s`;
-      }
-
-      const min = Math.floor(sec / 60);
-
-      if (min < 60) {
-        return `${min}m`;
-      }
-
-      const hr = Math.floor(min / 60);
-
-      return `${hr}h`;
+    if (ms < 1000) {
+      return "LIVE";
     }
 
+    const sec =
+      Math.floor(ms / 1000);
 
-    function relativeAge(timestamp) {
-
-      if (!timestamp) {
-        return "—";
-      }
-
-      const t = Number(timestamp);
-
-      if (!Number.isFinite(t)) {
-        return "—";
-      }
-
-      return ageText(Date.now() - t);
+    if (sec < 60) {
+      return `${sec}s`;
     }
 
+    const min =
+      Math.floor(sec / 60);
 
-    function safeJsonParse(text, fallback = null) {
+    if (min < 60) {
+      return `${min}m`;
+    }
 
-      try {
-        return JSON.parse(text);
-      } catch {
-        return fallback;
-      }
+    const hr =
+      Math.floor(min / 60);
+
+    return `${hr}h`;
+
+  }
+
+
+  function safeJsonParse(
+    text,
+    fallback = null
+  ) {
+
+    try {
+
+      return JSON.parse(text);
+
+    } catch {
+
+      return fallback;
 
     }
 
+  }
 
-    function base64Decode(value) {
 
-      try {
+  function base64Decode(
+    value
+  ) {
 
-        const binary = atob(value.replace(/\s/g, ""));
+    try {
 
-        const bytes = Uint8Array.from(
+      const binary =
+        atob(
+          String(value)
+            .replace(/\s/g, "")
+        );
+
+      const bytes =
+        Uint8Array.from(
           binary,
-          char => char.charCodeAt(0)
+          ch =>
+            ch.charCodeAt(0)
         );
 
-        return new TextDecoder().decode(bytes);
+      return new TextDecoder()
+        .decode(bytes);
 
-      } catch {
+    } catch {
 
-        return "";
+      return "";
+
+    }
+
+  }
+
+
+  function formatLedgerTime(
+    value
+  ) {
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return "—";
+    }
+
+    if (
+      typeof value === "number" ||
+      /^\d+$/.test(
+        String(value)
+      )
+    ) {
+
+      const n =
+        Number(value);
+
+      const ms =
+        n > 10000000000
+          ? n
+          : n * 1000;
+
+      return new Date(ms)
+        .toLocaleString();
+
+    }
+
+    return String(value);
+
+  }
+
+
+  /* =========================================================
+     GENERIC OBJECT SEARCH
+     ========================================================= */
+
+  function deepFind(
+    obj,
+    keys,
+    depth = 0
+  ) {
+
+    if (
+      obj === null ||
+      obj === undefined ||
+      depth > 7
+    ) {
+      return undefined;
+    }
+
+    if (
+      typeof obj !== "object"
+    ) {
+      return undefined;
+    }
+
+    for (
+      const key of keys
+    ) {
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          obj,
+          key
+        )
+      ) {
+
+        return obj[key];
 
       }
 
     }
 
+    for (
+      const key of Object.keys(obj)
+    ) {
 
-    /* =========================================================
-       TOKEN / AUTH
-       ========================================================= */
+      const result =
+        deepFind(
+          obj[key],
+          keys,
+          depth + 1
+        );
 
-    function getSessionToken() {
+      if (
+        result !== undefined
+      ) {
 
-      try {
-        return sessionStorage.getItem(
-          C?.tokenPolicy?.sessionKey || "fl200_face_tok"
-        ) || "";
-      } catch {
-        return "";
+        return result;
+
       }
 
     }
 
+    return undefined;
 
-    function setSessionToken(token) {
+  }
 
-      TOKEN = token || "";
 
-      try {
+  function stateValue(
+    keys
+  ) {
 
-        const key =
-          C?.tokenPolicy?.sessionKey ||
-          "fl200_face_tok";
+    return deepFind(
+      STATE,
+      keys
+    );
 
-        if (TOKEN) {
-          sessionStorage.setItem(key, TOKEN);
-        } else {
-          sessionStorage.removeItem(key);
-        }
+  }
 
-      } catch {}
+
+  function performanceValue(
+    keys
+  ) {
+
+    return deepFind(
+      PERF,
+      keys
+    );
+
+  }
+
+
+  /* =========================================================
+     TOKEN SESSION
+     ========================================================= */
+
+  function sessionKey() {
+
+    return (
+      C?.tokenPolicy?.sessionKey ||
+      "fl200_face_tok"
+    );
+
+  }
+
+
+  function getSessionToken() {
+
+    try {
+
+      return (
+        sessionStorage.getItem(
+          sessionKey()
+        ) || ""
+      );
+
+    } catch {
+
+      return "";
 
     }
 
+  }
 
-    function wipeSession() {
 
-      TOKEN = "";
+  function setSessionToken(
+    token
+  ) {
 
-      try {
+    TOKEN =
+      token || "";
+
+    try {
+
+      if (TOKEN) {
+
+        sessionStorage.setItem(
+          sessionKey(),
+          TOKEN
+        );
+
+      } else {
+
         sessionStorage.removeItem(
-          C?.tokenPolicy?.sessionKey || "fl200_face_tok"
+          sessionKey()
         );
-      } catch {}
 
-      try {
-        localStorage.removeItem("hermes_tok");
-      } catch {}
-
-      STATE = null;
-      PERF = null;
-      LEDGER = [];
-      CURRENT_SIGNAL = null;
-      CURRENT_CANDLES = [];
-      CURRENT_DEPTH = null;
-
-      if (LIVE.timer) {
-        clearInterval(LIVE.timer);
-        LIVE.timer = null;
       }
 
-      if (LIVE.rtTimer) {
-        clearInterval(LIVE.rtTimer);
-        LIVE.rtTimer = null;
-      }
+    } catch {}
 
-      LIVE.active = false;
-      LIVE.busy = false;
-      LIVE.marketBusy = false;
+  }
+
+
+  function wipeSession() {
+
+    TOKEN = "";
+
+    try {
+
+      sessionStorage.removeItem(
+        sessionKey()
+      );
+
+    } catch {}
+
+
+    STATE = null;
+
+    PERF = null;
+
+    LEDGER = [];
+
+    STRATEGY_TEXT = "";
+
+    MASTER_TEXT = "";
+
+    SECURITY_TEXT = "";
+
+    ENGINE_TEXT = "";
+
+    ENGINE = null;
+
+    CURRENT_SIGNAL = null;
+
+    CURRENT_CANDLES = [];
+
+    CURRENT_DEPTH = null;
+
+    TICKER_DATA = {};
+
+
+    if (LIVE.timer) {
+
+      clearInterval(
+        LIVE.timer
+      );
+
+      LIVE.timer = null;
 
     }
 
 
-    async function validateToken(token) {
+    if (LIVE.rtTimer) {
 
-      const base =
-        `${C.github.api}/repos/${C.heartRepo}`;
+      clearInterval(
+        LIVE.rtTimer
+      );
 
-      const repoResp = await fetch(
+      LIVE.rtTimer = null;
+
+    }
+
+
+    LIVE.active = false;
+
+    LIVE.busy = false;
+
+    LIVE.marketBusy = false;
+
+    LIVE.heartbeat = 0;
+
+  }
+
+
+  /* =========================================================
+     GITHUB AUTH VALIDATION
+     ========================================================= */
+
+  async function validateToken(
+    token
+  ) {
+
+    const base =
+      `${C.github.api}/repos/${C.heartRepo}`;
+
+
+    const repoResp =
+      await fetch(
         `${base}?_=${Date.now()}`,
         {
+          method: "GET",
+
           headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: C?.github?.accept || "application/vnd.github+json"
-          },
+            Authorization:
+              `Bearer ${token}`,
 
-          cache: "no-store"
-        }
-      );
-
-      if (repoResp.status === 401) {
-
-        throw new Error(
-          "401 — FACE_TOKEN incorrect or expired."
-        );
-
-      }
-
-      if (repoResp.status === 403) {
-
-        throw new Error(
-          "403 — token does not have permission."
-        );
-
-      }
-
-      if (repoResp.status === 404) {
-
-        throw new Error(
-          "404 — FL-200-Private access not available."
-        );
-
-      }
-
-      if (!repoResp.ok) {
-
-        throw new Error(
-          `GitHub ${repoResp.status}`
-        );
-
-      }
-
-
-      const rootResp = await fetch(
-        `${base}/contents/?ref=${encodeURIComponent(C.branch)}&_=${Date.now()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: C?.github?.accept || "application/vnd.github+json"
+            Accept:
+              C?.github?.accept ||
+              "application/vnd.github+json"
           },
 
           cache: "no-store"
@@ -2321,178 +2640,363 @@
       );
 
 
-      if (!rootResp.ok) {
+    if (
+      repoResp.status === 401
+    ) {
 
-        throw new Error(
-          `Repository contents read failed (${rootResp.status}).`
-        );
-
-      }
-
-
-      return true;
+      throw new Error(
+        "401 — FACE_TOKEN incorrect or expired."
+      );
 
     }
 
 
-    function unlockUI() {
+    if (
+      repoResp.status === 403
+    ) {
 
-      document.body.classList.remove("locked");
+      throw new Error(
+        "403 — GitHub permission denied."
+      );
 
-      const lock = $("lock");
-
-      if (lock) {
-        lock.style.display = "none";
-      }
-
-
-      const shell = $("appShell");
-
-      if (shell) {
-
-        shell.style.display = "block";
-
-        shell.removeAttribute("aria-hidden");
-
-      }
+    }
 
 
-      LIVE.active = true;
+    if (
+      repoResp.status === 404
+    ) {
+
+      throw new Error(
+        "404 — FL-200-Private not accessible with this token."
+      );
+
+    }
 
 
-      updateAccount();
+    if (
+      !repoResp.ok
+    ) {
 
-      pulse(
-        "FACE online · Heart sync 4s",
-        "ok"
+      throw new Error(
+        `GitHub ${repoResp.status}`
+      );
+
+    }
+
+
+    const rootResp =
+      await fetch(
+        `${base}/contents/?ref=${encodeURIComponent(C.branch)}&_=${Date.now()}`,
+        {
+          method: "GET",
+
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+
+            Accept:
+              C?.github?.accept ||
+              "application/vnd.github+json"
+          },
+
+          cache: "no-store"
+        }
       );
 
 
-      Promise.allSettled([
-        loadEngine(true),
-        loadHeartState(),
-        loadPerformance(),
-        loadLedger(),
-        loadStrategy(),
-        loadRepositoryMap()
-      ]).then(() => {
+    if (
+      !rootResp.ok
+    ) {
+
+      throw new Error(
+        `Repository contents read failed (${rootResp.status}).`
+      );
+
+    }
+
+
+    return true;
+
+  }
+
+
+  /* =========================================================
+     UNLOCK
+     ========================================================= */
+
+  function unlockUI() {
+
+    document.body.classList.remove(
+      "locked"
+    );
+
+
+    const lock =
+      $("lock");
+
+    if (lock) {
+
+      lock.style.display =
+        "none";
+
+    }
+
+
+    const shell =
+      $("appShell");
+
+    if (shell) {
+
+      shell.style.display =
+        "block";
+
+      shell.removeAttribute(
+        "aria-hidden"
+      );
+
+    }
+
+
+    LIVE.active =
+      true;
+
+
+    updateAccount();
+
+
+    pulse(
+      "FACE online · Heart sync 4s",
+      "ok"
+    );
+
+
+    Promise.allSettled([
+
+      loadEngine(true),
+
+      loadHeartState(),
+
+      loadPerformance(),
+
+      loadLedger(),
+
+      loadStrategy(),
+
+      loadRepositoryMap()
+
+    ]).then(
+      async () => {
 
         renderAll();
 
         startHeartbeat();
 
-        refreshMarket(true);
-
-      });
-
-    }
-
-
-    /* =========================================================
-       LOCK SCREEN UI
-       ========================================================= */
-
-    $("toggleToken").addEventListener(
-      "click",
-      () => {
-
-        const input = $("ltok");
-
-        if (!input) return;
-
-        const visible =
-          input.type === "text";
-
-        input.type =
-          visible ? "password" : "text";
-
-        $("toggleToken").textContent =
-          visible ? "SHOW" : "HIDE";
+        await refreshMarket(
+          true
+        );
 
       }
     );
 
+  }
 
-    $("lockBtn").addEventListener(
+
+  /* =========================================================
+     LOCK SCREEN
+     ========================================================= */
+
+  const lockButton =
+    $("lockBtn");
+
+
+  if (lockButton) {
+
+    lockButton.addEventListener(
       "click",
       async () => {
 
-        const token =
-          $("ltok").value.trim();
+        const input =
+          $("ltok");
 
-        const err =
+        const error =
           $("lockErr");
+
+        const token =
+          input?.value.trim() ||
+          "";
+
 
         if (!token) {
 
-          err.textContent =
-            "FACE_TOKEN zaroori hai.";
+          if (error) {
+
+            error.textContent =
+              "FACE_TOKEN zaroori hai.";
+
+          }
 
           return;
+
         }
 
 
-        err.textContent =
-          "Verifying FACE_TOKEN…";
+        if (error) {
+
+          error.textContent =
+            "Verifying FACE_TOKEN…";
+
+        }
 
 
         try {
 
-          await validateToken(token);
+          await validateToken(
+            token
+          );
 
-          setSessionToken(token);
 
-          err.textContent = "";
+          setSessionToken(
+            token
+          );
+
+
+          if (error) {
+
+            error.textContent =
+              "";
+
+          }
+
 
           unlockUI();
 
-        } catch (error) {
+        } catch (err) {
 
           TOKEN = "";
 
-          err.textContent =
-            error?.message ||
-            "Authentication failed.";
+          if (error) {
+
+            error.textContent =
+              err?.message ||
+              "Authentication failed.";
+
+          }
 
         }
 
       }
     );
 
+  }
 
-    $("ltok").addEventListener(
+
+  const tokenInput =
+    $("ltok");
+
+
+  if (tokenInput) {
+
+    tokenInput.addEventListener(
       "keydown",
       event => {
 
-        if (event.key === "Enter") {
-          $("lockBtn").click();
+        if (
+          event.key === "Enter"
+        ) {
+
+          lockButton?.click();
+
         }
 
       }
     );
 
+  }
 
-    /* =========================================================
-       GITHUB
-       ========================================================= */
 
-    async function ghFetch(
-      repo,
-      path,
-      accept = null
-    ) {
+  const toggleToken =
+    $("toggleToken");
 
-      if (!TOKEN) {
-        throw new Error("No FACE_TOKEN.");
+
+  if (toggleToken) {
+
+    toggleToken.addEventListener(
+      "click",
+      () => {
+
+        const input =
+          $("ltok");
+
+        if (!input) {
+          return;
+        }
+
+        const visible =
+          input.type === "text";
+
+
+        input.type =
+          visible
+            ? "password"
+            : "text";
+
+
+        toggleToken.textContent =
+          visible
+            ? "SHOW"
+            : "HIDE";
+
       }
+    );
 
-      const url =
-        `${C.github.api}/repos/${repo}/contents/${path}` +
-        `?ref=${encodeURIComponent(C.branch)}` +
-        `&_=${Date.now()}`;
+  }
 
-      const response =
-        await fetch(url, {
+
+  /* =========================================================
+     GITHUB FILE ACCESS
+     ========================================================= */
+
+  async function ghFetch(
+    repo,
+    path,
+    accept = null
+  ) {
+
+    if (!TOKEN) {
+
+      throw new Error(
+        "No FACE_TOKEN."
+      );
+
+    }
+
+
+    const safePath =
+      String(path || "")
+        .replace(/^\/+/, "");
+
+
+    const base =
+      `${C.github.api}/repos/${repo}/contents`;
+
+
+    const pathPart =
+      safePath
+        ? `/${safePath}`
+        : "";
+
+
+    const url =
+      `${base}${pathPart}` +
+      `?ref=${encodeURIComponent(C.branch)}` +
+      `&_=${Date.now()}`;
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
 
           headers: {
 
@@ -2508,156 +3012,214 @@
 
           cache: "no-store"
 
-        });
-
-
-      if (response.status === 401) {
-        throw new Error("GitHub 401.");
-      }
-
-      if (response.status === 403) {
-        throw new Error("GitHub 403.");
-      }
-
-      if (response.status === 404) {
-        throw new Error(`File not found: ${path}`);
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          `GitHub ${response.status}: ${path}`
-        );
-      }
-
-
-      return response;
-
-    }
-
-
-    async function ghJson(
-      repo,
-      path
-    ) {
-
-      const response =
-        await ghFetch(repo, path);
-
-      const payload =
-        await response.json();
-
-
-      if (
-        payload &&
-        typeof payload.content === "string"
-      ) {
-
-        return safeJsonParse(
-          base64Decode(payload.content),
-          null
-        );
-
-      }
-
-
-      return payload;
-
-    }
-
-
-    async function ghText(
-      repo,
-      path
-    ) {
-
-      const response =
-        await ghFetch(
-          repo,
-          path,
-          "application/vnd.github.raw+json"
-        );
-
-
-      return response.text();
-
-    }
-
-
-    async function ghRoot() {
-
-      const response =
-        await ghFetch(
-          C.heartRepo,
-          "",
-          C?.github?.accept ||
-          "application/vnd.github+json"
-        );
-
-      return response.json();
-
-    }
-
-
-    /* =========================================================
-       ENGINE
-       ========================================================= */
-
-    async function loadEngine(force = false) {
-
-      if (
-        ENGINE &&
-        !force
-      ) {
-        return ENGINE;
-      }
-
-
-      try {
-
-        ENGINE_TEXT =
-          await ghText(
-            C.heartRepo,
-            C.enginePath
-          );
-
-
-        const runner =
-          new Function(
-            `"use strict";\n${ENGINE_TEXT}\n//# sourceURL=FL200-Private-engine.js`
-          );
-
-
-        runner();
-
-
-        ENGINE =
-          window.FL200_ENGINE ||
-          null;
-
-
-        if (!ENGINE) {
-
-          throw new Error(
-            "FL200_ENGINE not exposed by engine.js."
-          );
-
         }
+      );
 
 
-        $("engBadge").textContent =
-          `ENGINE v${ENGINE.version || "?"}`;
+    if (
+      response.status === 401
+    ) {
+
+      throw new Error(
+        "GitHub 401 — token rejected."
+      );
+
+    }
+
+
+    if (
+      response.status === 403
+    ) {
+
+      throw new Error(
+        "GitHub 403 — access denied."
+      );
+
+    }
+
+
+    if (
+      response.status === 404
+    ) {
+
+      throw new Error(
+        `File not found: ${safePath}`
+      );
+
+    }
+
+
+    if (
+      !response.ok
+    ) {
+
+      throw new Error(
+        `GitHub ${response.status}: ${safePath}`
+      );
+
+    }
+
+
+    return response;
+
+  }
+
+
+  async function ghJson(
+    repo,
+    path
+  ) {
+
+    const response =
+      await ghFetch(
+        repo,
+        path
+      );
+
+
+    const payload =
+      await response.json();
+
+
+    if (
+      payload &&
+      typeof payload.content ===
+      "string"
+    ) {
+
+      const decoded =
+        base64Decode(
+          payload.content
+        );
+
+
+      return safeJsonParse(
+        decoded,
+        null
+      );
+
+    }
+
+
+    return payload;
+
+  }
+
+
+  async function ghText(
+    repo,
+    path
+  ) {
+
+    const response =
+      await ghFetch(
+        repo,
+        path,
+        "application/vnd.github.raw+json"
+      );
+
+
+    return response.text();
+
+  }
+
+
+  async function ghRoot() {
+
+    const response =
+      await ghFetch(
+        C.heartRepo,
+        "",
+        C?.github?.accept ||
+        "application/vnd.github+json"
+      );
+
+
+    return response.json();
+
+  }
+
+
+  /* =========================================================
+     LOAD ENGINE.JS
+     ========================================================= */
+
+  async function loadEngine(
+    force = false
+  ) {
+
+    if (
+      ENGINE &&
+      !force
+    ) {
+
+      return ENGINE;
+
+    }
+
+
+    try {
+
+      ENGINE_TEXT =
+        await ghText(
+          C.heartRepo,
+          C.enginePath
+        );
+
+
+      /*
+       * engine.js is intentionally executed only
+       * after successful private GitHub authentication.
+       */
+
+      const runner =
+        new Function(
+          `${ENGINE_TEXT}\n//# sourceURL=FL200-Private-engine.js`
+        );
+
+
+      runner();
+
+
+      ENGINE =
+        window.FL200_ENGINE ||
+        null;
+
+
+      if (!ENGINE) {
+
+        throw new Error(
+          "engine.js loaded but window.FL200_ENGINE was not created."
+        );
+
+      }
+
+
+      setText(
+        "engBadge",
+        `ENGINE v${ENGINE.version || "?"}`
+      );
+
+
+      if ($("engBadge")) {
 
         $("engBadge").className =
           "hidden rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300 md:block";
 
+      }
 
-        updateAccount();
 
-        return ENGINE;
+      updateAccount();
 
-      } catch (error) {
 
-        ENGINE = null;
+      return ENGINE;
+
+    } catch (error) {
+
+      ENGINE = null;
+
+
+      if ($("engBadge")) {
 
         $("engBadge").textContent =
           "ENGINE ERROR";
@@ -2665,806 +3227,1004 @@
         $("engBadge").className =
           "hidden rounded-full border border-rose-400/15 bg-rose-400/[0.05] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-rose-300 md:block";
 
-
-        setText(
-          "engWhy",
-          `Engine load failed: ${error.message}`
-        );
-
-
-        throw error;
-
       }
+
+
+      setText(
+        "engWhy",
+        `Engine load failed: ${error.message}`
+      );
+
+
+      throw error;
 
     }
 
+  }
 
-    /* =========================================================
-       HEART FILES
-       ========================================================= */
 
-    async function loadHeartState() {
+  /* =========================================================
+     LOAD HEART STATE
+     ROOT:
+       state.json
+     ========================================================= */
 
-      try {
+  async function loadHeartState() {
 
-        STATE =
-          await ghJson(
-            C.heartRepo,
-            C.statePaths[0]
-          );
+    try {
 
-        LIVE.lastFetch = Date.now();
-
-        return STATE;
-
-      } catch (error) {
-
-        console.warn(
-          "state.json",
-          error
+      STATE =
+        await ghJson(
+          C.heartRepo,
+          C.statePaths?.[0] ||
+          "state.json"
         );
 
-        return null;
 
-      }
+      LIVE.lastFetch =
+        Date.now();
+
+
+      return STATE;
+
+    } catch (error) {
+
+      console.warn(
+        "state.json",
+        error
+      );
+
+      return null;
 
     }
 
+  }
 
-    async function loadPerformance() {
 
-      try {
+  /* =========================================================
+     LOAD PERFORMANCE
+     ROOT:
+       perf.json
+     ========================================================= */
 
-        PERF =
-          await ghJson(
-            C.heartRepo,
-            C.perfPaths[0]
-          );
+  async function loadPerformance() {
 
-        return PERF;
+    try {
 
-      } catch (error) {
-
-        console.warn(
-          "perf.json",
-          error
+      PERF =
+        await ghJson(
+          C.heartRepo,
+          C.perfPaths?.[0] ||
+          "perf.json"
         );
 
-        return null;
 
-      }
+      return PERF;
+
+    } catch (error) {
+
+      console.warn(
+        "perf.json",
+        error
+      );
+
+      return null;
 
     }
 
-
-    async function loadLedger() {
-
-      try {
-
-        const text =
-          await ghText(
-            C.heartRepo,
-            C.ledgerPaths[0]
-          );
+  }
 
 
-        LEDGER =
-          text
-            .split(/\r?\n/)
-            .filter(Boolean)
-            .slice(-1000)
-            .map(line => {
+  /* =========================================================
+     LOAD LEDGER
+     ROOT:
+       ledger.jsonl
+     ========================================================= */
 
-              const parsed =
-                safeJsonParse(
-                  line,
-                  null
-                );
+  async function loadLedger() {
 
-              return parsed || {
-                raw: line
-              };
+    try {
 
-            });
-
-
-        renderLedger();
-
-        return LEDGER;
-
-      } catch (error) {
-
-        console.warn(
-          "ledger.jsonl",
-          error
+      const text =
+        await ghText(
+          C.heartRepo,
+          C.ledgerPaths?.[0] ||
+          "ledger.jsonl"
         );
 
-        return [];
 
-      }
-
-    }
-
-
-    async function loadStrategy() {
-
-      try {
-
-        const [
-          strategy,
-          master,
-          security
-        ] = await Promise.all([
-
-          ghText(
-            C.heartRepo,
-            C.strategyPaths[0]
-          ),
-
-          ghText(
-            C.heartRepo,
-            C.strategyPaths[1]
-          ),
-
-          ghText(
-            C.heartRepo,
-            "SECURITY.md"
+      LEDGER =
+        text
+          .split(/\r?\n/)
+          .map(line =>
+            line.trim()
           )
+          .filter(Boolean)
+          .slice(-1000)
+          .map(line => {
 
-        ]);
-
-
-        STRATEGY_TEXT = strategy || "";
-
-        MASTER_TEXT = master || "";
-
-        SECURITY_TEXT = security || "";
-
-
-        setText(
-          "stratBox",
-          STRATEGY_TEXT || "No strategy.md content."
-        );
-
-        setText(
-          "rulesBox",
-          MASTER_TEXT || "No FL-200_MASTER.md content."
-        );
-
-        setText(
-          "securityBox",
-          SECURITY_TEXT || "No SECURITY.md content."
-        );
+            const data =
+              safeJsonParse(
+                line,
+                null
+              );
 
 
-        return true;
+            return (
+              data || {
+                raw: line
+              }
+            );
 
-      } catch (error) {
+          });
 
-        setText(
-          "stratBox",
-          `Strategy load failed: ${error.message}`
-        );
 
-        setText(
-          "rulesBox",
-          `Master rule load failed: ${error.message}`
-        );
+      renderLedger();
 
-        setText(
-          "securityBox",
-          `Security file load failed: ${error.message}`
-        );
 
-        return false;
+      return LEDGER;
 
-      }
+    } catch (error) {
+
+      console.warn(
+        "ledger.jsonl",
+        error
+      );
+
+      return [];
 
     }
 
+  }
 
-    async function loadRepositoryMap() {
+
+  /* =========================================================
+     LOAD STRATEGY / MASTER / SECURITY
+     ========================================================= */
+
+  async function loadStrategy() {
+
+    try {
+
+      const strategyPath =
+        C.strategyPaths?.[0] ||
+        "strategy.md";
+
+      const masterPath =
+        C.strategyPaths?.[1] ||
+        "FL-200_MASTER.md";
+
+
+      const [
+        strategy,
+        master,
+        security
+      ] = await Promise.all([
+
+        ghText(
+          C.heartRepo,
+          strategyPath
+        ),
+
+        ghText(
+          C.heartRepo,
+          masterPath
+        ),
+
+        ghText(
+          C.heartRepo,
+          "SECURITY.md"
+        )
+
+      ]);
+
+
+      STRATEGY_TEXT =
+        strategy || "";
+
+      MASTER_TEXT =
+        master || "";
+
+      SECURITY_TEXT =
+        security || "";
+
+
+      setText(
+        "stratBox",
+        STRATEGY_TEXT ||
+        "No strategy.md content."
+      );
+
+
+      setText(
+        "rulesBox",
+        MASTER_TEXT ||
+        "No FL-200_MASTER.md content."
+      );
+
+
+      setText(
+        "securityBox",
+        SECURITY_TEXT ||
+        "No SECURITY.md content."
+      );
+
+
+      return true;
+
+    } catch (error) {
+
+      setText(
+        "stratBox",
+        `Strategy load failed: ${error.message}`
+      );
+
+
+      setText(
+        "rulesBox",
+        `Master rule load failed: ${error.message}`
+      );
+
+
+      setText(
+        "securityBox",
+        `Security file load failed: ${error.message}`
+      );
+
+
+      return false;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     PRIVATE REPOSITORY MAP
+     ========================================================= */
+
+  async function loadRepositoryMap() {
+
+    try {
+
+      const root =
+        await ghRoot();
+
+
+      renderRepositoryMap(
+        root
+      );
+
+
+      return root;
+
+    } catch (error) {
+
+      console.warn(
+        "Repository map",
+        error
+      );
+
+      return [];
+
+    }
+
+  }
+
+
+  /* =========================================================
+     BINANCE MARKET DATA
+     ---------------------------------------------------------
+     IMPORTANT FIX:
+       NO "_=timestamp" PARAMETER
+  ========================================================= */
+
+  async function fetchKlines(
+    symbol,
+    tf
+  ) {
+
+    const interval =
+      C?.binTf?.[tf] ||
+      "1h";
+
+
+    const limit =
+      Math.max(
+        50,
+        Number(
+          C?.market?.limit ||
+          200
+        )
+      );
+
+
+    const url =
+      `${C.market.base}${C.market.klines}` +
+      `?symbol=${encodeURIComponent(symbol)}` +
+      `&interval=${encodeURIComponent(interval)}` +
+      `&limit=${limit}`;
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+
+          cache: "no-store",
+
+          headers: {
+            Accept:
+              "application/json"
+          }
+        }
+      );
+
+
+    if (
+      !response.ok
+    ) {
+
+      let detail = "";
 
       try {
 
-        const root =
-          await ghRoot();
+        const body =
+          await response.json();
 
-        renderRepositoryMap(root);
+        if (body?.msg) {
 
-        return root;
+          detail =
+            ` — ${body.msg}`;
 
-      } catch (error) {
+        }
 
-        console.warn(
-          "Repository map",
-          error
-        );
+      } catch {}
 
-        return [];
 
-      }
+      throw new Error(
+        `Kline ${response.status}${detail}`
+      );
 
     }
 
 
-    /* =========================================================
-       MARKET DATA
-       ========================================================= */
+    const rows =
+      await response.json();
 
-    async function fetchKlines(
-      symbol,
-      tf
+
+    if (
+      !Array.isArray(rows)
     ) {
 
-      const interval =
-        C.binTf[tf] ||
-        "1h";
+      throw new Error(
+        "Invalid Binance kline response."
+      );
 
-      const limit =
-        C?.market?.limit ||
-        200;
+    }
 
 
-      const url =
-        `${C.market.base}${C.market.klines}` +
-        `?symbol=${encodeURIComponent(symbol)}` +
-        `&interval=${encodeURIComponent(interval)}` +
-        `&limit=${limit}`;
+    return rows.map(
+      row => ({
+
+        t:
+          Number(row[0]),
+
+        o:
+          Number(row[1]),
+
+        h:
+          Number(row[2]),
+
+        l:
+          Number(row[3]),
+
+        c:
+          Number(row[4]),
+
+        v:
+          Number(row[5]),
+
+        closeT:
+          Number(row[6])
+
+      })
+    );
+
+  }
 
 
-      const response =
-        await fetch(
-          `${url}&_=${Date.now()}`,
-          {
-            cache: "no-store"
+  async function fetchDepth(
+    symbol
+  ) {
+
+    const limit =
+      Math.max(
+        20,
+        Number(
+          C?.l2?.depth ||
+          20
+        )
+      );
+
+
+    const url =
+      `${C.market.base}${C.market.depth}` +
+      `?symbol=${encodeURIComponent(symbol)}` +
+      `&limit=${limit}`;
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+
+          cache: "no-store",
+
+          headers: {
+            Accept:
+              "application/json"
           }
-        );
+        }
+      );
 
 
-      if (!response.ok) {
+    if (
+      !response.ok
+    ) {
 
-        throw new Error(
-          `Kline ${response.status}`
-        );
+      let detail = "";
 
-      }
+      try {
+
+        const body =
+          await response.json();
+
+        if (body?.msg) {
+
+          detail =
+            ` — ${body.msg}`;
+
+        }
+
+      } catch {}
 
 
-      const rows =
-        await response.json();
-
-
-      return rows.map(row => ({
-
-        t: Number(row[0]),
-
-        o: Number(row[1]),
-
-        h: Number(row[2]),
-
-        l: Number(row[3]),
-
-        c: Number(row[4]),
-
-        v: Number(row[5]),
-
-        closeT: Number(row[6])
-
-      }));
+      throw new Error(
+        `Depth ${response.status}${detail}`
+      );
 
     }
 
 
-    async function fetchDepth(
-      symbol
-    ) {
+    return response.json();
 
-      const limit =
-        Math.max(
-          20,
-          Number(C?.l2?.depth || 20)
-        );
+  }
 
 
-      const url =
-        `${C.market.base}${C.market.depth}` +
-        `?symbol=${encodeURIComponent(symbol)}` +
-        `&limit=${limit}`;
+  async function fetchTicker(
+    symbol
+  ) {
+
+    const url =
+      `${C.market.base}/api/v3/ticker/price` +
+      `?symbol=${encodeURIComponent(symbol)}`;
 
 
-      const response =
-        await fetch(
-          `${url}&_=${Date.now()}`,
-          {
-            cache: "no-store"
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+
+          cache: "no-store",
+
+          headers: {
+            Accept:
+              "application/json"
           }
-        );
+        }
+      );
 
 
-      if (!response.ok) {
+    if (
+      !response.ok
+    ) {
 
-        throw new Error(
-          `Depth ${response.status}`
-        );
+      let detail = "";
 
-      }
+      try {
+
+        const body =
+          await response.json();
+
+        if (body?.msg) {
+
+          detail =
+            ` — ${body.msg}`;
+
+        }
+
+      } catch {}
 
 
-      return response.json();
+      throw new Error(
+        `Ticker ${response.status}${detail}`
+      );
 
     }
 
 
-    async function fetchTicker(
-      symbol
+    const row =
+      await response.json();
+
+
+    const price =
+      Number(row?.price);
+
+
+    if (
+      !Number.isFinite(price)
     ) {
 
-      const url =
-        `${C.market.base}/api/v3/ticker/price` +
-        `?symbol=${encodeURIComponent(symbol)}`;
-
-
-      const response =
-        await fetch(
-          `${url}&_=${Date.now()}`,
-          {
-            cache: "no-store"
-          }
-        );
-
-
-      if (!response.ok) {
-        throw new Error(
-          `Ticker ${response.status}`
-        );
-      }
-
-
-      const row =
-        await response.json();
-
-
-      return Number(row.price);
+      throw new Error(
+        "Invalid Binance ticker response."
+      );
 
     }
 
 
-    async function refreshMarket(
-      force = false
+    return price;
+
+  }
+
+
+  /* =========================================================
+     MARKET REFRESH
+     ========================================================= */
+
+  async function refreshMarket(
+    force = false
+  ) {
+
+    if (
+      !LIVE.active
     ) {
 
-      if (!LIVE.active) {
-        return;
-      }
+      return;
 
+    }
+
+
+    if (
+      LIVE.marketBusy &&
+      !force
+    ) {
+
+      return;
+
+    }
+
+
+    LIVE.marketBusy =
+      true;
+
+
+    try {
+
+      const [
+        candles,
+        depth,
+        btcPrice,
+        ethPrice
+      ] = await Promise.all([
+
+        fetchKlines(
+          CUR_SYM,
+          CUR_TF
+        ),
+
+        fetchDepth(
+          CUR_SYM
+        ),
+
+        fetchTicker(
+          "BTCUSDT"
+        ),
+
+        fetchTicker(
+          "ETHUSDT"
+        )
+
+      ]);
+
+
+      CURRENT_CANDLES =
+        candles;
+
+
+      CURRENT_DEPTH =
+        depth;
+
+
+      TICKER_DATA.BTCUSDT =
+        btcPrice;
+
+
+      TICKER_DATA.ETHUSDT =
+        ethPrice;
+
+
+      LIVE.lastMarket =
+        Date.now();
+
+
+      LIVE.failures = 0;
+
+
+      evaluateCurrentMarket();
+
+
+      renderAll();
+
+
+      setText(
+        "dataLayer",
+        [
+          "GitHub Heart: READY",
+          `state.json: ${STATE ? "READY" : "WAIT"}`,
+          `perf.json: ${PERF ? "READY" : "WAIT"}`,
+          `engine.js: ${ENGINE ? "READY" : "WAIT"}`,
+          `candles: ${CURRENT_CANDLES.length}`,
+          "L2: READY",
+          `market: ${CUR_SYM}`,
+          `tf: ${CUR_TF}`
+        ].join("\n")
+      );
+
+
+    } catch (error) {
+
+      LIVE.failures++;
+
+
+      setText(
+        "failCount",
+        LIVE.failures
+      );
+
+
+      setText(
+        "dataLayer",
+        `Market feed error:\n${error.message}`
+      );
+
+
+      $("mktLive").textContent =
+        "ERROR";
+
+
+      $("mktLive").className =
+        "mt-1 text-xs font-bold text-rose-300";
+
+
+      pulse(
+        `Market error · ${error.message}`,
+        "bad"
+      );
+
+
+      console.warn(
+        "refreshMarket",
+        error
+      );
+
+
+    } finally {
+
+      LIVE.marketBusy =
+        false;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     ENGINE EVALUATION
+     ========================================================= */
+
+  function evaluateCurrentMarket() {
+
+    if (
+      !ENGINE ||
+      !CURRENT_CANDLES ||
+      CURRENT_CANDLES.length < 3
+    ) {
+
+      CURRENT_SIGNAL =
+        null;
+
+      return null;
+
+    }
+
+
+    let result =
+      null;
+
+
+    try {
+
+      /*
+       * PRIMARY:
+       * L2 decisive realtime path
+       */
 
       if (
-        LIVE.marketBusy &&
-        !force
+        typeof ENGINE.fullSignalL2 ===
+        "function" &&
+        CURRENT_DEPTH
       ) {
-        return;
-      }
 
-
-      LIVE.marketBusy = true;
-
-
-      try {
-
-        const [
-          candles,
-          depth,
-          btcPrice,
-          ethPrice
-        ] = await Promise.all([
-
-          fetchKlines(
+        result =
+          ENGINE.fullSignalL2(
+            CURRENT_CANDLES,
+            CURRENT_DEPTH,
             CUR_SYM,
             CUR_TF
-          ),
-
-          fetchDepth(
-            CUR_SYM
-          ),
-
-          fetchTicker(
-            "BTCUSDT"
-          ),
-
-          fetchTicker(
-            "ETHUSDT"
-          )
-
-        ]);
-
-
-        CURRENT_CANDLES =
-          candles;
-
-        CURRENT_DEPTH =
-          depth;
-
-
-        TICKER_DATA.BTCUSDT =
-          btcPrice;
-
-        TICKER_DATA.ETHUSDT =
-          ethPrice;
-
-
-        LIVE.lastMarket =
-          Date.now();
-
-
-        evaluateCurrentMarket();
-
-        renderTicker();
-
-        renderAll();
-
-
-      } catch (error) {
-
-        LIVE.failures++;
-
-        setText(
-          "dataLayer",
-          `Market feed error: ${error.message}`
-        );
-
-        pulse(
-          `Market feed error · ${error.message}`,
-          "bad"
-        );
-
-      } finally {
-
-        LIVE.marketBusy = false;
-
-      }
-
-    }
-
-
-    /* =========================================================
-       ENGINE EVALUATION
-       ========================================================= */
-
-    function evaluateCurrentMarket() {
-
-      if (
-        !ENGINE ||
-        !CURRENT_CANDLES?.length
-      ) {
-        return null;
-      }
-
-
-      let result = null;
-
-
-      try {
-
-        if (
-          typeof ENGINE.fullSignalL2 ===
-          "function" &&
-          CURRENT_DEPTH
-        ) {
-
-          result =
-            ENGINE.fullSignalL2(
-              CURRENT_CANDLES,
-              CURRENT_DEPTH,
-              CUR_SYM,
-              CUR_TF
-            );
-
-        }
-
-
-        if (
-          !result &&
-          typeof ENGINE.fullSignal ===
-          "function"
-        ) {
-
-          result =
-            ENGINE.fullSignal(
-              CURRENT_CANDLES,
-              CUR_TF
-            );
-
-        }
-
-
-        CURRENT_SIGNAL =
-          result || null;
-
-
-        return CURRENT_SIGNAL;
-
-      } catch (error) {
-
-        console.warn(
-          "Engine evaluation",
-          error
-        );
-
-        CURRENT_SIGNAL = null;
-
-        setText(
-          "engWhy",
-          `Evaluation error: ${error.message}`
-        );
-
-        return null;
-
-      }
-
-    }
-
-
-    /* =========================================================
-       STATE EXTRACTION HELPERS
-       ========================================================= */
-
-    function deepFind(
-      obj,
-      keys,
-      depth = 0
-    ) {
-
-      if (
-        obj == null ||
-        depth > 6
-      ) {
-        return undefined;
-      }
-
-
-      if (
-        typeof obj !== "object"
-      ) {
-        return undefined;
-      }
-
-
-      for (const key of keys) {
-
-        if (
-          Object.prototype.hasOwnProperty.call(
-            obj,
-            key
-          )
-        ) {
-          return obj[key];
-        }
-
-      }
-
-
-      for (const key of Object.keys(obj)) {
-
-        const value =
-          obj[key];
-
-        const found =
-          deepFind(
-            value,
-            keys,
-            depth + 1
           );
 
-        if (found !== undefined) {
-          return found;
-        }
+      }
+
+
+      /*
+       * FALLBACK:
+       * candle-only engine path
+       */
+
+      if (
+        !result &&
+        typeof ENGINE.fullSignal ===
+        "function"
+      ) {
+
+        result =
+          ENGINE.fullSignal(
+            CURRENT_CANDLES,
+            CUR_TF
+          );
 
       }
 
 
-      return undefined;
-
-    }
-
-
-    function stateValue(keys) {
-
-      return deepFind(
-        STATE,
-        keys
-      );
-
-    }
+      CURRENT_SIGNAL =
+        result;
 
 
-    function performanceValue(keys) {
+      return result;
 
-      return deepFind(
-        PERF,
-        keys
-      );
+    } catch (error) {
 
-    }
-
-
-    /* =========================================================
-       RENDER HELPERS
-       ========================================================= */
-
-    function setText(
-      id,
-      value
-    ) {
-
-      const node =
-        $(id);
-
-      if (!node) return;
-
-      node.textContent =
-        value == null ||
-        value === ""
-          ? "—"
-          : String(value);
-
-    }
-
-
-    function toneForSignal(
-      signal
-    ) {
-
-      if (signal === "BUY") {
-        return "text-emerald-300";
-      }
-
-      if (signal === "SELL") {
-        return "text-rose-300";
-      }
-
-      return "text-slate-300";
-
-    }
-
-
-    function borderForSignal(
-      signal
-    ) {
-
-      if (signal === "BUY") {
-        return "border-emerald-400/20 bg-emerald-400/[0.05]";
-      }
-
-      if (signal === "SELL") {
-        return "border-rose-400/20 bg-rose-400/[0.05]";
-      }
-
-      return "border-white/[0.07] bg-white/[0.025]";
-
-    }
-
-
-    function renderTicker() {
-
-      const btc =
-        TICKER_DATA.BTCUSDT;
-
-      const eth =
-        TICKER_DATA.ETHUSDT;
-
-
-      const active =
-        TICKER_DATA[CUR_SYM];
-
-
-      $("ticker").innerHTML = `
-
-        <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
-
-          <div class="flex min-w-max items-center gap-6 overflow-x-auto py-2">
-
-            <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-700">
-              LIVE TAPE
-            </div>
-
-
-            <div class="flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
-              <span class="font-mono text-[11px] font-bold text-white">BTCUSDT</span>
-              <span class="font-mono text-[11px] text-slate-400">
-                ${btc != null ? num(btc, 2) : "—"}
-              </span>
-            </div>
-
-
-            <div class="flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
-              <span class="font-mono text-[11px] font-bold text-white">ETHUSDT</span>
-              <span class="font-mono text-[11px] text-slate-400">
-                ${eth != null ? num(eth, 2) : "—"}
-              </span>
-            </div>
-
-
-            <div class="ml-auto flex items-center gap-2">
-
-              <span class="font-mono text-[10px] text-slate-600">
-                ${CUR_SYM}
-              </span>
-
-              <span class="font-mono text-[12px] font-bold text-cyan-200">
-                ${active != null ? num(active, 2) : "—"}
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-    }
-
-
-    /* =========================================================
-       DASHBOARD RENDER
-       ========================================================= */
-
-    function renderDecision() {
-
-      const data =
-        CURRENT_SIGNAL;
-
-
-      const signal =
-        data?.signal ||
-        "WAIT";
-
-
-      const conf =
-        data?.confidence;
-
-
-      const entry =
-        data?.entryPlan?.entry ??
-        data?.plans?.B1?.entry ??
+      CURRENT_SIGNAL =
         null;
 
 
       setText(
-        "recSym",
-        CUR_SYM
-      );
-
-      setText(
-        "recSym2",
-        CUR_SYM
-      );
-
-      setText(
-        "recTF",
-        CUR_TF
-      );
-
-      setText(
-        "recTF2",
-        CUR_TF
+        "engWhy",
+        `Evaluation error: ${error.message}`
       );
 
 
-      $("recAction").textContent =
-        signal;
+      console.warn(
+        "Engine evaluation",
+        error
+      );
+
+
+      return null;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SIGNAL STYLING
+     ========================================================= */
+
+  function toneForSignal(
+    signal
+  ) {
+
+    if (
+      signal === "BUY"
+    ) {
+
+      return "text-emerald-300";
+
+    }
+
+    if (
+      signal === "SELL"
+    ) {
+
+      return "text-rose-300";
+
+    }
+
+    return "text-slate-300";
+
+  }
+
+
+  /* =========================================================
+     GENERIC UI ROWS
+     ========================================================= */
+
+  function miniRow(
+    label,
+    value
+  ) {
+
+    return `
+
+      <div class="flex items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-black/20 px-3 py-2.5">
+
+        <span class="text-[9px] uppercase tracking-[0.12em] text-slate-600">
+          ${esc(label)}
+        </span>
+
+        <span class="truncate font-mono text-[10px] font-bold text-slate-300">
+          ${esc(value)}
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  function emptyRow(
+    message
+  ) {
+
+    return `
+
+      <div class="rounded-xl border border-dashed border-white/[0.06] bg-black/10 px-4 py-5 text-center text-[10px] text-slate-600">
+        ${esc(message)}
+      </div>
+
+    `;
+
+  }
+
+
+  function modelRow(
+    name,
+    bias,
+    confidence,
+    reasoning
+  ) {
+
+    const signal =
+      bias ||
+      "HOLD";
+
+
+    return `
+
+      <button
+        type="button"
+        data-model="${esc(name)}"
+        class="w-full rounded-xl border border-white/[0.05] bg-black/20 p-3 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.02]"
+      >
+
+        <div class="flex items-center justify-between gap-3">
+
+          <div class="font-display text-[10px] font-bold tracking-wider text-white">
+            ${esc(name)}
+          </div>
+
+          <div class="font-mono text-[10px] font-bold ${toneForSignal(signal)}">
+            ${esc(signal)}
+          </div>
+
+        </div>
+
+        <div class="mt-2 flex items-center justify-between gap-3">
+
+          <div class="truncate text-[9px] text-slate-600">
+            ${esc(reasoning || "No reasoning")}
+          </div>
+
+          <div class="shrink-0 font-mono text-[9px] text-slate-500">
+            ${confidence == null ? "—" : `${confidence}%`}
+          </div>
+
+        </div>
+
+      </button>
+
+    `;
+
+  }
+
+
+  /* =========================================================
+     DECISION RENDER
+     ========================================================= */
+
+  function renderDecision() {
+
+    const data =
+      CURRENT_SIGNAL;
+
+
+    const signal =
+      data?.signal ||
+      "WAIT";
+
+
+    const conf =
+      data?.confidence;
+
+
+    const entry =
+      data?.entryPlan?.entry ??
+      null;
+
+
+    setText(
+      "recSym",
+      CUR_SYM
+    );
+
+
+    setText(
+      "recSym2",
+      CUR_SYM
+    );
+
+
+    setText(
+      "recTF",
+      CUR_TF
+    );
+
+
+    setText(
+      "recTF2",
+      CUR_TF
+    );
+
+
+    setText(
+      "recAction",
+      signal
+    );
+
+
+    if ($("recAction")) {
 
       $("recAction").className =
         `mt-2 font-display text-2xl font-bold tracking-wider ${toneForSignal(signal)}`;
 
+    }
 
-      $("finStrip").textContent =
-        signal === "WAIT"
-          ? "SIGNAL ONLY"
-          : `${signal} · ${conf ?? "—"}%`;
 
+    setText(
+      "finStrip",
+      signal === "WAIT"
+        ? "SIGNAL ONLY"
+        : `${signal} · ${conf ?? "—"}%`
+    );
+
+
+    if ($("finStrip")) {
 
       $("finStrip").className =
         `rounded-full border px-3 py-1.5 font-mono text-[10px] font-bold ${
@@ -3475,949 +4235,1012 @@
               : "border-white/[0.08] bg-white/[0.025] text-slate-400"
         }`;
 
-
-      const why =
-        data?.final?.why ||
-        data?.reason ||
-        "No decisive confluence yet.";
-
-
-      setText(
-        "recNote",
-        `${why}${conf != null ? ` · Confidence ${conf}%` : ""}`
-      );
-
-
-      setText(
-        "recEntry",
-        entry != null
-          ? num(entry, 2)
-          : "—"
-      );
-
-
-      setText(
-        "recBy",
-        data?.src ||
-        "realtime-engine"
-      );
-
-
-      const imb =
-        data?.l2?.imb ??
-        stateValue([
-          "imbalance",
-          "l2Imbalance",
-          "imb"
-        ]);
-
-
-      setText(
-        "l2ImbMini",
-        imb != null
-          ? `${Number(imb).toFixed(1)}%`
-          : "—"
-      );
-
     }
 
 
-    function renderActivePlan() {
-
-      const data =
-        CURRENT_SIGNAL;
-
-      const signal =
-        data?.signal ||
-        "WAIT";
-
-      const plan =
-        data?.entryPlan ||
-        null;
+    const why =
+      data?.final?.why ||
+      "No decisive confluence yet.";
 
 
-      setText(
-        "actSig",
-        signal
-      );
+    setText(
+      "recNote",
+      conf == null
+        ? why
+        : `${why} · Confidence ${conf}%`
+    );
 
+
+    setText(
+      "recEntry",
+      entry == null
+        ? "—"
+        : num(entry)
+    );
+
+
+    setText(
+      "recBy",
+      data?.src ||
+      "realtime-engine"
+    );
+
+
+    const imbalance =
+      data?.l2?.imb ??
+      null;
+
+
+    setText(
+      "l2ImbMini",
+      imbalance == null
+        ? "—"
+        : `${Number(imbalance).toFixed(1)}%`
+    );
+
+  }
+
+
+  /* =========================================================
+     ACTIVE PLAN
+     ========================================================= */
+
+  function renderActivePlan() {
+
+    const data =
+      CURRENT_SIGNAL;
+
+
+    const signal =
+      data?.signal ||
+      "WAIT";
+
+
+    const plan =
+      data?.entryPlan ||
+      null;
+
+
+    setText(
+      "actSig",
+      signal
+    );
+
+
+    if ($("actSig")) {
 
       $("actSig").className =
         `mt-1 font-display text-lg font-bold ${toneForSignal(signal)}`;
 
-
-      setText(
-        "actTime",
-        timeNow()
-      );
-
-
-      const why =
-        data?.final?.why ||
-        data?.reason ||
-        "No active setup.";
-
-
-      setText(
-        "actNote",
-        why
-      );
-
-
-      setText(
-        "actEntry",
-        plan?.entry != null
-          ? num(plan.entry, 2)
-          : "—"
-      );
-
-
-      setText(
-        "actTp",
-        plan?.tp != null
-          ? num(plan.tp, 2)
-          : "—"
-      );
-
-
-      setText(
-        "actSl",
-        plan?.sl != null
-          ? num(plan.sl, 2)
-          : "—"
-      );
-
-
-      setText(
-        "actStat",
-        signal === "WAIT"
-          ? "WAIT"
-          : "SIGNAL"
-      );
-
     }
 
 
-    function renderGridData() {
+    setText(
+      "actTime",
+      timeNow()
+    );
 
-      const grid =
-        CURRENT_SIGNAL?.grid;
+
+    setText(
+      "actNote",
+      data?.final?.why ||
+      "No active setup."
+    );
 
 
-      if (!grid) {
+    setText(
+      "actEntry",
+      plan?.entry == null
+        ? "—"
+        : num(plan.entry)
+    );
 
-        setText(
-          "gridStatus",
-          "GRID WAIT"
-        );
 
-        setText(
-          "gridSrc",
-          "—"
-        );
+    setText(
+      "actTp",
+      plan?.tp == null
+        ? "—"
+        : num(plan.tp)
+    );
 
-        $("tvRow").innerHTML =
-          emptyRow("Grid data not available.");
 
-        $("glvRow").innerHTML =
-          emptyRow("Levels not available.");
+    setText(
+      "actSl",
+      plan?.sl == null
+        ? "—"
+        : num(plan.sl)
+    );
 
-        return;
-      }
 
+    setText(
+      "actStat",
+      signal === "WAIT"
+        ? "WAIT"
+        : "SIGNAL"
+    );
+
+  }
+
+
+  /* =========================================================
+     GRID
+     ========================================================= */
+
+  function renderGridData() {
+
+    const grid =
+      CURRENT_SIGNAL?.grid;
+
+
+    if (!grid) {
 
       setText(
         "gridStatus",
-        `${grid.color || "GRID"} · LIVE`
+        "GRID WAIT"
       );
 
 
       setText(
         "gridSrc",
-        CURRENT_SIGNAL?.src ||
-        "engine"
+        "—"
       );
 
 
-      const a =
-        grid.anchor || {};
-
-      const b =
-        grid.bands || {};
-
-      const ext =
-        grid.ext || {};
-
-      const expected =
-        grid.expected || {};
-
-      $("tvRow").innerHTML = [
-
-        miniRow(
-          "Anchor O",
-          num(a.O)
-        ),
-
-        miniRow(
-          "Anchor H",
-          num(a.H)
-        ),
-
-        miniRow(
-          "Anchor L",
-          num(a.L)
-        ),
-
-        miniRow(
-          "Anchor C",
-          num(a.C)
-        ),
-
-        miniRow(
-          "Range",
-          num(a.R)
-        ),
-
-        miniRow(
-          "Expected H",
-          num(expected.high)
-        ),
-
-        miniRow(
-          "Expected L",
-          num(expected.low)
-        )
-
-      ].join("");
+      $("tvRow").innerHTML =
+        emptyRow(
+          "Grid data not available."
+        );
 
 
-      $("glvRow").innerHTML = [
+      $("glvRow").innerHTML =
+        emptyRow(
+          "Grid levels not available."
+        );
 
-        miniRow(
-          "0%",
-          num(b.l0)
-        ),
 
-        miniRow(
-          "33%",
-          num(b.l33)
-        ),
-
-        miniRow(
-          "66%",
-          num(b.l66)
-        ),
-
-        miniRow(
-          "100%",
-          num(b.l100)
-        ),
-
-        miniRow(
-          "-33%",
-          num(ext.m33)
-        ),
-
-        miniRow(
-          "133%",
-          num(ext.p133)
-        ),
-
-        miniRow(
-          "167%",
-          num(ext.p167)
-        ),
-
-        miniRow(
-          "200%",
-          num(ext.p200)
-        )
-
-      ].join("");
+      return;
 
     }
 
 
-    function renderL2() {
-
-      const l2 =
-        CURRENT_SIGNAL?.l2;
-
-
-      if (!l2) {
-
-        $("l2Row").innerHTML =
-          emptyRow(
-            "Realtime L2 unavailable."
-          );
-
-        return;
-
-      }
+    setText(
+      "gridStatus",
+      `${grid.color || "GRID"} · LIVE`
+    );
 
 
-      const bids =
-        l2.walls_b || [];
+    setText(
+      "gridSrc",
+      CURRENT_SIGNAL?.src ||
+      "engine"
+    );
 
-      const asks =
-        l2.walls_a || [];
+
+    const anchor =
+      grid.anchor ||
+      {};
+
+    const bands =
+      grid.bands ||
+      {};
+
+    const ext =
+      grid.ext ||
+      {};
+
+    const expected =
+      grid.expected ||
+      {};
 
 
-      $("l2Row").innerHTML = [
+    $("tvRow").innerHTML = [
 
-        miniRow(
-          "Bid",
-          num(l2.bid)
-        ),
+      miniRow(
+        "Open",
+        num(anchor.O)
+      ),
 
-        miniRow(
-          "Ask",
-          num(l2.ask)
-        ),
+      miniRow(
+        "High",
+        num(anchor.H)
+      ),
 
-        miniRow(
-          "Mid",
-          num(l2.mid)
-        ),
+      miniRow(
+        "Low",
+        num(anchor.L)
+      ),
 
-        miniRow(
-          "Spread",
-          num(l2.spread, 4)
-        ),
+      miniRow(
+        "Close",
+        num(anchor.C)
+      ),
 
-        miniRow(
-          "Imbalance",
-          pct(l2.imb, 1)
-        ),
+      miniRow(
+        "Range",
+        num(anchor.R)
+      ),
 
-        miniRow(
-          "Bid Walls",
-          String(bids.length)
-        ),
+      miniRow(
+        "Expected High",
+        num(expected.high)
+      ),
 
-        miniRow(
-          "Ask Walls",
-          String(asks.length)
+      miniRow(
+        "Expected Low",
+        num(expected.low)
+      )
+
+    ].join("");
+
+
+    $("glvRow").innerHTML = [
+
+      miniRow(
+        "0%",
+        num(bands.l0)
+      ),
+
+      miniRow(
+        "33%",
+        num(bands.l33)
+      ),
+
+      miniRow(
+        "66%",
+        num(bands.l66)
+      ),
+
+      miniRow(
+        "100%",
+        num(bands.l100)
+      ),
+
+      miniRow(
+        "-33%",
+        num(ext.m33)
+      ),
+
+      miniRow(
+        "133%",
+        num(ext.p133)
+      ),
+
+      miniRow(
+        "167%",
+        num(ext.p167)
+      ),
+
+      miniRow(
+        "200%",
+        num(ext.p200)
+      )
+
+    ].join("");
+
+  }
+
+
+  /* =========================================================
+     L2
+     ========================================================= */
+
+  function renderL2() {
+
+    const l2 =
+      CURRENT_SIGNAL?.l2;
+
+
+    if (!l2) {
+
+      $("l2Row").innerHTML =
+        emptyRow(
+          "Realtime L2 unavailable."
+        );
+
+      return;
+
+    }
+
+
+    $("l2Row").innerHTML = [
+
+      miniRow(
+        "Bid",
+        num(l2.bid)
+      ),
+
+      miniRow(
+        "Ask",
+        num(l2.ask)
+      ),
+
+      miniRow(
+        "Mid",
+        num(l2.mid)
+      ),
+
+      miniRow(
+        "Spread",
+        num(l2.spread, 4)
+      ),
+
+      miniRow(
+        "Imbalance",
+        pct(l2.imb)
+      ),
+
+      miniRow(
+        "Bid Walls",
+        String(
+          l2.walls_b?.length || 0
         )
+      ),
 
-      ].join("");
-
-    }
-
-
-    function renderContext() {
-
-      const z =
-        CURRENT_SIGNAL?.firstZone?.zone ||
-        CURRENT_SIGNAL?.final?.first_zone ||
-        "MID";
-
-
-      setText(
-        "zPos",
-        z
-      );
-
-
-      const color =
-        CURRENT_SIGNAL?.grid?.color ||
-        "UNKNOWN";
-
-
-      const imbalance =
-        CURRENT_SIGNAL?.l2?.imb;
-
-
-      const signal =
-        CURRENT_SIGNAL?.signal ||
-        "WAIT";
-
-
-      setText(
-        "ctxLine",
-        `${CUR_SYM} ${CUR_TF} · ${color} anchor · zone ${z} · signal ${signal} · L2 ${imbalance != null ? Number(imbalance).toFixed(1) + "%" : "unavailable"}`
-      );
-
-
-      const reason =
-        CURRENT_SIGNAL?.final?.why ||
-        "Waiting for engine reasoning.";
-
-
-      const planText =
-        CURRENT_SIGNAL?.entryPlan
-          ? `Entry ${num(CURRENT_SIGNAL.entryPlan.entry)} · SL ${num(CURRENT_SIGNAL.entryPlan.sl)} · TP ${num(CURRENT_SIGNAL.entryPlan.tp)}`
-          : "No entry plan";
-
-
-      setText(
-        "explainBody",
-        `${reason}. ${planText}. This is a signal-only analytical output; user decides whether to act.`
-      );
-
-    }
-
-
-    function renderFinal() {
-
-      const data =
-        CURRENT_SIGNAL;
-
-
-      let text = "";
-
-
-      if (
-        data?.final?.block
-      ) {
-
-        text =
-          data.final.block;
-
-      } else {
-
-        text =
-          JSON.stringify(
-            data || {
-              status:
-                "Waiting for engine"
-            },
-            null,
-            2
-          );
-
-      }
-
-
-      setText(
-        "finalText",
-        text
-      );
-
-    }
-
-
-    function renderIndicators() {
-
-      const indicators =
-        CURRENT_SIGNAL?.indicators ||
-        {};
-
-
-      const models =
-        CURRENT_SIGNAL?.models ||
-        {};
-
-
-      const grid =
-        models.grid || {};
-
-      const l2 =
-        models.l2 || {};
-
-      const quant =
-        models.quant || {};
-
-      const taurus =
-        models.taurus || {};
-
-
-      $("engGrid").innerHTML = [
-
-        miniRow(
-          "RSI",
-          indicators.RSI ?? "—"
-        ),
-
-        miniRow(
-          "MACD-H",
-          indicators["MACD-HIST"] ?? "—"
-        ),
-
-        miniRow(
-          "EMA20",
-          indicators.EMA20 ?? "—"
-        ),
-
-        miniRow(
-          "EMA50",
-          indicators.EMA50 ?? "—"
+      miniRow(
+        "Ask Walls",
+        String(
+          l2.walls_a?.length || 0
         )
+      )
 
-      ].join("");
+    ].join("");
 
-
-      $("modelGrid").innerHTML = [
-
-        modelRow(
-          "GRID",
-          grid.bias,
-          grid.confidence,
-          grid.reasoning
-        ),
-
-        modelRow(
-          "L2",
-          l2.bias,
-          l2.confidence,
-          l2.reasoning
-        ),
-
-        modelRow(
-          "QUANT",
-          quant.bias,
-          quant.confidence,
-          quant.reasoning
-        ),
-
-        modelRow(
-          "TAURUS",
-          taurus.bias,
-          taurus.confidence,
-          taurus.reasoning
-        )
-
-      ].join("");
+  }
 
 
-      const why =
-        CURRENT_SIGNAL?.final?.why ||
-        "No engine output yet.";
+  /* =========================================================
+     CONTEXT / EXPLANATION
+     ========================================================= */
+
+  function renderContext() {
+
+    const zone =
+      CURRENT_SIGNAL?.firstZone?.zone ||
+      CURRENT_SIGNAL?.final?.first_zone ||
+      "MID";
 
 
-      setText(
-        "engWhy",
-        why
-      );
+    setText(
+      "zPos",
+      zone
+    );
 
 
-      const tf =
-        CURRENT_SIGNAL?.tf ||
-        CUR_TF;
+    const color =
+      CURRENT_SIGNAL?.grid?.color ||
+      "UNKNOWN";
 
 
-      setText(
-        "gridMeta",
-        `${CUR_SYM} · ${tf} · ${timeNow()}`
-      );
+    const signal =
+      CURRENT_SIGNAL?.signal ||
+      "WAIT";
+
+
+    const imbalance =
+      CURRENT_SIGNAL?.l2?.imb;
+
+
+    setText(
+      "ctxLine",
+      `${CUR_SYM} ${CUR_TF} · ${color} anchor · ${zone} · ${signal} · L2 ${
+        imbalance == null
+          ? "unavailable"
+          : Number(imbalance).toFixed(1) + "%"
+      }`
+    );
+
+
+    const reason =
+      CURRENT_SIGNAL?.final?.why ||
+      "Waiting for engine reasoning.";
+
+
+    const plan =
+      CURRENT_SIGNAL?.entryPlan;
+
+
+    const planText =
+      plan
+        ? `Entry ${num(plan.entry)} · SL ${num(plan.sl)} · TP ${num(plan.tp)}`
+        : "No entry plan";
+
+
+    setText(
+      "explainBody",
+      `${reason}. ${planText}. Signal-only output; user decides whether to act.`
+    );
+
+  }
+
+
+  /* =========================================================
+     FINAL ENGINE BLOCK
+     ========================================================= */
+
+  function renderFinal() {
+
+    const data =
+      CURRENT_SIGNAL;
+
+
+    let text =
+      "";
+
+
+    if (
+      data?.final?.block
+    ) {
+
+      text =
+        data.final.block;
+
+    } else {
+
+      text =
+        JSON.stringify(
+          data || {
+            status:
+              "Waiting for engine"
+          },
+          null,
+          2
+        );
 
     }
 
 
-    /* =========================================================
-       PILLARS
-       ========================================================= */
-
-    function renderPillars() {
-
-      const names =
-        C.pillarNames || {};
+    const finalText =
+      $("finalText");
 
 
-      const source =
-        STATE?.pillars ||
-        STATE?.pillarScores ||
-        STATE?.scores?.pillars ||
-        {};
+    if (finalText) {
+
+      finalText.textContent =
+        text;
+
+    }
+
+  }
 
 
-      const entries =
-        Object.entries(names);
+  /* =========================================================
+     ENGINE / MODEL TELEMETRY
+     ========================================================= */
+
+  function renderIndicators() {
+
+    const indicators =
+      CURRENT_SIGNAL?.indicators ||
+      {};
 
 
-      const values =
-        [];
+    const models =
+      CURRENT_SIGNAL?.models ||
+      {};
 
 
-      for (const [key, name] of entries) {
+    const grid =
+      models.grid ||
+      {};
 
-        const raw =
-          source?.[key] ??
-          source?.[key.toLowerCase()] ??
-          source?.[name];
+    const l2 =
+      models.l2 ||
+      {};
+
+    const quant =
+      models.quant ||
+      {};
+
+    const taurus =
+      models.taurus ||
+      {};
 
 
-        let score = null;
+    $("engGrid").innerHTML = [
+
+      miniRow(
+        "RSI",
+        indicators.RSI ??
+        "—"
+      ),
+
+      miniRow(
+        "MACD-H",
+        indicators["MACD-HIST"] ??
+        "—"
+      ),
+
+      miniRow(
+        "EMA20",
+        indicators.EMA20 ??
+        "—"
+      ),
+
+      miniRow(
+        "EMA50",
+        indicators.EMA50 ??
+        "—"
+      )
+
+    ].join("");
 
 
-        if (
-          typeof raw === "number"
-        ) {
+    $("modelGrid").innerHTML = [
 
-          score =
-            raw > 1
-              ? raw
-              : raw * 100;
+      modelRow(
+        "GRID",
+        grid.bias,
+        grid.confidence,
+        grid.reasoning
+      ),
 
-        } else if (
-          typeof raw === "object" &&
-          raw !== null
-        ) {
+      modelRow(
+        "L2",
+        l2.bias,
+        l2.confidence,
+        l2.reasoning
+      ),
 
-          score =
-            raw.score ??
-            raw.value ??
+      modelRow(
+        "QUANT",
+        quant.bias,
+        quant.confidence,
+        quant.reasoning
+      ),
+
+      modelRow(
+        "TAURUS",
+        taurus.bias,
+        taurus.confidence,
+        taurus.reasoning
+      )
+
+    ].join("");
+
+
+    setText(
+      "engWhy",
+      CURRENT_SIGNAL?.final?.why ||
+      "No engine output yet."
+    );
+
+
+    setText(
+      "gridMeta",
+      `${CUR_SYM} · ${CUR_TF} · ${timeNow()}`
+    );
+
+  }
+
+
+  /* =========================================================
+     PILLARS
+     ========================================================= */
+
+  function renderPillars() {
+
+    const names =
+      C?.pillarNames ||
+      {};
+
+
+    const source =
+      STATE?.pillars ||
+      STATE?.pillarScores ||
+      STATE?.scores?.pillars ||
+      {};
+
+
+    const items =
+      Object.entries(
+        names
+      ).map(
+        ([key, name]) => {
+
+          const raw =
+            source?.[key] ??
+            source?.[
+              key.toLowerCase()
+            ] ??
+            source?.[name];
+
+
+          let score =
             null;
 
+
+          if (
+            typeof raw === "number"
+          ) {
+
+            score =
+              raw <= 1
+                ? raw * 100
+                : raw;
+
+          } else if (
+            raw &&
+            typeof raw === "object"
+          ) {
+
+            score =
+              raw.score ??
+              raw.value ??
+              null;
+
+          }
+
+
+          return {
+            key,
+            name,
+            score
+          };
+
         }
-
-
-        values.push({
-          key,
-          name,
-          score
-        });
-
-      }
-
-
-      const valid =
-        values
-          .map(x => x.score)
-          .filter(v => Number.isFinite(Number(v)));
-
-
-      const avg =
-        valid.length
-          ? valid.reduce(
-              (a, b) => a + Number(b),
-              0
-            ) / valid.length
-          : null;
-
-
-      setText(
-        "pillarScore",
-        avg == null
-          ? "—"
-          : `${avg.toFixed(0)} / 100`
       );
 
 
-      $("pillarGrid").innerHTML =
-        values.map(renderPillarMini).join("");
+    const valid =
+      items
+        .map(
+          item =>
+            Number(item.score)
+        )
+        .filter(
+          Number.isFinite
+        );
 
 
-      $("pillarPageGrid").innerHTML =
-        values.map(renderPillarLarge).join("");
+    const avg =
+      valid.length
+        ? valid.reduce(
+            (a, b) => a + b,
+            0
+          ) / valid.length
+        : null;
+
+
+    setText(
+      "pillarScore",
+      avg == null
+        ? "—"
+        : `${avg.toFixed(0)} / 100`
+    );
+
+
+    $("pillarGrid").innerHTML =
+      items
+        .map(
+          renderPillarMini
+        )
+        .join("");
+
+
+    $("pillarPageGrid").innerHTML =
+      items
+        .map(
+          renderPillarLarge
+        )
+        .join("");
+
+  }
+
+
+  function normalizedScore(
+    value
+  ) {
+
+    const n =
+      Number(value);
+
+
+    if (
+      !Number.isFinite(n)
+    ) {
+
+      return null;
 
     }
 
 
-    function renderPillarMini(
-      item
-    ) {
+    return Math.max(
+      0,
+      Math.min(
+        100,
+        n
+      )
+    );
 
-      const score =
-        Number.isFinite(Number(item.score))
-          ? Math.max(
-              0,
-              Math.min(
-                100,
-                Number(item.score)
-              )
-            )
-          : null;
+  }
 
 
-      return `
+  function renderPillarMini(
+    item
+  ) {
 
-        <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+    const score =
+      normalizedScore(
+        item.score
+      );
 
-          <div class="flex items-center justify-between gap-2">
 
-            <span class="font-mono text-[10px] font-bold text-slate-300">
+    return `
+
+      <div class="rounded-xl border border-white/[0.06] bg-black/20 p-3">
+
+        <div class="flex items-center justify-between gap-2">
+
+          <span class="font-mono text-[10px] font-bold text-slate-300">
+            ${esc(item.key)}
+          </span>
+
+          <span class="font-mono text-[10px] text-slate-500">
+            ${score == null ? "—" : score.toFixed(0)}
+          </span>
+
+        </div>
+
+        <div class="mt-2 text-[9px] uppercase tracking-wider text-slate-600">
+          ${esc(item.name)}
+        </div>
+
+        <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.04]">
+
+          <div
+            class="h-full rounded-full bg-cyan-300/60"
+            style="width:${score == null ? 0 : score}%"
+          ></div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  function renderPillarLarge(
+    item
+  ) {
+
+    const score =
+      normalizedScore(
+        item.score
+      );
+
+
+    return `
+
+      <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5 transition hover:border-cyan-400/10">
+
+        <div class="flex items-start justify-between gap-3">
+
+          <div>
+
+            <div class="font-display text-sm font-bold tracking-wider text-white">
               ${esc(item.key)}
-            </span>
+            </div>
 
-            <span class="font-mono text-[10px] text-slate-500">
-              ${score == null ? "—" : score.toFixed(0)}
-            </span>
+            <div class="mt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
+              ${esc(item.name)}
+            </div>
 
           </div>
 
-          <div class="mt-2 text-[9px] uppercase tracking-wider text-slate-600">
-            ${esc(item.name)}
-          </div>
-
-          <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.04]">
-
-            <div
-              class="h-full rounded-full bg-cyan-300/60"
-              style="width:${score == null ? 0 : score}%"
-            ></div>
-
+          <div class="font-mono text-xl font-bold text-cyan-200">
+            ${score == null ? "—" : score.toFixed(0)}
           </div>
 
         </div>
 
-      `;
 
+        <div class="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.05]">
+
+          <div
+            class="h-full rounded-full bg-cyan-300/65"
+            style="width:${score == null ? 0 : score}%"
+          ></div>
+
+        </div>
+
+
+        <div class="mt-3 text-[10px] leading-5 text-slate-600">
+          HERMES operating pillar
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =========================================================
+     LEDGER
+     ========================================================= */
+
+  function renderLedger() {
+
+    const box =
+      $("ledgerBox");
+
+
+    if (!box) {
+      return;
     }
 
 
-    function renderPillarLarge(
-      item
+    if (
+      !LEDGER.length
     ) {
-
-      const score =
-        Number.isFinite(Number(item.score))
-          ? Math.max(
-              0,
-              Math.min(
-                100,
-                Number(item.score)
-              )
-            )
-          : null;
-
-
-      return `
-
-        <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-5 transition hover:border-cyan-400/10">
-
-          <div class="flex items-start justify-between gap-3">
-
-            <div>
-
-              <div class="font-display text-sm font-bold tracking-wider text-white">
-                ${esc(item.key)}
-              </div>
-
-              <div class="mt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">
-                ${esc(item.name)}
-              </div>
-
-            </div>
-
-            <div class="font-mono text-xl font-bold text-cyan-200">
-              ${score == null ? "—" : score.toFixed(0)}
-            </div>
-
-          </div>
-
-
-          <div class="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.05]">
-
-            <div
-              class="h-full rounded-full bg-cyan-300/65"
-              style="width:${score == null ? 0 : score}%"
-            ></div>
-
-          </div>
-
-
-          <div class="mt-3 text-[10px] leading-5 text-slate-600">
-            HERMES operating pillar
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =========================================================
-       LEDGER
-       ========================================================= */
-
-    function renderLedger() {
-
-      const box =
-        $("ledgerBox");
-
-
-      if (!box) return;
-
-
-      if (!LEDGER.length) {
-
-        box.innerHTML = emptyRow(
-          "No ledger entries."
-        );
-
-        setText(
-          "ledgerMeta",
-          "ledger.jsonl · no entries"
-        );
-
-        return;
-
-      }
-
-
-      const rows =
-        LEDGER
-          .slice()
-          .reverse()
-          .slice(0, 100);
-
-
-      const html = `
-
-        <div class="min-w-[900px]">
-
-          <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 border-b border-white/[0.06] px-3 pb-3 text-[9px] font-bold uppercase tracking-wider text-slate-600">
-
-            <div>TIME</div>
-            <div>SYMBOL</div>
-            <div>SIGNAL</div>
-            <div>DETAIL</div>
-            <div>HASH</div>
-
-          </div>
-
-
-          <div class="divide-y divide-white/[0.04]">
-
-            ${rows.map((item, index) => {
-
-              const time =
-                item.time ||
-                item.timestamp ||
-                item.ts ||
-                item.created_at ||
-                "—";
-
-
-              const symbol =
-                item.symbol ||
-                item.sym ||
-                item.market ||
-                "—";
-
-
-              const signal =
-                item.signal ||
-                item.final?.signal ||
-                item.action ||
-                "—";
-
-
-              const detail =
-                item.reason ||
-                item.why ||
-                item.message ||
-                item.final?.why ||
-                "Ledger event";
-
-
-              const hash =
-                item.hash ||
-                item.digest ||
-                item.sha256 ||
-                "—";
-
-
-              return `
-
-                <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 px-3 py-3 text-[10px]">
-
-                  <div class="font-mono text-slate-500">
-                    ${esc(formatLedgerTime(time))}
-                  </div>
-
-                  <div class="font-mono font-bold text-slate-300">
-                    ${esc(symbol)}
-                  </div>
-
-                  <div class="font-display font-bold ${toneForSignal(signal)}">
-                    ${esc(signal)}
-                  </div>
-
-                  <div class="truncate text-slate-500">
-                    ${esc(detail)}
-                  </div>
-
-                  <div class="truncate font-mono text-[9px] text-slate-700">
-                    ${esc(String(hash).slice(0, 18))}
-                  </div>
-
-                </div>
-
-              `;
-
-            }).join("")}
-
-          </div>
-
-        </div>
-
-      `;
-
 
       box.innerHTML =
-        html;
+        emptyRow(
+          "No ledger entries."
+        );
 
 
       setText(
         "ledgerMeta",
-        `ledger.jsonl · ${LEDGER.length} entries`
+        "ledger.jsonl · no entries"
       );
 
-    }
 
-
-    function formatLedgerTime(value) {
-
-      if (!value) {
-        return "—";
-      }
-
-
-      if (
-        typeof value === "number" ||
-        /^\d+$/.test(String(value))
-      ) {
-
-        const n =
-          Number(value);
-
-        if (
-          n > 10000000000
-        ) {
-
-          return new Date(n)
-            .toLocaleString();
-
-        }
-
-        return new Date(n * 1000)
-          .toLocaleString();
-
-      }
-
-
-      return String(value);
+      return;
 
     }
 
 
-    /* =========================================================
-       SCOREBOARD
-       ========================================================= */
-
-    function collectTradeStats() {
-
-      const source =
-        PERF ||
-        STATE ||
-        {};
+    const rows =
+      LEDGER
+        .slice()
+        .reverse()
+        .slice(0, 100);
 
 
-      const totalRaw =
+    box.innerHTML = `
+
+      <div class="min-w-[900px]">
+
+        <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 border-b border-white/[0.06] px-3 pb-3 text-[9px] font-bold uppercase tracking-wider text-slate-600">
+
+          <div>TIME</div>
+          <div>SYMBOL</div>
+          <div>SIGNAL</div>
+          <div>DETAIL</div>
+          <div>HASH</div>
+
+        </div>
+
+
+        <div class="divide-y divide-white/[0.04]">
+
+          ${
+            rows.map(
+              item => {
+
+                const time =
+                  item?.time ||
+                  item?.timestamp ||
+                  item?.ts ||
+                  item?.created_at ||
+                  "—";
+
+
+                const symbol =
+                  item?.symbol ||
+                  item?.sym ||
+                  item?.market ||
+                  "—";
+
+
+                const signal =
+                  item?.signal ||
+                  item?.final?.signal ||
+                  item?.action ||
+                  "EVENT";
+
+
+                const detail =
+                  item?.reason ||
+                  item?.why ||
+                  item?.message ||
+                  item?.final?.why ||
+                  "Ledger event";
+
+
+                const hash =
+                  item?.hash ||
+                  item?.digest ||
+                  item?.sha256 ||
+                  "—";
+
+
+                return `
+
+                  <div class="grid grid-cols-[150px_100px_120px_1fr_130px] gap-3 px-3 py-3 text-[10px]">
+
+                    <div class="font-mono text-slate-500">
+                      ${esc(
+                        formatLedgerTime(
+                          time
+                        )
+                      )}
+                    </div>
+
+                    <div class="font-mono font-bold text-slate-300">
+                      ${esc(symbol)}
+                    </div>
+
+                    <div class="font-display font-bold ${toneForSignal(signal)}">
+                      ${esc(signal)}
+                    </div>
+
+                    <div class="truncate text-slate-500">
+                      ${esc(detail)}
+                    </div>
+
+                    <div class="truncate font-mono text-[9px] text-slate-700">
+                      ${esc(
+                        String(hash)
+                          .slice(
+                            0,
+                            18
+                          )
+                      )}
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            ).join("")
+          }
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    setText(
+      "ledgerMeta",
+      `ledger.jsonl · ${LEDGER.length} entries`
+    );
+
+  }
+
+
+  /* =========================================================
+     SCOREBOARD
+     ========================================================= */
+
+  function collectTradeStats() {
+
+    const source =
+      PERF ||
+      STATE ||
+      {};
+
+
+    let total =
+      Number(
         deepFind(
           source,
           [
-            "total",
             "totalTrades",
-            "trades"
+            "total"
           ]
-        );
+        )
+      );
 
 
-      const winRaw =
+    let wins =
+      Number(
         deepFind(
           source,
           [
@@ -4425,10 +5248,12 @@
             "win",
             "winningTrades"
           ]
-        );
+        )
+      );
 
 
-      const lossRaw =
+    let losses =
+      Number(
         deepFind(
           source,
           [
@@ -4436,21 +5261,24 @@
             "loss",
             "losingTrades"
           ]
-        );
+        )
+      );
 
 
-      const openRaw =
+    let open =
+      Number(
         deepFind(
           source,
           [
-            "open",
             "openTrades",
-            "active"
+            "open"
           ]
-        );
+        )
+      );
 
 
-      const wrRaw =
+    let wr =
+      Number(
         deepFind(
           source,
           [
@@ -4458,312 +5286,383 @@
             "wr",
             "accuracy"
           ]
-        );
+        )
+      );
 
 
-      let total =
-        Number(totalRaw);
-
-      let wins =
-        Number(winRaw);
-
-      let losses =
-        Number(lossRaw);
-
-      let open =
-        Number(openRaw);
-
-      let wr =
-        Number(wrRaw);
+    const ledgerEvents =
+      LEDGER.filter(
+        item =>
+          item &&
+          (
+            item.signal ||
+            item.action ||
+            item.final?.signal
+          )
+      );
 
 
-      const ledgerTrades =
-        LEDGER.filter(
-          x =>
-            x &&
-            (
-              x.signal ||
-              x.action ||
-              x.final?.signal
-            )
-        );
+    if (
+      !Number.isFinite(total)
+    ) {
 
-
-      if (
-        !Number.isFinite(total)
-      ) {
-        total = ledgerTrades.length;
-      }
-
-
-      if (
-        !Number.isFinite(wins)
-      ) {
-        wins = 0;
-      }
-
-
-      if (
-        !Number.isFinite(losses)
-      ) {
-        losses = 0;
-      }
-
-
-      if (
-        !Number.isFinite(open)
-      ) {
-        open = Math.max(
-          0,
-          total - wins - losses
-        );
-      }
-
-
-      if (
-        !Number.isFinite(wr)
-      ) {
-
-        wr =
-          wins + losses > 0
-            ? wins / (wins + losses) * 100
-            : null;
-
-      } else if (
-        wr >= 0 &&
-        wr <= 1
-      ) {
-
-        wr *= 100;
-
-      }
-
-
-      return {
-        total,
-        wins,
-        losses,
-        open,
-        wr
-      };
+      total =
+        ledgerEvents.length;
 
     }
 
 
-    function renderScoreboard() {
+    if (
+      !Number.isFinite(wins)
+    ) {
 
-      const stats =
-        collectTradeStats();
+      wins = 0;
 
-
-      setText(
-        "scTotal",
-        stats.total
-      );
-
-      setText(
-        "scWin",
-        stats.wins
-      );
-
-      setText(
-        "scLoss",
-        stats.losses
-      );
-
-      setText(
-        "scOpen",
-        stats.open
-      );
-
-      setText(
-        "scWR",
-        stats.wr == null
-          ? "—"
-          : `${stats.wr.toFixed(1)}%`
-      );
+    }
 
 
-      const wr =
-        stats.wr == null
-          ? 0
-          : Math.max(
-              0,
-              Math.min(
-                100,
-                stats.wr
+    if (
+      !Number.isFinite(losses)
+    ) {
+
+      losses = 0;
+
+    }
+
+
+    if (
+      !Number.isFinite(open)
+    ) {
+
+      open =
+        Math.max(
+          0,
+          total -
+          wins -
+          losses
+        );
+
+    }
+
+
+    if (
+      !Number.isFinite(wr)
+    ) {
+
+      wr =
+        wins + losses > 0
+          ? (
+              wins /
+              (
+                wins +
+                losses
               )
-            );
+            ) * 100
+          : null;
+
+    } else if (
+      wr >= 0 &&
+      wr <= 1
+    ) {
+
+      wr *= 100;
+
+    }
 
 
-      $("scWRBar").textContent =
-        `${wr.toFixed(1)}%`;
+    return {
+      total,
+      wins,
+      losses,
+      open,
+      wr
+    };
 
+  }
+
+
+  function renderScoreboard() {
+
+    const stats =
+      collectTradeStats();
+
+
+    setText(
+      "scTotal",
+      stats.total
+    );
+
+    setText(
+      "scWin",
+      stats.wins
+    );
+
+    setText(
+      "scLoss",
+      stats.losses
+    );
+
+    setText(
+      "scOpen",
+      stats.open
+    );
+
+    setText(
+      "scWR",
+      stats.wr == null
+        ? "—"
+        : `${stats.wr.toFixed(1)}%`
+    );
+
+
+    const wr =
+      stats.wr == null
+        ? 0
+        : Math.max(
+            0,
+            Math.min(
+              100,
+              stats.wr
+            )
+          );
+
+
+    setText(
+      "scWRBar",
+      `${wr.toFixed(1)}%`
+    );
+
+
+    if ($("wrFill")) {
 
       $("wrFill").style.width =
         `${wr}%`;
 
-
-      setText(
-        "scWRNote",
-        stats.wr == null
-          ? "No settled trade statistics available."
-          : `${stats.wins} wins / ${stats.losses} losses / ${stats.open} open.`
-      );
+    }
 
 
-      const accuracy =
-        performanceValue([
+    setText(
+      "scWRNote",
+      stats.wr == null
+        ? "No settled trade statistics available."
+        : `${stats.wins} wins / ${stats.losses} losses / ${stats.open} open.`
+    );
+
+
+    const accuracy =
+      performanceValue(
+        [
           "systemAccuracy",
           "accuracy",
-          "acc",
-          "score"
-        ]);
-
-
-      setText(
-        "sysAcc",
-        accuracy == null
-          ? stats.wr == null
-            ? "—"
-            : `${stats.wr.toFixed(1)}%`
-          : (
-              Number(accuracy) <= 1
-                ? `${(Number(accuracy) * 100).toFixed(1)}%`
-                : `${Number(accuracy).toFixed(1)}%`
-            )
+          "acc"
+        ]
       );
 
 
-      renderHistory();
+    setText(
+      "sysAcc",
+      accuracy == null
+        ? (
+            stats.wr == null
+              ? "—"
+              : `${stats.wr.toFixed(1)}%`
+          )
+        : (
+            Number(accuracy) <= 1
+              ? `${(Number(accuracy) * 100).toFixed(1)}%`
+              : `${Number(accuracy).toFixed(1)}%`
+          )
+    );
 
-      renderImprovement();
+
+    renderHistory();
+
+    renderImprovement();
+
+  }
+
+
+  function renderHistory() {
+
+    const box =
+      $("histBox");
+
+
+    if (!box) {
+      return;
+    }
+
+
+    if (
+      !LEDGER.length
+    ) {
+
+      box.innerHTML =
+        emptyRow(
+          "No decision history available."
+        );
+
+      return;
 
     }
 
 
-    function renderHistory() {
+    box.innerHTML = `
 
-      const box =
-        $("histBox");
+      <div class="space-y-2">
 
-
-      if (
-        !LEDGER.length
-      ) {
-
-        box.innerHTML =
-          emptyRow(
-            "No decision history available."
-          );
-
-        return;
-
-      }
-
-
-      box.innerHTML = `
-        <div class="space-y-2">
-
-          ${LEDGER
+        ${
+          LEDGER
             .slice()
             .reverse()
             .slice(0, 40)
-            .map(item => {
+            .map(
+              item => {
 
-              const signal =
-                item.signal ||
-                item.final?.signal ||
-                item.action ||
-                "EVENT";
-
-
-              const symbol =
-                item.symbol ||
-                item.sym ||
-                "—";
+                const signal =
+                  item?.signal ||
+                  item?.final?.signal ||
+                  item?.action ||
+                  "EVENT";
 
 
-              const time =
-                item.time ||
-                item.timestamp ||
-                item.ts ||
-                "—";
+                const symbol =
+                  item?.symbol ||
+                  item?.sym ||
+                  "—";
 
 
-              return `
+                const when =
+                  item?.time ||
+                  item?.timestamp ||
+                  item?.ts ||
+                  "—";
 
-                <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
 
-                  <div class="min-w-0">
+                const reason =
+                  item?.reason ||
+                  item?.why ||
+                  item?.message ||
+                  "";
 
-                    <div class="flex items-center gap-2">
 
-                      <span class="font-display text-[10px] font-bold ${toneForSignal(signal)}">
-                        ${esc(signal)}
-                      </span>
+                return `
 
-                      <span class="font-mono text-[10px] text-slate-600">
-                        ${esc(symbol)}
-                      </span>
+                  <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
+
+                    <div class="min-w-0">
+
+                      <div class="flex items-center gap-2">
+
+                        <span class="font-display text-[10px] font-bold ${toneForSignal(signal)}">
+                          ${esc(signal)}
+                        </span>
+
+                        <span class="font-mono text-[10px] text-slate-600">
+                          ${esc(symbol)}
+                        </span>
+
+                      </div>
+
+                      <div class="mt-1 truncate text-[10px] text-slate-600">
+                        ${esc(reason)}
+                      </div>
 
                     </div>
 
-                    <div class="mt-1 truncate text-[10px] text-slate-600">
-                      ${esc(item.reason || item.why || item.message || "")}
+                    <div class="shrink-0 font-mono text-[9px] text-slate-700">
+                      ${esc(
+                        formatLedgerTime(
+                          when
+                        )
+                      )}
                     </div>
 
                   </div>
 
-                  <div class="shrink-0 font-mono text-[9px] text-slate-700">
-                    ${esc(formatLedgerTime(time))}
-                  </div>
+                `;
 
-                </div>
+              }
+            )
+            .join("")
+        }
 
-              `;
+      </div>
 
-            }).join("")}
+    `;
 
-        </div>
-      `;
+  }
 
+
+  function renderImprovement() {
+
+    const box =
+      $("impGrid");
+
+
+    if (!box) {
+      return;
     }
 
 
-    function renderImprovement() {
+    const paths = [
 
-      const source =
-        PERF ||
-        {};
+      [
+        "Backtest",
+        [
+          "backtestAccuracy",
+          "backtest"
+        ]
+      ],
+
+      [
+        "Live",
+        [
+          "liveAccuracy",
+          "live"
+        ]
+      ],
+
+      [
+        "Recent",
+        [
+          "recentAccuracy",
+          "recent"
+        ]
+      ],
+
+      [
+        "System",
+        [
+          "systemAccuracy",
+          "accuracy"
+        ]
+      ]
+
+    ];
 
 
-      const keys = [
-        ["Backtest", ["backtest", "backtestAccuracy"]],
-        ["Live", ["liveAccuracy", "live"]],
-        ["Recent", ["recentAccuracy", "recent"]],
-        ["System", ["systemAccuracy", "accuracy"]]
-      ];
-
-
-      const rows =
-        keys.map(
-          ([label, paths]) => {
+    box.innerHTML =
+      paths
+        .map(
+          ([label, keys]) => {
 
             const raw =
               deepFind(
-                source,
-                paths
+                PERF || {},
+                keys
               );
 
 
             if (
               raw == null
             ) {
+
               return miniRow(
                 label,
                 "—"
               );
+
             }
 
 
@@ -4776,146 +5675,188 @@
               Number.isFinite(value)
                 ? (
                     value <= 1
-                      ? `${(value * 100).toFixed(1)}%`
+                      ? `${(
+                          value * 100
+                        ).toFixed(1)}%`
                       : `${value.toFixed(1)}%`
                   )
                 : String(raw)
             );
 
           }
-        );
+        )
+        .join("");
 
 
-      $("impGrid").innerHTML =
-        rows.join("");
+    setText(
+      "impMeta",
+      "Performance data read directly from perf.json."
+    );
+
+  }
 
 
-      setText(
-        "impMeta",
-        "Performance data is read directly from perf.json."
+  /* =========================================================
+     REPOSITORY MAP
+     ========================================================= */
+
+  function renderRepositoryMap(
+    root
+  ) {
+
+    const list =
+      Array.isArray(root)
+        ? root
+        : [];
+
+
+    const expected = new Set([
+
+      ".github",
+      "skills",
+      ".gitignore",
+      "FL-200_MASTER.md",
+      "README.md",
+      "SECURITY.md",
+      "engine.js",
+      "ledger.jsonl",
+      "perf.json",
+      "state.json",
+      "strategy.md"
+
+    ]);
+
+
+    const filtered =
+      list.filter(
+        item =>
+          expected.has(
+            item.name
+          )
       );
 
-    }
 
-
-    /* =========================================================
-       REPORTS
-       ========================================================= */
-
-    function renderRepositoryMap(
-      root
-    ) {
-
-      const knownNames =
-        new Set([
-          ...KNOWN_FILES,
-          "skills",
-          ".github"
-        ]);
-
-
-      const all =
-        Array.isArray(root)
-          ? root
-          : [];
-
-
-      const filtered =
-        all.filter(
-          item =>
-            knownNames.has(item.name)
-        );
-
+    if ($("repScan")) {
 
       $("repScan").innerHTML = `
 
         <div class="space-y-2">
 
-          ${filtered.map(item => `
+          ${
+            filtered.length
 
-            <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
+              ? filtered
+                  .map(
+                    item => `
 
-              <div class="flex min-w-0 items-center gap-3">
+                      <div class="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-3">
 
-                <span class="font-mono text-xs ${
-                  item.type === "dir"
-                    ? "text-amber-300"
-                    : "text-cyan-200"
-                }">
-                  ${item.type === "dir" ? "DIR" : "FILE"}
-                </span>
+                        <div class="flex min-w-0 items-center gap-3">
 
-                <span class="truncate font-mono text-xs text-slate-300">
-                  ${esc(item.name)}
-                </span>
+                          <span class="font-mono text-[9px] ${
+                            item.type === "dir"
+                              ? "text-amber-300"
+                              : "text-cyan-200"
+                          }">
+                            ${
+                              item.type === "dir"
+                                ? "DIR"
+                                : "FILE"
+                            }
+                          </span>
 
-              </div>
+                          <span class="truncate font-mono text-xs text-slate-300">
+                            ${esc(item.name)}
+                          </span>
 
-              <span class="shrink-0 text-[9px] text-slate-700">
-                ${item.type === "dir" ? "directory" : "root"}
-              </span>
+                        </div>
 
-            </div>
+                        <span class="text-[9px] text-slate-700">
+                          ROOT
+                        </span>
 
-          `).join("")}
+                      </div>
+
+                    `
+                  )
+                  .join("")
+
+              : emptyRow(
+                  "Unable to read repository map."
+                )
+          }
 
         </div>
 
       `;
 
+    }
+
+
+    if ($("repFiles")) {
 
       $("repFiles").innerHTML =
-        KNOWN_FILES.map(file => {
+        KNOWN_FILES
+          .map(
+            file => `
 
-          const desc =
-            C.reportDesc?.[file] ||
-            "Private Heart file";
+              <button
+                type="button"
+                data-view-file="${esc(file)}"
+                class="group rounded-2xl border border-white/[0.06] bg-black/20 p-4 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.025]"
+              >
 
+                <div class="flex items-start justify-between gap-3">
 
-          return `
+                  <div class="min-w-0">
 
-            <button
-              data-view-file="${esc(file)}"
-              type="button"
-              class="group rounded-2xl border border-white/[0.06] bg-black/20 p-4 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.025]"
-            >
+                    <div class="truncate font-mono text-xs font-bold text-slate-300 group-hover:text-white">
+                      ${esc(file)}
+                    </div>
 
-              <div class="flex items-start justify-between gap-3">
+                    <div class="mt-2 text-[10px] leading-5 text-slate-600">
+                      ${esc(
+                        C?.reportDesc?.[file] ||
+                        "Private Heart file"
+                      )}
+                    </div>
 
-                <div class="min-w-0">
-
-                  <div class="truncate font-mono text-xs font-bold text-slate-300 group-hover:text-white">
-                    ${esc(file)}
                   </div>
 
-                  <div class="mt-2 text-[10px] leading-5 text-slate-600">
-                    ${esc(desc)}
-                  </div>
+                  <span class="shrink-0 font-mono text-[9px] text-slate-700">
+                    READ
+                  </span>
 
                 </div>
 
-                <span class="font-mono text-[9px] text-slate-700">
-                  READ
-                </span>
+              </button>
 
-              </div>
-
-            </button>
-
-          `;
-
-        }).join("");
-
-
-      setText(
-        "repSummary",
-        `Private Heart repository loaded. ${KNOWN_FILES.length} root files are configured for FACE access.`
-      );
+            `
+          )
+          .join("");
 
     }
 
 
-    $("repRefresh").addEventListener(
+    setText(
+      "repSummary",
+      `Private Heart repository connected. Exact root structure detected.`
+    );
+
+  }
+
+
+  /* =========================================================
+     REPORT REFRESH
+     ========================================================= */
+
+  const reportRefresh =
+    $("repRefresh");
+
+
+  if (reportRefresh) {
+
+    reportRefresh.addEventListener(
       "click",
       async () => {
 
@@ -4924,137 +5865,220 @@
           "pa"
         );
 
+
         await Promise.allSettled([
+
           loadHeartState(),
+
           loadPerformance(),
+
           loadLedger(),
+
           loadStrategy(),
+
           loadRepositoryMap()
+
         ]);
 
+
         renderAll();
+
+
+        pulse(
+          "Heart reports refreshed",
+          "ok"
+        );
 
       }
     );
 
+  }
 
-    /* =========================================================
-       FILE VIEWER
-       ========================================================= */
 
-    async function openFileViewer(
+  /* =========================================================
+     FILE VIEWER
+     ========================================================= */
+
+  async function openFileViewer(
+    file
+  ) {
+
+    setText(
+      "fvTitle",
       file
-    ) {
-
-      $("fvTitle").textContent =
-        file;
+    );
 
 
-      $("fvBody").textContent =
-        "Loading…";
+    setText(
+      "fvBody",
+      "Loading…"
+    );
 
+
+    if ($("fileOverlay")) {
 
       $("fileOverlay").classList.remove(
         "hidden"
       );
 
-
-      try {
-
-        const text =
-          await ghText(
-            C.heartRepo,
-            file
-          );
+    }
 
 
-        $("fvBody").textContent =
-          text;
+    try {
 
-      } catch (error) {
+      const content =
+        await ghText(
+          C.heartRepo,
+          file
+        );
 
-        $("fvBody").textContent =
+
+      const body =
+        $("fvBody");
+
+
+      if (body) {
+
+        body.textContent =
+          content;
+
+      }
+
+    } catch (error) {
+
+      const body =
+        $("fvBody");
+
+
+      if (body) {
+
+        body.textContent =
           `Unable to read ${file}\n\n${error.message}`;
 
       }
 
     }
 
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        const button =
-          event.target.closest(
-            "[data-view-file]"
-          );
+  }
 
 
-        if (!button) {
-          return;
-        }
+  document.addEventListener(
+    "click",
+    event => {
 
+      const button =
+        event.target.closest(
+          "[data-view-file]"
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      const file =
+        button.getAttribute(
+          "data-view-file"
+        );
+
+
+      if (file) {
 
         openFileViewer(
-          button.getAttribute(
-            "data-view-file"
-          )
+          file
         );
 
       }
-    );
+
+    }
+  );
 
 
-    $("closeFv").addEventListener(
+  const closeFileViewer =
+    $("closeFv");
+
+
+  if (closeFileViewer) {
+
+    closeFileViewer.addEventListener(
       "click",
       () => {
-        $("fileOverlay").classList.add(
-          "hidden"
-        );
+
+        $("fileOverlay")
+          ?.classList
+          .add("hidden");
+
       }
     );
 
+  }
 
-    $("fileOverlay").addEventListener(
+
+  const fileOverlay =
+    $("fileOverlay");
+
+
+  if (fileOverlay) {
+
+    fileOverlay.addEventListener(
       "click",
       event => {
 
         if (
           event.target ===
-          $("fileOverlay")
+          fileOverlay
         ) {
-          $("fileOverlay").classList.add(
+
+          fileOverlay.classList.add(
             "hidden"
           );
+
         }
 
       }
     );
 
-
-    /* =========================================================
-       CONFIG DRAWER
-       ========================================================= */
-
-    function renderConfig() {
-
-      const publicConfig =
-        {
-          ...C,
-
-          tokenPolicy: {
-            ...(C.tokenPolicy || {}),
-            token: "[SESSION ONLY / HIDDEN]"
-          }
-        };
+  }
 
 
-      $("cfgInfo").innerHTML = `
+  /* =========================================================
+     CONFIG DRAWER
+     ========================================================= */
+
+  function renderConfig() {
+
+    const config =
+      {
+        ...C,
+
+        tokenPolicy: {
+
+          ...(C.tokenPolicy || {}),
+
+          sessionKey:
+            C?.tokenPolicy?.sessionKey ||
+            "fl200_face_tok",
+
+          token:
+            "[SESSION ONLY / HIDDEN]"
+
+        }
+
+      };
+
+
+    const box =
+      $("cfgInfo");
+
+
+    if (box) {
+
+      box.innerHTML = `
 
         <pre class="whitespace-pre-wrap font-mono text-[10px] leading-6 text-slate-400">${esc(
           JSON.stringify(
-            publicConfig,
+            config,
             null,
             2
           )
@@ -5064,43 +6088,67 @@
 
     }
 
+  }
 
-    $("openCfg").addEventListener(
+
+  const openConfig =
+    $("openCfg");
+
+
+  if (openConfig) {
+
+    openConfig.addEventListener(
       "click",
       () => {
 
         renderConfig();
 
-        $("cfgOverlay").classList.remove(
-          "hidden"
-        );
+        $("cfgOverlay")
+          ?.classList
+          .remove("hidden");
 
       }
     );
 
+  }
 
-    $("closeCfg").addEventListener(
+
+  const closeConfig =
+    $("closeCfg");
+
+
+  if (closeConfig) {
+
+    closeConfig.addEventListener(
       "click",
       () => {
 
-        $("cfgOverlay").classList.add(
-          "hidden"
-        );
+        $("cfgOverlay")
+          ?.classList
+          .add("hidden");
 
       }
     );
 
+  }
 
-    $("cfgOverlay").addEventListener(
+
+  const cfgOverlay =
+    $("cfgOverlay");
+
+
+  if (cfgOverlay) {
+
+    cfgOverlay.addEventListener(
       "click",
       event => {
 
         if (
           event.target ===
-          $("cfgOverlay")
+          cfgOverlay
         ) {
 
-          $("cfgOverlay").classList.add(
+          cfgOverlay.classList.add(
             "hidden"
           );
 
@@ -5109,23 +6157,36 @@
       }
     );
 
+  }
 
-    $("btnEngineReload").addEventListener(
+
+  const reloadEngineButton =
+    $("btnEngineReload");
+
+
+  if (reloadEngineButton) {
+
+    reloadEngineButton.addEventListener(
       "click",
       async () => {
 
+        pulse(
+          "Reloading private engine…",
+          "pa"
+        );
+
+
         try {
 
-          pulse(
-            "Reloading private engine…",
-            "pa"
+          await loadEngine(
+            true
           );
 
-          await loadEngine(true);
 
           evaluateCurrentMarket();
 
           renderAll();
+
 
           pulse(
             `Engine v${ENGINE?.version || "?"} reloaded`,
@@ -5144,25 +6205,37 @@
       }
     );
 
-
-    /* =========================================================
-       MODEL MODAL
-       ========================================================= */
-
-    function openModelModal(
-      name,
-      data
-    ) {
-
-      $("modTitle").textContent =
-        name;
+  }
 
 
-      $("modInst").textContent =
-        "Heart engine model telemetry";
+  /* =========================================================
+     MODEL DETAIL MODAL
+     ========================================================= */
+
+  function openModelModal(
+    name,
+    data
+  ) {
+
+    setText(
+      "modTitle",
+      name
+    );
 
 
-      $("modDetail").innerHTML = `
+    setText(
+      "modInst",
+      "Heart engine model telemetry"
+    );
+
+
+    const detail =
+      $("modDetail");
+
+
+    if (detail) {
+
+      detail.innerHTML = `
 
         <div class="rounded-2xl border border-white/[0.06] bg-black/20 p-4">
 
@@ -5178,322 +6251,428 @@
 
       `;
 
+    }
 
-      $("modOverlay").classList.remove(
+
+    const overlay =
+      $("modOverlay");
+
+
+    if (overlay) {
+
+      overlay.classList.remove(
         "hidden"
       );
 
-      $("modOverlay").classList.add(
+      overlay.classList.add(
         "flex"
       );
 
     }
 
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        const model =
-          event.target.closest(
-            "[data-model]"
-          );
+  }
 
 
-        if (!model) return;
+  function closeModelModal() {
+
+    const overlay =
+      $("modOverlay");
 
 
-        const name =
-          model.getAttribute(
-            "data-model"
-          );
+    if (!overlay) {
+      return;
+    }
 
 
-        const map = {
-          GRID:
-            CURRENT_SIGNAL?.models?.grid,
-
-          L2:
-            CURRENT_SIGNAL?.models?.l2,
-
-          QUANT:
-            CURRENT_SIGNAL?.models?.quant,
-
-          TAURUS:
-            CURRENT_SIGNAL?.models?.taurus
-        };
-
-
-        openModelModal(
-          name,
-          map[name]
-        );
-
-      }
+    overlay.classList.add(
+      "hidden"
     );
 
+    overlay.classList.remove(
+      "flex"
+    );
 
-    $("closeMod").addEventListener(
+  }
+
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      const button =
+        event.target.closest(
+          "[data-model]"
+        );
+
+
+      if (!button) {
+        return;
+      }
+
+
+      const name =
+        button.getAttribute(
+          "data-model"
+        );
+
+
+      const models = {
+
+        GRID:
+          CURRENT_SIGNAL?.models?.grid,
+
+        L2:
+          CURRENT_SIGNAL?.models?.l2,
+
+        QUANT:
+          CURRENT_SIGNAL?.models?.quant,
+
+        TAURUS:
+          CURRENT_SIGNAL?.models?.taurus
+
+      };
+
+
+      openModelModal(
+        name,
+        models[name]
+      );
+
+    }
+  );
+
+
+  const closeModelButton =
+    $("closeMod");
+
+
+  if (closeModelButton) {
+
+    closeModelButton.addEventListener(
       "click",
       closeModelModal
     );
 
+  }
 
-    $("modOverlay").addEventListener(
+
+  const modOverlay =
+    $("modOverlay");
+
+
+  if (modOverlay) {
+
+    modOverlay.addEventListener(
       "click",
       event => {
 
         if (
           event.target ===
-          $("modOverlay")
+          modOverlay
         ) {
+
           closeModelModal();
+
         }
 
       }
     );
 
+  }
 
-    function closeModelModal() {
 
-      $("modOverlay").classList.add(
-        "hidden"
+  /* =========================================================
+     ACCOUNT
+     ========================================================= */
+
+  function updateAccount() {
+
+    setText(
+      "accRepo",
+      C.heartRepo
+    );
+
+
+    setText(
+      "accBranch",
+      C.branch
+    );
+
+
+    setText(
+      "accTokenPolicy",
+      C?.tokenPolicy?.scope ||
+      "read-only"
+    );
+
+
+    setText(
+      "accEngine",
+      ENGINE?.version
+        ? `v${ENGINE.version}`
+        : "—"
+    );
+
+
+    setText(
+      "accSession",
+      TOKEN
+        ? "ACTIVE"
+        : "LOCKED"
+    );
+
+
+    const equity =
+      deepFind(
+        PERF || STATE,
+        [
+          "equity",
+          "balance",
+          "accountEquity"
+        ]
       );
 
-      $("modOverlay").classList.remove(
-        "flex"
+
+    const trades =
+      deepFind(
+        PERF || STATE,
+        [
+          "totalTrades",
+          "trades",
+          "count"
+        ]
       );
 
+
+    const pnl =
+      deepFind(
+        PERF || STATE,
+        [
+          "pnl",
+          "profit",
+          "profitLoss"
+        ]
+      );
+
+
+    setText(
+      "accEq",
+      equity == null
+        ? "—"
+        : num(equity)
+    );
+
+
+    setText(
+      "accTr",
+      trades == null
+        ? "—"
+        : trades
+    );
+
+
+    setText(
+      "accPnl",
+      pnl == null
+        ? "—"
+        : num(pnl)
+    );
+
+  }
+
+
+  /* =========================================================
+     SYSTEM PULSE
+     ========================================================= */
+
+  function pulse(
+    message,
+    type = "pa"
+  ) {
+
+    const box =
+      $("pulseBox");
+
+
+    if (!box) {
+      return;
     }
 
 
-    /* =========================================================
-       ACCOUNT
-       ========================================================= */
-
-    function updateAccount() {
-
-      setText(
-        "accRepo",
-        C.heartRepo
-      );
-
-      setText(
-        "accBranch",
-        C.branch
-      );
-
-      setText(
-        "accTokenPolicy",
-        C?.tokenPolicy?.scope ||
-        "read-only"
-      );
-
-      setText(
-        "accEngine",
-        ENGINE?.version
-          ? `v${ENGINE.version}`
-          : "—"
-      );
-
-      setText(
-        "accSession",
-        TOKEN
-          ? "ACTIVE"
-          : "LOCKED"
-      );
-
-      const equity =
-        deepFind(
-          PERF || STATE,
-          [
-            "equity",
-            "balance",
-            "accountEquity"
-          ]
-        );
+    box.textContent =
+      message;
 
 
-      const trades =
-        deepFind(
-          PERF || STATE,
-          [
-            "trades",
-            "totalTrades",
-            "count"
-          ]
-        );
+    if (
+      type === "ok"
+    ) {
 
+      box.className =
+        "rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-emerald-300";
 
-      const pnl =
-        deepFind(
-          PERF || STATE,
-          [
-            "pnl",
-            "profit",
-            "profitLoss"
-          ]
-        );
+    } else if (
+      type === "bad"
+    ) {
 
+      box.className =
+        "rounded-full border border-rose-400/15 bg-rose-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-rose-300";
 
-      setText(
-        "accEq",
-        equity == null
-          ? "—"
-          : num(equity, 2)
-      );
+    } else {
 
-
-      setText(
-        "accTr",
-        trades == null
-          ? "—"
-          : trades
-      );
-
-
-      setText(
-        "accPnl",
-        pnl == null
-          ? "—"
-          : num(pnl, 2)
-      );
+      box.className =
+        "rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-cyan-200";
 
     }
 
-
-    /* =========================================================
-       HEARTBEAT
-       ========================================================= */
-
-    function startHeartbeat() {
-
-      if (LIVE.timer) {
-        clearInterval(
-          LIVE.timer
-        );
-      }
+  }
 
 
-      if (LIVE.rtTimer) {
-        clearInterval(
-          LIVE.rtTimer
-        );
-      }
+  /* =========================================================
+     TICKER
+     ========================================================= */
+
+  function renderTicker() {
+
+    const btc =
+      TICKER_DATA.BTCUSDT;
+
+    const eth =
+      TICKER_DATA.ETHUSDT;
+
+    const active =
+      TICKER_DATA[CUR_SYM];
 
 
-      LIVE.timer =
-        setInterval(
-          async () => {
-
-            if (!LIVE.active) {
-              return;
-            }
+    const ticker =
+      $("ticker");
 
 
-            if (
-              LIVE.busy
-            ) {
-              return;
-            }
-
-
-            LIVE.busy = true;
-
-
-            try {
-
-              LIVE.heartbeat++;
-
-
-              setText(
-                "hbCount",
-                LIVE.heartbeat
-              );
-
-
-              await loadHeartState();
-
-              if (
-                LIVE.heartbeat % 5 ===
-                0
-              ) {
-
-                await loadPerformance();
-
-              }
-
-
-              updateAccount();
-
-              renderAll();
-
-            } catch (error) {
-
-              LIVE.failures++;
-
-              setText(
-                "failCount",
-                LIVE.failures
-              );
-
-            } finally {
-
-              LIVE.busy = false;
-
-            }
-
-          },
-          C.pollMs || 4000
-        );
-
-
-      LIVE.rtTimer =
-        setInterval(
-          () => {
-
-            if (!LIVE.active) {
-              return;
-            }
-
-            refreshMarket();
-
-            updateAgeDisplay();
-
-          },
-          C.pollMs || 4000
-        );
-
+    if (!ticker) {
+      return;
     }
 
 
-    function updateAgeDisplay() {
+    ticker.innerHTML = `
 
-      const source =
-        Math.max(
-          LIVE.lastFetch || 0,
-          LIVE.lastMarket || 0
-        );
+      <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
 
+        <div class="flex min-w-max items-center gap-6 overflow-x-auto py-2">
 
-      const elapsed =
-        source
-          ? Date.now() - source
-          : Infinity;
+          <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-700">
+            LIVE TAPE
+          </div>
 
 
-      setText(
-        "ageVal",
-        ageText(elapsed)
+          <div class="flex items-center gap-2">
+
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+
+            <span class="font-mono text-[11px] font-bold text-white">
+              BTCUSDT
+            </span>
+
+            <span class="font-mono text-[11px] text-slate-400">
+              ${btc == null ? "—" : num(btc, 2)}
+            </span>
+
+          </div>
+
+
+          <div class="flex items-center gap-2">
+
+            <span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span>
+
+            <span class="font-mono text-[11px] font-bold text-white">
+              ETHUSDT
+            </span>
+
+            <span class="font-mono text-[11px] text-slate-400">
+              ${eth == null ? "—" : num(eth, 2)}
+            </span>
+
+          </div>
+
+
+          <div class="ml-auto flex items-center gap-2">
+
+            <span class="font-mono text-[10px] text-slate-600">
+              ${esc(CUR_SYM)}
+            </span>
+
+            <span class="font-mono text-[12px] font-bold text-cyan-200">
+              ${active == null ? "—" : num(active, 2)}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =========================================================
+     DATA LAYER
+     ========================================================= */
+
+  function renderDataLayer() {
+
+    $("dataLayer").textContent =
+      [
+        `GitHub Heart: ${STATE ? "READY" : "WAIT"}`,
+        `state.json: ${STATE ? "READY" : "WAIT"}`,
+        `perf.json: ${PERF ? "READY" : "WAIT"}`,
+        `engine.js: ${ENGINE ? "READY" : "WAIT"}`,
+        `candles: ${CURRENT_CANDLES.length}`,
+        `L2: ${CURRENT_DEPTH ? "READY" : "WAIT"}`,
+        `symbol: ${CUR_SYM}`,
+        `timeframe: ${CUR_TF}`,
+        `poll: ${LIVE.pollMs}ms`
+      ].join("\n");
+
+  }
+
+
+  /* =========================================================
+     LIVE AGE
+     ========================================================= */
+
+  function updateAgeDisplay() {
+
+    const latest =
+      Math.max(
+        LIVE.lastFetch || 0,
+        LIVE.lastMarket || 0
       );
 
+
+    const elapsed =
+      latest
+        ? Date.now() - latest
+        : Infinity;
+
+
+    setText(
+      "ageVal",
+      ageText(elapsed)
+    );
+
+
+    const status =
+      $("sysStatus");
+
+
+    if (status) {
 
       if (
         elapsed <
         LIVE.staleMs
       ) {
 
-        $("sysStatus").className =
+        status.className =
           "pulse-dot h-2 w-2 rounded-full bg-emerald-300";
 
       } else if (
@@ -5501,33 +6680,39 @@
         LIVE.deadMs
       ) {
 
-        $("sysStatus").className =
+        status.className =
           "pulse-dot h-2 w-2 rounded-full bg-amber-300";
 
       } else {
 
-        $("sysStatus").className =
+        status.className =
           "pulse-dot h-2 w-2 rounded-full bg-rose-300";
 
       }
 
-
-      const live =
-        elapsed <
-        LIVE.deadMs;
+    }
 
 
-      setText(
-        "mktLive",
-        live
+    const marketOnline =
+      elapsed <
+      LIVE.deadMs;
+
+
+    const mkt =
+      $("mktLive");
+
+
+    if (mkt) {
+
+      mkt.textContent =
+        marketOnline
           ? "ONLINE"
-          : "STALE"
-      );
+          : "STALE";
 
 
-      $("mktLive").className =
+      mkt.className =
         `mt-1 text-xs font-bold ${
-          live
+          marketOnline
             ? "text-emerald-300"
             : "text-rose-300"
         }`;
@@ -5535,518 +6720,525 @@
     }
 
 
-    function pulse(
-      message,
-      type = "pa"
-    ) {
+    setText(
+      "failCount",
+      LIVE.failures
+    );
 
-      setText(
-        "pulseBox",
-        message
+  }
+
+
+  /* =========================================================
+     HEARTBEAT
+     ========================================================= */
+
+  function startHeartbeat() {
+
+    if (LIVE.timer) {
+
+      clearInterval(
+        LIVE.timer
       );
-
-
-      if (type === "ok") {
-
-        $("pulseBox").className =
-          "rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-emerald-300";
-
-      } else if (type === "bad") {
-
-        $("pulseBox").className =
-          "rounded-full border border-rose-400/15 bg-rose-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-rose-300";
-
-      } else {
-
-        $("pulseBox").className =
-          "rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-1.5 text-[10px] font-bold text-cyan-200";
-
-      }
 
     }
 
 
-    /* =========================================================
-       CHART
-       ========================================================= */
+    if (LIVE.rtTimer) {
 
-    function drawChart() {
-
-      const canvas =
-        $("cvGrid");
-
-
-      if (!canvas) return;
-
-
-      const rect =
-        canvas.getBoundingClientRect();
-
-
-      if (
-        rect.width <= 0
-      ) {
-        return;
-      }
-
-
-      const dpr =
-        window.devicePixelRatio ||
-        1;
-
-
-      canvas.width =
-        Math.floor(
-          rect.width * dpr
-        );
-
-      canvas.height =
-        Math.floor(
-          430 * dpr
-        );
-
-
-      const ctx =
-        canvas.getContext(
-          "2d"
-        );
-
-
-      ctx.scale(
-        dpr,
-        dpr
+      clearInterval(
+        LIVE.rtTimer
       );
 
+    }
 
-      const W =
-        rect.width;
 
-      const H =
-        430;
+    /*
+     * HEART / GitHub polling
+     */
 
-
-      ctx.clearRect(
-        0,
-        0,
-        W,
-        H
-      );
-
-
-      /* Background */
-      ctx.fillStyle =
-        "#040912";
-
-      ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-      );
-
-
-      /* Grid */
-      ctx.strokeStyle =
-        "rgba(255,255,255,.035)";
-
-      ctx.lineWidth =
-        1;
-
-
-      for (
-        let x = 0;
-        x < W;
-        x += 60
-      ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-          x,
-          0
-        );
-
-        ctx.lineTo(
-          x,
-          H
-        );
-
-        ctx.stroke();
-
-      }
-
-
-      for (
-        let y = 0;
-        y < H;
-        y += 50
-      ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-          0,
-          y
-        );
-
-        ctx.lineTo(
-          W,
-          y
-        );
-
-        ctx.stroke();
-
-      }
-
-
-      const candles =
-        CURRENT_CANDLES.slice(
-          -90
-        );
-
-
-      if (
-        candles.length < 3
-      ) {
-
-        ctx.fillStyle =
-          "#64748b";
-
-        ctx.font =
-          "12px JetBrains Mono";
-
-        ctx.fillText(
-          "Waiting for market candles…",
-          24,
-          54
-        );
-
-        return;
-
-      }
-
-
-      const rawHigh =
-        Math.max(
-          ...candles.map(
-            c => Number(c.h)
-          )
-        );
-
-
-      const rawLow =
-        Math.min(
-          ...candles.map(
-            c => Number(c.l)
-          )
-        );
-
-
-      const grid =
-        CURRENT_SIGNAL?.grid;
-
-
-      const levelValues = [
-
-        grid?.bands?.l0,
-
-        grid?.bands?.l33,
-
-        grid?.bands?.l66,
-
-        grid?.bands?.l100,
-
-        grid?.expected?.high,
-
-        grid?.expected?.low
-
-      ]
-        .map(Number)
-        .filter(Number.isFinite);
-
-
-      let hi =
-        Math.max(
-          rawHigh,
-          ...levelValues
-        );
-
-
-      let lo =
-        Math.min(
-          rawLow,
-          ...levelValues
-        );
-
-
-      const pad =
-        (hi - lo) *
-        0.08;
-
-
-      hi += pad;
-
-      lo -= pad;
-
-
-      const left =
-        54;
-
-      const right =
-        18;
-
-      const top =
-        28;
-
-      const bottom =
-        34;
-
-
-      const chartW =
-        W -
-        left -
-        right;
-
-      const chartH =
-        H -
-        top -
-        bottom;
-
-
-      const xFor =
-        index =>
-          left +
-          (
-            index /
-            Math.max(
-              candles.length - 1,
-              1
-            )
-          ) *
-          chartW;
-
-
-      const yFor =
-        price =>
-          top +
-          (
-            hi - price
-          ) /
-          (
-            hi - lo
-          ) *
-          chartH;
-
-
-      /* Grid levels */
-      if (grid) {
-
-        const levels = [
-
-          ["0%", grid.bands?.l0],
-          ["33%", grid.bands?.l33],
-          ["66%", grid.bands?.l66],
-          ["100%", grid.bands?.l100],
-          ["Expected H", grid.expected?.high],
-          ["Expected L", grid.expected?.low]
-
-        ];
-
-
-        for (
-          const [name, value]
-          of levels
-        ) {
-
-          const p =
-            Number(value);
+    LIVE.timer =
+      setInterval(
+        async () => {
 
           if (
-            !Number.isFinite(p)
+            !LIVE.active ||
+            LIVE.busy
           ) {
-            continue;
+
+            return;
+
           }
 
 
-          const y =
-            yFor(p);
+          LIVE.busy =
+            true;
 
 
-          ctx.strokeStyle =
-            name === "Expected H" ||
-            name === "Expected L"
-              ? "rgba(167,139,250,.35)"
-              : "rgba(34,211,238,.16)";
+          try {
+
+            LIVE.heartbeat++;
 
 
-          ctx.lineWidth =
-            name === "33%" ||
-            name === "66%"
-              ? 1.4
-              : 1;
-
-
-          ctx.setLineDash(
-            name === "Expected H" ||
-            name === "Expected L"
-              ? [5, 5]
-              : []
-          );
-
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            left,
-            y
-          );
-
-          ctx.lineTo(
-            W - right,
-            y
-          );
-
-          ctx.stroke();
-
-
-          ctx.setLineDash([]);
-
-
-          ctx.fillStyle =
-            "rgba(148,163,184,.55)";
-
-          ctx.font =
-            "9px JetBrains Mono";
-
-
-          ctx.fillText(
-            `${name} ${num(p, 2)}`,
-            6,
-            y - 4
-          );
-
-        }
-
-      }
-
-
-      /* Candles */
-      const slot =
-        chartW /
-        candles.length;
-
-      const bodyW =
-        Math.max(
-          2,
-          Math.min(
-            9,
-            slot * 0.62
-          )
-        );
-
-
-      candles.forEach(
-        (candle, i) => {
-
-          const x =
-            xFor(i);
-
-
-          const o =
-            yFor(Number(candle.o));
-
-          const h =
-            yFor(Number(candle.h));
-
-          const l =
-            yFor(Number(candle.l));
-
-          const c =
-            yFor(Number(candle.c));
-
-
-          const bullish =
-            Number(candle.c) >=
-            Number(candle.o);
-
-
-          ctx.strokeStyle =
-            bullish
-              ? "rgba(52,211,153,.72)"
-              : "rgba(251,113,133,.72)";
-
-          ctx.lineWidth =
-            1;
-
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            x,
-            h
-          );
-
-          ctx.lineTo(
-            x,
-            l
-          );
-
-          ctx.stroke();
-
-
-          const topBody =
-            Math.min(
-              o,
-              c
-            );
-
-          const bodyH =
-            Math.max(
-              1,
-              Math.abs(
-                c - o
-              )
+            setText(
+              "hbCount",
+              LIVE.heartbeat
             );
 
 
-          ctx.fillStyle =
-            bullish
-              ? "rgba(52,211,153,.65)"
-              : "rgba(251,113,133,.65)";
+            await loadHeartState();
 
 
-          ctx.fillRect(
-            x - bodyW / 2,
-            topBody,
-            bodyW,
-            bodyH
-          );
+            /*
+             * Perf is refreshed every 5 cycles
+             * to reduce unnecessary GitHub calls.
+             */
 
-        }
+            if (
+              LIVE.heartbeat % 5 ===
+              0
+            ) {
+
+              await loadPerformance();
+
+            }
+
+
+            updateAccount();
+
+            renderAll();
+
+          } catch (error) {
+
+            LIVE.failures++;
+
+
+            console.warn(
+              "Heart heartbeat",
+              error
+            );
+
+          } finally {
+
+            LIVE.busy =
+              false;
+
+          }
+
+        },
+        LIVE.pollMs
       );
 
 
-      /* Current price */
-      const last =
-        Number(
-          candles[candles.length - 1].c
-        );
+    /*
+     * MARKET polling
+     */
+
+    LIVE.rtTimer =
+      setInterval(
+        () => {
+
+          if (
+            !LIVE.active
+          ) {
+
+            return;
+
+          }
 
 
-      if (
-        Number.isFinite(last)
+          refreshMarket();
+
+          updateAgeDisplay();
+
+        },
+        LIVE.pollMs
+      );
+
+  }
+
+
+  /* =========================================================
+     CHART
+     ========================================================= */
+
+  function drawChart() {
+
+    const canvas =
+      $("cvGrid");
+
+
+    if (!canvas) {
+      return;
+    }
+
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+
+    if (
+      rect.width <= 0
+    ) {
+
+      return;
+
+    }
+
+
+    const dpr =
+      window.devicePixelRatio ||
+      1;
+
+
+    canvas.width =
+      Math.floor(
+        rect.width * dpr
+      );
+
+
+    canvas.height =
+      Math.floor(
+        430 * dpr
+      );
+
+
+    const ctx =
+      canvas.getContext(
+        "2d"
+      );
+
+
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      0,
+      0
+    );
+
+
+    const W =
+      rect.width;
+
+    const H =
+      430;
+
+
+    ctx.clearRect(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+    /*
+     * Background
+     */
+
+    ctx.fillStyle =
+      "#040912";
+
+    ctx.fillRect(
+      0,
+      0,
+      W,
+      H
+    );
+
+
+    /*
+     * Background grid
+     */
+
+    ctx.strokeStyle =
+      "rgba(255,255,255,.035)";
+
+    ctx.lineWidth =
+      1;
+
+
+    for (
+      let x = 0;
+      x < W;
+      x += 60
+    ) {
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        x,
+        0
+      );
+
+      ctx.lineTo(
+        x,
+        H
+      );
+
+      ctx.stroke();
+
+    }
+
+
+    for (
+      let y = 0;
+      y < H;
+      y += 50
+    ) {
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        0,
+        y
+      );
+
+      ctx.lineTo(
+        W,
+        y
+      );
+
+      ctx.stroke();
+
+    }
+
+
+    const candles =
+      CURRENT_CANDLES.slice(
+        -90
+      );
+
+
+    if (
+      candles.length < 3
+    ) {
+
+      ctx.fillStyle =
+        "#64748b";
+
+      ctx.font =
+        "12px JetBrains Mono";
+
+      ctx.fillText(
+        "Waiting for market candles…",
+        24,
+        54
+      );
+
+      return;
+
+    }
+
+
+    const rawHigh =
+      Math.max(
+        ...candles.map(
+          candle =>
+            Number(candle.h)
+        )
+      );
+
+
+    const rawLow =
+      Math.min(
+        ...candles.map(
+          candle =>
+            Number(candle.l)
+        )
+      );
+
+
+    const grid =
+      CURRENT_SIGNAL?.grid ||
+      null;
+
+
+    const levelValues = [
+
+      grid?.bands?.l0,
+      grid?.bands?.l33,
+      grid?.bands?.l66,
+      grid?.bands?.l100,
+      grid?.expected?.high,
+      grid?.expected?.low
+
+    ]
+      .map(Number)
+      .filter(Number.isFinite);
+
+
+    let hi =
+      Math.max(
+        rawHigh,
+        ...levelValues
+      );
+
+
+    let lo =
+      Math.min(
+        rawLow,
+        ...levelValues
+      );
+
+
+    const range =
+      Math.max(
+        hi - lo,
+        1
+      );
+
+
+    const padding =
+      range * 0.08;
+
+
+    hi += padding;
+
+    lo -= padding;
+
+
+    const left =
+      54;
+
+    const right =
+      18;
+
+    const top =
+      28;
+
+    const bottom =
+      34;
+
+
+    const chartW =
+      W -
+      left -
+      right;
+
+
+    const chartH =
+      H -
+      top -
+      bottom;
+
+
+    const xFor =
+      index =>
+        left +
+        (
+          index /
+          Math.max(
+            candles.length - 1,
+            1
+          )
+        ) *
+        chartW;
+
+
+    const yFor =
+      price =>
+        top +
+        (
+          hi -
+          Number(price)
+        ) /
+        (
+          hi -
+          lo
+        ) *
+        chartH;
+
+
+    /*
+     * Grid lines
+     */
+
+    if (grid) {
+
+      const levels = [
+
+        [
+          "0%",
+          grid.bands?.l0
+        ],
+
+        [
+          "33%",
+          grid.bands?.l33
+        ],
+
+        [
+          "66%",
+          grid.bands?.l66
+        ],
+
+        [
+          "100%",
+          grid.bands?.l100
+        ],
+
+        [
+          "Expected H",
+          grid.expected?.high
+        ],
+
+        [
+          "Expected L",
+          grid.expected?.low
+        ]
+
+      ];
+
+
+      for (
+        const [
+          name,
+          value
+        ]
+        of levels
       ) {
 
+        const price =
+          Number(value);
+
+
+        if (
+          !Number.isFinite(price)
+        ) {
+
+          continue;
+
+        }
+
+
         const y =
-          yFor(last);
+          yFor(price);
+
+
+        const expected =
+          name === "Expected H" ||
+          name === "Expected L";
 
 
         ctx.strokeStyle =
-          "rgba(255,255,255,.32)";
+          expected
+            ? "rgba(167,139,250,.35)"
+            : "rgba(34,211,238,.16)";
+
+
+        ctx.lineWidth =
+          name === "33%" ||
+          name === "66%"
+            ? 1.4
+            : 1;
 
 
         ctx.setLineDash(
-          [4, 4]
+          expected
+            ? [5, 5]
+            : []
         );
 
 
@@ -6069,16 +7261,17 @@
 
 
         ctx.fillStyle =
-          "#ffffff";
+          "rgba(148,163,184,.55)";
+
 
         ctx.font =
-          "bold 10px JetBrains Mono";
+          "9px JetBrains Mono";
 
 
         ctx.fillText(
-          num(last, 2),
-          W - 92,
-          y - 5
+          `${name} ${num(price, 2)}`,
+          6,
+          y - 4
         );
 
       }
@@ -6086,109 +7279,193 @@
     }
 
 
-    /* =========================================================
-       GENERIC ROWS
-       ========================================================= */
+    /*
+     * Candles
+     */
 
-    function miniRow(
-      label,
-      value
+    const slot =
+      chartW /
+      candles.length;
+
+
+    const bodyW =
+      Math.max(
+        2,
+        Math.min(
+          9,
+          slot * 0.62
+        )
+      );
+
+
+    candles.forEach(
+      (candle, i) => {
+
+        const x =
+          xFor(i);
+
+
+        const o =
+          yFor(
+            Number(candle.o)
+          );
+
+        const h =
+          yFor(
+            Number(candle.h)
+          );
+
+        const l =
+          yFor(
+            Number(candle.l)
+          );
+
+        const c =
+          yFor(
+            Number(candle.c)
+          );
+
+
+        const bullish =
+          Number(candle.c) >=
+          Number(candle.o);
+
+
+        ctx.strokeStyle =
+          bullish
+            ? "rgba(52,211,153,.72)"
+            : "rgba(251,113,133,.72)";
+
+
+        ctx.lineWidth =
+          1;
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          x,
+          h
+        );
+
+        ctx.lineTo(
+          x,
+          l
+        );
+
+        ctx.stroke();
+
+
+        const topBody =
+          Math.min(
+            o,
+            c
+          );
+
+
+        const bodyHeight =
+          Math.max(
+            1,
+            Math.abs(
+              c - o
+            )
+          );
+
+
+        ctx.fillStyle =
+          bullish
+            ? "rgba(52,211,153,.65)"
+            : "rgba(251,113,133,.65)";
+
+
+        ctx.fillRect(
+          x -
+          bodyW / 2,
+          topBody,
+          bodyW,
+          bodyHeight
+        );
+
+      }
+    );
+
+
+    /*
+     * Current price
+     */
+
+    const last =
+      Number(
+        candles[
+          candles.length - 1
+        ].c
+      );
+
+
+    if (
+      Number.isFinite(last)
     ) {
 
-      return `
+      const y =
+        yFor(last);
 
-        <div class="flex items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-black/20 px-3 py-2.5">
 
-          <span class="text-[9px] uppercase tracking-[0.12em] text-slate-600">
-            ${esc(label)}
-          </span>
+      ctx.strokeStyle =
+        "rgba(255,255,255,.30)";
 
-          <span class="truncate font-mono text-[10px] font-bold text-slate-300">
-            ${esc(value)}
-          </span>
 
-        </div>
+      ctx.setLineDash(
+        [4, 4]
+      );
 
-      `;
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        left,
+        y
+      );
+
+      ctx.lineTo(
+        W - right,
+        y
+      );
+
+      ctx.stroke();
+
+
+      ctx.setLineDash([]);
+
+
+      ctx.fillStyle =
+        "#ffffff";
+
+
+      ctx.font =
+        "bold 10px JetBrains Mono";
+
+
+      ctx.fillText(
+        num(last, 2),
+        W - 92,
+        y - 5
+      );
 
     }
 
-
-    function modelRow(
-      name,
-      bias,
-      confidence,
-      reasoning
-    ) {
-
-      const signal =
-        bias ||
-        "HOLD";
+  }
 
 
-      return `
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
 
-        <button
-          type="button"
-          data-model="${esc(name)}"
-          class="w-full rounded-xl border border-white/[0.05] bg-black/20 p-3 text-left transition hover:border-cyan-400/10 hover:bg-white/[0.02]"
-        >
+  function showSection(
+    id
+  ) {
 
-          <div class="flex items-center justify-between gap-3">
-
-            <div class="font-display text-[10px] font-bold tracking-wider text-white">
-              ${esc(name)}
-            </div>
-
-            <div class="font-mono text-[10px] font-bold ${toneForSignal(signal)}">
-              ${esc(signal)}
-            </div>
-
-          </div>
-
-          <div class="mt-2 flex items-center justify-between gap-3">
-
-            <div class="truncate text-[9px] text-slate-600">
-              ${esc(reasoning || "No reasoning")}
-            </div>
-
-            <div class="shrink-0 font-mono text-[9px] text-slate-500">
-              ${confidence == null ? "—" : `${confidence}%`}
-            </div>
-
-          </div>
-
-        </button>
-
-      `;
-
-    }
-
-
-    function emptyRow(
-      message
-    ) {
-
-      return `
-
-        <div class="rounded-xl border border-dashed border-white/[0.06] bg-black/10 px-4 py-5 text-center text-[10px] text-slate-600">
-          ${esc(message)}
-        </div>
-
-      `;
-
-    }
-
-
-    /* =========================================================
-       NAVIGATION
-       ========================================================= */
-
-    function showSection(
-      id
-    ) {
-
-      $$(".section").forEach(
+    $$(".section")
+      .forEach(
         section => {
 
           section.classList.toggle(
@@ -6200,17 +7477,20 @@
       );
 
 
-      $$(".navBtn").forEach(
+    $$(".navBtn")
+      .forEach(
         button => {
 
           const active =
-            button.dataset.s === id;
+            button.dataset.s ===
+            id;
 
 
           button.classList.toggle(
             "text-cyan-200",
             active
           );
+
 
           button.classList.toggle(
             "bg-cyan-400/[0.06]",
@@ -6220,17 +7500,23 @@
         }
       );
 
-      if (id === "dash") {
-        setTimeout(
-          drawChart,
-          30
-        );
-      }
+
+    if (
+      id === "dash"
+    ) {
+
+      setTimeout(
+        drawChart,
+        30
+      );
 
     }
 
+  }
 
-    $$(".navBtn").forEach(
+
+  $$(".navBtn")
+    .forEach(
       button => {
 
         button.addEventListener(
@@ -6248,49 +7534,56 @@
     );
 
 
-    /* =========================================================
-       SYMBOL / TF
-       ========================================================= */
+  /* =========================================================
+     SYMBOL / TF CONTROLS
+     ========================================================= */
 
-    function refreshControlState() {
+  function refreshControlState() {
 
-      $$(".symbolBtn").forEach(
-        btn => {
+    $$(".symbolBtn")
+      .forEach(
+        button => {
 
           const active =
-            btn.dataset.symbol ===
+            button.dataset.symbol ===
             CUR_SYM;
 
 
-          btn.className =
+          button.className =
             active
+
               ? "symbolBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200"
+
               : "symbolBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400";
 
         }
       );
 
 
-      $$(".tfBtn").forEach(
-        btn => {
+    $$(".tfBtn")
+      .forEach(
+        button => {
 
           const active =
-            btn.dataset.tf ===
+            button.dataset.tf ===
             CUR_TF;
 
 
-          btn.className =
+          button.className =
             active
+
               ? "tfBtn rounded-lg border border-cyan-400/20 bg-cyan-400/[0.08] px-3 py-2 font-mono text-[11px] font-bold text-cyan-200"
+
               : "tfBtn rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 font-mono text-[11px] font-bold text-slate-400";
 
         }
       );
 
-    }
+  }
 
 
-    $$(".symbolBtn").forEach(
+  $$(".symbolBtn")
+    .forEach(
       button => {
 
         button.addEventListener(
@@ -6301,14 +7594,19 @@
               button.dataset.symbol ||
               CUR_SYM;
 
+
             refreshControlState();
+
 
             pulse(
               `${CUR_SYM} selected`,
               "pa"
             );
 
-            await refreshMarket(true);
+
+            await refreshMarket(
+              true
+            );
 
           }
         );
@@ -6317,7 +7615,8 @@
     );
 
 
-    $$(".tfBtn").forEach(
+  $$(".tfBtn")
+    .forEach(
       button => {
 
         button.addEventListener(
@@ -6328,14 +7627,19 @@
               button.dataset.tf ||
               CUR_TF;
 
+
             refreshControlState();
+
 
             pulse(
               `${CUR_TF} selected`,
               "pa"
             );
 
-            await refreshMarket(true);
+
+            await refreshMarket(
+              true
+            );
 
           }
         );
@@ -6344,7 +7648,13 @@
     );
 
 
-    $("btnSync").addEventListener(
+  const syncButton =
+    $("btnSync");
+
+
+  if (syncButton) {
+
+    syncButton.addEventListener(
       "click",
       async () => {
 
@@ -6355,14 +7665,24 @@
 
 
         await Promise.allSettled([
+
           loadHeartState(),
+
           loadPerformance(),
+
           loadLedger(),
-          refreshMarket(true)
+
+          loadStrategy(),
+
+          refreshMarket(
+            true
+          )
+
         ]);
 
 
         renderAll();
+
 
         pulse(
           "Manual sync complete",
@@ -6372,54 +7692,111 @@
       }
     );
 
+  }
 
-    /* =========================================================
-       LOCK / WIPE
-       ========================================================= */
 
-    function lockAndWipe() {
+  /* =========================================================
+     LOGOUT
+     ========================================================= */
 
-      wipeSession();
+  function lockAndWipe() {
 
-      $("appShell").style.display =
+    wipeSession();
+
+
+    const shell =
+      $("appShell");
+
+
+    if (shell) {
+
+      shell.style.display =
         "none";
 
-      $("appShell").setAttribute(
+      shell.setAttribute(
         "aria-hidden",
         "true"
       );
 
+    }
 
-      $("lock").style.display =
+
+    const lock =
+      $("lock");
+
+
+    if (lock) {
+
+      lock.style.display =
         "flex";
-
-
-      $("ltok").value =
-        "";
-
-
-      $("lockErr").textContent =
-        "";
-
-
-      $("ltok").focus();
 
     }
 
 
-    $("btnLogout").addEventListener(
+    const input =
+      $("ltok");
+
+
+    if (input) {
+
+      input.value =
+        "";
+
+      input.focus();
+
+    }
+
+
+    setText(
+      "lockErr",
+      ""
+    );
+
+  }
+
+
+  const logout =
+    $("btnLogout");
+
+
+  if (logout) {
+
+    logout.addEventListener(
       "click",
       lockAndWipe
     );
 
+  }
 
-    $("btnLogout2").addEventListener(
+
+  const logout2 =
+    $("btnLogout2");
+
+
+  if (logout2) {
+
+    logout2.addEventListener(
       "click",
       lockAndWipe
     );
 
+  }
 
-    $("btnClearHist").addEventListener(
+
+  /* =========================================================
+     CLEAR HISTORY VIEW
+     ---------------------------------------------------------
+     This only clears the local UI view.
+     It DOES NOT write to ledger.jsonl.
+     ========================================================= */
+
+  const clearHistory =
+    $("btnClearHist");
+
+
+  if (clearHistory) {
+
+    clearHistory.addEventListener(
       "click",
       () => {
 
@@ -6437,187 +7814,229 @@
       }
     );
 
-
-    /* =========================================================
-       MAIN RENDER
-       ========================================================= */
-
-    function renderDataLayer() {
-
-      const candles =
-        CURRENT_CANDLES?.length ||
-        0;
+  }
 
 
-      const hasDepth =
-        !!CURRENT_DEPTH;
+  /* =========================================================
+     COMPLETE RENDER
+     ========================================================= */
+
+  function renderAll() {
+
+    refreshControlState();
+
+    renderDecision();
+
+    renderActivePlan();
+
+    renderGridData();
+
+    renderL2();
+
+    renderContext();
+
+    renderFinal();
+
+    renderIndicators();
+
+    renderPillars();
+
+    renderTicker();
+
+    renderLedger();
+
+    renderScoreboard();
+
+    renderDataLayer();
+
+    updateAccount();
+
+    updateAgeDisplay();
+
+    drawChart();
+
+  }
 
 
-      const engine =
-        !!ENGINE;
+  /* =========================================================
+     WINDOW RESIZE
+     ========================================================= */
 
-
-      setText(
-        "dataLayer",
-        [
-          `GitHub Heart: ${STATE ? "READY" : "WAIT"}`,
-          `perf.json: ${PERF ? "READY" : "WAIT"}`,
-          `engine.js: ${engine ? "READY" : "WAIT"}`,
-          `candles: ${candles}`,
-          `L2: ${hasDepth ? "READY" : "WAIT"}`,
-          `poll: ${C.pollMs || 4000}ms`
-        ].join("\n")
-      );
-
-    }
-
-
-    function renderAll() {
-
-      refreshControlState();
-
-      renderDecision();
-
-      renderActivePlan();
-
-      renderGridData();
-
-      renderL2();
-
-      renderContext();
-
-      renderFinal();
-
-      renderIndicators();
-
-      renderPillars();
-
-      renderTicker();
-
-      renderLedger();
-
-      renderScoreboard();
-
-      renderDataLayer();
-
-      updateAccount();
-
-      updateAgeDisplay();
+  window.addEventListener(
+    "resize",
+    () => {
 
       drawChart();
 
     }
+  );
 
 
-    /* =========================================================
-       RESIZE
-       ========================================================= */
+  /* =========================================================
+     INITIAL LOCK STATE
+     ========================================================= */
 
-    window.addEventListener(
-      "resize",
-      () => {
+  function initializeLockedState() {
 
-        drawChart();
-
-      }
+    document.body.classList.add(
+      "locked"
     );
 
 
-    /* =========================================================
-       INITIALIZATION
-       ========================================================= */
+    TOKEN = "";
 
-    (async function init() {
+    LIVE.active =
+      false;
 
-      showSection(
-        "dash"
+
+    const shell =
+      $("appShell");
+
+
+    if (shell) {
+
+      shell.style.display =
+        "none";
+
+      shell.setAttribute(
+        "aria-hidden",
+        "true"
       );
 
+    }
+
+
+    const lock =
+      $("lock");
+
+
+    if (lock) {
+
+      lock.style.display =
+        "flex";
+
+    }
+
+  }
+
+
+  /* =========================================================
+     BOOT
+     ========================================================= */
+
+  async function init() {
+
+    initializeLockedState();
+
+
+    showSection(
+      "dash"
+    );
+
+
+    setText(
+      "recSym",
+      CUR_SYM
+    );
+
+    setText(
+      "recSym2",
+      CUR_SYM
+    );
+
+    setText(
+      "recTF",
+      CUR_TF
+    );
+
+    setText(
+      "recTF2",
+      CUR_TF
+    );
+
+
+    setText(
+      "gridMeta",
+      "Waiting…"
+    );
+
+
+    if (
+      !C ||
+      !C.heartRepo
+    ) {
 
       setText(
-        "recSym",
-        CUR_SYM
+        "lockErr",
+        "config.js missing or invalid."
       );
 
-      setText(
-        "recSym2",
-        CUR_SYM
-      );
+      return;
 
-      setText(
-        "recTF",
-        CUR_TF
-      );
-
-      setText(
-        "recTF2",
-        CUR_TF
-      );
+    }
 
 
-      setText(
-        "gridMeta",
-        "Waiting…"
-      );
+    /*
+     * Session-only token restoration.
+     *
+     * We NEVER read from localStorage.
+     */
+
+    const existing =
+      getSessionToken();
 
 
-      if (!C || !C.heartRepo) {
+    if (existing) {
 
-        $("lockErr").textContent =
-          "config.js missing or invalid.";
+      try {
+
+        await validateToken(
+          existing
+        );
+
+
+        setSessionToken(
+          existing
+        );
+
+
+        unlockUI();
+
 
         return;
 
-      }
+      } catch (error) {
+
+        console.warn(
+          "Existing session invalid:",
+          error
+        );
 
 
-      const existing =
-        getSessionToken();
-
-
-      /*
-       * Existing session is allowed only after
-       * checking that the token still has access.
-       */
-      if (existing) {
-
-        try {
-
-          await validateToken(
-            existing
-          );
-
-          setSessionToken(
-            existing
-          );
-
-          unlockUI();
-
-          return;
-
-        } catch {
-
-          wipeSession();
-
-        }
+        wipeSession();
 
       }
 
-
-      $("lock").style.display =
-        "flex";
+    }
 
 
-      $("appShell").style.display =
-        "none";
+    const input =
+      $("ltok");
 
 
-      $("ltok").focus();
+    if (input) {
 
-    })();
+      input.focus();
 
-  })();
-  </script>
+    }
+
+  }
+
+
+  init();
+
+})();
+</script>
 
 </body>
 </html>

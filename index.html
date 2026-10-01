@@ -192,14 +192,15 @@
           <div class="hidden text-right sm:block"><div class="text-[8px] uppercase tracking-wider text-slate-700">ACTIVE MARKET</div><div id="livePrice" class="mt-1 font-mono text-sm font-bold text-white">—</div></div>
         </div>
 
+        <!-- MAIN ROW: CANDLES (left) + SIDE PANEL (right) -->
         <div class="grid min-w-0 items-start gap-4 xl:grid-cols-[3fr_2fr]">
 
-          <!-- CANDLE MATRIX 60% -->
+          <!-- MAIN CANDLE BOX -->
           <div class="min-w-0">
             <div class="mb-3 flex items-center justify-between gap-3">
               <div>
-                <div class="flex items-center gap-2"><span id="recSym" class="font-display text-sm font-bold tracking-wider text-white">BTCUSDT</span><span class="rounded-md border border-cyan-400/10 bg-cyan-400/[0.04] px-2 py-1 font-mono text-[7px] text-cyan-300/70">5 TF</span></div>
-                <div class="mt-1 text-[8px] uppercase tracking-[0.16em] text-slate-700">CANDLE[1] CLOSED ANCHOR · CANDLE[0] CURRENT</div>
+                <div class="flex items-center gap-2"><span id="recSym" class="font-display text-sm font-bold tracking-wider text-white">BTCUSDT</span><span class="rounded-md border border-cyan-400/10 bg-cyan-400/[0.04] px-2 py-1 font-mono text-[7px] text-cyan-300/70">5 TF · W1 H4 D1 M30 + ACTIVE</span></div>
+                <div class="mt-1 text-[8px] uppercase tracking-[0.16em] text-slate-700">CANDLE[1] CLOSED ANCHOR · CANDLE[0] CURRENT · SELECTED TF ENLARGED</div>
               </div>
               <div class="flex items-center gap-1.5"><div id="gridStatus" class="rounded-md border border-white/[0.06] bg-white/[0.025] px-2 py-1.5 text-[8px] font-bold text-slate-500">GRID WAIT</div><div id="gridSrc" class="rounded-md border border-white/[0.06] bg-white/[0.025] px-2 py-1.5 font-mono text-[8px] text-slate-600">—</div></div>
             </div>
@@ -212,29 +213,137 @@
             </div>
           </div>
 
-          <!-- DECISION 40% -->
+          <!-- SIDE MAIN BOX -->
           <div class="min-w-0 space-y-4">
+
+            <!-- SYSTEM ACCURACY -->
+            <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">SYSTEM ACCURACY</div>
+                  <div class="mt-1 text-sm font-semibold text-white">Performance Snapshot</div>
+                </div>
+                <div id="sideSysAcc" class="font-mono text-xl font-bold text-cyan-200">—</div>
+              </div>
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">WIN RATE</div>
+                  <div id="sideWR" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">TRADES</div>
+                  <div id="sideTrades" class="mt-1 font-mono text-sm font-bold text-white">—</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">WINS</div>
+                  <div id="sideWins" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">LOSSES</div>
+                  <div id="sideLosses" class="mt-1 font-mono text-sm font-bold text-rose-300">—</div>
+                </div>
+              </div>
+              <div class="mt-3 h-1.5 rounded-full bg-white/[0.04]"><div id="sideWrFill" class="h-full rounded-full bg-cyan-300/50" style="width:0%"></div></div>
+              <div id="sideAccNote" class="mt-2 text-[8px] text-slate-600">Waiting for performance data.</div>
+            </div>
+
+            <!-- FINAL SIGNAL -->
             <div class="overflow-hidden rounded-3xl border border-white/[0.07] bg-[#070c16]">
-              <div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3"><div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">HERMES DECISION</div><div class="mt-1 text-sm font-semibold text-white">Final Signal</div></div><div id="finStrip" class="rounded-full border border-white/[0.08] bg-white/[0.025] px-2.5 py-1.5 font-mono text-[8px] font-bold text-slate-400">SIGNAL ONLY</div></div>
+              <div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
+                <div>
+                  <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">HERMES DECISION</div>
+                  <div class="mt-1 text-sm font-semibold text-white">Final Signal</div>
+                </div>
+                <div id="finStrip" class="rounded-full border border-white/[0.08] bg-white/[0.025] px-2.5 py-1.5 font-mono text-[8px] font-bold text-slate-400">SIGNAL ONLY</div>
+              </div>
               <div class="p-4">
                 <div class="grid grid-cols-2 gap-2">
                   <div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] uppercase tracking-wider text-slate-600">SYMBOL</div><div id="recSym2" class="mt-1.5 font-mono text-sm font-bold text-white">BTCUSDT</div></div>
                   <div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] uppercase tracking-wider text-slate-600">ACTIVE TF</div><div id="recTF" class="mt-1.5 font-mono text-sm font-bold text-cyan-200">H1</div></div>
                 </div>
                 <div id="recNote" class="mt-3 rounded-xl border border-white/[0.05] bg-white/[0.015] p-3 text-[10px] leading-5 text-slate-400">Waiting for realtime engine evaluation…</div>
-                <div class="mt-3 grid grid-cols-2 gap-2"><div><div class="text-[7px] text-slate-600">DECISION</div><div id="recAction" class="mt-1.5 font-display text-xl font-bold text-slate-300">WAIT</div></div><div><div class="text-[7px] text-slate-600">ENTRY</div><div id="recEntry" class="mt-1.5 font-mono text-lg font-bold text-white">—</div></div></div>
-                <div class="mt-3 grid grid-cols-2 gap-2"><div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] text-slate-600">L2 IMBALANCE</div><div id="l2ImbMini" class="mt-1.5 font-mono text-sm font-bold text-cyan-200">—</div></div><div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] text-slate-600">SOURCE</div><div id="recBy" class="mt-1.5 truncate font-mono text-[8px] font-bold text-slate-300">—</div></div></div>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <div><div class="text-[7px] text-slate-600">DECISION</div><div id="recAction" class="mt-1.5 font-display text-xl font-bold text-slate-300">WAIT</div></div>
+                  <div><div class="text-[7px] text-slate-600">ENTRY</div><div id="recEntry" class="mt-1.5 font-mono text-lg font-bold text-white">—</div></div>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] text-slate-600">L2 IMBALANCE</div><div id="l2ImbMini" class="mt-1.5 font-mono text-sm font-bold text-cyan-200">—</div></div>
+                  <div class="rounded-xl border border-white/[0.05] bg-black/20 p-3"><div class="text-[7px] text-slate-600">SOURCE</div><div id="recBy" class="mt-1.5 truncate font-mono text-[8px] font-bold text-slate-300">—</div></div>
+                </div>
               </div>
             </div>
 
-            <div id="actBox" class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
-              <div class="flex items-center justify-between"><div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE PLAN</div><div class="mt-1 text-sm font-semibold text-white">Signal Planning</div></div><div id="actStat" class="rounded-full border border-white/[0.07] bg-white/[0.02] px-2.5 py-1.5 text-[8px] font-bold text-slate-500">WAIT</div></div>
-              <div class="mt-4 flex items-center justify-between"><div><div class="text-[7px] text-slate-600">SIGNAL</div><div id="actSig" class="mt-1 font-display text-base font-bold text-slate-300">WAIT</div></div><div class="text-right"><div class="text-[7px] text-slate-600">TIME</div><div id="actTime" class="mt-1 font-mono text-[8px] text-slate-500">—</div></div></div>
-              <div id="actNote" class="mt-3 text-[9px] leading-5 text-slate-500">No active setup.</div>
-              <div id="actRow" class="mt-3 grid grid-cols-3 gap-2"><div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">ENTRY</div><div id="actEntry" class="mt-1 font-mono text-[9px] font-bold text-white">—</div></div><div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">TP</div><div id="actTp" class="mt-1 font-mono text-[9px] font-bold text-emerald-300">—</div></div><div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">SL</div><div id="actSl" class="mt-1 font-mono text-[9px] font-bold text-rose-300">—</div></div></div>
+            <!-- SYSTEM ACTIVITIES -->
+            <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">SYSTEM ACTIVITIES</div>
+                  <div class="mt-1 text-sm font-semibold text-white">Heartbeat &amp; Poll</div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="sysActDot" class="pulse-dot h-2 w-2 rounded-full bg-emerald-400"></span>
+                  <span id="sysActLabel" class="font-mono text-[8px] font-bold text-emerald-300">ACTIVE</span>
+                </div>
+              </div>
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">POLL INTERVAL</div>
+                  <div id="sysPollMs" class="mt-1 font-mono text-sm font-bold text-cyan-200">4s</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">CURRENT TIME</div>
+                  <div id="sysClock" class="mt-1 font-mono text-sm font-bold text-white">—</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">DATA AGE</div>
+                  <div id="ageVal" class="mt-1 font-mono text-sm font-bold text-slate-300">—</div>
+                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
+                  <div class="text-[7px] text-slate-600">HEART POLL</div>
+                  <div id="hbCount" class="mt-1 font-mono text-sm font-bold text-slate-300">0</div>
+                </div>
+              </div>
+              <div class="mt-3 flex items-center justify-between rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">
+                <span class="text-[8px] text-slate-600">FAILURES</span>
+                <span id="failCount" class="font-mono text-[9px] font-bold text-rose-300">0</span>
+              </div>
+              <div id="pulseBox" class="mt-3 text-center text-[8px] text-slate-500">BOOT</div>
             </div>
 
-            <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE L2</div><div id="l2Row" class="mt-3 space-y-2"></div></div>
+          </div>
+        </div>
+
+        <!-- FULL WIDTH ROWS BELOW -->
+        <div class="mt-4 grid gap-4 lg:grid-cols-2">
+          <div id="actBox" class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE PLAN</div>
+                <div class="mt-1 text-sm font-semibold text-white">Signal Planning</div>
+              </div>
+              <div id="actStat" class="rounded-full border border-white/[0.07] bg-white/[0.02] px-2.5 py-1.5 text-[8px] font-bold text-slate-500">WAIT</div>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <div class="text-[7px] text-slate-600">SIGNAL</div>
+                <div id="actSig" class="mt-1 font-display text-base font-bold text-slate-300">WAIT</div>
+              </div>
+              <div class="text-right">
+                <div class="text-[7px] text-slate-600">TIME</div>
+                <div id="actTime" class="mt-1 font-mono text-[8px] text-slate-500">—</div>
+              </div>
+            </div>
+            <div id="actNote" class="mt-3 text-[9px] leading-5 text-slate-500">No active setup.</div>
+            <div id="actRow" class="mt-3 grid grid-cols-3 gap-2">
+              <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">ENTRY</div><div id="actEntry" class="mt-1 font-mono text-[9px] font-bold text-white">—</div></div>
+              <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">TP</div><div id="actTp" class="mt-1 font-mono text-[9px] font-bold text-emerald-300">—</div></div>
+              <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">SL</div><div id="actSl" class="mt-1 font-mono text-[9px] font-bold text-rose-300">—</div></div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
+            <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE L2</div>
+            <div id="l2Row" class="mt-3 space-y-2"></div>
           </div>
         </div>
 
@@ -249,10 +358,17 @@
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="flex items-center justify-between"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">PILLARS</div><div id="pillarScore" class="font-mono text-xs font-bold text-cyan-200">—</div></div><div id="pillarGrid" class="mt-3 grid grid-cols-2 gap-2"></div></div>
         </div>
 
-        <div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="flex items-center justify-between"><div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">DECISION LEDGER</div><div id="ledgerMeta" class="mt-1 text-[8px] text-slate-700">ledger.jsonl</div></div><button id="btnClearHist" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] font-bold text-slate-500 hover:text-white">REFRESH VIEW</button></div><div id="ledgerBox" class="mt-3 overflow-auto"></div></div>
+        <div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">DECISION LEDGER</div>
+              <div id="ledgerMeta" class="mt-1 text-[8px] text-slate-700">ledger.jsonl</div>
+            </div>
+            <button id="btnClearHist" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] font-bold text-slate-500 hover:text-white">REFRESH VIEW</button>
+          </div>
+          <div id="ledgerBox" class="mt-3 overflow-auto"></div>
+        </div>
 
-        <div id="pulseBox" class="mt-3 text-center text-[8px] text-slate-700">BOOT</div>
-        <div class="mt-1 text-center font-mono text-[7px] text-slate-700">DATA AGE <span id="ageVal">—</span> · HEART POLL <span id="hbCount">0</span> · FAILURES <span id="failCount">0</span></div>
       </section>
 
       <!-- SCOREBOARD -->

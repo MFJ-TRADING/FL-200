@@ -147,7 +147,7 @@
   }
 
   function card(tf, candles) {
-    var isH1 = tf === "H1";
+    var isLarge = tf === selectedTf;
     var engine = window.FL200_HEART && window.FL200_HEART.getEngine();
     var grid = engine && typeof engine.gridFromCandles === "function"
       ? engine.gridFromCandles(candles)
@@ -155,7 +155,7 @@
 
     if (!candles || candles.length < 3) {
       return `
-        <article class="${isH1 ? "md:col-span-2" : ""} overflow-hidden rounded-3xl border border-white/[0.07] bg-[#060b15]">
+        <article class="${isLarge ? "md:col-span-2" : ""} overflow-hidden rounded-3xl border border-white/[0.07] bg-[#060b15]">
           <div class="flex items-center justify-between border-b border-white/[0.05] px-4 py-3">
             <span class="font-display text-xs font-bold tracking-wider text-white">${esc(tf)}</span>
             <span class="rounded-md border border-amber-400/10 bg-amber-400/[0.03] px-2 py-1 font-mono text-[8px] text-amber-300/70">WAIT</span>
@@ -172,49 +172,49 @@
     var range = grid && grid.anchor ? grid.anchor.R : Number(c1.h) - Number(c1.l);
 
     return `
-      <article class="${isH1 ? "md:col-span-2" : ""} overflow-hidden rounded-3xl border ${isH1 ? "border-cyan-400/10" : "border-white/[0.07]"} bg-[#060b15] shadow-terminal">
+      <article class="${isLarge ? "md:col-span-2" : ""} overflow-hidden rounded-3xl border ${isLarge ? "border-cyan-400/10" : "border-white/[0.07]"} bg-[#060b15] shadow-terminal">
 
         <div class="flex items-center justify-between border-b border-white/[0.05] px-4 py-3">
           <div class="flex items-center gap-2">
-            <span class="font-display ${isH1 ? "text-sm" : "text-xs"} font-bold tracking-wider text-white">${esc(tf)}</span>
+            <span class="font-display ${isLarge ? "text-sm" : "text-xs"} font-bold tracking-wider text-white">${esc(tf)}</span>
             <span class="rounded-md border ${c1Bull ? "border-emerald-400/10 bg-emerald-400/[0.03] text-emerald-300" : "border-rose-400/10 bg-rose-400/[0.03] text-rose-300"} px-2 py-1 font-mono text-[8px] font-bold">${c1Bull ? "GREEN" : "RED"}</span>
           </div>
-          <span class="font-mono text-[8px] text-slate-600">${esc(selectedTf === tf ? "ACTIVE" : C.symbols[window.FL200_APP?.symbol]?.name || "BTCUSDT")}</span>
+          <span class="font-mono text-[8px] text-slate-600">${esc(isLarge ? "ACTIVE" : C.symbols[window.FL200_APP?.symbol]?.name || "BTCUSDT")}</span>
         </div>
 
-        <div class="${isH1 ? "grid gap-4 p-4 lg:grid-cols-[1fr_1fr_0.82fr]" : "p-3"}">
+        <div class="${isLarge ? "grid gap-4 p-4 lg:grid-cols-[1fr_1fr_0.82fr]" : "p-3"}">
 
-          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isH1 ? "p-4" : "p-3"}">
+          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isLarge ? "p-4" : "p-3"}">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[9px] font-bold text-slate-400">CANDLE [1]</span>
               <span class="font-mono text-[7px] ${c1Bull ? "text-emerald-300" : "text-rose-300"}">${c1Bull ? "CLOSED · GREEN" : "CLOSED · RED"}</span>
             </div>
-            <div class="${isH1 ? "mt-3 grid grid-cols-2 gap-2" : "mt-2 grid grid-cols-3 gap-2"}">
-              ${metric("O", num(c1.o), isH1)}
-              ${metric("H", num(c1.h), isH1)}
-              ${metric("L", num(c1.l), isH1)}
-              ${metric("C", num(c1.c), isH1)}
-              ${metric("R", num(range), isH1)}
-              ${metric("M", num(Number(c1.c) - Number(c1.o)), isH1)}
+            <div class="${isLarge ? "mt-3 grid grid-cols-2 gap-2" : "mt-2 grid grid-cols-3 gap-2"}">
+              ${metric("O", num(c1.o), isLarge)}
+              ${metric("H", num(c1.h), isLarge)}
+              ${metric("L", num(c1.l), isLarge)}
+              ${metric("C", num(c1.c), isLarge)}
+              ${metric("R", num(range), isLarge)}
+              ${metric("M", num(Number(c1.c) - Number(c1.o)), isLarge)}
             </div>
           </div>
 
-          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isH1 ? "p-4" : "p-3"}">
+          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isLarge ? "p-4" : "p-3"}">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[9px] font-bold text-slate-400">CANDLE [0]</span>
               <span class="font-mono text-[7px] ${c0Bull ? "text-emerald-300" : "text-rose-300"}">${c0Bull ? "CURRENT · GREEN" : "CURRENT · RED"}</span>
             </div>
-            <div class="${isH1 ? "mt-3 grid grid-cols-2 gap-2" : "mt-2 grid grid-cols-3 gap-2"}">
-              ${metric("O", num(c0.o), isH1)}
-              ${metric("H", num(c0.h), isH1)}
-              ${metric("L", num(c0.l), isH1)}
-              ${metric("C", num(c0.c), isH1)}
-              ${metric("R", num(Number(c0.h) - Number(c0.l)), isH1)}
-              ${metric("M", num(Number(c0.c) - Number(c0.o)), isH1)}
+            <div class="${isLarge ? "mt-3 grid grid-cols-2 gap-2" : "mt-2 grid grid-cols-3 gap-2"}">
+              ${metric("O", num(c0.o), isLarge)}
+              ${metric("H", num(c0.h), isLarge)}
+              ${metric("L", num(c0.l), isLarge)}
+              ${metric("C", num(c0.c), isLarge)}
+              ${metric("R", num(Number(c0.h) - Number(c0.l)), isLarge)}
+              ${metric("M", num(Number(c0.c) - Number(c0.o)), isLarge)}
             </div>
           </div>
 
-          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isH1 ? "p-4" : "p-3"}">
+          <div class="rounded-2xl border border-white/[0.05] bg-black/20 ${isLarge ? "p-4" : "p-3"}">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[9px] font-bold text-slate-400">GRID</span>
               <span class="font-mono text-[7px] text-violet-300/60">[1] ANCHOR</span>
@@ -222,15 +222,15 @@
             <div class="mt-2">
               ${gridRows(grid)}
             </div>
-            ${isH1 && grid ? `
+            ${isLarge && grid ? `
               <div class="mt-3 grid grid-cols-2 gap-2">
                 ${metric("Expected H", num(grid.expected && grid.expected.high), true)}
                 ${metric("Expected L", num(grid.expected && grid.expected.low), true)}
               </div>` : ""}
           </div>
 
-          <div class="${isH1 ? "lg:col-span-3" : "mt-3"} overflow-hidden rounded-2xl border border-white/[0.05] bg-black/20 p-2">
-            <canvas id="mini-${esc(tf)}" class="h-${isH1 ? "[155px]" : "[90px]"} w-full"></canvas>
+          <div class="${isLarge ? "lg:col-span-3" : "mt-3"} overflow-hidden rounded-2xl border border-white/[0.05] bg-black/20 p-2">
+            <canvas id="mini-${esc(tf)}" class="h-${isLarge ? "[155px]" : "[90px]"} w-full"></canvas>
           </div>
 
         </div>
@@ -244,7 +244,16 @@
 
     var market = window.FL200_MARKET && window.FL200_MARKET.state;
     var data = market ? market.candles : {};
-    var tfs = Array.isArray(C.tfs) ? C.tfs : ["M30", "H1", "H4", "D1", "W1"];
+    var tfs = Array.isArray(C.tfs) ? C.tfs.slice() : ["M30", "H1", "H4", "D1", "W1"];
+    // Prefer order: selected first (large), then W1, H4, D1, M30, H1 remaining
+    var preferred = ["W1", "H4", "D1", "M30", "H1"];
+    tfs.sort(function (a, b) {
+      if (a === selectedTf) return -1;
+      if (b === selectedTf) return 1;
+      var ia = preferred.indexOf(a); if (ia < 0) ia = 99;
+      var ib = preferred.indexOf(b); if (ib < 0) ib = 99;
+      return ia - ib;
+    });
 
     root.innerHTML = tfs.map(function (tf) {
       return card(tf, data[tf] || []);
@@ -256,7 +265,7 @@
       var grid = engine && candles.length >= 3 && typeof engine.gridFromCandles === "function"
         ? engine.gridFromCandles(candles)
         : null;
-      drawMiniChart(document.getElementById("mini-" + tf), candles, grid, tf === "H1");
+      drawMiniChart(document.getElementById("mini-" + tf), candles, grid, tf === selectedTf);
     });
   }
 

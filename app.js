@@ -175,6 +175,15 @@
     APP.rtTimer = setInterval(function () {
       if (window.FL200_AUTH && window.FL200_AUTH.getToken()) refreshMarket(false);
     }, C.pollMs || 4000);
+
+    APP.clockTimer = setInterval(function () {
+      if (window.FL200_UI && window.FL200_UI.renderSysActivity) {
+        window.FL200_UI.renderSysActivity();
+      } else {
+        var el = document.getElementById("sysClock");
+        if (el) el.textContent = new Date().toLocaleTimeString();
+      }
+    }, 1000);
   }
 
   document.addEventListener("fl200:unlock", start);
@@ -183,8 +192,10 @@
     APP.started = false;
     if (APP.timer) clearInterval(APP.timer);
     if (APP.rtTimer) clearInterval(APP.rtTimer);
+    if (APP.clockTimer) clearInterval(APP.clockTimer);
     APP.timer = null;
     APP.rtTimer = null;
+    APP.clockTimer = null;
   });
 
   window.addEventListener("resize", function () {

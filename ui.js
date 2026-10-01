@@ -271,6 +271,15 @@
     txt("scWRNote", wr == null ? "No settled trade statistics available." : wins + " wins / " + losses + " losses / " + open + " open.");
     var fill = document.getElementById("wrFill"); if (fill) fill.style.width = Math.max(0, Math.min(100, wr || 0)) + "%";
     txt("sysAcc", wr == null ? "—" : wr.toFixed(1) + "%");
+    // Side panel accuracy
+    txt("sideSysAcc", wr == null ? "—" : wr.toFixed(1) + "%");
+    txt("sideWR", wr == null ? "—" : wr.toFixed(1) + "%");
+    txt("sideTrades", total);
+    txt("sideWins", wins);
+    txt("sideLosses", losses);
+    var sideFill = document.getElementById("sideWrFill");
+    if (sideFill) sideFill.style.width = Math.max(0, Math.min(100, wr || 0)) + "%";
+    txt("sideAccNote", wr == null ? "Waiting for performance data." : wins + " wins / " + losses + " losses / " + open + " open.");
   }
 
   function renderDocuments() {
@@ -346,9 +355,26 @@
     });
   }
 
+  function renderSysActivity() {
+    var poll = (window.FL200_CONFIG && window.FL200_CONFIG.pollMs) || 4000;
+    txt("sysPollMs", (poll / 1000) + "s");
+    var now = new Date();
+    txt("sysClock", now.toLocaleTimeString());
+    var dot = document.getElementById("sysActDot");
+    var label = document.getElementById("sysActLabel");
+    if (window.FL200_TOKEN) {
+      if (dot) { dot.className = "pulse-dot h-2 w-2 rounded-full bg-emerald-400"; }
+      if (label) { label.textContent = "ACTIVE"; label.className = "font-mono text-[8px] font-bold text-emerald-300"; }
+    } else {
+      if (dot) { dot.className = "h-2 w-2 rounded-full bg-slate-500"; }
+      if (label) { label.textContent = "IDLE"; label.className = "font-mono text-[8px] font-bold text-slate-500"; }
+    }
+  }
+
   function refresh(signal) {
     renderDecision(signal || {});
     renderPlan(signal || {});
+    renderSysActivity();
     renderL2(signal || {});
     renderModels(signal || {});
     renderTicker();
@@ -406,6 +432,7 @@
     renderLedger: renderLedger,
     renderScore: renderScore,
     renderTicker: renderTicker,
-    renderAccount: renderAccount
+    renderAccount: renderAccount,
+    renderSysActivity: renderSysActivity
   };
 })();

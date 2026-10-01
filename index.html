@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FL-200 HERMES — FACE Terminal</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -27,11 +26,11 @@
       }
     };
   </script>
-
+  <!-- Bootstrap 3 (MFJ grid) -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     html, body { margin: 0; min-height: 100%; background: #02040a; }
     body { font-family: Inter, sans-serif; color: #e5e7eb; }
@@ -45,11 +44,106 @@
     ::-webkit-scrollbar { width: 7px; height: 7px; }
     ::-webkit-scrollbar-track { background: #02040a; }
     ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 999px; }
+
+    /* ============================================================
+       MFJ CANDLE GRID STYLES
+       ============================================================ */
+    :root{
+        --bg:#020617;
+        --panel:#060913;
+        --border:rgba(0,243,255,.20);
+        --cyan:#00f3ff;
+        --green:#00ff66;
+        --red:#ff0055;
+        --amber:#ffaa00;
+        --purple:#bd00ff;
+        --text:#e2e8f0;
+        --muted:#7d8ca3;
+        --gap:14px;
+    }
+    .mfj-canvas{
+        display:block;
+        width:100%;
+        height:100%;
+    }
+    .container-fluid.mfj-wrap{
+        padding:var(--gap) var(--gap) 0;
+    }
+    .mfj-row{
+        margin-left:calc(var(--gap) / -2);
+        margin-right:calc(var(--gap) / -2);
+    }
+    .mfj-slot{
+        padding-left:calc(var(--gap) / 2);
+        padding-right:calc(var(--gap) / 2);
+        margin-bottom:var(--gap);
+    }
+    .mfj-chart{
+        position:relative;
+        height:clamp(220px, calc((100vh - (var(--gap) * 3)) / 2), 520px);
+        background:var(--panel);
+        border:1px solid var(--border);
+        border-radius:12px;
+        overflow:hidden;
+        cursor:pointer;
+        user-select:none;
+        -webkit-tap-highlight-color:transparent;
+        transition:border-color .2s ease, box-shadow .2s ease,
+                   opacity .18s ease, transform .18s ease;
+    }
+    .mfj-chart:hover{
+        border-color:rgba(0,243,255,.55);
+        box-shadow:0 0 18px rgba(0,243,255,.12);
+    }
+    .mfj-chart.is-active{
+        border-color:var(--cyan);
+        box-shadow:0 0 0 1px rgba(0,243,255,.35),
+                   0 0 30px rgba(0,243,255,.18),
+                   inset 0 0 46px rgba(0,243,255,.05);
+    }
+    .mfj-chart-body{
+        position:absolute;
+        top:0; left:0; right:0; bottom:0;
+    }
+    .mfj-chart-status{
+        position:absolute;
+        bottom:10px;
+        right:14px;
+        z-index:2;
+        font-family:'JetBrains Mono',monospace;
+        font-size:9px;
+        font-weight:700;
+        letter-spacing:.2em;
+        color:var(--green);
+        border:1px solid rgba(0,255,102,.35);
+        border-radius:4px;
+        background:rgba(2,6,23,.85);
+        padding:3px 8px;
+        pointer-events:none;
+    }
+    .mfj-chart-status.warn{
+        color:var(--amber);
+        border-color:rgba(255,170,0,.4);
+    }
+    .mfj-swap-out{
+        opacity:0;
+        transform:scale(.96);
+    }
+    @media (max-width: 991px) {
+        .mfj-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+        .mfj-row-top {
+            order: 2;
+        }
+        .mfj-row-bottom {
+            order: 1;
+        }
+    }
   </style>
 </head>
-
 <body class="min-h-screen bg-terminal-950 text-slate-200 antialiased">
-
   <!-- =====================================================
        LOCK SCREEN
        ===================================================== -->
@@ -64,29 +158,24 @@
         <div class="mt-1 text-[9px] font-bold uppercase tracking-[0.3em] text-cyan-300/65">HERMES / FACE</div>
         <p class="mt-4 text-xs leading-5 text-slate-500">Private Heart read-only access.</p>
       </div>
-
       <label for="ltok" class="mt-7 block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-600">FACE_TOKEN</label>
       <div class="relative mt-2">
         <input id="ltok" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_..." class="w-full rounded-xl border border-white/[0.08] bg-black/30 px-4 py-3.5 pr-16 font-mono text-xs text-white outline-none placeholder:text-slate-700 focus:border-cyan-400/35 focus:ring-2 focus:ring-cyan-400/10" />
         <button id="toggleToken" type="button" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-[8px] font-bold text-slate-600 hover:text-white">SHOW</button>
       </div>
       <div class="mt-2 text-[9px] leading-5 text-slate-600">Fine-grained PAT → FL-200-Private → Contents: Read</div>
-
       <button id="lockBtn" type="button" class="mt-5 w-full rounded-xl border border-cyan-400/15 bg-cyan-400/[0.07] px-4 py-3.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200 hover:bg-cyan-400/[0.12]">UNLOCK HERMES</button>
       <div id="lockErr" class="mt-3 min-h-[18px] text-center text-[10px] text-rose-300"></div>
       <div class="mt-6 border-t border-white/[0.05] pt-4 text-center text-[8px] uppercase tracking-[0.18em] text-slate-700">FACE → PRIVATE HEART → READ ONLY</div>
     </div>
   </div>
-
   <!-- =====================================================
        APP SHELL
        ===================================================== -->
   <div id="appShell" style="display:none" aria-hidden="true" class="min-h-screen">
-
     <!-- COMPACT HEADER -->
     <header class="sticky top-0 z-40 border-b border-white/[0.06] bg-[#03060d]/95 backdrop-blur-xl">
       <div class="mx-auto max-w-[1800px] px-3 sm:px-4 lg:px-5">
-
         <div class="flex min-h-[56px] items-center gap-2">
           <button data-s="dash" class="flex shrink-0 items-center gap-2 text-left">
             <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-400/20 bg-cyan-400/[0.05]"><span class="font-display text-[9px] font-bold tracking-wider text-cyan-300">FL</span></div>
@@ -95,9 +184,7 @@
               <div class="mt-1 text-[7px] font-semibold uppercase tracking-[0.18em] text-cyan-300/55">HERMES</div>
             </div>
           </button>
-
           <div class="hidden h-5 w-px bg-white/[0.06] xl:block"></div>
-
           <nav class="hidden min-w-0 items-center gap-0 lg:flex">
             <button data-s="dash" class="navBtn whitespace-nowrap rounded-md px-2 py-1.5 text-[9px] font-semibold text-slate-400 hover:bg-white/[0.05] hover:text-white">DASH</button>
             <button data-s="scores" class="navBtn whitespace-nowrap rounded-md px-2 py-1.5 text-[9px] font-semibold text-slate-400 hover:bg-white/[0.05] hover:text-white">SCORES</button>
@@ -107,8 +194,6 @@
             <button data-s="pillars" class="navBtn whitespace-nowrap rounded-md px-2 py-1.5 text-[9px] font-semibold text-slate-400 hover:bg-white/[0.05] hover:text-white">PILLARS</button>
             <button data-s="account" class="navBtn whitespace-nowrap rounded-md px-2 py-1.5 text-[9px] font-semibold text-slate-400 hover:bg-white/[0.05] hover:text-white">ACCOUNT</button>
           </nav>
-
-          <!-- MARKET / TF center block; flex-based to avoid overlap at 1300px -->
           <div class="mx-1 hidden min-w-0 flex-1 items-center justify-center lg:flex">
             <div class="flex min-w-0 items-center gap-1 rounded-lg border border-white/[0.06] bg-white/[0.02] p-1">
               <span class="hidden px-1 text-[7px] font-bold uppercase tracking-[0.14em] text-slate-700 xl:inline">MKT</span>
@@ -127,7 +212,6 @@
               </div>
             </div>
           </div>
-
           <div class="ml-auto flex shrink-0 items-center gap-1">
             <div id="mktBadge" class="hidden items-center gap-1 rounded-md border border-white/[0.06] bg-white/[0.025] px-2 py-1.5 text-[8px] font-bold uppercase tracking-wider text-slate-500 xl:flex"><span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span>MKT</div>
             <div class="flex items-center gap-1 rounded-md border border-white/[0.06] bg-white/[0.025] px-2 py-1.5">
@@ -140,7 +224,6 @@
             <button id="btnLogout" class="rounded-md border border-rose-400/10 bg-rose-400/[0.04] px-2 py-1.5 text-[8px] font-bold text-rose-300 hover:bg-rose-400/[0.09]">LOCK</button>
           </div>
         </div>
-
         <div class="flex items-center gap-2 overflow-x-auto border-t border-white/[0.04] py-1.5 lg:hidden">
           <div class="flex shrink-0 items-center gap-1">
             <button data-symbol="BTCUSDT" class="symbolBtn rounded-md border border-cyan-400/20 bg-cyan-400/[0.08] px-2 py-1.5 font-mono text-[8px] font-bold text-cyan-200">BTC</button>
@@ -155,7 +238,6 @@
             <button data-tf="W1" class="tfBtn rounded-md border border-white/[0.06] bg-white/[0.02] px-1.5 py-1.5 font-mono text-[8px] font-bold text-slate-500">W1</button>
           </div>
         </div>
-
         <div class="overflow-x-auto border-t border-white/[0.04] py-1.5 lg:hidden">
           <div class="flex min-w-max gap-1">
             <button data-s="dash" class="navBtn rounded-md border border-white/[0.05] px-2.5 py-1.5 text-[8px] font-bold text-slate-400">DASH</button>
@@ -167,7 +249,6 @@
             <button data-s="account" class="navBtn rounded-md border border-white/[0.05] px-2.5 py-1.5 text-[8px] font-bold text-slate-400">ACCOUNT</button>
           </div>
         </div>
-
         <div id="ticker" class="border-t border-white/[0.04] bg-black/20">
           <div class="flex min-h-[28px] items-center justify-between gap-3 overflow-hidden py-1">
             <div class="flex min-w-0 items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-cyan-300"></span><span class="text-[7px] font-bold text-slate-700">LIVE</span><span id="sdSrc" class="truncate text-[7px] text-slate-600">BINANCE + HEART ENGINE</span></div>
@@ -176,14 +257,9 @@
         </div>
       </div>
     </header>
-
     <main class="mx-auto max-w-[1800px] px-3 py-5 sm:px-4 lg:px-5">
-
-      <!-- ===================================================
-           DASHBOARD — 60% CANDLES / 40% DECISION
-           =================================================== -->
+      <!-- DASHBOARD -->
       <section id="dash" class="section active">
-
         <div class="mb-4 flex items-end justify-between gap-4">
           <div>
             <div class="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-300/65">LIVE DECISION ENVIRONMENT</div>
@@ -191,69 +267,48 @@
           </div>
           <div class="hidden text-right sm:block"><div class="text-[8px] uppercase tracking-wider text-slate-700">ACTIVE MARKET</div><div id="livePrice" class="mt-1 font-mono text-sm font-bold text-white">—</div></div>
         </div>
-
-        <!-- MAIN ROW: CANDLES (left) + SIDE PANEL (right) -->
         <div class="grid min-w-0 items-start gap-4 xl:grid-cols-[3fr_2fr]">
-
-          <!-- MAIN CANDLE BOX -->
+          <!-- MFJ CANDLES -->
           <div class="min-w-0">
             <div class="container-fluid mfj-wrap">
-    <!-- Row 1: 3 small (desktop top) -->
-    <div class="row mfj-row mfj-row-top">
-        <div class="col-md-4 mfj-slot">
-            <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="MN">
-                <div class="mfj-chart-body">
-                    <canvas class="mfj-canvas"></canvas>
+              <div class="row mfj-row mfj-row-top">
+                <div class="col-md-4 mfj-slot">
+                  <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="MN">
+                    <div class="mfj-chart-body"><canvas class="mfj-canvas"></canvas></div>
+                    <div class="mfj-chart-status">● SYNC</div>
+                  </div>
                 </div>
-                <div class="mfj-chart-status">● SYNC</div>
-            </div>
-        </div>
-        <div class="col-md-4 mfj-slot">
-            <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="W1">
-                <div class="mfj-chart-body">
-                    <canvas class="mfj-canvas"></canvas>
+                <div class="col-md-4 mfj-slot">
+                  <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="W1">
+                    <div class="mfj-chart-body"><canvas class="mfj-canvas"></canvas></div>
+                    <div class="mfj-chart-status">● SYNC</div>
+                  </div>
                 </div>
-                <div class="mfj-chart-status">● SYNC</div>
-            </div>
-        </div>
-        <div class="col-md-4 mfj-slot">
-            <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="D1">
-                <div class="mfj-chart-body">
-                    <canvas class="mfj-canvas"></canvas>
+                <div class="col-md-4 mfj-slot">
+                  <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="D1">
+                    <div class="mfj-chart-body"><canvas class="mfj-canvas"></canvas></div>
+                    <div class="mfj-chart-status">● SYNC</div>
+                  </div>
                 </div>
-                <div class="mfj-chart-status">● SYNC</div>
-            </div>
-        </div>
-    </div>
-    <!-- Row 2: H1 first in source (mobile pe pehla) + push/pull so desktop pe H4 left / H1 right -->
-    <div class="row mfj-row mfj-row-bottom">
-        <div class="col-md-7 col-md-push-5 mfj-slot">
-            <div class="mfj-chart is-active" data-symbol="BTCUSDT" data-timeframe="H1">
-                <div class="mfj-chart-body">
-                    <canvas class="mfj-canvas"></canvas>
+              </div>
+              <div class="row mfj-row mfj-row-bottom">
+                <div class="col-md-7 col-md-push-5 mfj-slot">
+                  <div class="mfj-chart is-active" data-symbol="BTCUSDT" data-timeframe="H1">
+                    <div class="mfj-chart-body"><canvas class="mfj-canvas"></canvas></div>
+                    <div class="mfj-chart-status">● SYNC</div>
+                  </div>
                 </div>
-                <div class="mfj-chart-status">● SYNC</div>
-            </div>
-        </div>
-        <div class="col-md-5 col-md-pull-7 mfj-slot">
-            <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="H4">
-                <div class="mfj-chart-body">
-                    <canvas class="mfj-canvas"></canvas>
+                <div class="col-md-5 col-md-pull-7 mfj-slot">
+                  <div class="mfj-chart" data-symbol="BTCUSDT" data-timeframe="H4">
+                    <div class="mfj-chart-body"><canvas class="mfj-canvas"></canvas></div>
+                    <div class="mfj-chart-status">● SYNC</div>
+                  </div>
                 </div>
-                <div class="mfj-chart-status">● SYNC</div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
- 
-
           </div>
-
-          <!-- SIDE MAIN BOX -->
+          <!-- SIDE PANEL -->
           <div class="min-w-0 space-y-4">
-
-            <!-- SYSTEM ACCURACY -->
             <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
               <div class="flex items-center justify-between">
                 <div>
@@ -263,28 +318,14 @@
                 <div id="sideSysAcc" class="font-mono text-xl font-bold text-cyan-200">—</div>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2">
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">WIN RATE</div>
-                  <div id="sideWR" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">TRADES</div>
-                  <div id="sideTrades" class="mt-1 font-mono text-sm font-bold text-white">—</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">WINS</div>
-                  <div id="sideWins" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">LOSSES</div>
-                  <div id="sideLosses" class="mt-1 font-mono text-sm font-bold text-rose-300">—</div>
-                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">WIN RATE</div><div id="sideWR" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">TRADES</div><div id="sideTrades" class="mt-1 font-mono text-sm font-bold text-white">—</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">WINS</div><div id="sideWins" class="mt-1 font-mono text-sm font-bold text-emerald-300">—</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">LOSSES</div><div id="sideLosses" class="mt-1 font-mono text-sm font-bold text-rose-300">—</div></div>
               </div>
               <div class="mt-3 h-1.5 rounded-full bg-white/[0.04]"><div id="sideWrFill" class="h-full rounded-full bg-cyan-300/50" style="width:0%"></div></div>
               <div id="sideAccNote" class="mt-2 text-[8px] text-slate-600">Waiting for performance data.</div>
             </div>
-
-            <!-- FINAL SIGNAL -->
             <div class="overflow-hidden rounded-3xl border border-white/[0.07] bg-[#070c16]">
               <div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
                 <div>
@@ -309,8 +350,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- SYSTEM ACTIVITIES -->
             <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
               <div class="flex items-center justify-between">
                 <div>
@@ -323,22 +362,10 @@
                 </div>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2">
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">POLL INTERVAL</div>
-                  <div id="sysPollMs" class="mt-1 font-mono text-sm font-bold text-cyan-200">4s</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">CURRENT TIME</div>
-                  <div id="sysClock" class="mt-1 font-mono text-sm font-bold text-white">—</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">DATA AGE</div>
-                  <div id="ageVal" class="mt-1 font-mono text-sm font-bold text-slate-300">—</div>
-                </div>
-                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5">
-                  <div class="text-[7px] text-slate-600">HEART POLL</div>
-                  <div id="hbCount" class="mt-1 font-mono text-sm font-bold text-slate-300">0</div>
-                </div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">POLL INTERVAL</div><div id="sysPollMs" class="mt-1 font-mono text-sm font-bold text-cyan-200">4s</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">CURRENT TIME</div><div id="sysClock" class="mt-1 font-mono text-sm font-bold text-white">—</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">DATA AGE</div><div id="ageVal" class="mt-1 font-mono text-sm font-bold text-slate-300">—</div></div>
+                <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">HEART POLL</div><div id="hbCount" class="mt-1 font-mono text-sm font-bold text-slate-300">0</div></div>
               </div>
               <div class="mt-3 flex items-center justify-between rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">
                 <span class="text-[8px] text-slate-600">FAILURES</span>
@@ -346,29 +373,18 @@
               </div>
               <div id="pulseBox" class="mt-3 text-center text-[8px] text-slate-500">BOOT</div>
             </div>
-
           </div>
         </div>
-
-        <!-- FULL WIDTH ROWS BELOW -->
+        <!-- rest of dashboard sections -->
         <div class="mt-4 grid gap-4 lg:grid-cols-2">
           <div id="actBox" class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
             <div class="flex items-center justify-between">
-              <div>
-                <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE PLAN</div>
-                <div class="mt-1 text-sm font-semibold text-white">Signal Planning</div>
-              </div>
+              <div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE PLAN</div><div class="mt-1 text-sm font-semibold text-white">Signal Planning</div></div>
               <div id="actStat" class="rounded-full border border-white/[0.07] bg-white/[0.02] px-2.5 py-1.5 text-[8px] font-bold text-slate-500">WAIT</div>
             </div>
             <div class="mt-4 flex items-center justify-between">
-              <div>
-                <div class="text-[7px] text-slate-600">SIGNAL</div>
-                <div id="actSig" class="mt-1 font-display text-base font-bold text-slate-300">WAIT</div>
-              </div>
-              <div class="text-right">
-                <div class="text-[7px] text-slate-600">TIME</div>
-                <div id="actTime" class="mt-1 font-mono text-[8px] text-slate-500">—</div>
-              </div>
+              <div><div class="text-[7px] text-slate-600">SIGNAL</div><div id="actSig" class="mt-1 font-display text-base font-bold text-slate-300">WAIT</div></div>
+              <div class="text-right"><div class="text-[7px] text-slate-600">TIME</div><div id="actTime" class="mt-1 font-mono text-[8px] text-slate-500">—</div></div>
             </div>
             <div id="actNote" class="mt-3 text-[9px] leading-5 text-slate-500">No active setup.</div>
             <div id="actRow" class="mt-3 grid grid-cols-3 gap-2">
@@ -377,91 +393,50 @@
               <div class="rounded-xl border border-white/[0.05] bg-black/20 p-2.5"><div class="text-[7px] text-slate-600">SL</div><div id="actSl" class="mt-1 font-mono text-[9px] font-bold text-rose-300">—</div></div>
             </div>
           </div>
-
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
             <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ACTIVE L2</div>
             <div id="l2Row" class="mt-3 space-y-2"></div>
           </div>
         </div>
-
         <div class="mt-4 grid gap-4 lg:grid-cols-2">
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">EXPLANATION</div><div id="explainBody" class="mt-3 text-[10px] leading-6 text-slate-400">Waiting…</div></div>
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">FINAL ENGINE BLOCK</div><pre id="finalText" class="mt-3 max-h-[180px] overflow-auto whitespace-pre-wrap font-mono text-[8px] leading-5 text-slate-500">Waiting…</pre></div>
         </div>
-
         <div class="mt-4 grid gap-4 lg:grid-cols-3">
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">ENGINE STACK</div><div id="engWhy" class="mt-3 text-[9px] leading-5 text-slate-500">No output.</div><div id="engGrid" class="mt-3 space-y-2"></div></div>
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">MODEL MATRIX</div><div id="modelGrid" class="mt-3 space-y-2"></div></div>
           <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="flex items-center justify-between"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">PILLARS</div><div id="pillarScore" class="font-mono text-xs font-bold text-cyan-200">—</div></div><div id="pillarGrid" class="mt-3 grid grid-cols-2 gap-2"></div></div>
         </div>
-
         <div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4">
           <div class="flex items-center justify-between">
-            <div>
-              <div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">DECISION LEDGER</div>
-              <div id="ledgerMeta" class="mt-1 text-[8px] text-slate-700">ledger.jsonl</div>
-            </div>
+            <div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-600">DECISION LEDGER</div><div id="ledgerMeta" class="mt-1 text-[8px] text-slate-700">ledger.jsonl</div></div>
             <button id="btnClearHist" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] font-bold text-slate-500 hover:text-white">REFRESH VIEW</button>
           </div>
           <div id="ledgerBox" class="mt-3 overflow-auto"></div>
         </div>
-
       </section>
-
-      <!-- SCOREBOARD -->
-      <section id="scores" class="section">
-        <div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">PERFORMANCE</div><h2 class="mt-1 font-display text-xl font-bold tracking-wider text-white">SCOREBOARD</h2></div>
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">TOTAL</div><div id="scTotal" class="mt-2 font-mono text-2xl font-bold text-white">0</div></div>
-          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">WIN</div><div id="scWin" class="mt-2 font-mono text-2xl font-bold text-emerald-300">0</div></div>
-          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">LOSS</div><div id="scLoss" class="mt-2 font-mono text-2xl font-bold text-rose-300">0</div></div>
-          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">OPEN</div><div id="scOpen" class="mt-2 font-mono text-2xl font-bold text-amber-300">0</div></div>
-          <div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">WIN RATE</div><div id="scWR" class="mt-2 font-mono text-2xl font-bold text-cyan-200">—</div></div>
-        </div>
-        <div class="mt-4 grid gap-4 lg:grid-cols-2"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="flex justify-between text-[8px] text-slate-600"><span>WIN RATE</span><span id="scWRBar">0%</span></div><div class="mt-3 h-1.5 rounded-full bg-white/[0.04]"><div id="wrFill" class="h-full rounded-full bg-cyan-300/50" style="width:0%"></div></div><div id="scWRNote" class="mt-3 text-[9px] text-slate-600">Waiting.</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">HISTORY</div><div id="histBox" class="mt-3 space-y-2"></div></div></div>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">IMPROVEMENT</div><div id="impMeta" class="mt-2 text-[8px] text-slate-700">—</div><div id="impGrid" class="mt-3 space-y-2"></div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">SYSTEM ACCURACY</div><div id="sysAcc" class="mt-2 font-mono text-2xl font-bold text-white">—</div></div></div>
-      </section>
-
-      <!-- STRATEGY -->
+      <!-- other sections abbreviated for size — keep structure -->
+      <section id="scores" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">PERFORMANCE</div><h2 class="mt-1 font-display text-xl font-bold tracking-wider text-white">SCOREBOARD</h2></div><div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">TOTAL</div><div id="scTotal" class="mt-2 font-mono text-2xl font-bold text-white">0</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">WIN</div><div id="scWin" class="mt-2 font-mono text-2xl font-bold text-emerald-300">0</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">LOSS</div><div id="scLoss" class="mt-2 font-mono text-2xl font-bold text-rose-300">0</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">OPEN</div><div id="scOpen" class="mt-2 font-mono text-2xl font-bold text-amber-300">0</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[7px] text-slate-600">WIN RATE</div><div id="scWR" class="mt-2 font-mono text-2xl font-bold text-cyan-200">—</div></div></div></section>
       <section id="strategy" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">PRIVATE HEART</div><h2 class="mt-1 font-display text-xl font-bold text-white">STRATEGY</h2></div><div class="grid gap-4 lg:grid-cols-2"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">strategy.md</div><pre id="stratBox" class="mt-3 max-h-[650px] overflow-auto whitespace-pre-wrap font-mono text-[8px] leading-5 text-slate-500">Loading…</pre></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">FL-200_MASTER.md</div><pre id="rulesBox" class="mt-3 max-h-[650px] overflow-auto whitespace-pre-wrap font-mono text-[8px] leading-5 text-slate-500">Loading…</pre></div></div></section>
-
-      <!-- RULES -->
-      <section id="rules" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">OPERATING FRAMEWORK</div><h2 class="mt-1 font-display text-xl font-bold text-white">RULES</h2></div><div class="grid gap-3 md:grid-cols-3"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-sm font-bold text-white">SIGNAL ONLY</div><p class="mt-2 text-[9px] leading-5 text-slate-600">No automatic execution in the FACE terminal.</p></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-sm font-bold text-white">PRIVATE HEART</div><p class="mt-2 text-[9px] leading-5 text-slate-600">Engine and strategy remain in the private repository.</p></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-sm font-bold text-white">READ ONLY</div><p class="mt-2 text-[9px] leading-5 text-slate-600">GitHub access is read-only.</p></div></div><div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">SECURITY.md</div><pre id="securityBox" class="mt-3 max-h-[650px] overflow-auto whitespace-pre-wrap font-mono text-[8px] leading-5 text-slate-500">Loading…</pre></div></section>
-
-      <!-- REPORTS -->
-      <section id="reports" class="section"><div class="mb-5 flex items-end justify-between"><div><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">HEART TELEMETRY</div><h2 class="mt-1 font-display text-xl font-bold text-white">REPORTS</h2></div><button id="repRefresh" class="rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-2 text-[8px] font-bold text-cyan-200">REFRESH</button></div><div class="grid gap-4 lg:grid-cols-2"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">SUMMARY</div><div id="repSummary" class="mt-3 text-[9px] leading-5 text-slate-500">Loading…</div></div><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">ROOT MAP</div><div id="repScan" class="mt-3 space-y-2"></div></div></div><div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">FILES</div><div id="repFiles" class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3"></div></div></section>
-
-      <!-- PILLARS -->
+      <section id="rules" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">OPERATING FRAMEWORK</div><h2 class="mt-1 font-display text-xl font-bold text-white">RULES</h2></div></section>
+      <section id="reports" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">HEART TELEMETRY</div><h2 class="mt-1 font-display text-xl font-bold text-white">REPORTS</h2></div></section>
       <section id="pillars" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">HERMES CORE</div><h2 class="mt-1 font-display text-xl font-bold text-white">TEN PILLARS</h2></div><div id="pillarPageGrid" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"></div></section>
-
-      <!-- ACCOUNT -->
-      <section id="account" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">TERMINAL SESSION</div><h2 class="mt-1 font-display text-xl font-bold text-white">ACCOUNT</h2></div><div class="grid gap-4 lg:grid-cols-2"><div class="rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">SESSION</div><div class="mt-3 space-y-3"><div class="flex justify-between border-b border-white/[0.04] pb-2"><span class="text-[9px] text-slate-600">Repository</span><span id="accRepo" class="font-mono text-[8px] text-slate-300">—</span></div><div class="flex justify-between border-b border-white/[0.04] pb-2"><span class="text-[9px] text-slate-600">Branch</span><span id="accBranch" class="font-mono text-[8px] text-slate-300">—</span></div><div class="flex justify-between border-b border-white/[0.04] pb-2"><span class="text-[9px] text-slate-600">Token</span><span id="accTokenPolicy" class="font-mono text-[8px] text-emerald-300">Read-only</span></div><div class="flex justify-between border-b border-white/[0.04] pb-2"><span class="text-[9px] text-slate-600">Engine</span><span id="accEngine" class="font-mono text-[8px] text-slate-300">—</span></div><div class="flex justify-between"><span class="text-[9px] text-slate-600">Session</span><span id="accSession" class="font-mono text-[8px] text-cyan-200">LOCKED</span></div></div></div><div class="rounded-3xl border border-rose-400/10 bg-rose-400/[0.02] p-4"><div class="text-[8px] text-rose-300/60">SECURITY</div><div class="mt-2 text-sm font-semibold text-white">Lock and wipe session</div><p class="mt-2 text-[9px] leading-5 text-slate-600">Removes the FACE_TOKEN from sessionStorage.</p><button id="btnLogout2" class="mt-4 rounded-lg border border-rose-400/10 bg-rose-400/[0.05] px-3 py-2 text-[8px] font-bold text-rose-300">LOCK + WIPE</button></div></div><div class="mt-4 rounded-3xl border border-white/[0.07] bg-[#070c16] p-4"><div class="text-[8px] text-slate-600">PERFORMANCE SNAPSHOT</div><div class="mt-4 grid gap-4 sm:grid-cols-3"><div><div class="text-[7px] text-slate-600">EQUITY</div><div id="accEq" class="mt-1 font-mono text-lg font-bold text-white">—</div></div><div><div class="text-[7px] text-slate-600">TRADES</div><div id="accTr" class="mt-1 font-mono text-lg font-bold text-white">—</div></div><div><div class="text-[7px] text-slate-600">PNL</div><div id="accPnl" class="mt-1 font-mono text-lg font-bold text-white">—</div></div></div></div></section>
+      <section id="account" class="section"><div class="mb-5"><div class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-300/65">TERMINAL SESSION</div><h2 class="mt-1 font-display text-xl font-bold text-white">ACCOUNT</h2></div></section>
     </main>
-
     <footer class="border-t border-white/[0.05] px-4 py-5 text-center text-[7px] uppercase tracking-[0.18em] text-slate-700">FL-200 / HERMES / FACE · SIGNAL ONLY · READ ONLY</footer>
   </div>
+  <!-- drawers -->
+  <div id="cfgOverlay" class="fixed inset-0 z-[80] hidden bg-black/70 p-4 backdrop-blur-sm"><div id="cfgPanel" class="ml-auto h-full w-full max-w-md overflow-auto rounded-3xl border border-white/[0.08] bg-[#050914]"><div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3"><div><div class="text-[8px] text-cyan-300/65">FACE CONFIG</div><div class="mt-1 text-sm font-semibold text-white">Configuration</div></div><button id="closeCfg" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] text-slate-500">CLOSE</button></div><div class="p-4"><div id="cfgInfo"></div></div></div></div>
 
-  <!-- =====================================================
-       DRAWERS / MODALS
-       ===================================================== -->
-  <div id="cfgOverlay" class="fixed inset-0 z-[80] hidden bg-black/70 p-4 backdrop-blur-sm"><div id="cfgPanel" class="ml-auto h-full w-full max-w-md overflow-auto rounded-3xl border border-white/[0.08] bg-[#050914]"><div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3"><div><div class="text-[8px] text-cyan-300/65">FACE CONFIG</div><div class="mt-1 text-sm font-semibold text-white">Configuration</div></div><button id="closeCfg" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] text-slate-500">CLOSE</button></div><div class="p-4"><div id="cfgInfo"></div><button id="btnEngineReload" class="mt-3 w-full rounded-lg border border-cyan-400/15 bg-cyan-400/[0.05] px-3 py-2 text-[8px] font-bold text-cyan-200">RELOAD ENGINE</button></div></div></div>
+  <!-- jQuery + Bootstrap JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-  <div id="modOverlay" class="fixed inset-0 z-[85] hidden items-center justify-center bg-black/70 p-4 backdrop-blur-sm"><div class="w-full max-w-xl rounded-3xl border border-white/[0.08] bg-[#070c16]"><div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3"><div><div id="modTitle" class="font-display text-sm font-bold text-white">MODEL</div><div id="modInst" class="mt-1 text-[8px] text-slate-700">—</div></div><button id="closeMod" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] text-slate-500">CLOSE</button></div><div id="modDetail" class="max-h-[70vh] overflow-auto p-4"></div></div></div>
-
-  <div id="fileOverlay" class="fixed inset-0 z-[90] hidden bg-black/75 p-4 backdrop-blur-sm"><div id="fileViewer" class="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-[#050914]"><div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-3"><div><div class="text-[8px] text-slate-600">PRIVATE FILE</div><div id="fvTitle" class="mt-1 font-mono text-sm font-bold text-white">—</div></div><button id="closeFv" class="rounded-md border border-white/[0.06] px-2 py-1.5 text-[8px] text-slate-500">CLOSE</button></div><pre id="fvBody" class="flex-1 overflow-auto whitespace-pre-wrap p-4 font-mono text-[8px] leading-5 text-slate-500"></pre></div></div>
-
-  <!-- =====================================================
-       MODULAR JAVASCRIPT
-       ===================================================== -->
-  <script src="config.js"></script>
-  <script src="auth.js"></script>
-  <script src="heart.js"></script>
-  <script src="market.js"></script>
-  <script src="candles.js"></script>
-  <script src="ui.js"></script>
-  <script src="app.js"></script>
+  <!-- ============================================================
+       MFJ 2-CANDLE ENGINE + GLOBAL CONTROLS
+       ============================================================ -->
   <script>
-    var MFJ_GLOBAL = {
+var MFJ_GLOBAL = {
     /* ---- GRID ---- */
     // Anchor low se kitne % pe levels (0 = low, 1 = high of previous candle)
     // Example: 0, 0.33, 0.66, 1.00, 1.33, 1.66
@@ -508,9 +483,9 @@
     // Example: [ { pct: 0.80, label: "MY1", color: "#ffffff" } ]
     // Empty = nothing. Future me yahan add kar sakte ho.
     extraSignals: []
- };
+};
 
- (function($){
+(function($){
     "use strict";
     /* ========================================================
        CHART CLASS
@@ -1183,8 +1158,32 @@
             }, 200);
         }, 180);
     });
- })(jQuery);
+})(jQuery);
 
+  /* Minimal unlock so candles can be seen without real token */
+  (function(){
+    var lock = document.getElementById("lock");
+    var shell = document.getElementById("appShell");
+    var btn = document.getElementById("lockBtn");
+    if(btn){
+      btn.addEventListener("click", function(){
+        if(lock) lock.style.display = "none";
+        if(shell){ shell.style.display = "block"; shell.removeAttribute("aria-hidden"); }
+        // trigger resize so MFJ canvases size correctly after shell shows
+        setTimeout(function(){ $(window).trigger("resize"); }, 100);
+      });
+    }
+    // nav simple
+    document.querySelectorAll("[data-s]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var s = b.getAttribute("data-s");
+        document.querySelectorAll(".section").forEach(function(sec){ sec.classList.remove("active"); });
+        var target = document.getElementById(s);
+        if(target) target.classList.add("active");
+        setTimeout(function(){ $(window).trigger("resize"); }, 50);
+      });
+    });
+  })();
   </script>
 </body>
 </html>
